@@ -1,0 +1,438 @@
+/* ============================================================
+   FICHIER : Accueil.css
+   ROUTE   : / (page d'accueil publique)
+   RÔLE    : Page vitrine principale du site. Contient les
+             styles les plus complexes du projet :
+             animations, hero full-height, chiffres clés,
+             valeurs, menus de la semaine, actualités, CTA.
+
+   STRUCTURE :
+     1. Import des variables
+     2. Hero (bandeau principal animé)
+        a. Fond et bulles décoratives
+        b. Animation "flotter"
+        c. Contenu du hero (texte + visuel)
+        d. Coccinelle animée
+     3. Chiffres clés (4 stats)
+     4. Nos valeurs (4 cartes colorées)
+     5. Menu de la semaine (5 colonnes)
+     6. Actualités (3 colonnes)
+     7. CTA final (appel à l'inscription)
+     8. Responsive
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import '../../../styles/variables.css';
+
+/* ── 2. HERO ─────────────────────────────────────────────── */
+
+/* Grande section d'accueil : dégradé orange → crème → violet.
+   min-height:85vh = presque toute la hauteur de l'écran.
+   position:relative pour positionner les bulles décoratives en absolu. */
+.hero {
+  position:    relative;
+  background:  linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 50%, #f3e5f5 100%);
+  overflow:    hidden;   /* Cache les bulles qui dépassent les bords */
+  padding:     var(--space-3xl) 0;
+  min-height:  85vh;
+  display:     flex;
+  align-items: center;
+}
+
+/* ── 2a. Fond et bulles décoratives ─────────────────────── */
+
+/* Conteneur des bulles décoratives : couvre tout le hero,
+   pointer-events:none pour ne pas bloquer les clics. */
+.hero__fond { position: absolute; inset: 0; pointer-events: none; }
+
+/* Bulle décorative de base : emoji animé, semi-transparent */
+.hero__bulle {
+  position:  absolute;
+  font-size: 3rem;
+  opacity:   0.15;
+  animation: flotter 6s ease-in-out infinite;
+}
+
+/* Positions et tailles individuelles de chaque bulle.
+   animation-delay étale les animations pour un effet organique. */
+.hero__bulle--1 { top: 10%; left:   5%; font-size: 5rem;   animation-delay: 0s;   opacity: 0.2; }
+.hero__bulle--2 { top: 60%; left:  80%; font-size: 4rem;   animation-delay: 1.5s; }
+.hero__bulle--3 { top: 20%; right: 10%; font-size: 2.5rem; animation-delay: 0.8s; }
+.hero__bulle--4 { bottom: 15%; left: 30%; font-size: 3rem; animation-delay: 2s;   }
+.hero__bulle--5 { top: 70%; left:  15%; font-size: 2rem;   animation-delay: 1s;   }
+
+/* ── 2b. Animation "flotter" ────────────────────────────── */
+
+/* Chaque bulle monte légèrement et tourne un peu, en boucle.
+   translateY(-20px) = monte de 20px, rotate(10deg) = légère rotation. */
+@keyframes flotter {
+  0%, 100% { transform: translateY(0) rotate(0deg);      }
+  50%       { transform: translateY(-20px) rotate(10deg); }
+}
+
+/* ── 2c. Contenu du hero ────────────────────────────────── */
+
+/* Disposition du hero : texte à gauche + visuel à droite.
+   z-index:1 pour passer au-dessus des bulles décoratives. */
+.hero__contenu {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-3xl);
+  position:        relative;
+  z-index:         1;
+}
+
+/* Colonne texte : prend 60% de la largeur, max 600px */
+.hero__texte { flex: 1; max-width: 600px; }
+
+/* Tag de catégorie orange au-dessus du titre */
+.hero__surtitle {
+  display:        inline-block;
+  background:     var(--primary);
+  color:          var(--white);
+  padding:        var(--space-xs) var(--space-md);
+  border-radius:  var(--radius-pill);
+  font-size:      0.85rem;
+  font-weight:    700;
+  margin-bottom:  var(--space-lg);
+  letter-spacing: 0.03em;
+}
+
+/* Grand titre du hero : taille fluide entre 2.2rem et 3.5rem.
+   clamp(min, préféré, max) — s'adapte automatiquement à la fenêtre. */
+.hero__titre {
+  font-family:   var(--font-heading);
+  font-size:     clamp(2.2rem, 5vw, 3.5rem);
+  font-weight:   700;
+  color:         var(--text-dark);
+  line-height:   1.15;
+  margin-bottom: var(--space-lg);
+}
+
+/* Mot mis en orange dans le titre */
+.hero__titre span { color: var(--primary); }
+
+/* Description sous le titre : plus grande que le corps (1.1rem) */
+.hero__description {
+  font-size:     1.1rem;
+  color:         var(--text-gray);
+  margin-bottom: var(--space-2xl);
+  line-height:   1.7;
+  max-width:     480px;
+}
+
+/* Boutons d'action côte à côte : inscription + visite */
+.hero__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
+
+/* Colonne visuelle : ne rétrécit jamais, centrée */
+.hero__visuel { flex-shrink: 0; text-align: center; }
+
+/* ── 2d. Grande coccinelle animée ───────────────────────── */
+
+/* La coccinelle 🐞 principale : taille fluide entre 8rem et 14rem.
+   drop-shadow donne un halo orange sous la coccinelle.
+   animation pulse : grossit légèrement toutes les 3 secondes. */
+.hero__coccinelle-grande {
+  font-size:   clamp(8rem, 15vw, 14rem);
+  filter:      drop-shadow(0 20px 40px rgba(255,152,0,0.3));
+  animation:   pulse-coccinelle 3s ease-in-out infinite;
+  line-height: 1;
+}
+
+/* Animation de pulsation : légère respiration de la coccinelle */
+@keyframes pulse-coccinelle {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.05); }
+}
+
+/* Petites décorations sous la coccinelle */
+.hero__deco {
+  display:         flex;
+  justify-content: center;
+  gap:             var(--space-xl);
+  font-size:       2.5rem;
+  margin-top:      var(--space-md);
+  opacity:         0.8;
+}
+
+/* ── 3. CHIFFRES CLÉS ───────────────────────────────────── */
+
+/* Bande blanche avec 4 chiffres clés : années, enfants, taux, staff.
+   box-shadow sous la bande pour la distinguer du hero et de la suite. */
+.chiffres {
+  background: var(--white);
+  padding:    var(--space-2xl) 0;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Grille 4 colonnes égales pour les 4 chiffres */
+.chiffres__grille {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--space-lg);
+}
+
+/* Carte d'un chiffre : centrée, bordure grise discrète */
+.chiffre-carte {
+  text-align:    center;
+  padding:       var(--space-xl);
+  border-radius: var(--radius-xl);
+  border:        2px solid var(--bg-gray);
+  transition:    var(--transition);
+}
+
+/* Au survol : bordure orange + ombre colorée + élévation */
+.chiffre-carte:hover {
+  border-color: var(--primary);
+  box-shadow:   var(--shadow-colored);
+  transform:    translateY(-4px);
+}
+
+/* Icône de la stat */
+.chiffre-carte__icone  { font-size: 2.5rem; display: block; margin-bottom: var(--space-sm); }
+
+/* Chiffre principal : grand, orange, police Fredoka */
+.chiffre-carte__nombre {
+  font-family:   var(--font-heading);
+  font-size:     2rem;
+  font-weight:   700;
+  color:         var(--primary);
+  margin-bottom: var(--space-xs);
+}
+
+/* Suffixe du chiffre : ex "+", "%" — plus petit, gris */
+.chiffre-carte__nombre span { font-size: 1rem; color: var(--text-gray); }
+
+/* Label sous le chiffre : "ans d'expérience", "enfants accueillis"... */
+.chiffre-carte__label { font-size: 0.9rem; color: var(--text-gray); font-weight: 600; }
+
+/* ── 4. NOS VALEURS ─────────────────────────────────────── */
+
+/* Section fond blanc cassé avec 4 cartes de valeurs */
+.valeurs {
+  padding:    var(--space-3xl) 0;
+  background: var(--bg-light);
+}
+
+/* Grille 4 colonnes */
+.valeurs__grille {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
+
+/* Carte de valeur : barre colorée en haut selon la valeur
+   (vert = nature, rose = bienveillance, orange = créativité, violet = diversité) */
+.valeur-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-2xl) var(--space-xl);
+  text-align:    center;
+  box-shadow:    var(--shadow-sm);
+  transition:    var(--transition);
+  border-top:    4px solid transparent;  /* Transparente par défaut, colorée par variante */
+}
+
+/* Au survol : grande élévation */
+.valeur-carte:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+
+/* Couleurs des barres du haut selon la valeur */
+.valeur-carte--vert   { border-top-color: var(--secondary); }  /* Vert nature */
+.valeur-carte--rose   { border-top-color: var(--accent-2); }   /* Rose bienveillance */
+.valeur-carte--orange { border-top-color: var(--primary); }    /* Orange créativité */
+.valeur-carte--violet { border-top-color: var(--accent-3); }   /* Violet diversité */
+
+/* Icône de la valeur */
+.valeur-carte__icone { font-size: 3rem; display: block; margin-bottom: var(--space-md); }
+
+/* Titre de la valeur */
+.valeur-carte__titre { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); margin-bottom: var(--space-md); }
+
+/* Description de la valeur */
+.valeur-carte__texte { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
+
+/* ── 5. MENU DE LA SEMAINE ──────────────────────────────── */
+
+/* Section verte clair + jaune : fond évoquant la nature et la nutrition */
+.accueil-menus {
+  background: linear-gradient(135deg, #e8f5e9 0%, #fff9c4 100%);
+  padding:    var(--space-3xl) 0;
+}
+
+/* En-tête de la section menus : titre + lien "voir tout" */
+.accueil-menus__entete {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-2xl);
+}
+
+/* 5 colonnes : une par jour de la semaine (lundi au vendredi) */
+.menu-semaine {
+  display:               grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:                   var(--space-md);
+}
+
+/* Carte d'un jour de menu */
+.menu-jour {
+  background:    var(--white);
+  border-radius: var(--radius-lg);
+  padding:       var(--space-lg);
+  box-shadow:    var(--shadow-sm);
+}
+
+/* Nom du jour (Lundi, Mardi...) : orange, séparé par une ligne */
+.menu-jour__nom {
+  font-family:    var(--font-heading);
+  font-size:      1.1rem;
+  font-weight:    700;
+  color:          var(--primary);
+  margin-bottom:  var(--space-md);
+  text-align:     center;
+  padding-bottom: var(--space-sm);
+  border-bottom:  2px solid var(--primary-light);
+}
+
+/* Repas du jour : liste verticale dense */
+.menu-jour__repas {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  margin-bottom:  var(--space-sm);
+  font-size:      0.85rem;
+  color:          var(--text-dark);
+}
+
+/* Label de catégorie (Entrée, Plat, Dessert) : petit et gris */
+.menu-jour__label { font-weight: 700; color: var(--text-gray); font-size: 0.75rem; }
+
+/* État vide : affiché si aucun menu n'est publié pour la semaine */
+.menu-vide { text-align: center; padding: var(--space-2xl); background: var(--white); border-radius: var(--radius-xl); color: var(--text-gray); }
+.menu-vide p { margin-bottom: var(--space-md); }
+
+/* ── 6. ACTUALITÉS ──────────────────────────────────────── */
+
+/* Section fond blanc avec 3 cartes d'actualités */
+.accueil-actualites {
+  padding:    var(--space-3xl) 0;
+  background: var(--white);
+}
+
+/* En-tête : titre + lien "voir toutes les actualités" */
+.accueil-actualites__entete {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-2xl);
+}
+
+/* Grille 3 colonnes pour les cartes d'actualités */
+.actualites-grille {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-xl);
+}
+
+/* Carte d'une actualité : image + corps texte */
+.actu-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  overflow:      hidden;   /* Rogne l'image de couverture dans le coin arrondi */
+  box-shadow:    var(--shadow-sm);
+  border:        1px solid var(--bg-gray);
+  transition:    var(--transition);
+}
+
+/* Au survol : grande ombre + légère élévation */
+.actu-carte:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+
+/* Zone image en haut de la carte : hauteur fixe, rognée */
+.actu-carte__image     { height: 180px; overflow: hidden; }
+.actu-carte__image img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+
+/* Au survol de la carte : zoom sur l'image (effet magazine) */
+.actu-carte:hover .actu-carte__image img { transform: scale(1.05); }
+
+/* Corps de la carte : texte de l'actualité */
+.actu-carte__corps   { padding: var(--space-lg); }
+.actu-carte__date    { font-size: 0.8rem; color: var(--text-light); margin-bottom: var(--space-sm); }
+.actu-carte__titre   { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-sm); line-height: 1.3; }
+.actu-carte__extrait { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; margin-bottom: var(--space-md); }
+.actu-carte__lien    { color: var(--primary); font-weight: 700; font-size: 0.9rem; transition: var(--transition); }
+.actu-carte__lien:hover { color: var(--primary-dark); }
+
+/* ── 7. CTA FINAL ───────────────────────────────────────── */
+
+/* Section d'appel à l'inscription : dégradé orange plein */
+.cta {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  padding:    var(--space-3xl) 0;
+  text-align: center;
+}
+
+/* Contenu centré, largeur max pour la lisibilité */
+.cta__contenu { max-width: 700px; margin: 0 auto; }
+
+/* Grand titre blanc */
+.cta__titre   { font-family: var(--font-heading); font-size: 2.2rem; color: var(--white); margin-bottom: var(--space-lg); }
+
+/* Description : presque blanc, bonne lisibilité */
+.cta__texte   { font-size: 1.1rem; color: rgba(255,255,255,0.9); margin-bottom: var(--space-2xl); line-height: 1.6; }
+
+/* Boutons côte à côte, centrés */
+.cta__actions { display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap; }
+
+/* Bouton secondaire "Nous contacter" : bordure blanche sur fond orange */
+.cta__btn-contact {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       var(--space-md) var(--space-2xl);
+  border:        2px solid rgba(255,255,255,0.7);
+  border-radius: var(--radius-pill);
+  color:         var(--white);
+  font-weight:   700;
+  font-size:     1.1rem;
+  transition:    var(--transition);
+  font-family:   var(--font-body);
+}
+
+/* Au survol : fond blanc légèrement visible */
+.cta__btn-contact:hover {
+  background:   rgba(255,255,255,0.15);
+  border-color: var(--white);
+}
+
+/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette (≤1024px) :
+   - Valeurs : 4 → 2 colonnes
+   - Menus : 5 → 3 colonnes
+   - Actualités : 3 → 2 colonnes */
+@media (max-width: 1024px) {
+  .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
+  .menu-semaine      { grid-template-columns: repeat(3, 1fr); }
+  .actualites-grille { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (≤768px) : tout en 1 ou 2 colonnes */
+@media (max-width: 768px) {
+  .hero { min-height: auto; padding: var(--space-2xl) 0; }
+  .hero__contenu  { flex-direction: column; text-align: center; }
+  .hero__visuel   { order: -1; }              /* Coccinelle en premier sur mobile */
+  .hero__coccinelle-grande { font-size: 6rem; }
+  .hero__actions  { justify-content: center; }
+  .hero__description { max-width: 100%; }
+  .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
+  .valeurs__grille   { grid-template-columns: 1fr; }
+  .menu-semaine      { grid-template-columns: repeat(2, 1fr); }
+  .actualites-grille { grid-template-columns: 1fr; }
+  .accueil-menus__entete,
+  .accueil-actualites__entete { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
+  .cta__titre { font-size: 1.6rem; }
+}
+
+/* Conteneur simple pour la version connectée de la page */
+.accueil-page { padding: var(--space-xl); }

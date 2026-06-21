@@ -1,0 +1,293 @@
+/* ============================================================
+   FICHIER : ParentLayout.css
+   ROUTE   : /parent/* (toutes les pages de l'espace parent)
+   RÔLE    : Structure de mise en page de l'espace parent.
+             Sidebar blanche à gauche + contenu à droite.
+             Sur mobile : barre de navigation en bas fixe
+             (pattern "mobile app" comme une app mobile native).
+
+   STRUCTURE :
+     1. Import des variables
+     2. Layout flex global (.parent-layout)
+     3. Sidebar blanche (.parent-sidebar)
+        a. Zone logo
+        b. Infos utilisateur (avatar + nom + rôle)
+        c. Navigation
+        d. Bouton déconnexion
+     4. Zone contenu (.parent-content)
+        a. Topbar sticky
+        b. Contenu principal
+     5. Responsive mobile (barre en bas)
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import '../../styles/variables.css';
+
+/* ── 2. LAYOUT FLEX GLOBAL ──────────────────────────────── */
+
+/* Flex horizontal : sidebar à gauche + contenu à droite.
+   background:var(--bg-gray) = fond gris très clair (différent du
+   blanc de la sidebar pour bien les distinguer visuellement). */
+.parent-layout {
+  display:    flex;
+  min-height: 100vh;
+  background: var(--bg-gray);
+}
+
+/* ── 3. SIDEBAR BLANCHE ─────────────────────────────────── */
+
+/* Sidebar blanche de 260px avec ombre légère.
+   Contraste avec la sidebar sombre de l'admin : l'espace parent
+   est plus doux et accueillant pour les parents. */
+.parent-sidebar {
+  width:          260px;
+  min-height:     100vh;
+  background:     var(--white);
+  box-shadow:     var(--shadow-md);
+  display:        flex;
+  flex-direction: column;
+  position:       sticky;
+  top:            0;
+  height:         100vh;
+  overflow-y:     auto;
+  flex-shrink:    0;
+}
+
+/* ── 3a. Zone logo ──────────────────────────────────────── */
+
+/* Logo en haut de la sidebar : séparé du reste par une ligne grise */
+.parent-sidebar__logo {
+  padding:       var(--space-xl) var(--space-lg);
+  border-bottom: 1px solid var(--bg-gray);
+}
+
+/* Lien logo : flex pour emoji + texte */
+.parent-sidebar__logo-lien {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+  font-size:   1.3rem;
+}
+
+/* Nom de la crèche : orange, police Fredoka */
+.parent-sidebar__logo-text {
+  font-family: var(--font-heading);
+  font-size:   1.2rem;
+  font-weight: 700;
+  color:       var(--primary);
+}
+
+/* ── 3b. Infos utilisateur ──────────────────────────────── */
+
+/* Zone d'info : avatar circulaire + nom + rôle "Parent".
+   Séparée par une ligne grise en bas. */
+.parent-sidebar__user {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-lg);
+  border-bottom: 1px solid var(--bg-gray);
+}
+
+/* Avatar circulaire : fond orange clair, initiales oranges.
+   overflow:hidden pour rogner les images de profil. */
+.parent-sidebar__avatar {
+  width:           44px;
+  height:          44px;
+  border-radius:   50%;
+  background:      var(--primary-light);   /* Fond orange très clair */
+  color:           var(--primary);         /* Initiales en orange */
+  font-weight:     700;
+  font-size:       1rem;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  overflow:        hidden;
+  flex-shrink:     0;
+}
+
+/* Photo de profil dans l'avatar : rempli et rogné en cercle */
+.parent-sidebar__avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Nom du parent */
+.parent-sidebar__user-nom  { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Rôle : "Parent" en gris discret */
+.parent-sidebar__user-role { font-size: 0.75rem; color: var(--text-gray); }
+
+/* ── 3c. Navigation ─────────────────────────────────────── */
+
+/* Zone nav : flex:1 = prend tout l'espace vertical disponible */
+.parent-sidebar__nav {
+  flex:    1;
+  padding: var(--space-md) 0;
+}
+
+/* Lien de navigation : barre droite orange à l'état actif */
+.parent-sidebar__link {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-md);
+  padding:         var(--space-md) var(--space-lg);
+  color:           var(--text-gray);       /* Gris = inactif */
+  text-decoration: none;
+  font-weight:     600;
+  font-size:       0.9rem;
+  transition:      var(--transition);
+  border-right:    3px solid transparent;
+}
+
+/* Actif/hover : orange + fond orange très clair + barre droite orange */
+.parent-sidebar__link:hover,
+.parent-sidebar__link.active {
+  color:        var(--primary);
+  background:   var(--primary-light);
+  border-right: 3px solid var(--primary);
+}
+
+/* ── 3d. Bouton déconnexion ─────────────────────────────── */
+
+/* Bouton en bas de la sidebar (pas dans <nav> pour être distinct).
+   border-top le sépare visuellement des liens de navigation. */
+.parent-sidebar__deconnexion {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+  width:       100%;
+  padding:     var(--space-md) var(--space-lg);
+  background:  none;
+  border:      none;
+  border-top:  1px solid var(--bg-gray);   /* Ligne séparatrice */
+  color:       var(--text-gray);
+  font-weight: 600;
+  font-size:   0.9rem;
+  cursor:      pointer;
+  transition:  var(--transition);
+  text-align:  left;
+}
+
+/* Au survol : rouge pour signaler l'action de déconnexion */
+.parent-sidebar__deconnexion:hover { color: var(--error); }
+
+/* ── 4. ZONE CONTENU ────────────────────────────────────── */
+
+/* max-width:1100px pour ne pas trop étirer le contenu sur très grand écran */
+.parent-content {
+  flex:           1;
+  display:        flex;
+  flex-direction: column;
+  max-width:      1100px;
+  overflow-x:     hidden;
+}
+
+/* ── 4a. Topbar sticky ──────────────────────────────────── */
+
+/* Barre blanche collante en haut du contenu : affiche le fil
+   d'Ariane "Espace parent / Tableau de bord". */
+.layout-topbar {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         var(--space-md) var(--space-xl);
+  background:      var(--white);
+  border-bottom:   1px solid var(--bg-gray);
+  position:        sticky;
+  top:             0;
+  z-index:         10;
+}
+
+/* Texte du topbar : petit, gris */
+.layout-topbar__titre {
+  font-size:   0.85rem;
+  font-weight: 600;
+  color:       var(--text-gray);
+}
+
+/* ── 4b. Contenu principal ──────────────────────────────── */
+
+/* flex:1 + padding standard autour du contenu des pages */
+.layout-main {
+  flex:    1;
+  padding: var(--space-xl);
+}
+
+/* ── 5. RESPONSIVE MOBILE ───────────────────────────────── */
+
+/* Mobile (≤768px) : layout en colonne, sidebar fixée en bas de l'écran.
+   Ce pattern "tab bar" est familier des apps mobiles natives. */
+@media (max-width: 768px) {
+  /* Layout devient flex vertical */
+  .parent-layout  { flex-direction: column; }
+
+  /* La sidebar devient une barre fixe en bas de l'écran.
+     position:fixed + bottom:0 pour rester en bas même en défilant.
+     box-shadow haut pour la distinguer du contenu au-dessus. */
+  .parent-sidebar {
+    width:          100%;
+    height:         auto;
+    min-height:     auto;
+    position:       fixed;
+    top:            auto;         /* Annule le top:0 de la règle desktop */
+    bottom:         0;
+    left:           0;
+    right:          0;
+    z-index:        var(--z-sidebar);
+    flex-direction: row;
+    align-items:    center;
+    overflow-x:     auto;
+    overflow-y:     hidden;
+    box-shadow:     0 -2px 12px rgba(0,0,0,0.08);  /* Ombre vers le haut */
+    border-top:     1px solid var(--bg-gray);
+  }
+
+  /* Logo, infos utilisateur et déconnexion masqués sur mobile
+     (la sidebar en bas n'a pas la place pour ça) */
+  .parent-sidebar__logo,
+  .parent-sidebar__user,
+  .parent-sidebar__deconnexion { display: none; }
+
+  /* Navigation horizontale : scrollable si les liens dépassent */
+  .parent-sidebar__nav {
+    display:         flex;
+    flex-direction:  row;
+    align-items:     center;
+    padding:         0;
+    width:           100%;
+    overflow-x:      auto;
+    scrollbar-width: none;   /* Masque la scrollbar horizontale (Firefox) */
+  }
+
+  /* Masque la scrollbar sur Chrome/Safari */
+  .parent-sidebar__nav::-webkit-scrollbar { display: none; }
+
+  /* Chaque lien : icône en haut + label en bas, barre en haut (pas à droite) */
+  .parent-sidebar__link {
+    flex-direction: column;
+    gap:            2px;
+    padding:        var(--space-sm) var(--space-xs);
+    font-size:      0.6rem;
+    border-right:   none;
+    border-top:     3px solid transparent;  /* Barre en haut sur mobile */
+    min-width:      56px;
+    text-align:     center;
+    flex-shrink:    0;
+  }
+
+  /* Actif sur mobile : barre en haut + fond orange */
+  .parent-sidebar__link.active {
+    border-top:   3px solid var(--primary);
+    border-right: none;
+    background:   var(--primary-light);
+  }
+
+  /* padding-bottom:80px laisse de l'espace pour la barre de nav fixe
+     (évite que le contenu soit masqué derrière la barre) */
+  .layout-main { padding: var(--space-md); padding-bottom: 80px; }
+
+  /* Topbar reste collant en haut du contenu sur mobile */
+  .layout-topbar {
+    position: sticky;
+    top:      0;
+    z-index:  10;
+  }
+}

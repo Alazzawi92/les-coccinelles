@@ -1,0 +1,21 @@
+/* ============================================================
+   FICHIER : AdminDashboard.css
+   ROUTE   : /admin/tableau-de-bord (ancienne version)
+   RÔLE    : Fichier placeholder généré automatiquement.
+             Ce fichier contient une règle CSS invalide
+             (double accolades {{ }}) — il s'agit d'un résidu
+             de génération de code et non d'un composant actif.
+             Le vrai dashboard admin utilise Dashboard.css.
+
+   NOTE    : La classe .admin-dashboard-page n'est référencée
+             dans aucun composant JSX actif du projet.
+             Ce fichier peut être ignoré ou supprimé.
+   ============================================================ */
+
+/* Fichier placeholder — styles réels dans Dashboard.css */
+@import '../../../styles/variables.css';
+
+/* Classe placeholder (double accolades = CSS invalide à corriger) */
+.admin-dashboard-page {
+  padding: var(--space-xl);
+}

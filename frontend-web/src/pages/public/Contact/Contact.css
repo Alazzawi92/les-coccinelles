@@ -1,0 +1,167 @@
+/* ============================================================
+   FICHIER : Contact.css
+   ROUTE   : /contact
+   RÔLE    : Page de contact de la crèche. Disposition en
+             2 colonnes : formulaire de contact à gauche,
+             informations et carte à droite.
+
+   STRUCTURE :
+     1. Imports
+     2. Layout 2 colonnes (formulaire + infos)
+     3. Formulaire de contact
+     4. Message de succès après envoi
+     5. Informations de contact
+     6. Emplacement carte (placeholder)
+     7. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. LAYOUT 2 COLONNES ───────────────────────────────── */
+
+/* Formulaire prend tout l'espace (1fr), infos ont une largeur fixe (380px).
+   align-items:flex-start évite que les deux colonnes s'étirent
+   jusqu'au bas si l'une est plus courte que l'autre. */
+.contact-grille {
+  display:               grid;
+  grid-template-columns: 1fr 380px;
+  gap:                   var(--space-3xl);
+  align-items:           flex-start;
+}
+
+/* ── 3. FORMULAIRE DE CONTACT ───────────────────────────── */
+
+/* Formulaire en flex vertical */
+.contact-form { display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-xl); }
+
+/* Rangée 2 colonnes pour Prénom | Nom côte à côte */
+.form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+
+/* Groupe label + input */
+.form-groupe { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+/* Label du champ */
+.form-label  { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Astérisque rouge pour les champs obligatoires */
+.requis      { color: var(--error); }
+
+/* Champ de saisie standard */
+.form-input {
+  padding:       var(--space-sm) var(--space-md);
+  border:        2px solid #E0E0E0;
+  border-radius: var(--radius-md);
+  font-family:   var(--font-body);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  background:    var(--white);
+  transition:    var(--transition);
+  outline:       none;
+}
+
+/* Focus : bordure orange + halo */
+.form-input:focus         { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+
+/* Champ en erreur : bordure rouge */
+.form-input--erreur       { border-color: var(--error); }
+
+/* Focus sur champ en erreur : halo rouge */
+.form-input--erreur:focus { box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
+
+/* Zone de texte redimensionnable, plus haute par défaut (150px) */
+.form-textarea { resize: vertical; min-height: 150px; }
+
+/* Message d'erreur sous le champ */
+.form-erreur { color: var(--error); font-size: 0.8rem; margin-top: 2px; }
+
+/* Indication du nombre de caractères restants */
+.form-aide   { font-size: 0.75rem; color: var(--text-light); text-align: right; margin-top: 2px; }
+
+/* ── 4. MESSAGE DE SUCCÈS ───────────────────────────────── */
+
+/* Affiché à la place du formulaire après envoi réussi.
+   Fond vert + bordure verte pour un feedback positif clair. */
+.envoi-succes {
+  text-align:    center;
+  padding:       var(--space-3xl);
+  background:    #e8f5e9;
+  border-radius: var(--radius-xl);
+  border:        2px solid var(--success);
+}
+
+/* Grande icône ✅ en haut */
+.envoi-succes span { font-size: 4rem; display: block; margin-bottom: var(--space-md); }
+
+/* Titre de confirmation : vert */
+.envoi-succes h3 { font-family: var(--font-heading); font-size: 1.5rem; color: var(--success); margin-bottom: var(--space-md); }
+
+/* Message détaillé */
+.envoi-succes p  { color: var(--text-gray); margin-bottom: var(--space-xl); line-height: 1.6; }
+
+/* ── 5. INFORMATIONS DE CONTACT ─────────────────────────── */
+
+/* Liste verticale des infos : adresse, téléphone, email, horaires */
+.contact-infos__liste {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-lg);
+  margin-top:     var(--space-xl);
+}
+
+/* Un item d'info : icône + titre + contenu */
+.contact-info-item {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-md);
+  padding:       var(--space-md);
+  background:    var(--bg-gray);
+  border-radius: var(--radius-md);
+}
+
+/* Icône de l'info (📍, 📞, ✉️...) : grande, ne rétrécit pas */
+.contact-info-icone   { font-size: 1.5rem; flex-shrink: 0; }
+
+/* Titre de l'info (ex: "Adresse") : gras, foncé */
+.contact-info-titre   { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); margin-bottom: 2px; }
+
+/* Contenu de l'info : petit, gris, retour à la ligne préservé
+   white-space:pre-line permet d'afficher les sauts de ligne du texte */
+.contact-info-contenu { font-size: 0.85rem; color: var(--text-gray); line-height: 1.5; white-space: pre-line; }
+
+/* ── 6. PLACEHOLDER CARTE ───────────────────────────────── */
+
+.contact-carte { margin-top: var(--space-lg); }
+
+/* Zone où sera intégrée une carte Google Maps.
+   En attendant : fond vert/bleu avec bordure en pointillés. */
+.carte-placeholder {
+  height:          200px;
+  background:      linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 100%);
+  border-radius:   var(--radius-xl);
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  color:           var(--text-gray);
+  font-size:       0.9rem;
+  text-align:      center;
+  border:          2px dashed var(--text-light);
+}
+
+/* Icône de la carte placeholder */
+.carte-placeholder span { font-size: 3rem; margin-bottom: var(--space-sm); }
+
+/* ── 7. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette (≤1024px) : 2 colonnes → 1 colonne, infos en premier */
+@media (max-width: 1024px) {
+  .contact-grille { grid-template-columns: 1fr; }
+  .contact-infos  { order: -1; }   /* Les infos passent au-dessus du formulaire */
+}
+
+/* Mobile (≤768px) : Prénom | Nom en 2 colonnes → 1 colonne */
+@media (max-width: 768px) {
+  .form-row { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,11 @@
+/* ============================================================
+   FICHIER : Absences.css
+   ROUTE   : /admin/absences
+   RÔLE    : Page de gestion des absences signalées par les
+             parents. Tableau avec filtre par statut (en attente,
+             validée, refusée). Tous les styles viennent de
+             admin.css (tableau, badges, filtres, modale).
+   ============================================================ */
+
+/* Tous les styles viennent de admin.css via cet import */
+@import '../../../styles/admin.css';

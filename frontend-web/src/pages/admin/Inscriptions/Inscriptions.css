@@ -1,0 +1,34 @@
+/* ============================================================
+   FICHIER : Inscriptions.css
+   ROUTE   : /admin/inscriptions
+   RÔLE    : Page de gestion des dossiers d'inscription.
+             Tableau de toutes les inscriptions avec filtres
+             par statut. Modale de traitement d'un dossier
+             (validation, refus, mise en liste d'attente).
+
+   STRUCTURE :
+     1. Imports
+     2. Grille 2 colonnes (infos enfant + infos famille)
+     3. Actions sur le dossier
+   ============================================================ */
+
+/* Charge les variables et les styles communs admin */
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. GRILLE DE DÉTAIL D'UN DOSSIER ──────────────────── */
+
+/* 2 colonnes dans la modale de détail : infos enfant | infos famille.
+   margin-bottom pour l'espace avant les boutons d'action. */
+.dossier-grille {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-md);
+  margin-bottom:         var(--space-xl);
+}
+
+/* ── 3. ACTIONS SUR LE DOSSIER ──────────────────────────── */
+
+/* Colonne de boutons d'action : Valider, Refuser, Liste d'attente.
+   Disposition verticale pour séparer visuellement chaque action. */
+.dossier-actions { display: flex; flex-direction: column; gap: var(--space-md); }

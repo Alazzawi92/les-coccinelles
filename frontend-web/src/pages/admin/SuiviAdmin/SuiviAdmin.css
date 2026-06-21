@@ -1,0 +1,106 @@
+/* ============================================================
+   FICHIER : SuiviAdmin.css
+   ROUTE   : /admin/suivi
+   RÔLE    : Page de suivi quotidien des enfants.
+             Pour chaque enfant présent, l'admin peut saisir :
+             les repas (entrée, plat, dessert), l'heure de sieste
+             et l'humeur de l'enfant dans la journée.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des cartes enfants
+     3. Carte de suivi d'un enfant
+     4. En-tête de la carte
+     5. Saisie des repas (3 colonnes)
+     6. Saisie de la sieste
+     7. Saisie de l'humeur
+     8. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs admin */
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. GRILLE DES CARTES ENFANTS ───────────────────────── */
+
+/* 3 cartes par ligne par défaut (une par enfant présent) */
+.suivi-admin-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
+
+/* ── 3. CARTE DE SUIVI D'UN ENFANT ─────────────────────── */
+
+/* Carte blanche pour un enfant : flex vertical avec espaces entre sections */
+.suivi-admin-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border:        1px solid rgba(0,0,0,0.06);
+  display:       flex;
+  flex-direction: column;
+  gap:           var(--space-md);
+}
+
+/* ── 4. EN-TÊTE DE LA CARTE ─────────────────────────────── */
+
+/* En-tête : avatar emoji + nom + badge "nouveau".
+   border-bottom sépare visuellement l'en-tête du contenu. */
+.suivi-admin-entete { display: flex; align-items: center; gap: var(--space-md); padding-bottom: var(--space-md); border-bottom: 2px solid var(--bg-gray); }
+
+/* Grand emoji avatar de l'enfant */
+.suivi-admin-avatar { font-size: 2.5rem; }
+
+/* Nom de l'enfant : Fredoka, noir */
+.suivi-admin-entete h3 { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); }
+
+/* Badge orange "Nouveau" si c'est un nouvel enfant ou première présence */
+.suivi-nouveau-badge { background: var(--primary); color: var(--white); font-size: 0.7rem; font-weight: 700; padding: 2px var(--space-sm); border-radius: var(--radius-pill); }
+
+/* Section de saisie (repas, sieste, humeur) : label + contrôles */
+.suivi-admin-section  { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Label de section : très petit, en majuscules, gris */
+.suivi-admin-label    { font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+
+/* ── 5. SAISIE DES REPAS ────────────────────────────────── */
+
+/* 3 colonnes : Entrée | Plat | Dessert */
+.repas-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+
+/* Colonne d'un repas : label + select */
+.repas-col { display: flex; flex-direction: column; gap: 4px; }
+
+/* Label mini au-dessus du select de repas */
+.repas-mini-label { font-size: 0.7rem; color: var(--text-gray); }
+
+/* Select de saisie du repas : petit, compact */
+.repas-select { padding: 4px; border: 2px solid #E0E0E0; border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--white); }
+
+/* ── 6. SAISIE DE LA SIESTE ─────────────────────────────── */
+
+/* Ligne horizontale : input temps + label */
+.sieste-row { display: flex; align-items: center; gap: var(--space-sm); }
+
+/* Le champ de durée de sieste prend tout l'espace restant */
+.sieste-row .a-input { flex: 1; }
+
+/* ── 7. SAISIE DE L'HUMEUR ──────────────────────────────── */
+
+/* Rangée de boutons emoji pour sélectionner l'humeur */
+.humeur-row { display: flex; gap: var(--space-sm); }
+
+/* Bouton emoji d'humeur : fond gris, bordure transparent par défaut */
+.humeur-btn { font-size: 1.3rem; background: var(--bg-gray); border: 2px solid transparent; border-radius: var(--radius-sm); padding: var(--space-xs) var(--space-sm); cursor: pointer; transition: var(--transition); }
+
+/* Au survol : bordure orange */
+.humeur-btn:hover    { border-color: var(--primary); }
+
+/* Humeur sélectionnée : bordure orange + fond orange clair */
+.humeur-btn--actif   { border-color: var(--primary); background: var(--primary-light); }
+
+/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette (≤1200px) : 3 → 2 cartes par ligne */
+@media (max-width: 1200px) { .suivi-admin-grille { grid-template-columns: repeat(2, 1fr); } }
+
+/* Mobile (≤768px) : 1 carte par ligne */
+@media (max-width: 768px)  { .suivi-admin-grille { grid-template-columns: 1fr; } }

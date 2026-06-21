@@ -1,0 +1,163 @@
+/* ============================================================
+   FICHIER : Galerie.css  (espace admin)
+   PAGE    : /admin/galerie
+   RÔLE    : Styles de la gestion de la galerie photos admin.
+             Couvre la grille d'albums, la zone d'upload,
+             les tags enfants (RGPD), la grille de photos
+             et les overlays d'action sur chaque photo.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des albums
+     3. Carte album (couverture + infos + actions)
+     4. Zone d'upload et aperçu
+     5. Tags enfants (sélection pour tag RGPD)
+     6. Grille des photos
+     7. Overlay boutons sur chaque photo
+     8. Tags enfants sur les photos
+     9. Responsive
+   ============================================================ */
+
+/* Charge les variables CSS du projet */
+@import '../../../styles/variables.css';
+
+/* Charge les styles communs admin (cartes, tableaux, boutons...) */
+@import '../../../styles/admin.css';
+
+/* ── 2. GRILLE DES ALBUMS ───────────────────────────────── */
+
+/* 3 colonnes d'albums par défaut, avec grand espacement */
+.albums-admin-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-xl); }
+
+/* ── 3. CARTE ALBUM ─────────────────────────────────────── */
+
+/* Carte blanche avec coins arrondis et ombre légère.
+   overflow:hidden empêche la couverture de dépasser les bords. */
+.album-admin-carte { background: var(--white); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); }
+
+/* Au survol : ombre plus forte et légère élévation */
+.album-admin-carte:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+/* Zone de couverture (image ou emoji) : hauteur fixe, fond gris
+   si pas d'image. overflow:hidden clip l'image dans la zone. */
+.album-admin-couverture { height: 160px; background: var(--bg-gray); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; }
+
+/* L'image de couverture remplit toute la zone en gardant ses proportions */
+.album-admin-couverture img  { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
+
+/* Emoji affiché quand l'album n'a pas encore de photo de couverture */
+.album-admin-couverture span { font-size: 3.5rem; }
+
+/* Zone d'informations sous la couverture : titre + nombre de photos */
+.album-admin-infos   { padding: var(--space-md) var(--space-lg); }
+.album-admin-infos h3 { font-family: var(--font-heading); font-size: 1rem; color: var(--text-dark); margin-bottom: 4px; }
+.album-admin-infos p  { font-size: 0.8rem; color: var(--text-gray); }
+
+/* Boutons d'action (modifier, supprimer) alignés à droite en bas */
+.album-admin-actions { display: flex; gap: var(--space-sm); padding: var(--space-sm) var(--space-lg) var(--space-md); justify-content: flex-end; }
+
+/* ── 4. ZONE D'UPLOAD ───────────────────────────────────── */
+
+/* Conteneur principal de la zone d'upload */
+.upload-zone-admin { margin-bottom: var(--space-xl); }
+
+/* Boutons + infos sur une ligne, avec passage à la ligne si besoin */
+.upload-photos-actions { display: flex; gap: var(--space-md); align-items: center; flex-wrap: wrap; margin-bottom: var(--space-md); }
+
+/* Aperçu des photos sélectionnées avant envoi : fond gris neutre */
+.upload-preview { padding: var(--space-md); background: var(--bg-gray); border-radius: var(--radius-lg); }
+
+/* Avertissement RGPD : fond bleu clair + barre bleue à gauche.
+   Rappelle à l'admin d'avoir le consentement des parents avant d'uploader. */
+.upload-info-rgpd { margin-top: var(--space-md); font-size: 0.82rem; color: var(--text-gray); background: #e3f2fd; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); border-left: 3px solid var(--info); }
+
+/* ── 5. TAGS ENFANTS (sélection RGPD) ──────────────────────── */
+
+/* Liste des chips enfants pour tagger qui est sur la photo */
+.tags-enfants-liste { display: flex; gap: var(--space-sm); flex-wrap: wrap; margin-top: var(--space-sm); }
+
+/* Chaque chip enfant : ressemble à un bouton-pill cliquable.
+   L'input[type=checkbox] est caché, le style change via --actif. */
+.tag-enfant-option {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  padding:       var(--space-sm) var(--space-md);
+  border:        2px solid var(--bg-gray);
+  border-radius: var(--radius-pill);
+  cursor:        pointer;
+  font-size:     0.85rem;
+  font-weight:   600;
+  transition:    var(--transition);
+  background:    var(--white);
+}
+
+/* La vraie checkbox est cachée (le style est géré par le label) */
+.tag-enfant-option input     { display: none; }
+
+/* Au survol : bordure orange pour indiquer que c'est sélectionnable */
+.tag-enfant-option:hover     { border-color: var(--primary); }
+
+/* Chip sélectionné : fond orange + texte blanc */
+.tag-enfant-option--actif    { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+/* ── 6. GRILLE DES PHOTOS ───────────────────────────────── */
+
+/* 6 photos par ligne sur grand écran → réduit en responsive */
+.photos-admin-grille { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--space-sm); }
+
+/* Chaque photo : position:relative pour placer l'overlay par-dessus.
+   overflow:hidden pour que l'image ne dépasse pas les bords arrondis. */
+.photo-admin-item { position: relative; border-radius: var(--radius-md); overflow: hidden; background: var(--bg-gray); }
+
+/* L'image remplit le carré (aspect-ratio:1) en recadrant si besoin */
+.photo-admin-item img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+
+/* ── 7. OVERLAY BOUTONS AU SURVOL ──────────────────────── */
+
+/* Overlay positionné en haut à droite de la photo.
+   opacity:0 par défaut → apparaît au survol de la photo. */
+.photo-admin-overlay {
+  position: absolute; top: 4px; right: 4px;
+  display: flex; gap: 4px;
+  opacity: 0; transition: var(--transition);
+}
+
+/* Au survol de la photo : les boutons deviennent visibles */
+.photo-admin-item:hover .photo-admin-overlay { opacity: 1; }
+
+/* Bouton d'action (voir / supprimer) : fond semi-transparent sombre */
+.photo-overlay-btn {
+  background: rgba(0,0,0,0.7); border: none; border-radius: var(--radius-sm);
+  color: var(--white); cursor: pointer; font-size: 0.8rem; padding: 3px 7px;
+  transition: var(--transition);
+}
+
+/* Bouton générique au survol : devient orange */
+.photo-overlay-btn:hover             { background: var(--primary); }
+
+/* Bouton suppression au survol : devient rouge pour alerter */
+.photo-overlay-btn--suppr:hover      { background: var(--error); }
+
+/* ── 8. TAGS ENFANTS SUR LES PHOTOS ────────────────────── */
+
+/* Bande de tags en bas de la photo (noms des enfants tagués) */
+.photo-enfants-tags {
+  display: flex; flex-wrap: wrap; gap: 2px; padding: 4px;
+  background: rgba(0,0,0,0.6); /* fond sombre semi-transparent */
+}
+
+/* Chaque tag : petit pill orange avec le prénom de l'enfant */
+.photo-enfant-tag {
+  background: var(--primary); color: var(--white);
+  font-size: 0.65rem; font-weight: 700;
+  padding: 1px 6px; border-radius: var(--radius-pill);
+}
+
+/* ── 9. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette : 2 albums par ligne, 4 photos par ligne */
+@media (max-width: 1200px) { .albums-admin-grille { grid-template-columns: repeat(2, 1fr); } .photos-admin-grille { grid-template-columns: repeat(4, 1fr); } }
+
+/* Mobile : 1 album par ligne (pleine largeur), 3 photos par ligne */
+@media (max-width: 768px)  { .albums-admin-grille { grid-template-columns: 1fr; }            .photos-admin-grille { grid-template-columns: repeat(3, 1fr); } }

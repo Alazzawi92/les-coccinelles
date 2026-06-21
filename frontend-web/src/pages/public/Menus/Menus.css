@@ -1,0 +1,153 @@
+/* ============================================================
+   FICHIER : Menus.css
+   ROUTE   : /menus
+   RÔLE    : Page affichant les menus de la semaine de la crèche
+             (déjeuner + goûter, du lundi au vendredi).
+             Navigation semaine précédente/suivante.
+             Inclut une info-bulle nutritionnelle en bas de page.
+
+   STRUCTURE :
+     1. Imports
+     2. Navigation entre semaines
+     3. Grille des menus (5 jours)
+     4. Carte d'un jour
+     5. Sections repas (midi, goûter)
+     6. États (chargement, vide)
+     7. Info nutritionnelle
+     8. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. NAVIGATION ENTRE SEMAINES ───────────────────────── */
+
+/* Barre "◀ Semaine du X au Y ▶" : fond orange clair.
+   flex-wrap:wrap pour que les boutons passent en dessous sur mobile. */
+.semaine-nav {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-2xl);
+  padding:         var(--space-lg);
+  background:      var(--primary-light);
+  border-radius:   var(--radius-xl);
+  flex-wrap:       wrap;
+  gap:             var(--space-md);
+}
+
+/* Titre de la semaine affiché au centre */
+.semaine-titre {
+  font-family: var(--font-heading);
+  font-size:   1.2rem;
+  color:       var(--text-dark);
+  text-align:  center;
+}
+
+/* ── 3. GRILLE DES MENUS ────────────────────────────────── */
+
+/* 5 colonnes : une par jour de la semaine */
+.menus-grille {
+  display:               grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:                   var(--space-md);
+}
+
+/* ── 4. CARTE D'UN JOUR ─────────────────────────────────── */
+
+/* Carte de menu d'un jour : arrondie, ombre légère.
+   overflow:hidden pour rogner l'en-tête coloré dans les coins. */
+.menu-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  overflow:      hidden;
+  box-shadow:    var(--shadow-sm);
+  transition:    var(--transition);
+}
+
+/* Au survol : ombre + légère élévation */
+.menu-carte:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+/* En-tête de la carte : dégradé vert pour évoquer la nature et la santé */
+.menu-carte__entete {
+  background:  linear-gradient(135deg, var(--secondary) 0%, #4caf50 100%);
+  color:       var(--white);
+  padding:     var(--space-md);
+  text-align:  center;
+  display:     flex;
+  flex-direction: column;
+  align-items: center;
+  gap:         var(--space-xs);
+}
+
+/* Icône saisonnière du jour */
+.menu-carte__icone { font-size: 1.5rem; }
+
+/* Nom du jour (Lundi, Mardi...) : Fredoka, gras */
+.menu-carte__jour  { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; }
+
+/* ── 5. SECTIONS REPAS ──────────────────────────────────── */
+
+/* Zone des repas dans la carte : liste des sections midi et goûter */
+.menu-carte__repas { padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Section d'un repas (midi ou goûter) : fond coloré */
+.repas-section { padding: var(--space-sm); border-radius: var(--radius-sm); }
+
+/* Fond orange très clair pour le déjeuner */
+.repas-section--midi   { background: var(--primary-light); }
+
+/* Fond violet très clair pour le goûter */
+.repas-section--gouter { background: #f3e5f5; }
+
+/* Label du repas ("Déjeuner", "Goûter") : très petit, gris, gras */
+.repas-label   { font-size: 0.7rem; font-weight: 700; color: var(--text-gray); margin-bottom: 4px; }
+
+/* Contenu du repas : liste des plats, petite taille */
+.repas-contenu { font-size: 0.85rem; color: var(--text-dark); line-height: 1.4; }
+
+/* ── 6. ÉTATS ───────────────────────────────────────────── */
+
+/* Message de chargement centré */
+.menus-chargement { text-align: center; padding: var(--space-3xl); color: var(--text-gray); font-size: 1.1rem; }
+
+/* État vide : aucun menu pour cette semaine */
+.liste-vide { text-align: center; padding: var(--space-3xl); color: var(--text-gray); }
+.liste-vide span    { font-size: 4rem; display: block; margin-bottom: var(--space-md); }
+.liste-vide__sous   { font-size: 0.9rem; margin-top: var(--space-sm); color: var(--text-light); }
+
+/* ── 7. INFO NUTRITIONNELLE ─────────────────────────────── */
+
+/* Encart vert avec info sur la politique nutritionnelle de la crèche.
+   border-left:4px = barre verte à gauche (couleur santé). */
+.nutrition-info {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-lg);
+  margin-top:    var(--space-2xl);
+  padding:       var(--space-xl);
+  background:    #e8f5e9;
+  border-radius: var(--radius-xl);
+  border-left:   4px solid var(--secondary);
+}
+
+/* Icône de l'info nutritionnelle : grande, ne rétrécit pas */
+.nutrition-info > span { font-size: 2.5rem; flex-shrink: 0; }
+.nutrition-info h3     { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-sm); }
+.nutrition-info p      { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
+
+/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette (≤1024px) : 5 jours → 3 colonnes */
+@media (max-width: 1024px) {
+  .menus-grille { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Mobile (≤768px) :
+   - Menus : 5 → 2 colonnes
+   - Navigation de semaine en colonne centrée */
+@media (max-width: 768px) {
+  .menus-grille { grid-template-columns: repeat(2, 1fr); }
+  .semaine-nav  { flex-direction: column; text-align: center; }
+}

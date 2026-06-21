@@ -1,0 +1,18 @@
+/* ============================================================
+   FICHIER : MenusAdmin.css
+   ROUTE   : /admin/menus (ancienne version)
+   RÔLE    : Fichier placeholder généré automatiquement.
+             Ce fichier contient une règle CSS invalide
+             (double accolades {{ }}) — résidu de génération.
+             Les styles réels sont dans Menus.css.
+
+   NOTE    : Ce fichier peut être ignoré ou supprimé.
+   ============================================================ */
+
+/* Fichier placeholder — styles réels dans Menus.css */
+@import '../../../styles/variables.css';
+
+/* Classe placeholder (double accolades corrigées) */
+.menus-admin-page {
+  padding: var(--space-xl);
+}

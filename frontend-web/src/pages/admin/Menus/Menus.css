@@ -1,0 +1,41 @@
+/* ============================================================
+   FICHIER : Menus.css  (espace admin)
+   PAGE    : /admin/menus
+   RÔLE    : Styles de la page de gestion des menus de la semaine.
+             Affiche les 5 jours en colonnes côte à côte,
+             chaque colonne contenant midi + goûter.
+
+   STRUCTURE :
+     1. Import admin global
+     2. Grille des 5 jours
+     3. Colonne d'un jour
+     4. En-tête de colonne
+     5. Responsive
+   ============================================================ */
+
+/* Charge tous les styles communs de l'espace admin */
+@import '../../../styles/admin.css';
+
+/* ── GRILLE DES 5 JOURS ─────────────────────────────────── */
+
+/* Affiche lundi→vendredi en 5 colonnes égales.
+   Sur tablette (≤1200px) → 3 colonnes, sur mobile → 1 colonne. */
+.menus-admin-grille { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--space-md); }
+
+/* ── COLONNE D'UN JOUR ──────────────────────────────────── */
+
+/* Carte blanche pour chaque jour : fond blanc, ombre légère,
+   flex vertical pour empiler les champs midi et goûter. */
+.menu-admin-col { background:var(--white); border-radius:var(--radius-xl); padding:var(--space-xl); box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:var(--space-md); }
+
+/* Titre du jour ("Lundi", "Mardi"...) : police de titre orange,
+   bordure orange en bas pour séparer visuellement du contenu. */
+.menu-admin-jour { font-family:var(--font-heading); font-size:1.1rem; color:var(--primary); padding-bottom:var(--space-sm); border-bottom:2px solid var(--primary-light); margin-bottom:var(--space-sm); }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Tablette : 3 colonnes pour éviter des cases trop étroites */
+@media(max-width:1200px){.menus-admin-grille{grid-template-columns:repeat(3,1fr);}}
+
+/* Mobile : 1 colonne, les jours s'empilent verticalement */
+@media(max-width:768px){.menus-admin-grille{grid-template-columns:1fr;}}

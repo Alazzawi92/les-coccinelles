@@ -1,0 +1,277 @@
+/* ============================================================
+   FICHIER : Dashboard.css
+   PAGE    : /parent/tableau-de-bord
+   RÔLE    : Styles du tableau de bord de l'espace parent.
+             Ce fichier habille uniquement les éléments propres
+             à cette page (salutation, raccourcis, grille de
+             widgets, enfants, suivi, notifications).
+
+   STRUCTURE DU FICHIER :
+     1. Imports des variables et styles communs parent
+     2. Bandeau de salutation
+     3. Badge de notifications animé
+     4. Grille de raccourcis rapides
+     5. Grille principale du dashboard (3 widgets)
+     6. Widget Mes enfants
+     7. Widget Suivi du jour
+     8. Widget Notifications
+     9. Responsive (grand écran, tablette, mobile)
+   ============================================================ */
+
+
+/* ── 1. IMPORTS ─────────────────────────────────────────── */
+
+/* Charge toutes les variables CSS du projet : couleurs, espacements,
+   polices, ombres, rayons... Doit être importé en premier. */
+@import '../../../styles/variables.css';
+
+/* Charge les styles communs à toutes les pages de l'espace parent :
+   cartes (.p-card), titres (.p-titre), états vides (.p-vide),
+   formulaires (.p-form), etc. */
+@import '../../../styles/parent.css';
+
+
+/* ── 2. BANDEAU DE SALUTATION ───────────────────────────── */
+
+/* Conteneur principal : "Bonjour Sophie 👋" + badge notifications.
+   flex + justify-content:space-between place le titre à gauche
+   et le badge à droite. flex-wrap permet le passage à la ligne
+   sur mobile. */
+.dashboard__salutation {
+  display: flex;
+  align-items: flex-start;        /* aligne les éléments en haut */
+  justify-content: space-between; /* titre à gauche, badge à droite */
+  margin-bottom: var(--space-xl); /* espace sous la salutation */
+  flex-wrap: wrap;                /* passe à la ligne si pas assez de place */
+  gap: var(--space-md);           /* espace entre titre et badge quand ils wrappent */
+}
+
+/* Titre principal "Bonjour Sophie 👋" : grande police de titre */
+.dashboard__titre { font-family: var(--font-heading); font-size: 1.8rem; color: var(--text-dark); }
+
+/* Le prénom dans le titre est coloré en orange primaire */
+.dashboard__titre span { color: var(--primary); }
+
+/* Sous-titre gris clair : date du jour ou message de bienvenue */
+.dashboard__sous  { color: var(--text-gray); margin-top: 4px; }
+
+
+/* ── 3. BADGE DE NOTIFICATIONS ANIMÉ ───────────────────── */
+
+/* Badge orange "🔔 3 notifications" affiché à droite du titre.
+   inline-flex pour aligner l'icône et le texte sur la même ligne.
+   border-radius:pill donne la forme de pilule arrondie. */
+.notif-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: var(--primary);      /* fond orange */
+  color: var(--white);             /* texte blanc */
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill); /* forme ovale */
+  font-weight: 700;
+  font-size: 0.9rem;
+  animation: pulse 2s infinite;   /* pulsation orange en continu */
+}
+
+/* Animation "pulse" : crée un halo orange qui s'étend et disparaît
+   autour du badge toutes les 2 secondes pour attirer l'attention. */
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0   rgba(255,152,0,0.4); } /* halo invisible */
+  50%      { box-shadow: 0 0 0 8px rgba(255,152,0,0);   } /* halo pleinement étendu */
+}
+
+
+/* ── 4. GRILLE DE RACCOURCIS RAPIDES ────────────────────── */
+
+/* Grille des 6 raccourcis (Mes enfants, Messages, Absences...).
+   Par défaut : 3 colonnes sur écran moyen.
+   Sur grand écran (≥1100px) : 6 colonnes en ligne (voir responsive). */
+.dashboard__raccourcis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes de taille égale */
+  gap: var(--space-md);                  /* espace entre chaque raccourci */
+  margin-bottom: var(--space-xl);        /* espace sous la grille */
+}
+
+/* Chaque carte raccourci : icône + label centrés verticalement.
+   text-decoration:none efface le soulignement (c'est un lien <a>).
+   border transparent par défaut, devient visible au survol via la couleur. */
+.raccourci {
+  display: flex;
+  flex-direction: column;   /* icône au-dessus, label en dessous */
+  align-items: center;      /* centrés horizontalement */
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  border-radius: var(--radius-xl);
+  text-decoration: none;            /* lien sans soulignement */
+  transition: var(--transition);    /* animation douce au survol */
+  border: 2px solid transparent;    /* bordure invisible par défaut */
+}
+
+/* Au survol : la carte se soulève de 4px et projette une ombre.
+   Donne l'effet de "carte soulevée" très courant en UI moderne. */
+.raccourci:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+/* Couleurs de fond pour chaque raccourci (une couleur douce par thème) */
+.raccourci--orange { background: var(--primary-light);  border-color: rgba(255,152,0,0.2); }   /* Mes enfants */
+.raccourci--vert   { background: #e8f5e9;               border-color: rgba(102,187,106,0.2); } /* Suivi */
+.raccourci--bleu   { background: #e3f2fd;               border-color: rgba(79,195,247,0.2); }  /* Absences */
+.raccourci--violet { background: #f3e5f5;               border-color: rgba(186,104,200,0.2); } /* Messages */
+.raccourci--rose   { background: #fce4ec;               border-color: rgba(240,98,146,0.2); }  /* Documents */
+.raccourci--jaune  { background: #fffde7;               border-color: rgba(255,235,59,0.3); }  /* Galerie */
+
+/* Emoji/icône du raccourci : grande taille pour être lisible */
+.raccourci__icone { font-size: 1.8rem; }
+
+/* Label texte sous l'icône : petit, gras, centré */
+.raccourci__label { font-size: 0.8rem; font-weight: 700; color: var(--text-dark); text-align: center; }
+
+
+/* ── 5. GRILLE PRINCIPALE DU DASHBOARD ─────────────────── */
+
+/* Grille qui contient les 3 widgets : Mes enfants | Suivi du jour | Notifications.
+   3 colonnes de taille égale. Passe à 1 colonne sous 1100px (voir responsive). */
+.dashboard__grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
+  gap: var(--space-lg);                  /* espace entre les widgets */
+}
+
+
+/* ── 6. WIDGET MES ENFANTS ──────────────────────────────── */
+
+/* Liste verticale d'enfants avec espace entre chaque item */
+.enfants-liste { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Chaque ligne enfant : avatar + infos côte à côte.
+   Fond gris clair, bords arrondis, animation douce au survol. */
+.enfant-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-gray);         /* fond gris neutre */
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+
+/* Au survol : fond orange clair pour feedback visuel */
+.enfant-item:hover { background: var(--primary-light); }
+
+/* Cercle coloré avec l'initiale de l'enfant (ex: "L" pour Lucas).
+   flex-shrink:0 empêche le cercle de rétrécir si le texte est long. */
+.enfant-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;                   /* cercle parfait */
+  background: var(--primary);           /* fond orange */
+  color: var(--white);                  /* initiale blanche */
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700; font-size: 1.2rem;
+  flex-shrink: 0;                       /* ne rétrécit pas */
+}
+
+/* Zone texte à droite de l'avatar : prend tout l'espace disponible */
+.enfant-infos { flex: 1; }
+
+/* Nom de l'enfant : gras et foncé */
+.enfant-nom   { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); }
+
+/* Âge de l'enfant : plus petit, gris */
+.enfant-age   { font-size: 0.8rem; color: var(--text-gray); }
+
+/* Lien "Voir tout →" aligné à droite en bas de chaque widget */
+.p-voir-tout  { display: block; text-align: right; font-size: 0.85rem; color: var(--primary); font-weight: 700; margin-top: var(--space-md); }
+.p-voir-tout:hover { color: var(--primary-dark); }
+
+
+/* ── 7. WIDGET SUIVI DU JOUR ────────────────────────────── */
+
+/* Conteneur vertical des infos de suivi */
+.suivi-apercu   { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Nom de l'enfant en titre coloré dans la section suivi */
+.suivi-enfant-nom { font-family: var(--font-heading); font-size: 1.1rem; color: var(--primary); }
+
+/* Ligne des repas : midi + goûter côte à côte */
+.suivi-repas-row  { display: flex; gap: var(--space-md); }
+
+/* Chaque case repas : centrée, fond gris, bords arrondis */
+.suivi-repas-item  { flex: 1; text-align: center; background: var(--bg-gray); border-radius: var(--radius-md); padding: var(--space-md); }
+
+/* Libellé "Midi" ou "Goûter" : très petit, gris */
+.suivi-repas-label  { display: block; font-size: 0.7rem; color: var(--text-gray); margin-bottom: 4px; }
+
+/* Emoji de quantité mangée (😋 tout / 🙂 la moitié / 😕 peu) */
+.suivi-repas-valeur { font-size: 1.5rem; }
+
+/* Humeur du jour : texte gris discret */
+.suivi-humeur { font-size: 0.9rem; color: var(--text-gray); }
+
+/* Note de l'éducatrice : fond orange clair + barre verticale orange à gauche.
+   Simule un bloc de citation pour mettre en valeur le message. */
+.suivi-note   {
+  font-size: 0.9rem;
+  color: var(--text-dark);
+  background: var(--primary-light);       /* fond orange très clair */
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--primary);  /* barre orange sur le côté gauche */
+}
+
+
+/* ── 8. WIDGET NOTIFICATIONS ────────────────────────────── */
+
+/* Liste verticale avec petit espace entre chaque notification */
+.notifs-liste { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Chaque notification : icône + texte côte à côte, fond gris */
+.notif-item {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--bg-gray);
+  transition: var(--transition);
+}
+
+/* Notification non lue : fond orange clair + barre orange à gauche
+   pour la distinguer visuellement des notifications déjà lues. */
+.notif-item--nonlue { background: var(--primary-light); border-left: 3px solid var(--primary); }
+
+/* Icône de type de notification (🔔 message, 📅 absence...) */
+.notif-type    { font-size: 1.3rem; flex-shrink: 0; }
+
+/* Zone texte à droite de l'icône */
+.notif-contenu { flex: 1; min-width: 0; } /* min-width:0 permet l'ellipsis sur les enfants */
+
+/* Titre de la notification : gras et sombre */
+.notif-titre   { font-weight: 700; font-size: 0.85rem; color: var(--text-dark); }
+
+/* Aperçu du message : tronqué avec "..." si trop long */
+.notif-message { font-size: 0.8rem; color: var(--text-gray); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Date de la notification : très petite, gris clair */
+.notif-date    { font-size: 0.75rem; color: var(--text-light); margin-top: 2px; }
+
+
+/* ── 9. RESPONSIVE ──────────────────────────────────────── */
+
+/* Grand écran (≥1100px) : les 6 raccourcis tiennent en 1 seule ligne */
+@media (min-width: 1100px) {
+  .dashboard__raccourcis { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* Tablette (≤1100px) : les 3 widgets passent en colonne unique
+   pour éviter d'être trop étroits avec une barre latérale */
+@media (max-width: 1100px) {
+  .dashboard__grille { grid-template-columns: 1fr; }
+}
+
+/* Mobile (≤600px) : raccourcis en 2 colonnes, titres réduits */
+@media (max-width: 600px) {
+  .dashboard__raccourcis { grid-template-columns: repeat(2, 1fr); } /* 2 colonnes au lieu de 3 */
+  .dashboard__titre      { font-size: 1.4rem; }                     /* titre plus petit */
+  .dashboard__sous       { font-size: 0.85rem; }                    /* sous-titre plus petit */
+}

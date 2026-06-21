@@ -1,0 +1,115 @@
+/* ============================================================
+   FICHIER : reset.css
+   RÔLE    : Neutralise les styles par défaut des navigateurs.
+             Sans ce reset, chaque navigateur (Chrome, Firefox,
+             Safari...) applique ses propres styles aux éléments
+             HTML, ce qui donne des résultats différents d'un
+             navigateur à l'autre.
+
+             Ce fichier est importé via global.css qui est lui-
+             même chargé dans App.jsx — il s'applique donc à
+             toute l'application.
+
+   STRUCTURE :
+     1. Modèle de boîte universel
+     2. Balise <html> (taille de base, défilement)
+     3. Balise <body> (police, couleur, fond, rendu)
+     4. Liens <a>
+     5. Listes <ul> et <ol>
+     6. Images et SVG
+     7. Éléments de formulaire
+     8. Boutons
+     9. Titres h1-h6
+   ============================================================ */
+
+/* ── 1. MODÈLE DE BOÎTE UNIVERSEL ──────────────────────────
+
+   Par défaut, le navigateur calcule la largeur d'un élément
+   SANS inclure le padding et la bordure. Exemple :
+     div { width: 100px; padding: 10px; } → largeur réelle = 120px !!!
+
+   Avec box-sizing: border-box, le padding et la bordure sont
+   INCLUS dans la largeur déclarée. Exemple :
+     div { width: 100px; padding: 10px; } → largeur réelle = 100px ✅
+
+   Le sélecteur *, *::before, *::after s'applique à TOUS les
+   éléments HTML ainsi qu'à leurs pseudo-éléments. */
+*, *::before, *::after {
+  box-sizing: border-box; /* Inclure padding et border dans la largeur */
+  margin:  0;             /* Supprimer les marges par défaut du navigateur */
+  padding: 0;             /* Supprimer les paddings par défaut du navigateur */
+}
+
+/* ── 2. BALISE <html> ───────────────────────────────────────
+
+   L'élément racine de la page HTML. */
+html {
+  font-size: 16px;         /* Base 16px = 1rem. Les autres tailles se calculent en rem.
+                              Ex : 1.5rem = 24px, 0.875rem = 14px */
+  scroll-behavior: smooth; /* Défilement fluide pour les ancres (#section)
+                              au lieu d'un saut brutal */
+}
+
+/* ── 3. BALISE <body> ───────────────────────────────────────
+
+   Le corps principal de la page, conteneur de tout le contenu visible. */
+body {
+  font-family: var(--font-body);    /* Police Nunito pour tout le texte */
+  color:       var(--text-dark);    /* Couleur de texte par défaut : gris foncé */
+  background:  var(--bg-light);     /* Fond blanc légèrement chaud */
+  line-height: 1.6;                 /* Hauteur de ligne : 1.6× la taille de police
+                                       pour une meilleure lisibilité */
+  -webkit-font-smoothing:  antialiased;  /* Rendu plus net des polices sur Mac/Chrome */
+  -moz-osx-font-smoothing: grayscale;    /* Rendu plus net des polices sur Mac/Firefox */
+}
+
+/* ── 4. LIENS <a> ───────────────────────────────────────────
+
+   Par défaut les navigateurs colorent les liens en bleu et
+   les soulignent. On remet à zéro pour contrôler complètement
+   le style dans chaque composant. */
+a {
+  color:           inherit;    /* Hérite la couleur du parent (pas de bleu automatique) */
+  text-decoration: none;       /* Pas de soulignement par défaut */
+}
+
+/* ── 5. LISTES <ul> et <ol> ──────────────────────────────── */
+
+/* Supprime les puces (•) et numéros par défaut des listes.
+   On ajoute list-style manuellement dans les composants qui en ont besoin. */
+ul, ol { list-style: none; }
+
+/* ── 6. IMAGES ET SVG ────────────────────────────────────── */
+
+img, svg {
+  display:   block;     /* Supprime l'espace blanc sous les images
+                           (les images sont inline par défaut → espace fantôme) */
+  max-width: 100%;      /* L'image ne dépasse jamais son conteneur */
+}
+
+/* ── 7. ÉLÉMENTS DE FORMULAIRE ───────────────────────────── */
+
+/* Par défaut, les navigateurs n'héritent PAS la police dans les
+   champs de formulaire (ils utilisent une police système).
+   Ce reset force l'héritage de la police définie sur body. */
+input, button, textarea, select {
+  font: inherit; /* Hériter la police, taille et poids du parent */
+}
+
+/* ── 8. BOUTONS ──────────────────────────────────────────── */
+
+/* Par défaut les <button> n'ont pas de cursor:pointer.
+   On le force pour que tous les boutons montrent la main au survol. */
+button { cursor: pointer; }
+
+/* ── 9. TITRES h1-h6 ─────────────────────────────────────── */
+
+/* Par défaut les navigateurs appliquent des tailles de police
+   différentes à chaque niveau de titre. Ce reset uniformise
+   la police et la hauteur de ligne, les tailles se gèrent
+   dans chaque composant CSS. */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading); /* Police Fredoka pour tous les titres */
+  line-height: 1.2;                 /* Hauteur de ligne réduite pour les titres
+                                       (les titres courts n'ont pas besoin de 1.6) */
+}

@@ -1,0 +1,13 @@
+/* ============================================================
+   FICHIER : Login.css
+   ROUTE   : /connexion
+   RÔLE    : Page de connexion au compte (parent ou admin).
+             Ce fichier ne contient PAS les styles de la page :
+             ils sont tous définis dans styles/auth.css qui est
+             importé dans Login.jsx. Ce fichier est un point
+             d'entrée vide — ajouter ici uniquement les styles
+             spécifiques à la page Connexion s'ils apparaissent.
+   ============================================================ */
+
+/* Tous les styles sont dans styles/auth.css
+   Aucun style spécifique à la page Connexion pour l'instant. */

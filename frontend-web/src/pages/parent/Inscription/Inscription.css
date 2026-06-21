@@ -1,0 +1,211 @@
+/* ============================================================
+   FICHIER : Inscription.css
+   ROUTE   : /parent/inscription
+   RÔLE    : Formulaire multi-étapes d'inscription en ligne.
+             3 étapes : sélection de l'enfant → choix des jours
+             → récapitulatif. Barre de progression visuelle.
+
+   STRUCTURE :
+     1. Imports
+     2. Barre de progression (étapes)
+     3. Contenu de l'étape
+     4. Étape 1 : sélection de l'enfant
+     5. Étape 2 : sélection des jours
+     6. Étape 3 : récapitulatif
+     7. Navigation entre étapes
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. BARRE DE PROGRESSION ────────────────────────────── */
+
+/* Conteneur de la barre de progression : espace entre les étapes.
+   position:relative pour la ligne de connexion absolue. */
+.etapes-barre {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  position:        relative;
+  margin-bottom:   var(--space-2xl);
+  padding:         0 var(--space-xl);
+}
+
+/* Ligne orange qui relie les cercles : sa largeur augmente avec l'avancement.
+   width définie en style inline dans le JSX. */
+.etapes-barre__ligne {
+  position:   absolute;
+  bottom:     20px;            /* Centré avec les cercles de 40px */
+  left:       var(--space-xl);
+  height:     3px;
+  background: var(--primary);
+  transition: width 0.4s ease;
+  z-index:    0;               /* Derrière les cercles */
+}
+
+/* Un cercle + label d'étape */
+.etape-step {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-sm);
+  z-index:        1;           /* Au-dessus de la ligne */
+  position:       relative;
+}
+
+/* Cercle de l'étape : 40×40px.
+   Gris par défaut = étape à venir. */
+.etape-step__cercle {
+  width:           40px;
+  height:          40px;
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-weight:     700;
+  font-size:       0.9rem;
+  background:      var(--bg-gray);
+  color:           var(--text-gray);
+  border:          3px solid var(--bg-gray);
+  transition:      var(--transition);
+}
+
+/* Étape active : fond orange + blanc */
+.etape-step--actif .etape-step__cercle { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+/* Étape déjà faite : fond vert + blanc */
+.etape-step--fait  .etape-step__cercle { background: var(--success); color: var(--white); border-color: var(--success); }
+
+/* Label sous le cercle : gris par défaut */
+.etape-step__label { font-size: 0.8rem; font-weight: 600; color: var(--text-gray); }
+
+/* Label actif : orange */
+.etape-step--actif .etape-step__label { color: var(--primary); }
+
+/* Label fait : vert */
+.etape-step--fait  .etape-step__label { color: var(--success); }
+
+/* ── 3. CONTENU DE L'ÉTAPE ──────────────────────────────── */
+
+/* Zone blanche du formulaire de l'étape */
+.inscription-contenu { padding: var(--space-2xl); }
+
+/* Titre de l'étape : ex "Choisissez un enfant" */
+.etape-titre { font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-dark); margin-bottom: var(--space-xl); }
+
+/* ── 4. ÉTAPE 1 : SÉLECTION DE L'ENFANT ────────────────── */
+
+/* Choix de l'enfant : liste verticale de cartes cliquables */
+.enfants-choix { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Option enfant : cliquable comme un bouton.
+   input[type=radio] caché — la carte elle-même sert de contrôle. */
+.enfant-option {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-lg);
+  border:        2px solid var(--bg-gray);
+  border-radius: var(--radius-xl);
+  cursor:        pointer;
+  transition:    var(--transition);
+}
+
+/* La vraie radio est masquée visuellement */
+.enfant-option input { display: none; }
+
+/* Au survol : bordure et fond orange */
+.enfant-option:hover              { border-color: var(--primary); background: var(--primary-light); }
+
+/* Option sélectionnée : même style que le hover */
+.enfant-option--selectionne       { border-color: var(--primary); background: var(--primary-light); }
+
+/* Emoji avatar de l'enfant */
+.enfant-option__icone             { font-size: 2.5rem; }
+
+/* Nom de l'enfant */
+.enfant-option__nom               { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; }
+
+/* ── 5. ÉTAPE 2 : SÉLECTION DES JOURS ──────────────────── */
+
+/* Rangée de boutons "Lundi", "Mardi"... cliquables comme des checkboxes */
+.jours-checkboxes { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* Un bouton jour : bordure grise par défaut, cochable */
+.jour-checkbox {
+  padding:       var(--space-sm) var(--space-md);
+  border:        2px solid var(--bg-gray);
+  border-radius: var(--radius-pill);
+  cursor:        pointer;
+  transition:    var(--transition);
+  font-weight:   600;
+  font-size:     0.9rem;
+}
+
+/* Checkbox caché sous le bouton */
+.jour-checkbox input { display: none; }
+
+/* Survol : bordure orange */
+.jour-checkbox:hover     { border-color: var(--primary); }
+
+/* Jour coché : fond orange plein */
+.jour-checkbox--actif    { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+/* ── 6. ÉTAPE 3 : RÉCAPITULATIF ─────────────────────────── */
+
+/* Grille 2 colonnes de toutes les infos de la demande */
+.recap-grille {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-md);
+  margin-bottom:         var(--space-xl);
+}
+
+/* Item du récap : label + valeur sur fond gris */
+.recap-item {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  padding:        var(--space-md);
+  background:     var(--bg-gray);
+  border-radius:  var(--radius-md);
+}
+
+/* Item pleine largeur (s'étend sur les 2 colonnes) */
+.recap-item--full { grid-column: 1 / -1; }
+
+/* Label du récap : très petit, en majuscules */
+.recap-item strong { font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Valeur du récap */
+.recap-item span   { font-size: 0.95rem; color: var(--text-dark); font-weight: 600; }
+
+/* Note d'info en bleu : "Votre demande sera traitée sous 48h" */
+.recap-info {
+  display:       flex;
+  gap:           var(--space-md);
+  padding:       var(--space-md);
+  background:    #e3f2fd;
+  border-radius: var(--radius-md);
+  border-left:   4px solid var(--info);
+  font-size:     0.9rem;
+  color:         var(--text-gray);
+  align-items:   flex-start;
+}
+
+/* Icône ℹ️ dans la note d'info */
+.recap-info span { font-size: 1.3rem; flex-shrink: 0; }
+
+/* ── 7. NAVIGATION ENTRE ÉTAPES ─────────────────────────── */
+
+/* Barre "Précédent | Suivant" en bas de chaque étape.
+   border-top la sépare visuellement du formulaire. */
+.etape-nav {
+  display:    flex;
+  align-items: center;
+  gap:        var(--space-md);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--bg-gray);
+}

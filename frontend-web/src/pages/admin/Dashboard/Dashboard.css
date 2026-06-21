@@ -1,0 +1,165 @@
+/* ============================================================
+   FICHIER : Dashboard.css
+   ROUTE   : /admin/tableau-de-bord
+   RÔLE    : Tableau de bord administrateur. Affiche les
+             alertes urgentes, les statistiques clés, les
+             raccourcis d'accès rapide et la répartition
+             des inscriptions par statut.
+
+   STRUCTURE :
+     1. Imports
+     2. Date du jour
+     3. Alertes urgentes
+     4. Grille de statistiques (responsive multi-colonnes)
+     5. Raccourcis d'accès rapide
+     6. Barre de répartition + légende
+     7. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs admin */
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. DATE DU JOUR ────────────────────────────────────── */
+
+/* Petite date affichée sous le titre de la page */
+.admin-date { font-size: 0.85rem; color: var(--text-gray); font-style: italic; }
+
+/* ── 3. ALERTES URGENTES ────────────────────────────────── */
+
+/* Section d'alertes : liste verticale dense en haut du tableau de bord */
+.alertes-section { display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-xl); }
+
+/* Un item d'alerte : icône + message + lien "Voir".
+   border-left:4px identifie visuellement le type d'alerte. */
+.alerte-item {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-weight:   600;
+  border-left:   4px solid;
+  transition:    var(--transition);
+}
+
+/* Alerte absence : fond orange clair + barre orange */
+.alerte-item--absence { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
+
+/* Alerte message non lu : fond bleu clair + barre bleue */
+.alerte-item--message { background: #e3f2fd; border-left-color: var(--info);    color: #1565c0; }
+
+/* Au survol : légère opacité pour indiquer l'interactivité */
+.alerte-item:hover    { opacity: 0.85; }
+
+/* Lien "Voir" à l'extrême droite de l'alerte */
+.alerte-lien          { margin-left: auto; font-size: 0.85rem; }
+
+/* ── 4. GRILLE DE STATISTIQUES ──────────────────────────── */
+
+/* Grille de statistiques par défaut : 3 colonnes.
+   Devient 4, 6 colonnes sur les grands écrans
+   (les admins travaillent souvent sur de grands monitors). */
+.stats-grille {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-md);
+  margin-bottom:         var(--space-xl);
+}
+
+/* ── 5. RACCOURCIS D'ACCÈS RAPIDE ───────────────────────── */
+
+/* Section : contenu de chaque zone du dashboard */
+.admin-dashboard__section { margin-bottom: var(--space-xl); }
+
+/* Grille des raccourcis : 3 par défaut, augmente selon la largeur */
+.raccourcis-admin {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-md);
+}
+
+/* Raccourci : lien cliquable avec icône + label + description.
+   flex horizontal, bordure colorée au hover. */
+.raccourci-admin {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-md);
+  padding:         var(--space-lg);
+  border-radius:   var(--radius-xl);
+  text-decoration: none;
+  transition:      var(--transition);
+  border:          2px solid transparent;
+}
+
+/* Au survol : élévation + ombre */
+.raccourci-admin:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+/* Couleurs de fond des raccourcis selon la section */
+.raccourci-admin--orange { background: var(--primary-light); }  /* Inscriptions */
+.raccourci-admin--vert   { background: #e8f5e9; }               /* Enfants / présences */
+.raccourci-admin--bleu   { background: #e3f2fd; }               /* Messages */
+.raccourci-admin--violet { background: #f3e5f5; }               /* Documents */
+.raccourci-admin--rose   { background: #fce4ec; }               /* Galerie */
+.raccourci-admin--jaune  { background: #fffde7; }               /* Menus */
+
+/* Icône du raccourci : grande, ne rétrécit pas */
+.raccourci-admin__icone { font-size: 1.8rem; flex-shrink: 0; }
+
+/* Libellé du raccourci : gras, foncé */
+.raccourci-admin__label { font-weight: 700; font-size: 0.85rem; color: var(--text-dark); }
+
+/* Description courte : petit, gris */
+.raccourci-admin__desc  { font-size: 0.75rem; color: var(--text-gray); }
+
+/* ── 6. BARRE DE RÉPARTITION ────────────────────────────── */
+
+/* Barre horizontale multicolore : chaque couleur = un statut d'inscription.
+   overflow:hidden arrondis les extrémités de la barre. */
+.repartition-barre {
+  display:       flex;
+  height:        24px;
+  border-radius: var(--radius-pill);
+  overflow:      hidden;
+  margin-bottom: var(--space-lg);
+}
+
+/* Segment coloré de la barre : largeur définie par le style inline (%) */
+.repartition-segment { height: 100%; transition: var(--transition); }
+
+/* Légende des couleurs : liste horizontale des statuts */
+.repartition-legende { display: flex; gap: var(--space-lg); flex-wrap: wrap; }
+
+/* Un élément de légende : pastille de couleur + libellé du statut */
+.legende-item    { display: flex; align-items: center; gap: var(--space-sm); font-size: 0.85rem; color: var(--text-gray); }
+
+/* Pastille de couleur carrée : 12×12px, légèrement arrondie */
+.legende-couleur { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* ── 7. RESPONSIVE ──────────────────────────────────────── */
+
+/* Grand écran (≥1600px) : 6 colonnes pour stats et raccourcis
+   (1600 - 280px sidebar - 64px padding = 1256px / 6 = ~210px par col) */
+@media (min-width: 1600px) {
+  .stats-grille     { grid-template-columns: repeat(6, 1fr); }
+  .raccourcis-admin { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* Écran large (1280px–1599px) : 4 colonnes
+   (1280 - 240px sidebar - 64px padding = 976px / 4 = ~244px par col) */
+@media (min-width: 1280px) and (max-width: 1599px) {
+  .stats-grille     { grid-template-columns: repeat(4, 1fr); }
+  .raccourcis-admin { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Mobile (≤768px) : 2 colonnes pour stats et raccourcis */
+@media (max-width: 768px) {
+  .stats-grille     { grid-template-columns: repeat(2, 1fr); }
+  .raccourcis-admin { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Très petit mobile (≤480px) : stats en 1 colonne */
+@media (max-width: 480px) {
+  .stats-grille     { grid-template-columns: 1fr; }
+  .raccourcis-admin { grid-template-columns: repeat(2, 1fr); }
+}

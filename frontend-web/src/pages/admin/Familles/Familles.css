@@ -1,0 +1,87 @@
+/* ============================================================
+   FICHIER : Familles.css
+   ROUTE   : /admin/familles
+   RÔLE    : Page de gestion des comptes familles (parents).
+             Tableau avec recherche par nom, filtre par rôle.
+             Modale de détail d'une famille : infos personnelles,
+             enfants liés, historique. Activation/désactivation
+             des comptes.
+
+   STRUCTURE :
+     1. Imports
+     2. Compteur de résultats
+     3. Identité dans le tableau (avatar + nom)
+     4. Modale de détail famille
+     5. Grille des informations de la famille
+   ============================================================ */
+
+/* Charge les variables et les styles communs admin */
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. COMPTEUR DE RÉSULTATS ───────────────────────────── */
+
+/* Badge gris discret affichant le nombre total de résultats.
+   Affiché dans la barre de filtres à côté du champ de recherche. */
+.admin-compteur {
+  font-size:     0.85rem;
+  color:         var(--text-gray);
+  background:    var(--bg-gray);
+  padding:       var(--space-sm) var(--space-md);
+  border-radius: var(--radius-pill);
+}
+
+/* ── 3. IDENTITÉ DANS LE TABLEAU ────────────────────────── */
+
+/* Cellule d'identité : avatar circulaire + nom + prénom.
+   width:250px pour que la colonne ne soit pas trop étroite. */
+.user-identite { display: flex; align-items: center; width: 250px; gap: var(--space-sm); }
+
+/* Avatar avec initiales du parent : cercle orange + initiales blanches.
+   overflow:hidden pour rogner les vraies photos de profil. */
+.user-avatar {
+  width:           36px;
+  height:          36px;
+  border-radius:   50%;
+  background:      var(--primary);
+  color:           var(--white);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-weight:     700;
+  font-size:       0.8rem;
+  flex-shrink:     0;
+}
+
+/* Nom du parent : gras */
+.user-nom { font-weight: 700; font-size: 0.9rem; }
+
+/* ── 4 & 5. MODALE DE DÉTAIL FAMILLE ───────────────────── */
+
+/* Grille 2 colonnes pour les informations de la famille :
+   ex: Email | Téléphone, Adresse | Commune, Ville | Code postal */
+.user-detail-grille {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-md);
+}
+
+/* Chaque item d'information : fond gris, label + valeur */
+.detail-item {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  padding:        var(--space-md);
+  background:     var(--bg-gray);
+  border-radius:  var(--radius-md);
+}
+
+/* Item qui s'étend sur toute la largeur (ex: adresse complète).
+   1 / -1 = de la 1ère à la dernière colonne de la grille. */
+.detail-item--full { grid-column: 1 / -1; }
+
+/* Label du champ : très petit, en majuscules, gris */
+.detail-label { font-size: 0.75rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; }
+
+/* Valeur du champ : lisible, foncé */
+.detail-valeur { font-size: 0.95rem; color: var(--text-dark); }

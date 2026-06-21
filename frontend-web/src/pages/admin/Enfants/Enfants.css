@@ -1,0 +1,12 @@
+/* ============================================================
+   FICHIER : Enfants.css
+   ROUTE   : /admin/enfants
+   RÔLE    : Page de gestion des fiches enfants inscrits.
+             Tableau avec recherche, filtres. Modale pour
+             voir / modifier la fiche d'un enfant.
+             Ce fichier délègue tous ses styles à admin.css
+             (tableau, filtres, badges, modale).
+   ============================================================ */
+
+/* Tous les styles viennent de admin.css via cet import */
+@import '../../../styles/admin.css';

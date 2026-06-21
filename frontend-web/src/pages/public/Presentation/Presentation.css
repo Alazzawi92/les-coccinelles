@@ -1,0 +1,25 @@
+/* ============================================================
+   FICHIER : Presentation.css
+   ROUTE   : /presentation
+   RÔLE    : Page de présentation de la crèche (histoire,
+             valeurs, espaces de vie, équipe de direction).
+             Ce fichier importe pages-publiques.css qui contient
+             tous les styles communs : hero, sections, layouts,
+             grilles d'espaces, boutons. Aucun style spécifique
+             n'est nécessaire pour cette page.
+
+   COMPOSANTS UTILISÉS (définis dans pages-publiques.css) :
+     - .page-hero / .page-hero--orange
+     - .section-blanche / .section-grise / .section-couleur
+     - .titre-section / .titre-section span
+     - .contenu-deux-colonnes / .contenu-texte / .contenu-visuel
+     - .espaces-grille / .espace-carte
+     - .cta-bas / .cta-bas__contenu
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* Aucun style spécifique à la page Présentation —
+   tous les composants viennent de pages-publiques.css */

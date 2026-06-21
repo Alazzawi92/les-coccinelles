@@ -1,0 +1,23 @@
+/* ============================================================
+   FICHIER : Register.css
+   ROUTE   : /inscription
+   RÔLE    : Page de création de compte parent.
+             Étend les styles communs de styles/auth.css avec
+             deux ajustements spécifiques :
+             1. Carte légèrement plus large (560px au lieu de 480px)
+                pour accueillir les champs côte à côte (prénom + nom)
+             2. Rangée double : deux champs sur la même ligne
+   ============================================================ */
+
+/* Carte légèrement plus large pour le formulaire d'inscription :
+   560px au lieu de 480px (max-width dans .auth-card) car l'inscription
+   a plus de champs (prénom, nom, téléphone, email, mot de passe...) */
+.auth-card--large { max-width: 560px; }
+
+/* Rangée à 2 colonnes pour les champs courts côte à côte.
+   Utilisé pour : "Prénom | Nom" sur une même ligne. */
+.form-row-double  { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
+
+/* Sur mobile très petit (≤480px) : les 2 colonnes passent en 1
+   pour éviter que les champs soient trop étroits. */
+@media (max-width: 480px) { .form-row-double { grid-template-columns: 1fr; } }

@@ -1,0 +1,59 @@
+/* ============================================================
+   FICHIER : CMS.css  (espace admin)
+   PAGE    : /admin/cms
+   RÔLE    : Styles de l'éditeur de pages CMS (Gestion de contenu).
+             Layout 2 colonnes : liste des pages à gauche,
+             éditeur HTML à droite.
+
+   STRUCTURE :
+     1. Import admin global
+     2. Layout 2 colonnes
+     3. Liste des pages (colonne gauche)
+     4. Item de page dans la liste
+     5. Éditeur (colonne droite)
+     6. Responsive
+   ============================================================ */
+
+/* Charge tous les styles communs de l'espace admin */
+@import '../../../styles/admin.css';
+
+/* ── 2. LAYOUT 2 COLONNES ───────────────────────────────── */
+
+/* Colonne gauche fixe (240px) pour la liste des pages,
+   colonne droite flexible pour l'éditeur.
+   align-items:flex-start évite que les deux colonnes aient
+   la même hauteur forcée (chacune prend sa hauteur naturelle). */
+.cms-layout{display:grid;grid-template-columns:240px 1fr;gap:var(--space-xl);align-items:flex-start;}
+
+/* ── 3. LISTE DES PAGES ─────────────────────────────────── */
+
+/* Carte blanche de la colonne gauche contenant tous les items */
+.cms-pages-liste{background:var(--white);border-radius:var(--radius-xl);padding:var(--space-xl);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--space-sm);}
+
+/* ── 4. ITEM DE PAGE ────────────────────────────────────── */
+
+/* Chaque page cliquable dans la liste : fond gris par défaut,
+   orange au survol ou quand elle est sélectionnée (--actif).
+   text-align:left car c'est un <button> (centré par défaut). */
+.cms-page-item{background:var(--bg-gray);border-radius:var(--radius-md);padding:var(--space-md);cursor:pointer;text-align:left;border:2px solid transparent;transition:var(--transition);display:flex;flex-direction:column;gap:2px;border:none;}
+.cms-page-item:hover{background:var(--primary-light);}
+
+/* Page actuellement sélectionnée : fond orange clair + barre orange à gauche */
+.cms-page-item--actif{background:var(--primary-light);border-left:3px solid var(--primary);}
+
+/* Slug de la page (/presentation, /equipe...) : petit, orange, gras */
+.cms-page-slug{font-size:0.75rem;color:var(--primary);font-weight:700;}
+
+/* Titre court de la page, en dessous du slug */
+.cms-page-titre-court{font-size:0.9rem;color:var(--text-dark);font-weight:600;}
+
+/* ── 5. ÉDITEUR ─────────────────────────────────────────── */
+
+/* Le textarea de l'éditeur HTML utilise une police monospace
+   pour faciliter la lecture et l'écriture du code HTML */
+.cms-editeur-textarea{font-family:monospace;font-size:0.85rem;}
+
+/* ── 6. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile : les 2 colonnes passent en colonne unique (liste au-dessus, éditeur en dessous) */
+@media(max-width:768px){.cms-layout{grid-template-columns:1fr;}}

@@ -1,0 +1,123 @@
+/* ============================================================
+   FICHIER : MesEnfants.css
+   ROUTE   : /parent/mes-enfants
+   RÔLE    : Page listant les fiches des enfants de la famille.
+             Chaque enfant a une carte avec en-tête colorée,
+             informations de santé (allergies, médicaments)
+             et boutons d'action.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille verticale des fiches
+     3. Fiche d'un enfant
+     4. En-tête de la fiche
+     5. Informations de santé
+     6. Actions sur la fiche
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. GRILLE DES FICHES ───────────────────────────────── */
+
+/* Les fiches enfants sont empilées verticalement */
+.enfants-grille { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* ── 3. FICHE D'UN ENFANT ───────────────────────────────── */
+
+/* Carte complète d'un enfant : blanche, arrondie.
+   overflow:hidden pour rogner l'en-tête dans les coins. */
+.enfant-fiche {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-sm);
+  overflow:      hidden;
+  border:        1px solid var(--bg-gray);
+  transition:    var(--transition);
+}
+
+/* Au survol : ombre plus marquée */
+.enfant-fiche:hover { box-shadow: var(--shadow-md); }
+
+/* ── 4. EN-TÊTE DE LA FICHE ─────────────────────────────── */
+
+/* En-tête dégradée orange clair : avatar + nom + groupe.
+   padding:xl pour un impact visuel suffisant. */
+.enfant-fiche__entete {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-lg);
+  padding:     var(--space-xl);
+  background:  linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 100%);
+}
+
+/* Avatar circulaire de l'enfant : fond blanc avec ombre.
+   Contient un grand emoji (🧒, 👧, 🌸...) */
+.enfant-fiche__avatar {
+  font-size:       3.5rem;
+  width:           70px;
+  height:          70px;
+  background:      var(--white);
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  box-shadow:      var(--shadow-sm);
+  flex-shrink:     0;
+}
+
+/* Nom et date de naissance de l'enfant */
+.enfant-fiche__identite h3 { font-family: var(--font-heading); font-size: 1.4rem; color: var(--text-dark); }
+.enfant-fiche__identite p  { color: var(--text-gray); font-size: 0.9rem; margin-top: 4px; }
+
+/* Badge de groupe : ex "Groupe Petits", "Groupe Moyens" */
+.enfant-groupe {
+  display:       inline-block;
+  background:    var(--primary);
+  color:         var(--white);
+  padding:       2px var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size:     0.75rem;
+  font-weight:   700;
+  margin-top:    var(--space-sm);
+}
+
+/* ── 5. INFORMATIONS DE SANTÉ ───────────────────────────── */
+
+/* Zone santé : fond blanc, séparatrice en bas */
+.enfant-fiche__sante {
+  padding:       var(--space-md) var(--space-xl);
+  border-bottom: 1px solid var(--bg-gray);
+  display:       flex;
+  flex-direction: column;
+  gap:           var(--space-xs);
+}
+
+/* Item de santé : petit badge coloré */
+.sante-item { font-size: 0.85rem; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); }
+
+/* Allergie : fond orange clair */
+.sante-allergie   { background: #fff3e0; color: #e65100; }
+
+/* Médicament en cours : fond bleu clair */
+.sante-medicament { background: #e3f2fd; color: #1565c0; }
+
+/* ── 6. ACTIONS ─────────────────────────────────────────── */
+
+/* Boutons d'action de la fiche : Voir suivi, Signaler absence, etc. */
+.enfant-fiche__actions {
+  display:  flex;
+  gap:      var(--space-sm);
+  padding:  var(--space-md) var(--space-xl);
+  flex-wrap: wrap;
+}
+
+/* Boutons de validation du formulaire de modification */
+.enfant-form__actions {
+  display:         flex;
+  gap:             var(--space-md);
+  justify-content: flex-end;
+  padding-top:     var(--space-md);
+  border-top:      1px solid var(--bg-gray);
+}

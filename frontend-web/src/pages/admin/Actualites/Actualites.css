@@ -1,0 +1,16 @@
+/* ============================================================
+   FICHIER : Actualites.css  (espace admin)
+   PAGE    : /admin/actualites
+   RÔLE    : Styles spécifiques à la gestion des actualités
+             côté admin. Les styles communs (tableaux, cartes,
+             boutons) viennent du fichier admin.css global.
+   ============================================================ */
+
+/* Charge tous les styles communs de l'espace admin :
+   .a-card, .a-table, .a-btn, .a-form-row, etc. */
+@import '../../../styles/admin.css';
+
+/* Toggle "Publié / Brouillon" sur chaque ligne d'actualité.
+   flex + gap aligne l'interrupteur et son label côte à côte.
+   cursor:pointer indique que c'est cliquable. */
+.publie-toggle { display:flex; align-items:center; gap:var(--space-md); font-weight:600; cursor:pointer; }

@@ -1,0 +1,11 @@
+/* ============================================================
+   FICHIER : Documents.css
+   ROUTE   : /admin/documents
+   RÔLE    : Page de gestion des documents mis à disposition
+             des parents (contrats, règlements, formulaires).
+             Upload, validation, suppression de documents.
+             Tous les styles viennent de admin.css.
+   ============================================================ */
+
+/* Tous les styles viennent de admin.css via cet import */
+@import '../../../styles/admin.css';

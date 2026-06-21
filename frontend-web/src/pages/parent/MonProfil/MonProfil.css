@@ -1,0 +1,91 @@
+/* ============================================================
+   FICHIER : MonProfil.css
+   ROUTE   : /parent/mon-profil
+   RÔLE    : Page de profil du parent. Affiche les informations
+             personnelles avec un avatar. Navigation par onglets
+             (Informations personnelles, Sécurité, Notifications).
+
+   STRUCTURE :
+     1. Imports
+     2. Carte d'identité (avatar + nom + rôle)
+     3. Navigation par onglets
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. CARTE D'IDENTITÉ ────────────────────────────────── */
+
+/* Bannière d'identité en haut de la page : avatar + nom + email.
+   border-left:4px orange crée un accent de marque discret. */
+.profil-identite {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-xl);
+  padding:       var(--space-xl);
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-sm);
+  margin-bottom: var(--space-xl);
+  border-left:   4px solid var(--primary);
+}
+
+/* Grand avatar circulaire : fond orange + initiales du parent en blanc.
+   Si une vraie photo est uploadée, elle remplace les initiales. */
+.profil-avatar {
+  width:           80px;
+  height:          80px;
+  border-radius:   50%;
+  background:      var(--primary);
+  color:           var(--white);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-family:     var(--font-heading);
+  font-size:       2rem;
+  font-weight:     700;
+  flex-shrink:     0;
+  overflow:        hidden;   /* Rogne la photo de profil dans le cercle */
+}
+
+/* Photo de profil : remplie et centrée dans l'avatar */
+.profil-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Nom et email de l'utilisateur */
+.profil-identite__infos h2 { font-family: var(--font-heading); font-size: 1.3rem; color: var(--text-dark); margin-bottom: 4px; }
+.profil-identite__infos p  { color: var(--text-gray); font-size: 0.9rem; margin-bottom: var(--space-sm); }
+
+/* ── 3. NAVIGATION PAR ONGLETS ──────────────────────────── */
+
+/* Barre d'onglets : ligne horizontale avec séparateur bas.
+   margin-bottom:-2px fait coïncider la bordure de l'onglet actif
+   avec la ligne de séparation (effet onglet soudé). */
+.profil-onglets {
+  display:       flex;
+  gap:           var(--space-sm);
+  margin-bottom: var(--space-lg);
+  border-bottom: 2px solid var(--bg-gray);
+  padding-bottom: 0;
+}
+
+/* Bouton d'onglet : sans fond par défaut, bordure invisible en bas */
+.onglet {
+  padding:      var(--space-md) var(--space-xl);
+  border:       none;
+  background:   none;
+  cursor:       pointer;
+  font-family:  var(--font-body);
+  font-weight:  600;
+  font-size:    0.95rem;
+  color:        var(--text-gray);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;   /* Coïncide avec la bordure de .profil-onglets */
+  transition:   var(--transition);
+}
+
+/* Au survol : orange */
+.onglet:hover      { color: var(--primary); }
+
+/* Onglet actif : orange + bordure orange en bas (l'onglet "couvre" la ligne grise) */
+.onglet--actif     { color: var(--primary); border-bottom-color: var(--primary); }

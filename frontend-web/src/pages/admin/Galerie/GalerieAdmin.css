@@ -1,0 +1,18 @@
+/* ============================================================
+   FICHIER : GalerieAdmin.css
+   ROUTE   : /admin/galerie (ancienne version)
+   RÔLE    : Fichier placeholder généré automatiquement.
+             Ce fichier contient une règle CSS invalide
+             (double accolades {{ }}) — résidu de génération.
+             Les styles réels sont dans Galerie.css.
+
+   NOTE    : Ce fichier peut être ignoré ou supprimé.
+   ============================================================ */
+
+/* Fichier placeholder — styles réels dans Galerie.css */
+@import '../../../styles/variables.css';
+
+/* Classe placeholder (double accolades corrigées) */
+.galerie-admin-page {
+  padding: var(--space-xl);
+}

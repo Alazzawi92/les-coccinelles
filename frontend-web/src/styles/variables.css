@@ -1,0 +1,158 @@
+/* ============================================================
+   FICHIER : variables.css
+   RÔLE    : Cœur du design system du projet Les Coccinelles.
+             Définit TOUTES les valeurs réutilisables du projet :
+             couleurs, polices, espacements, arrondis, ombres,
+             transitions et niveaux z-index.
+
+             Ce fichier est importé en PREMIER dans tous les
+             autres CSS. Changer une valeur ici la modifie
+             partout dans le projet automatiquement.
+
+   STRUCTURE :
+     1. Couleurs principales (orange de marque + dégradés)
+     2. Couleurs accent (bleu, rose, violet, jaune)
+     3. Couleurs neutres (fonds, textes)
+     4. États sémantiques (erreur, succès, avertissement, info)
+     5. Typographie (2 polices Google Fonts)
+     6. Système d'espacement (base 8px)
+     7. Border radius (du petit au pill)
+     8. Ombres portées
+     9. Transitions
+    10. Z-index (ordre d'empilement)
+   ============================================================ */
+
+/* :root = pseudo-classe qui cible l'élément racine <html>.
+   Les variables déclarées ici sont disponibles dans tout le CSS
+   via la fonction var(--nom-variable). */
+:root {
+
+  /* ── 1. COULEURS PRINCIPALES ──────────────────────────── */
+
+  /* Orange vif — couleur de la marque "Les Coccinelles".
+     Utilisé pour les boutons primaires, liens actifs, accents. */
+  --primary:       #FF9800;
+
+  /* Orange foncé — utilisé pour les états hover et focus
+     sur les éléments orange (boutons, liens...) */
+  --primary-dark:  #E65100;
+
+  /* Orange très clair — fond doux pour les cartes, badges,
+     zones de mise en valeur sans être trop agressif. */
+  --primary-light: #FFF3E0;
+
+  /* Vert nature — couleur secondaire pour les statuts positifs
+     et les éléments liés à la nature / l'éveil. */
+  --secondary:     #66BB6A;
+
+  /* Vert foncé — hover et états actifs des éléments verts */
+  --secondary-dark:#2E7D32;
+
+  /* ── 2. COULEURS ACCENT ───────────────────────────────── */
+
+  /* Bleu ciel — utilisé pour les badges "en cours", infos */
+  --accent-1:   #4FC3F7;
+
+  /* Rose doux — utilisé pour les raccourcis, éléments féminins */
+  --accent-2:   #F06292;
+
+  /* Violet tendre — badges "liste d'attente", super admin */
+  --accent-3:   #BA68C8;
+
+  /* Jaune soleil — raccourcis galerie, alertes douces */
+  --accent-4:   #FFEB3B;
+
+  /* ── 3. COULEURS NEUTRES ──────────────────────────────── */
+
+  /* Fond blanc légèrement chaud (pas 100% blanc) — fond global du site */
+  --bg-light:   #FFFDF7;
+
+  /* Fond gris très clair — fonds de tableaux, zones alternées,
+     inputs désactivés, états hover discrets */
+  --bg-gray:    #F5F5F5;
+
+  /* Blanc pur — cartes, modales, éléments sur fond coloré */
+  --white:      #FFFFFF;
+
+  /* Texte principal — gris très foncé (pas noir pur pour moins fatiguer) */
+  --text-dark:  #2D3436;
+
+  /* Texte secondaire — gris moyen pour labels, sous-titres, métadonnées */
+  --text-gray:  #636e72;
+
+  /* Texte désactivé / placeholder — très clair, peu contrasté */
+  --text-light: #b2bec3;
+
+  /* ── 4. ÉTATS SÉMANTIQUES ────────────────────────────── */
+
+  /* Rouge — erreurs de validation, messages d'erreur, suppressions */
+  --error:   #E53935;
+
+  /* Vert — confirmations, statuts "accepté", messages de succès */
+  --success: #43A047;
+
+  /* Orange — avertissements, statuts "en attente" */
+  --warning: #FB8C00;
+
+  /* Bleu — informations, statuts "en cours", notifications neutres */
+  --info:    #1E88E5;
+
+  /* ── 5. TYPOGRAPHIE ──────────────────────────────────── */
+
+  /* Police des titres : Fredoka — arrondie, ludique, adaptée à la petite enfance */
+  --font-heading: 'Fredoka', sans-serif;
+
+  /* Police du corps : Nunito — très lisible, douce, légèrement arrondie */
+  --font-body:    'Nunito', sans-serif;
+
+  /* ── 6. ESPACEMENTS (système basé sur 8px) ───────────── */
+  /* Tous les espacements sont des multiples de 8px pour
+     une cohérence visuelle parfaite sur toute l'interface. */
+
+  --space-xs:  4px;   /* Micro-espace : gaps internes, petits paddings */
+  --space-sm:  8px;   /* Petit espace : entre icône et texte, padding compact */
+  --space-md:  16px;  /* Espace standard : entre champs, padding de bouton */
+  --space-lg:  24px;  /* Grand espace : padding de carte, gap de grille */
+  --space-xl:  32px;  /* Très grand : padding de page, margin entre sections */
+  --space-2xl: 48px;  /* Extra-large : espacement entre sections importantes */
+  --space-3xl: 64px;  /* Maximum : hero sections, très grands espaces */
+
+  /* ── 7. BORDER RADIUS ────────────────────────────────── */
+  /* Valeurs du plus petit au plus grand arrondi.
+     Les coins arrondis contribuent au caractère doux et accueillant du design. */
+
+  --radius-sm:   8px;   /* Léger arrondi : badges, miniatures */
+  --radius-md:   12px;  /* Arrondi standard : inputs, selects, petites cartes */
+  --radius-lg:   16px;  /* Arrondi prononcé : cartes moyennes, items de liste */
+  --radius-xl:   20px;  /* Très arrondi : cartes principales, modales */
+  --radius-pill: 50px;  /* Pill (forme de pilule) : boutons, badges de statut */
+
+  /* ── 8. OMBRES PORTÉES ───────────────────────────────── */
+
+  /* Ombre très légère — élévation minimale, bordure subtile */
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.1);
+
+  /* Ombre standard — cartes flottantes, dropdowns */
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.1);
+
+  /* Ombre forte — modales, popovers, éléments très en avant */
+  --shadow-lg:      0 8px 24px rgba(0,0,0,0.15);
+
+  /* Ombre orange — boutons primaires au hover, effet "lumineux" de marque */
+  --shadow-colored: 0 4px 15px rgba(255,152,0,0.3);
+
+  /* ── 9. TRANSITIONS ──────────────────────────────────── */
+
+  /* Transition standard appliquée à presque tous les éléments interactifs.
+     0.2s est assez rapide pour ne pas sembler lent, assez lent pour être perçu. */
+  --transition: all 0.2s ease;
+
+  /* ── 10. Z-INDEX (ordre d'empilement) ───────────────── */
+  /* Définit qui passe par-dessus qui. Toujours utiliser ces variables
+     plutôt que des valeurs arbitraires pour éviter les conflits. */
+
+  --z-navbar:  100;  /* Barre de navigation publique — au-dessus du contenu */
+  --z-sidebar: 90;   /* Sidebar des espaces admin/parent */
+  --z-modal:   200;  /* Modales — au-dessus de tout le reste de la page */
+  --z-toast:   300;  /* Notifications toast — au-dessus même des modales */
+}

@@ -1,0 +1,180 @@
+/* ============================================================
+   FICHIER : global.css
+   RÔLE    : Styles globaux appliqués à toute l'application.
+             Importé une seule fois dans App.jsx.
+             Fournit le système de boutons réutilisables et
+             les classes utilitaires (layout, textes, espacements).
+
+   STRUCTURE :
+     1. Imports (variables + reset)
+     2. Système de boutons (.btn + variantes)
+     3. Import des polices Google Fonts
+     4. Classes utilitaires
+        a. Conteneur centré
+        b. Textes
+        c. Flexbox helpers
+        d. Espacements
+     5. Loader global
+     6. Titres de section
+   ============================================================ */
+
+/* Charge les variables CSS (couleurs, espacements, etc.) */
+@import './variables.css';
+
+/* Neutralise les styles par défaut des navigateurs */
+@import './reset.css';
+
+/* ── 2. SYSTÈME DE BOUTONS ──────────────────────────────── */
+
+/* Classe de base .btn : toujours combinée avec une variante.
+   inline-flex pour aligner l'icône et le texte côte à côte.
+   flex-shrink:0 empêche le bouton de rétrécir dans un conteneur flex.
+   white-space:nowrap empêche le texte du bouton de passer à la ligne. */
+.btn {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--space-sm);      /* Espace entre icône et texte */
+  padding:         var(--space-sm) var(--space-lg);
+  border-radius:   var(--radius-pill);  /* Forme de pilule très arrondie */
+  font-family:     var(--font-body);
+  font-size:       0.9rem;
+  font-weight:     700;
+  border:          2px solid transparent; /* Bordure invisible par défaut */
+  cursor:          pointer;
+  transition:      var(--transition);
+  text-decoration: none;       /* Fonctionne aussi sur les <a> stylés en bouton */
+  white-space:     nowrap;
+  flex-shrink:     0;
+}
+
+/* Bouton désactivé : semi-transparent + curseur "interdit" */
+.btn:disabled {
+  opacity: 0.55;
+  cursor:  not-allowed;
+}
+
+/* Bouton primaire : fond orange plein — action principale de la page */
+.btn--primary {
+  background:   var(--primary);
+  border-color: var(--primary);
+  color:        var(--white);
+}
+/* Au survol (et pas désactivé) : orange plus foncé */
+.btn--primary:hover:not(:disabled) {
+  background:   var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+/* Bouton ghost : transparent avec bordure grise — action secondaire */
+.btn--ghost {
+  background:   transparent;
+  border-color: #E0E0E0;
+  color:        var(--text-dark);
+}
+/* Au survol : fond gris très clair */
+.btn--ghost:hover:not(:disabled) {
+  background:   var(--bg-gray);
+  border-color: #BDBDBD;
+}
+
+/* Bouton outline : transparent avec bordure orange — action tertiaire */
+.btn--outline {
+  background:   transparent;
+  border-color: var(--primary);
+  color:        var(--primary);
+}
+/* Au survol : fond orange très clair */
+.btn--outline:hover:not(:disabled) {
+  background: var(--primary-light);
+}
+
+/* Taille petite — dans les tableaux, barres d'actions compactes */
+.btn--sm {
+  padding:   4px var(--space-md);
+  font-size: 0.8rem;
+}
+
+/* Taille grande — boutons CTA proéminents */
+.btn--lg {
+  padding:   var(--space-md) var(--space-xl);
+  font-size: 1rem;
+}
+
+/* ── 3. POLICES GOOGLE FONTS ────────────────────────────── */
+
+/* Fredoka : police de titres, arrondie et ludique (poids 400 à 700)
+   Nunito  : police de corps, lisible et douce (poids 400 à 800)
+   display=swap : affiche une police de secours pendant le chargement */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+/* ── 4. CLASSES UTILITAIRES ─────────────────────────────── */
+
+/* ── 4a. Conteneur centré ──────────────────────────────── */
+
+/* Largeur max 1200px, centré avec padding latéral.
+   S'utilise sur les <div> wrappers des sections de page. */
+.container {
+  max-width:     1200px;
+  margin:        0 auto;          /* Centrage horizontal */
+  padding-left:  var(--space-xl);
+  padding-right: var(--space-xl);
+}
+
+/* ── 4b. Textes ─────────────────────────────────────────── */
+
+.text-primary   { color: var(--primary); }    /* Orange de marque */
+.text-secondary { color: var(--secondary); }  /* Vert */
+.text-gray      { color: var(--text-gray); }  /* Gris discret */
+.text-center    { text-align: center; }
+
+/* ── 4c. Flexbox helpers ────────────────────────────────── */
+
+/* Raccourcis pour les dispositions flex les plus communes */
+.flex         { display: flex; }
+.flex-center  { display: flex; align-items: center; justify-content: center; }   /* Centré sur les 2 axes */
+.flex-between { display: flex; align-items: center; justify-content: space-between; } /* Extrémités */
+.flex-col     { display: flex; flex-direction: column; }  /* Colonne */
+.gap-sm       { gap: var(--space-sm); }   /* 8px entre les enfants */
+.gap-md       { gap: var(--space-md); }   /* 16px entre les enfants */
+.gap-lg       { gap: var(--space-lg); }   /* 24px entre les enfants */
+
+/* ── 4d. Espacements ────────────────────────────────────── */
+
+/* Classes de margin-top et margin-bottom pour espacer les sections */
+.mt-md { margin-top:    var(--space-md); }   /* 16px */
+.mt-lg { margin-top:    var(--space-lg); }   /* 24px */
+.mt-xl { margin-top:    var(--space-xl); }   /* 32px */
+.mb-md { margin-bottom: var(--space-md); }   /* 16px */
+.mb-lg { margin-bottom: var(--space-lg); }   /* 24px */
+.mb-xl { margin-bottom: var(--space-xl); }   /* 32px */
+
+/* ── 5. LOADER GLOBAL ───────────────────────────────────── */
+
+/* Affiché pendant le chargement initial de la page (App.jsx).
+   min-height:100vh pour occuper tout l'écran verticalement. */
+.page-loader {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  min-height:      100vh;
+  font-family:     var(--font-heading);
+  font-size:       1.2rem;
+  color:           var(--primary);
+}
+
+/* ── 6. TITRES DE SECTION ───────────────────────────────── */
+
+/* Titre centré de section (utilisé sur les pages publiques).
+   Ex : "Notre <span>équipe</span>" → "Notre" en foncé, "équipe" en orange. */
+.section-titre {
+  font-family: var(--font-heading);
+  font-size:   2rem;
+  color:       var(--text-dark);
+  margin-bottom: var(--space-lg);
+}
+
+/* Mot mis en valeur en orange dans le titre */
+.section-titre span {
+  color: var(--primary);
+}

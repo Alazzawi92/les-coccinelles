@@ -1,0 +1,120 @@
+/* ============================================================
+   FICHIER : Documents.css
+   ROUTE   : /parent/documents
+   RÔLE    : Page des documents partagés entre la crèche et
+             la famille. Le parent peut uploader des documents
+             et télécharger ceux envoyés par l'administration.
+
+   STRUCTURE :
+     1. Imports
+     2. Zone d'upload (drag & drop)
+     3. Liste des documents
+     4. Ligne d'un document
+     5. Catégories et métadonnées
+     6. Actions sur un document
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. ZONE D'UPLOAD ───────────────────────────────────── */
+
+/* Zone d'upload : conteneur du formulaire d'envoi */
+.upload-zone { margin-bottom: var(--space-xl); }
+
+/* Formulaire d'upload en flex vertical */
+.upload-form { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* Zone de drop : bordure en pointillés, cliquer ou déposer un fichier.
+   transition douce pour le changement de style quand on survole. */
+.drop-zone {
+  border:         2px dashed var(--text-light);
+  border-radius:  var(--radius-xl);
+  padding:        var(--space-2xl);
+  text-align:     center;
+  cursor:         pointer;
+  transition:     var(--transition);
+  color:          var(--text-gray);
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-sm);
+}
+
+/* Survol de la zone : bordure orange + fond orange très clair */
+.drop-zone:hover    { border-color: var(--primary); background: var(--primary-light); }
+
+/* Quand un fichier est dans la zone : bordure verte + fond vert */
+.drop-zone--fichier { border-color: var(--success); background: #e8f5e9; }
+
+/* Nom du fichier sélectionné : gras, foncé */
+.drop-zone__nom     { font-weight: 700; color: var(--text-dark); }
+
+/* Taille du fichier : petit, gris */
+.drop-zone__taille  { font-size: 0.8rem; color: var(--text-gray); }
+
+/* ── 3. LISTE DES DOCUMENTS ─────────────────────────────── */
+
+/* Liste verticale sans espaces (les lignes sont séparées par des bordures) */
+.documents-liste { display: flex; flex-direction: column; gap: 0; }
+
+/* ── 4. LIGNE D'UN DOCUMENT ─────────────────────────────── */
+
+/* Une ligne de document : icône + infos + actions.
+   border-bottom sépare les documents entre eux. */
+.document-ligne {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+  padding:     var(--space-md);
+  border-bottom: 1px solid var(--bg-gray);
+  transition:  var(--transition);
+}
+
+/* Pas de bordure sous le dernier document */
+.document-ligne:last-child { border-bottom: none; }
+
+/* Au survol : fond gris très clair */
+.document-ligne:hover      { background: var(--bg-gray); }
+
+/* Icône du type de fichier (📄, 📋, 🖼️...) : grande */
+.doc-icone  { font-size: 1.8rem; flex-shrink: 0; }
+
+/* Infos du document : flex:1 pour prendre tout l'espace disponible.
+   min-width:0 permet l'ellipsis sur le nom du fichier. */
+.doc-infos  { flex: 1; min-width: 0; }
+
+/* Nom du fichier : gras, tronqué si trop long */
+.doc-nom    { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Méta-informations sous le nom */
+.doc-meta   { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; margin-top: 4px; }
+
+/* Taille et date : très petits, gris très clair */
+.doc-taille, .doc-date { font-size: 0.75rem; color: var(--text-light); }
+
+/* Description du document */
+.doc-description        { font-size: 0.8rem; color: var(--text-gray); }
+
+/* ── 5. CATÉGORIE DU DOCUMENT ───────────────────────────── */
+
+/* Badge de catégorie : pilule colorée selon le type */
+.doc-categorie { padding: 2px var(--space-sm); border-radius: var(--radius-pill); font-size: 0.7rem; font-weight: 700; }
+
+/* Contrat, conventions : bleu */
+.doc-categorie--bleu  { background: #e3f2fd; color: var(--info); }
+
+/* Documents administratifs, formulaires : rouge */
+.doc-categorie--rouge { background: #ffebee; color: var(--error); }
+
+/* Documents de santé, suivi : vert */
+.doc-categorie--vert  { background: #e8f5e9; color: var(--success); }
+
+/* Autres documents : gris neutre */
+.doc-categorie--gris  { background: var(--bg-gray); color: var(--text-gray); }
+
+/* ── 6. ACTIONS ─────────────────────────────────────────── */
+
+/* Zone des boutons à droite (télécharger, supprimer) */
+.doc-actions { display: flex; gap: var(--space-sm); flex-shrink: 0; }

@@ -1,0 +1,163 @@
+/* ============================================================
+   FICHIER : Absences.css
+   ROUTE   : /parent/absences
+   RÔLE    : Page de signalement et suivi des absences de l'enfant.
+             Formulaire avec choix du motif + calendrier visuel
+             des absences passées et en cours.
+
+   STRUCTURE :
+     1. Imports
+     2. Choix du motif (boutons radio stylés)
+     3. Calendrier
+        a. Navigation mois/année
+        b. Grille 7 jours
+        c. Labels des jours
+        d. Cases du calendrier
+     4. Légende du calendrier
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. CHOIX DU MOTIF ──────────────────────────────────── */
+
+/* Rangée de boutons radio stylés : Maladie, Vacances, Autre...
+   flex-wrap pour passer à la ligne si nécessaire. */
+.motifs-choix { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* Option de motif : bouton radio caché, tout le bouton est cliquable */
+.motif-option {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  padding:       var(--space-sm) var(--space-md);
+  border:        2px solid var(--bg-gray);
+  border-radius: var(--radius-pill);
+  cursor:        pointer;
+  font-size:     0.9rem;
+  font-weight:   600;
+  transition:    var(--transition);
+  background:    var(--white);
+}
+
+/* Input radio caché : la carte est le contrôle visuel */
+.motif-option input    { display: none; }
+
+/* Survol : bordure orange */
+.motif-option:hover    { border-color: var(--primary); }
+
+/* Motif sélectionné : fond orange plein */
+.motif-option--actif   { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+/* ── 3. CALENDRIER ──────────────────────────────────────── */
+
+/* Zone du calendrier : padding large */
+.calendrier-wrapper { padding: var(--space-xl); }
+
+/* ── 3a. Navigation mois/année ──────────────────────────── */
+
+/* Barre de navigation : ◀ Juin 2025 ▶ */
+.calendrier-nav {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-xl);
+}
+
+/* "Juin 2025" : police Fredoka, grand, centré */
+.calendrier-mois-titre {
+  font-family: var(--font-heading);
+  font-size:   1.3rem;
+  color:       var(--text-dark);
+  text-align:  center;
+}
+
+/* ── 3b. Grille 7 jours ─────────────────────────────────── */
+
+/* Grille du calendrier : 7 colonnes (Lun Mar Mer Jeu Ven Sam Dim).
+   gap:4px pour des petits espaces entre les cases. */
+.calendrier-grille {
+  display:               grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:                   4px;
+}
+
+/* ── 3c. Labels des jours ───────────────────────────────── */
+
+/* "L M M J V S D" en haut du calendrier : petit, gris, centré */
+.calendrier-jour-label {
+  text-align:     center;
+  font-size:      0.8rem;
+  font-weight:    700;
+  color:          var(--text-gray);
+  padding:        var(--space-sm);
+  text-transform: uppercase;
+}
+
+/* ── 3d. Cases du calendrier ────────────────────────────── */
+
+/* Case d'un jour : carré parfait grâce à aspect-ratio:1.
+   Fond blanc par défaut, avec états visuels différents selon le statut. */
+.calendrier-case {
+  aspect-ratio:    1;
+  border-radius:   var(--radius-md);
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  font-size:       0.9rem;
+  transition:      var(--transition);
+  cursor:          default;
+  background:      var(--white);
+  border:          1px solid transparent;
+  position:        relative;
+}
+
+/* Case vide (avant le 1er du mois) : invisible */
+.calendrier-case--vide        { background: transparent; border: none; }
+
+/* Jour passé (avant aujourd'hui) : gris clair */
+.calendrier-case--passe       { color: var(--text-light); background: var(--bg-gray); }
+
+/* Aujourd'hui : bordure orange + texte orange + fond orange très clair */
+.calendrier-case--aujourd-hui { border: 2px solid var(--primary); font-weight: 700; color: var(--primary); background: var(--primary-light); }
+
+/* Jour avec absence : fond coloré selon le statut de l'absence.
+   La couleur est définie en style inline dans le JSX. */
+.calendrier-case--absence     { font-weight: 700; border: 1px solid rgba(0,0,0,0.08); }
+
+/* Numéro du jour : taille standard */
+.calendrier-numero        { font-size: 0.9rem; line-height: 1; }
+
+/* Point coloré en bas de la case pour signaler une absence */
+.calendrier-absence-point { font-size: 0.7rem; }
+
+/* ── 4. LÉGENDE DU CALENDRIER ───────────────────────────── */
+
+/* Rangée horizontale de la légende : En attente | Validée | Refusée.
+   flex-wrap pour les petits écrans. */
+.calendrier-legende {
+  display:     flex;
+  gap:         var(--space-xl);
+  margin-top:  var(--space-lg);
+  padding-top: var(--space-lg);
+  border-top:  1px solid var(--bg-gray);
+  flex-wrap:   wrap;
+}
+
+/* Item de légende : fond coloré en forme de pilule */
+.legende-item {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  font-size:     0.85rem;
+  font-weight:   600;
+  padding:       4px var(--space-md);
+  border-radius: var(--radius-pill);
+}
+
+/* Couleurs des items de légende */
+.legende-item--attente { background: #fff3e0; color: #e65100; }   /* Orange = en attente */
+.legende-item--validee { background: #e8f5e9; color: #2e7d32; }   /* Vert = validée */
+.legende-item--refusee { background: #ffebee; color: #c62828; }   /* Rouge = refusée */

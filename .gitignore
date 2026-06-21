@@ -1,0 +1,30 @@
+# Environnements
+.env
+.env.local
+.env.*.local
+
+# Dépendances
+node_modules/
+backend/node_modules/
+frontend-web/node_modules/
+frontend-mobile/node_modules/
+
+# Build
+frontend-web/build/
+frontend-mobile/.expo/
+frontend-mobile/dist/
+
+# Uploads (garder le dossier mais pas les fichiers)
+backend/uploads/avatars/*
+backend/uploads/documents/*
+backend/uploads/photos/*
+backend/uploads/justificatifs/*
+!backend/uploads/**/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# Divers
+.DS_Store
+Thumbs.db

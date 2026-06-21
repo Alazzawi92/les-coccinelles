@@ -1,0 +1,108 @@
+/* ============================================================
+   FICHIER : Inscriptions.css
+   ROUTE   : /inscriptions
+   RÔLE    : Page informative sur la procédure d'inscription.
+             Présente les 4 étapes de la démarche et la liste
+             des documents à fournir. Mène vers le formulaire
+             d'inscription en ligne.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des étapes (4 colonnes)
+     3. Carte d'une étape
+     4. Liste des documents requis
+     5. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. GRILLE DES ÉTAPES ───────────────────────────────── */
+
+/* 4 colonnes : étape 1, 2, 3, 4 côte à côte */
+.etapes-grille {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
+
+/* ── 3. CARTE D'UNE ÉTAPE ───────────────────────────────── */
+
+/* Carte : barre orange en haut, centrée, avec survol animé */
+.etape-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  text-align:    center;
+  border-top:    4px solid var(--primary);
+  transition:    var(--transition);
+}
+
+/* Au survol : élévation légère */
+.etape-carte:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+/* Numéro de l'étape : cercle orange avec le chiffre dedans */
+.etape-numero {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           50px;
+  height:          50px;
+  background:      var(--primary);
+  color:           var(--white);
+  font-family:     var(--font-heading);
+  font-size:       1.3rem;
+  font-weight:     700;
+  border-radius:   50%;
+  margin-bottom:   var(--space-md);
+}
+
+/* Titre de l'étape : police Fredoka */
+.etape-titre { font-family: var(--font-heading); font-size: 1rem; color: var(--text-dark); margin-bottom: var(--space-sm); }
+
+/* Texte descriptif de l'étape */
+.etape-texte { font-size: 0.85rem; color: var(--text-gray); line-height: 1.6; }
+
+/* ── 4. LISTE DES DOCUMENTS ─────────────────────────────── */
+
+/* Liste verticale centrée des documents requis.
+   max-width:700px + margin:auto pour la centrer dans la page. */
+.documents-liste {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  max-width:      700px;
+  margin:         var(--space-2xl) auto 0;
+}
+
+/* Chaque document requis : icône + texte, dans une ligne
+   avec une barre orange à gauche pour l'identifier visuellement. */
+.document-item {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-md) var(--space-lg);
+  background:    var(--white);
+  border-radius: var(--radius-md);
+  box-shadow:    var(--shadow-sm);
+  font-size:     0.95rem;
+  color:         var(--text-dark);
+  border-left:   4px solid var(--primary);
+  transition:    var(--transition);
+}
+
+/* Au survol : légère translation vers la droite (effet "sélection") */
+.document-item:hover { transform: translateX(4px); }
+
+/* Icône du document : grande, ne rétrécit pas */
+.document-item span:first-child { font-size: 1.5rem; flex-shrink: 0; }
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : 4 étapes → 2 colonnes */
+@media (max-width: 768px) {
+  .etapes-grille { grid-template-columns: repeat(2, 1fr); }
+}

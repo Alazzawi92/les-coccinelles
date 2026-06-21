@@ -1,0 +1,91 @@
+# Docker Compose — Les Coccinelles
+# Lance : MySQL + Backend + Frontend en un seul commande
+
+version: '3.8'
+
+services:
+
+  # ── BASE DE DONNÉES MySQL ─────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: coccinelles-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword        # Mot de passe root (à changer en prod)
+      MYSQL_DATABASE:      coccinelles_db      # Créer la BDD automatiquement
+      MYSQL_USER:          coccinelles_user    # Utilisateur dédié
+      MYSQL_PASSWORD:      coccinelles_pass    # Mot de passe utilisateur
+    ports:
+      - "3306:3306"                            # Exposer le port MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql              # Persister les données
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql # Initialiser le schéma
+    networks:
+      - coccinelles-network
+    healthcheck:
+      test:     ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout:  5s
+      retries:  10
+
+  # ── BACKEND Node.js ───────────────────────────────────────
+  backend:
+    build:
+      context:    ./backend
+      dockerfile: Dockerfile
+    container_name: coccinelles-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy              # Attendre que MySQL soit prêt
+    environment:
+      PORT:              3001
+      NODE_ENV:          development
+      FRONTEND_URL:      http://localhost:3000
+      DB_HOST:           mysql                  # Nom du service Docker
+      DB_PORT:           3306
+      DB_NAME:           coccinelles_db
+      DB_USER:           coccinelles_user
+      DB_PASSWORD:       Root123!                # Doit correspondre à MYSQL_PASSWORD
+      JWT_SECRET:        dev_jwt_secret_change_in_production_xxxxxxxxxxxxxxxx
+      JWT_EXPIRES_IN:    15m
+      JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_xxxxxxxxxx
+      JWT_REFRESH_EXPIRES_IN: 7d
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app                          # Hot reload en développement
+      - /app/node_modules                       # Exclure node_modules
+      - ./backend/uploads:/app/uploads          # Persister les fichiers uploadés
+    networks:
+      - coccinelles-network
+
+  # ── FRONTEND React ────────────────────────────────────────
+  frontend:
+    build:
+      context:    ./frontend-web
+      dockerfile: Dockerfile
+    container_name: coccinelles-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      REACT_APP_API_URL: http://localhost:3001/api
+      REACT_APP_NAME:    Les Coccinelles
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-web:/app                     # Hot reload en développement
+      - /app/node_modules
+    networks:
+      - coccinelles-network
+
+# ── VOLUMES PERSISTANTS ───────────────────────────────────────
+volumes:
+  mysql_data:
+    driver: local
+
+# ── RÉSEAU ────────────────────────────────────────────────────
+networks:
+  coccinelles-network:
+    driver: bridge

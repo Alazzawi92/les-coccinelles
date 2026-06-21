@@ -1,0 +1,246 @@
+/* ============================================================
+   FICHIER : Messages.css
+   ROUTE   : /parent/messages
+   RÔLE    : Messagerie entre le parent et l'équipe de la crèche.
+             Layout 2 colonnes : liste des conversations à gauche,
+             fil de discussion à droite.
+             Supporte les pièces jointes (photos + PDFs).
+
+   STRUCTURE :
+     1. Imports
+     2. Layout 2 colonnes
+     3. Liste des conversations
+     4. Item de conversation
+     5. Détail de la conversation
+     6. Fil des messages
+     7. Zone de réponse
+     8. Modal "Nouveau message"
+     9. Pièces jointes (sélection dans le modal)
+    10. Pièces jointes (affichage dans les bulles)
+    11. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. LAYOUT 2 COLONNES ───────────────────────────────── */
+
+/* Layout messagerie : 300px fixe (conversations) + 1fr (détail).
+   height:600px fixe pour que les deux colonnes soient stables
+   et que chaque colonne scroll indépendamment. */
+.messagerie-layout {
+  display:       grid;
+  grid-template-columns: 300px 1fr;
+  gap:           0;
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-md);
+  overflow:      hidden;
+  height:        600px;
+}
+
+/* ── 3. LISTE DES CONVERSATIONS ─────────────────────────── */
+
+/* Colonne gauche : liste scrollable avec séparateur vertical */
+.conversations-liste { border-right: 1px solid var(--bg-gray); overflow-y: auto; }
+
+/* ── 4. ITEM DE CONVERSATION ─────────────────────────────── */
+
+/* Une conversation dans la liste : avatar + nom/sujet + date.
+   position:relative pour le point de non-lecture en absolu. */
+.conv-item {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-md);
+  padding:       var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--bg-gray);
+  cursor:        pointer;
+  transition:    var(--transition);
+  background:    none;
+  border-right:  none;
+  text-align:    left;
+  width:         100%;
+  position:      relative;
+}
+
+/* Survol : fond gris clair */
+.conv-item:hover  { background: var(--bg-gray); }
+
+/* Conversation sélectionnée : fond orange + barre orange à droite */
+.conv-item--actif { background: var(--primary-light); border-right: 3px solid var(--primary); }
+
+/* Sujet gras si conversation non lue */
+.conv-item--nonlu .conv-sujet { font-weight: 700; color: var(--text-dark); }
+
+/* Avatar circulaire de l'interlocuteur : fond orange + initiale */
+.conv-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+
+/* Zone infos : prend le reste de la largeur.
+   min-width:0 pour permettre l'ellipsis sur le sujet. */
+.conv-infos { flex: 1; min-width: 0; }
+
+/* Nom de l'interlocuteur */
+.conv-nom   { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Dernier message tronqué si trop long */
+.conv-sujet { font-size: 0.8rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Date du dernier message */
+.conv-date  { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
+
+/* Petit point orange indiquant un message non lu */
+.conv-point-nonlu { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+
+/* ── 5. DÉTAIL DE LA CONVERSATION ───────────────────────── */
+
+/* Colonne droite : flex colonne pour que l'en-tête et la zone de réponse
+   restent fixes et que le fil de messages scroll. */
+.conversation-detail { display: flex; flex-direction: column; overflow: hidden; }
+
+/* État vide : aucune conversation sélectionnée */
+.detail-vide   { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: var(--text-gray); gap: var(--space-md); font-size: 3rem; }
+.detail-vide p { font-size: 1rem; }
+
+/* En-tête du détail : sujet + interlocuteur */
+.detail-entete              { padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); }
+.detail-entete h2           { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); }
+.detail-interlocuteur       { font-size: 0.85rem; color: var(--text-gray); margin-top: 4px; }
+
+/* ── 6. FIL DES MESSAGES ────────────────────────────────── */
+
+/* Zone scrollable des messages : flex colonne avec les bulles */
+.messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Bulle d'un message : max 75% de largeur */
+.message-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); }
+
+/* Mes messages : orange, alignés à droite.
+   border-bottom-right-radius:4px = coin plat = bulle "sortant de moi" */
+.message-bulle--moi   { background: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+
+/* Messages de l'autre : gris, alignés à gauche.
+   border-bottom-left-radius:4px = bulle "venant de l'autre" */
+.message-bulle--autre { background: var(--bg-gray); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+/* Texte du message : white-space:pre-wrap pour garder les retours à la ligne */
+.message-contenu { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+
+/* Date d'envoi : petite, semi-transparente (sur fond coloré) */
+.message-date    { font-size: 0.7rem; margin-top: 4px; opacity: 0.7; }
+
+/* ── 7. ZONE DE RÉPONSE ─────────────────────────────────── */
+
+/* Barre de réponse en bas : textarea + bouton trombone + bouton envoyer.
+   align-items:flex-end = les éléments s'alignent sur la ligne basse. */
+.reponse-zone    { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--bg-gray); display: flex; gap: var(--space-md); align-items: flex-end; }
+
+/* Côté gauche : textarea + aperçu de la pièce jointe */
+.reponse-gauche  { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+/* Textarea du message */
+.reponse-input   { flex: 1; }
+
+/* Boutons à droite : trombone + envoyer, empilés */
+.reponse-actions { display: flex; flex-direction: column; gap: var(--space-sm); flex-shrink: 0; }
+
+/* ── 8. MODAL "NOUVEAU MESSAGE" ─────────────────────────── */
+
+/* Fond sombre derrière le modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: var(--z-modal); display: flex; align-items: center; justify-content: center; padding: var(--space-xl); }
+
+/* Boîte blanche du modal : 560px max */
+.modal          { background: var(--white); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 560px; }
+
+/* En-tête du modal : titre + bouton ✕ */
+.modal__entete  { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-xl); }
+.modal__entete h2 { font-family: var(--font-heading); font-size: 1.3rem; }
+
+/* Bouton ✕ de fermeture du modal */
+.modal__fermer  { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-gray); }
+
+/* ── 9. PIÈCES JOINTES — SÉLECTION ─────────────────────── */
+
+/* Label "(optionnel)" en petit à côté du label principal */
+.p-label--opt { font-weight: 400; font-size: 0.8rem; color: var(--text-gray); }
+
+/* Conteneur de la zone PJ : input + aperçu */
+.pj-zone  { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Input file : texte en gris, cursor pointer */
+.pj-input { font-size: 0.85rem; color: var(--text-gray); cursor: pointer; }
+
+/* Bouton "Choisir un fichier" natif : stylé en pilule gris */
+.pj-input::file-selector-button {
+  background:    var(--bg-gray);
+  border:        1px solid #E0E0E0;
+  border-radius: var(--radius-pill);
+  padding:       4px var(--space-md);
+  font-size:     0.8rem;
+  cursor:        pointer;
+  margin-right:  var(--space-sm);
+  transition:    var(--transition);
+}
+
+/* Survol du bouton natif */
+.pj-input::file-selector-button:hover { background: #E0E0E0; }
+
+/* Aperçu du fichier sélectionné : miniature + nom + supprimer */
+.pj-apercu         { display: flex; align-items: center; gap: var(--space-sm); background: var(--bg-gray); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); }
+
+/* Miniature de l'image sélectionnée (48×48px, rognée) */
+.pj-apercu__img    { width: 48px; height: 48px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
+
+/* Nom du fichier : tronqué si trop long */
+.pj-apercu__nom    { flex: 1; font-size: 0.8rem; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Bouton ✕ pour retirer la pièce jointe */
+.pj-apercu__sup    { background: none; border: none; cursor: pointer; color: var(--text-gray); font-size: 1rem; padding: 0 4px; flex-shrink: 0; }
+.pj-apercu__sup:hover { color: var(--error); }
+
+/* Aperçu dans la zone de réponse rapide : légèrement décalé */
+.pj-apercu--rep    { margin-top: 4px; }
+
+/* Bouton trombone : position:relative pour l'input file hidden en absolu */
+.pj-btn            { position: relative; overflow: hidden; font-size: 1rem; padding: 6px 10px; }
+
+/* Input file invisible sur toute la surface du bouton trombone :
+   opacity:0 masque l'input, pointer-events actifs pour le clic */
+.pj-input--hidden  { position: absolute; inset: 0; opacity: 0; cursor: pointer; font-size: 0; }
+
+/* ── 10. PIÈCES JOINTES — DANS LES BULLES ───────────────── */
+
+/* Conteneur de la PJ dans une bulle */
+.pj-bulle     { display: block; margin-top: var(--space-sm); border-radius: var(--radius-md); overflow: hidden; max-width: 220px; }
+
+/* Image reçue dans la bulle : pleine largeur, max 200px de haut */
+.pj-bulle__img { width: 100%; max-height: 200px; object-fit: cover; display: block; border-radius: var(--radius-md); }
+
+/* Document PDF/autre dans la bulle : pilule semi-transparente */
+.pj-bulle--doc {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             6px;
+  background:      rgba(255,255,255,0.2);   /* Semi-transparent sur fond orange */
+  padding:         6px var(--space-md);
+  border-radius:   var(--radius-pill);
+  font-size:       0.85rem;
+  color:           inherit;
+  text-decoration: none;
+}
+
+/* Sur fond gris (bulle de l'autre) : fond gris légèrement foncé */
+.message-bulle--autre .pj-bulle--doc { background: rgba(0,0,0,0.07); color: var(--text-dark); }
+
+/* Au clic/survol : légère transparence */
+.pj-bulle--doc:hover { opacity: 0.85; }
+
+/* ── 11. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : 2 colonnes → 1 colonne.
+   La liste des conversations prend 250px et passe au-dessus du détail. */
+@media (max-width: 768px) {
+  .messagerie-layout    { grid-template-columns: 1fr; height: auto; }
+  .conversations-liste  { height: 250px; border-right: none; border-bottom: 1px solid var(--bg-gray); }
+  .conversation-detail  { height: 400px; }
+}

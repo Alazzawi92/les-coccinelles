@@ -1,0 +1,18 @@
+/* ============================================================
+   FICHIER : InscriptionsAdmin.css
+   ROUTE   : /admin/inscriptions (ancienne version)
+   RÔLE    : Fichier placeholder généré automatiquement.
+             Ce fichier contient une règle CSS invalide
+             (double accolades {{ }}) — résidu de génération.
+             Les styles réels sont dans Inscriptions.css.
+
+   NOTE    : Ce fichier peut être ignoré ou supprimé.
+   ============================================================ */
+
+/* Fichier placeholder — styles réels dans Inscriptions.css */
+@import '../../../styles/variables.css';
+
+/* Classe placeholder (double accolades corrigées) */
+.inscriptions-admin-page {
+  padding: var(--space-xl);
+}

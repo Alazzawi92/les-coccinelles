@@ -1,0 +1,279 @@
+/* ============================================================
+   FICHIER : AdminLayout.css
+   ROUTE   : /admin/* (toutes les pages de l'espace admin)
+   RÔLE    : Structure de mise en page de l'espace administrateur.
+             Sidebar sombre fixe à gauche + contenu scrollable à droite.
+             Sur mobile : sidebar horizontale en haut.
+
+   STRUCTURE :
+     1. Import des variables
+     2. Layout flex global (.admin-layout)
+     3. Sidebar sombre (.admin-sidebar)
+        a. Zone logo
+        b. Navigation (groupes + liens)
+        c. Pied de sidebar (profil + déconnexion)
+     4. Zone contenu (.admin-content)
+        a. Topbar
+        b. Contenu principal
+     5. Responsive (tablette, mobile)
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import '../../styles/variables.css';
+
+/* ── 2. LAYOUT FLEX GLOBAL ──────────────────────────────── */
+
+/* Flex horizontal : sidebar à gauche + contenu à droite.
+   background:#F0F2F5 donne un fond gris bleuté à la zone de contenu
+   (différent du blanc de la sidebar). */
+.admin-layout {
+  display:    flex;
+  min-height: 100vh;
+  width:      100%;
+  background: #F0F2F5;
+}
+
+/* ── 3. SIDEBAR SOMBRE ──────────────────────────────────── */
+
+/* Sidebar fixe de 280px : sombre (var(--text-dark) = gris foncé).
+   position:sticky + height:100vh la garde visible même en défilant.
+   overflow-y:auto permet le défilement si la nav dépasse la hauteur. */
+.admin-sidebar {
+  width:          280px;
+  min-height:     100vh;
+  background:     var(--text-dark);    /* Fond sombre (#2D3436) */
+  display:        flex;
+  flex-direction: column;
+  position:       sticky;
+  top:            0;
+  height:         100vh;
+  overflow-y:     auto;
+  flex-shrink:    0;  /* Ne rétrécit jamais, même si le contenu est large */
+}
+
+/* ── 3a. Zone logo ──────────────────────────────────────── */
+
+/* Zone logo en haut de la sidebar : séparée par une ligne très subtile */
+.admin-sidebar__logo {
+  padding:       var(--space-xl) var(--space-lg);
+  border-bottom: 1px solid rgba(255,255,255,0.1);  /* Ligne discrète */
+}
+
+/* Lien logo : flex pour aligner emoji + texte */
+.admin-sidebar__logo-lien {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+  font-size:   1.3rem;
+}
+
+/* Nom de la crèche en blanc dans la sidebar */
+.admin-sidebar__logo-text {
+  font-family: var(--font-heading);
+  font-size:   1.2rem;
+  font-weight: 700;
+  color:       var(--white);
+}
+
+/* Sous-titre "ADMIN" en petit orange sous le nom */
+.admin-sidebar__logo-sous {
+  font-size:      0.75rem;
+  color:          var(--primary);   /* Orange de marque */
+  margin-top:     4px;
+  font-weight:    600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── 3b. Navigation ─────────────────────────────────────── */
+
+/* Zone de navigation : flex:1 pour prendre tout l'espace vertical restant */
+.admin-sidebar__nav { flex: 1; padding: var(--space-md) 0; }
+
+/* Groupe de liens (ex: "GESTION", "COMMUNICATION") */
+.admin-sidebar__groupe { margin-bottom: var(--space-md); }
+
+/* Titre du groupe : tout petit, en majuscules espacées, gris clair */
+.admin-sidebar__groupe-titre {
+  font-size:      0.65rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--text-light);  /* Gris très clair */
+  padding:        var(--space-sm) var(--space-lg);
+  margin-top:     var(--space-sm);
+}
+
+/* Lien de navigation dans la sidebar.
+   border-right:transparent par défaut → devient orange à l'état actif. */
+.admin-sidebar__link {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-md);
+  padding:         var(--space-md) var(--space-lg);
+  color:           rgba(255,255,255,0.65);  /* Blanc semi-transparent = inactif */
+  text-decoration: none;
+  font-weight:     500;
+  font-size:       0.9rem;
+  transition:      var(--transition);
+  border-right:    3px solid transparent;    /* Barre droite invisible par défaut */
+}
+
+/* Au survol et sur la page active :
+   blanc + fond orange très transparent + barre orange à droite */
+.admin-sidebar__link:hover,
+.admin-sidebar__link.active {
+  color:        var(--white);
+  background:   rgba(255,152,0,0.15);          /* Fond orange très doux */
+  border-right: 3px solid var(--primary);       /* Barre orange visible */
+}
+
+/* ── 3c. Pied de sidebar ────────────────────────────────── */
+
+/* Zone profil + déconnexion en bas de la sidebar */
+.admin-sidebar__pied {
+  padding:    var(--space-lg);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Nom de l'admin connecté */
+.admin-sidebar__user-nom  { color: var(--white); font-weight: 700; font-size: 0.9rem; }
+
+/* Rôle de l'admin (admin / super_admin) : orange */
+.admin-sidebar__user-role { color: var(--primary); font-size: 0.75rem; margin-bottom: var(--space-md); }
+
+/* Bouton déconnexion : fond semi-transparent, bordure discrète.
+   S'affiche en rouge au survol pour signifier le danger. */
+.admin-sidebar__deconnexion {
+  width:         100%;
+  padding:       var(--space-sm) var(--space-md);
+  background:    rgba(255,255,255,0.1);
+  border:        1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-md);
+  color:         rgba(255,255,255,0.7);
+  cursor:        pointer;
+  font-size:     0.85rem;
+  font-weight:   600;
+  transition:    var(--transition);
+  text-align:    left;
+}
+
+/* Au survol : fond rouge discret pour signaler l'action de déconnexion */
+.admin-sidebar__deconnexion:hover {
+  background:   rgba(229,57,53,0.2);
+  color:        #ef9a9a;              /* Texte rouge clair */
+  border-color: rgba(229,57,53,0.4);
+}
+
+/* ── 4. ZONE CONTENU ────────────────────────────────────── */
+
+/* La zone de contenu prend tout l'espace horizontal restant.
+   min-width:0 empêche le contenu de déborder sur la sidebar. */
+.admin-content {
+  flex:           1;
+  min-width:      0;    /* Important : sans ça, flex peut ignorer overflow */
+  display:        flex;
+  flex-direction: column;
+}
+
+/* Topbar blanc de la zone contenu : chemin de navigation */
+.layout-topbar--admin {
+  background:    #fff;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Contenu principal : tout l'espace restant après le topbar */
+.layout-main {
+  flex:    1;
+  padding: var(--space-xl);
+}
+
+/* En-tête standard d'une page admin :
+   titre à gauche + bouton d'action à droite */
+.admin-page-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-xl);
+}
+
+/* Titre de la page dans la zone de contenu */
+.admin-page-titre {
+  font-family: var(--font-heading);
+  font-size:   1.8rem;
+  color:       var(--text-dark);
+}
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette paysage (≤1280px) : sidebar un peu plus étroite */
+@media (max-width: 1280px) {
+  .admin-sidebar { width: 240px; }
+}
+
+/* Tablette portrait (≤1024px) : sidebar encore réduite + textes plus petits */
+@media (max-width: 1024px) {
+  .admin-sidebar { width: 200px; }
+  .admin-sidebar__groupe-titre { font-size: 0.6rem; padding: var(--space-xs) var(--space-md); }
+  .admin-sidebar__link         { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
+  .layout-main                 { padding: var(--space-lg); }
+}
+
+/* Mobile (≤768px) : layout en colonne, sidebar horizontale en haut */
+@media (max-width: 768px) {
+  /* Layout passe de flex horizontal à flex vertical */
+  .admin-layout  { flex-direction: column; }
+
+  /* La sidebar devient une barre horizontale en haut de l'écran.
+     overflow-x:auto permet le défilement horizontal des liens. */
+  .admin-sidebar {
+    width:          100%;
+    height:         auto;
+    min-height:     auto;
+    position:       sticky;
+    top:            0;
+    z-index:        var(--z-sidebar, 90);
+    flex-direction: row;    /* Horizontal */
+    overflow-x:     auto;
+    overflow-y:     visible;
+    padding:        var(--space-sm) 0;
+  }
+
+  /* Logo, titres de groupes et pied masqués sur mobile */
+  .admin-sidebar__logo,
+  .admin-sidebar__groupe-titre,
+  .admin-sidebar__pied { display: none; }
+
+  /* Navigation en ligne horizontale scrollable */
+  .admin-sidebar__nav {
+    display:        flex;
+    flex-direction: row;
+    flex-wrap:      nowrap;
+    padding:        0;
+    width:          max-content;   /* La nav peut être plus large que l'écran */
+  }
+
+  /* Chaque lien : vertical (icône au-dessus, texte en dessous),
+     séparé du bas par une barre (au lieu de la barre droite de desktop) */
+  .admin-sidebar__link {
+    flex-direction: column;
+    gap:            2px;
+    padding:        var(--space-sm) var(--space-md);
+    font-size:      0.65rem;
+    border-right:   none;
+    border-bottom:  3px solid transparent;
+    white-space:    nowrap;
+    min-width:      56px;
+    text-align:     center;
+  }
+
+  /* Actif sur mobile : barre en bas (au lieu de à droite) */
+  .admin-sidebar__link:hover,
+  .admin-sidebar__link.active {
+    border-right:  none;
+    border-bottom: 3px solid var(--primary);
+  }
+
+  /* Moins de padding pour le contenu sur mobile */
+  .layout-main { padding: var(--space-md); }
+}

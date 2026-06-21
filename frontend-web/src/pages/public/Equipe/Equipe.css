@@ -1,0 +1,71 @@
+/* ============================================================
+   FICHIER : Equipe.css
+   ROUTE   : /equipe
+   RÔLE    : Page présentant l'équipe de la crèche avec une
+             grille de cartes membres (photo/avatar, nom, poste,
+             diplôme). La barre colorée du haut varie selon le
+             poste (directrice = orange, éducatrice = rose...).
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des membres
+     3. Carte membre (.membre-carte)
+     4. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. GRILLE DES MEMBRES ──────────────────────────────── */
+
+/* 3 colonnes pour les cartes membres : 3 personnes par ligne */
+.equipe-grille {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
+
+/* ── 3. CARTE MEMBRE ────────────────────────────────────── */
+
+/* Carte d'un membre de l'équipe : centrée, barre colorée en haut.
+   La couleur de la barre identifie le rôle de la personne. */
+.membre-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  text-align:    center;
+  box-shadow:    var(--shadow-sm);
+  transition:    var(--transition);
+  border-top:    4px solid var(--primary);  /* Orange par défaut */
+}
+
+/* Au survol : légère élévation */
+.membre-carte:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+/* Couleurs de la barre selon le rôle de chaque membre */
+.membre-carte--orange { border-top-color: var(--primary); }    /* Directrice, responsable */
+.membre-carte--rose   { border-top-color: var(--accent-2); }   /* Puéricultrice */
+.membre-carte--vert   { border-top-color: var(--secondary); }  /* Éducatrice de jeunes enfants */
+.membre-carte--bleu   { border-top-color: var(--accent-1); }   /* Auxiliaire de puériculture */
+.membre-carte--violet { border-top-color: var(--accent-3); }   /* Assistante maternelle */
+
+/* Avatar emoji de la personne (en attendant de vraies photos) */
+.membre-carte__avatar  { font-size: 4rem; display: block; margin-bottom: var(--space-md); }
+
+/* Nom de la personne : police Fredoka, foncé */
+.membre-carte__nom     { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-xs); }
+
+/* Poste occupé : orange, gras */
+.membre-carte__poste   { font-weight: 700; color: var(--primary); font-size: 0.9rem; margin-bottom: var(--space-sm); }
+
+/* Diplôme ou formation : petit, gris */
+.membre-carte__diplome { font-size: 0.8rem; color: var(--text-gray); }
+
+/* ── 4. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : 3 colonnes → 2 colonnes */
+@media (max-width: 768px) {
+  .equipe-grille { grid-template-columns: repeat(2, 1fr); }
+}

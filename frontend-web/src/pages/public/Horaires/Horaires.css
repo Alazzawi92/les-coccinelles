@@ -1,0 +1,97 @@
+/* ============================================================
+   FICHIER : Horaires.css
+   ROUTE   : /horaires
+   RÔLE    : Page affichant les horaires d'ouverture de la
+             crèche (lundi-vendredi) et les informations sur
+             les périodes de fermeture et accueil exceptionnel.
+
+   STRUCTURE :
+     1. Imports
+     2. Tableau des horaires
+     3. Lignes de l'horaire
+     4. Boîtes d'information
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. TABLEAU DES HORAIRES ────────────────────────────── */
+
+/* Bloc centrée, largeur max 600px, avec arrondi et ombre.
+   overflow:hidden rogue les coins arrondis des lignes de tableau. */
+.horaires-tableau {
+  max-width:     600px;
+  margin:        var(--space-2xl) auto 0;
+  border-radius: var(--radius-xl);
+  overflow:      hidden;
+  box-shadow:    var(--shadow-md);
+}
+
+/* ── 3. LIGNES DE L'HORAIRE ─────────────────────────────── */
+
+/* Chaque ligne = un jour : nom du jour à gauche + horaires à droite.
+   border-bottom sépare les jours entre eux. */
+.horaire-ligne {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         var(--space-lg) var(--space-xl);
+  background:      var(--white);
+  border-bottom:   1px solid var(--bg-gray);
+  transition:      var(--transition);
+}
+
+/* Au survol : fond orange clair pour feedback interactif */
+.horaire-ligne:hover { background: var(--primary-light); }
+
+/* Variante jour fermé : fond gris, curseur par défaut */
+.horaire-ligne--ferme { background: var(--bg-gray); color: var(--text-light); }
+
+/* Le survol n'a pas d'effet sur les jours fermés */
+.horaire-ligne--ferme:hover { background: var(--bg-gray); }
+
+/* Nom du jour (Lundi, Mardi...) : gras, foncé */
+.horaire-jour   { font-weight: 700; font-size: 1rem; color: var(--text-dark); }
+
+/* Horaire affiché à droite (ex: "7h30 – 18h30") */
+.horaire-statut { font-size: 0.95rem; color: var(--text-gray); }
+
+/* "Fermé" en italique et gris clair */
+.ferme-label    { color: var(--text-light); font-style: italic; }
+
+/* ── 4. BOÎTES D'INFORMATION ────────────────────────────── */
+
+/* Conteneur des boîtes d'info : colonne verticale centrée */
+.horaires-info {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  margin-top:     var(--space-2xl);
+  max-width:      600px;
+  margin-left:    auto;
+  margin-right:   auto;
+}
+
+/* Boîte d'info générique : fond + barre colorée à gauche.
+   La barre distingue visuellement le type d'info (alerte, conseil). */
+.info-box {
+  display:     flex;
+  gap:         var(--space-md);
+  padding:     var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  border-left: 4px solid;
+  align-items: flex-start;
+}
+
+/* Fond orange clair + barre orange = information importante */
+.info-box--orange { background: var(--primary-light); border-color: var(--primary); }
+
+/* Fond bleu clair + barre bleue = information neutre */
+.info-box--bleu   { background: #e3f2fd; border-color: var(--info); }
+
+/* Texte de l'info : petit, gris, avec espacement entre les lignes */
+.info-box p    { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }
+
+/* Icône à gauche du texte : grande, ne rétrécit pas */
+.info-box span { font-size: 1.3rem; flex-shrink: 0; }

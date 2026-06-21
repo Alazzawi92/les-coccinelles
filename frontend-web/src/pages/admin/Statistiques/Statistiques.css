@@ -1,0 +1,75 @@
+/* ============================================================
+   FICHIER : Statistiques.css
+   ROUTE   : /admin/statistiques
+   RÔLE    : Page de statistiques avancées pour le super admin.
+             KPIs clés, graphiques en barres horizontales pour
+             les statuts d'inscription, et compteurs d'utilisateurs.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des KPIs (indicators clés)
+     3. Sections de statistiques (2 colonnes)
+     4. Graphiques en barres horizontales
+     5. Compteurs d'utilisateurs
+     6. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs admin */
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. GRILLE DES KPIs ─────────────────────────────────── */
+
+/* Grille de KPIs : 3 colonnes par défaut.
+   Utilise les mêmes règles responsive que le dashboard admin
+   (6 colonnes sur grand écran, 4 sur large, 2 sur mobile). */
+.kpi-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); }
+
+/* ── 3. SECTIONS DE STATISTIQUES ───────────────────────── */
+
+/* 2 colonnes côte à côte : ex "Répartition statuts | Répartition genres" */
+.stats-sections { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+
+/* ── 4. GRAPHIQUES EN BARRES ────────────────────────────── */
+
+/* Conteneur des barres : liste verticale avec espaces entre les lignes */
+.stats-bars { display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-md); }
+
+/* Une ligne de barre : label (160px) | barre | valeur (80px).
+   align-items:center pour que tout soit aligné verticalement. */
+.stat-bar-ligne { display: grid; grid-template-columns: 160px 1fr 80px; align-items: center; gap: var(--space-md); }
+
+/* Label de la barre (ex: "En attente", "Accepté"...) */
+.stat-bar-label   { font-size: 0.85rem; color: var(--text-dark); font-weight: 600; }
+
+/* Piste de la barre : fond gris, arrondie, débordement caché */
+.stat-bar-fond    { background: var(--bg-gray); border-radius: var(--radius-pill); height: 10px; overflow: hidden; }
+
+/* Remplissage coloré de la barre : largeur en % définie inline.
+   transition:0.5s pour une animation douce au chargement de la page. */
+.stat-bar-remplissage { height: 100%; border-radius: var(--radius-pill); transition: width 0.5s ease; }
+
+/* Valeur numérique à droite : petit, gris, aligné à droite */
+.stat-bar-valeur  { font-size: 0.8rem; color: var(--text-gray); text-align: right; }
+
+/* ── 5. COMPTEURS D'UTILISATEURS ────────────────────────── */
+
+/* Ligne horizontale avec 2 compteurs : parents | admins */
+.comptes-stats { display: flex; gap: var(--space-2xl); }
+
+/* Un compteur : icône + info */
+.compte-item   { display: flex; align-items: center; gap: var(--space-md); }
+
+/* ── 6. RESPONSIVE ──────────────────────────────────────── */
+
+/* Grand écran (≥1600px) : 6 KPIs sur une ligne */
+@media (min-width: 1600px) { .kpi-grille { grid-template-columns: repeat(6, 1fr); } }
+
+/* Large (1280–1599px) : 4 KPIs sur une ligne */
+@media (min-width: 1280px) and (max-width: 1599px) { .kpi-grille { grid-template-columns: repeat(4, 1fr); } }
+
+/* Tablette (≤1024px) : sections en 1 colonne */
+@media (max-width: 1024px) { .stats-sections { grid-template-columns: 1fr; } }
+
+/* Mobile (≤768px) : 2 KPIs + barres plus compactes */
+@media (max-width: 768px)  { .kpi-grille { grid-template-columns: repeat(2, 1fr); } .stat-bar-ligne { grid-template-columns: 120px 1fr 60px; } }

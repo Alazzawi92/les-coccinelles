@@ -1,0 +1,116 @@
+/* ============================================================
+   FICHIER : MentionsLegales.css
+   ROUTE   : /mentions-legales
+   RÔLE    : Page des mentions légales et politique de
+             confidentialité RGPD. Contenu essentiellement
+             textuel avec sections hiérarchisées, tableau
+             des cookies et liste des droits utilisateur.
+
+   STRUCTURE :
+     1. Imports
+     2. Conteneur principal
+     3. Sections des mentions
+     4. Tableau des cookies
+     5. Grille des droits RGPD
+     6. Date de mise à jour
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. CONTENEUR PRINCIPAL ─────────────────────────────── */
+
+/* max-width:900px pour une bonne lisibilité du texte long.
+   flex vertical avec grands espaces entre les sections. */
+.mentions-contenu {
+  max-width:      900px;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-2xl);
+}
+
+/* ── 3. SECTIONS DES MENTIONS ───────────────────────────── */
+
+/* Titre de section : orange, avec ligne de séparation orange pâle */
+.mentions-section h2 {
+  font-family:    var(--font-heading);
+  font-size:      1.4rem;
+  color:          var(--primary);
+  margin-bottom:  var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom:  2px solid var(--primary-light);
+}
+
+/* Paragraphes et éléments de liste : texte gris, grande hauteur de ligne */
+.mentions-section p, .mentions-section li {
+  font-size:     0.95rem;
+  color:         var(--text-gray);
+  line-height:   1.8;
+  margin-bottom: var(--space-sm);
+}
+
+/* Listes à puces dans les mentions : puce standard + indentation */
+.mentions-section ul { list-style: disc; padding-left: var(--space-xl); }
+
+/* ── 4. TABLEAU DES COOKIES ─────────────────────────────── */
+
+/* Wrapper avec scroll horizontal pour les petits écrans */
+.mentions-tableau-wrapper { overflow-x: auto; margin-top: var(--space-md); }
+
+/* Tableau des cookies : types, durée, finalité */
+.mentions-tableau { width: 100%; border-collapse: collapse; }
+
+/* En-tête du tableau : fond orange + texte blanc */
+.mentions-tableau th { background: var(--primary); color: var(--white); padding: var(--space-md) var(--space-lg); text-align: left; }
+
+/* Cellules : séparateur bas, texte standard */
+.mentions-tableau td { padding: var(--space-md) var(--space-lg); border-bottom: 1px solid var(--bg-gray); color: var(--text-dark); }
+
+/* Ligne survolée : fond orange clair */
+.mentions-tableau tbody tr:hover td { background: var(--primary-light); }
+
+/* ── 5. GRILLE DES DROITS RGPD ──────────────────────────── */
+
+/* Liste verticale des droits de l'utilisateur (accès, rectification,
+   effacement, portabilité, opposition, limitation) */
+.droits-grille {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  margin:         var(--space-md) 0;
+}
+
+/* Un droit : icône + titre + description.
+   border-left:4px orange identifie visuellement les droits. */
+.droit-item {
+  display:       flex;
+  gap:           var(--space-md);
+  padding:       var(--space-md);
+  background:    var(--bg-gray);
+  border-radius: var(--radius-md);
+  border-left:   4px solid var(--primary);
+  align-items:   flex-start;
+}
+
+/* Icône du droit (⚖️, 🔍, 🗑️...) */
+.droit-item > span { font-size: 1.5rem; flex-shrink: 0; }
+
+/* Nom du droit : gras, foncé */
+.droit-item strong { font-size: 0.95rem; color: var(--text-dark); }
+
+/* Description du droit */
+.droit-item p { font-size: 0.85rem; color: var(--text-gray); margin: 2px 0 0; }
+
+/* ── 6. DATE DE MISE À JOUR ──────────────────────────────── */
+
+/* Date de dernière mise à jour en bas de la page : italique, gris clair.
+   border-top sépare la date du reste du contenu. */
+.mentions-date {
+  font-size:    0.85rem;
+  color:        var(--text-light);
+  font-style:   italic;
+  text-align:   right;
+  padding-top:  var(--space-lg);
+  border-top:   1px solid var(--bg-gray);
+}

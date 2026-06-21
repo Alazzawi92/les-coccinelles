@@ -1,0 +1,196 @@
+/* ============================================================
+   FICHIER : parent.css
+   RÔLE    : Styles communs à toutes les pages de l'espace parent.
+             Importé dans chaque page parent via leur propre CSS.
+             Fournit les composants de base : en-têtes, cartes,
+             badges de statut, tableaux, formulaires, états.
+
+   STRUCTURE :
+     1. Import des variables
+     2. En-tête de page parent
+     3. Carte générique parent (.p-card)
+     4. Badges de statut (.statut-badge)
+     5. États chargement et vide
+     6. Grilles standard
+     7. Tableau parent
+     8. Formulaire parent
+     9. Responsive
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import './variables.css';
+
+/* ── 2. EN-TÊTE DE PAGE PARENT ──────────────────────────── */
+
+/* Barre supérieure de chaque page parent : titre à gauche,
+   bouton d'action à droite (ex: "Nouveau message").
+   flex-wrap:wrap pour que le bouton passe en dessous sur mobile. */
+.parent-page-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-xl);
+  flex-wrap:       wrap;
+  gap:             var(--space-md);
+}
+
+/* Titre de la page parent : grande police de titre Fredoka */
+.parent-page-titre {
+  font-family: var(--font-heading);
+  font-size:   1.8rem;
+  color:       var(--text-dark);
+}
+
+/* Mot mis en orange dans le titre : ex "Ma <span>messagerie</span>" */
+.parent-page-titre span { color: var(--primary); }
+
+/* ── 3. CARTE GÉNÉRIQUE PARENT ──────────────────────────── */
+
+/* Conteneur blanc arrondi avec ombre légère.
+   Utilisé pour encadrer chaque section de contenu dans l'espace parent. */
+.p-card {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border:        1px solid var(--bg-gray);
+}
+
+/* Titre dans une carte parent : avec une ligne de séparation en bas */
+.p-card__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 2px solid var(--bg-gray);
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+}
+
+/* ── 4. BADGES DE STATUT ────────────────────────────────── */
+
+/* Badge de statut : même concept que .s-badge en admin,
+   mais appliqué dans l'interface parent (inscription, documents...) */
+.statut-badge {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       3px var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size:     0.75rem;
+  font-weight:   700;
+  white-space:   nowrap;
+}
+
+/* Couleurs sémantiques par statut */
+.statut-badge--en_attente  { background: #fff3e0; color: var(--warning); }      /* Orange — en attente */
+.statut-badge--en_cours    { background: #e3f2fd; color: var(--info); }          /* Bleu — en cours */
+.statut-badge--accepte     { background: #e8f5e9; color: var(--success); }       /* Vert — accepté */
+.statut-badge--refuse      { background: #ffebee; color: var(--error); }         /* Rouge — refusé */
+.statut-badge--incomplet   { background: #fce4ec; color: #c2185b; }              /* Rose — incomplet */
+.statut-badge--liste_attente { background: #f3e5f5; color: var(--accent-3); }   /* Violet — liste d'attente */
+.statut-badge--validee     { background: #e8f5e9; color: var(--success); }       /* Vert — validée */
+.statut-badge--refusee     { background: #ffebee; color: var(--error); }         /* Rouge — refusée */
+
+/* ── 5. ÉTATS ───────────────────────────────────────────── */
+
+/* Spinner / message de chargement centré verticalement */
+.p-chargement {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--space-3xl);
+  color:           var(--text-gray);
+  font-size:       1rem;
+}
+
+/* État vide : affiché quand la liste est vide (aucun enfant, aucun message...) */
+.p-vide {
+  text-align:    center;
+  padding:       var(--space-3xl);
+  color:         var(--text-gray);
+  background:    var(--bg-gray);
+  border-radius: var(--radius-xl);
+}
+
+/* Icône large au-dessus du message d'état vide */
+.p-vide__icone { font-size: 3.5rem; display: block; margin-bottom: var(--space-md); }
+
+/* Texte de l'état vide */
+.p-vide p      { margin-bottom: var(--space-md); }
+
+/* ── 6. GRILLES STANDARD ────────────────────────────────── */
+
+/* Grille 2 colonnes pour les sections avec 2 cartes côte à côte */
+.p-grille-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+
+/* Grille 3 colonnes pour les sections avec 3 cartes côte à côte */
+.p-grille-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
+
+/* ── 7. TABLEAU PARENT ──────────────────────────────────── */
+
+/* Tableau simple sans min-width (l'espace parent est moins dense que l'admin) */
+.p-table { width: 100%; border-collapse: collapse; }
+
+/* En-tête du tableau : fond gris, texte gras */
+.p-table th { background: var(--bg-gray); padding: var(--space-md); text-align: left; font-size: 0.85rem; font-weight: 700; color: var(--text-gray); }
+
+/* Cellules : séparateur bas, texte standard */
+.p-table td { padding: var(--space-md); border-bottom: 1px solid var(--bg-gray); font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; }
+
+/* Ligne survolée : fond orange clair (plus chaleureux que le gris admin) */
+.p-table tbody tr:hover td { background: var(--primary-light); }
+
+/* Dernière ligne : pas de bordure en bas */
+.p-table tbody tr:last-child td { border-bottom: none; }
+
+/* ── 8. FORMULAIRE PARENT ───────────────────────────────── */
+
+/* Formulaire parent : même structure que le formulaire admin
+   mais avec un style légèrement différent (labels plus lisibles) */
+.p-form { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* Rangée 2 colonnes pour les champs côte à côte */
+.p-form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+
+/* Groupe label + champ */
+.p-form-groupe { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+/* Label du champ parent : plus lisible que l'admin (pas en majuscules) */
+.p-label    { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Astérisque rouge pour les champs obligatoires */
+.p-label .requis { color: var(--error); }
+
+/* Champ de saisie parent : légèrement plus grand que l'admin (font-size: 1rem) */
+.p-input {
+  padding: var(--space-sm) var(--space-md);
+  border: 2px solid #E0E0E0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-dark);
+  transition: var(--transition);
+  outline: none;
+}
+
+/* Focus : bordure orange + halo pour l'accessibilité */
+.p-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+
+/* Variante erreur : bordure rouge */
+.p-input--erreur { border-color: var(--error); }
+
+/* Message d'erreur sous un champ */
+.p-erreur { color: var(--error); font-size: 0.8rem; }
+
+/* Textarea redimensionnable verticalement */
+.p-textarea { resize: vertical; min-height: 100px; }
+
+/* ── 9. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : toutes les grilles passent en 1 colonne */
+@media (max-width: 768px) {
+  .p-grille-2, .p-grille-3, .p-form-row { grid-template-columns: 1fr; }
+  .parent-page-header { flex-direction: column; align-items: flex-start; }
+}

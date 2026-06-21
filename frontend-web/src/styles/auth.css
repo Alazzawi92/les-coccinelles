@@ -1,0 +1,308 @@
+/* ============================================================
+   FICHIER : auth.css
+   RÔLE    : Styles communs à toutes les pages d'authentification
+             (Connexion, Inscription, Mot de passe oublié, Réinit).
+             Importé dans chaque page auth via son propre CSS.
+
+   STRUCTURE :
+     1. Import des variables
+     2. Page d'authentification (fond dégradé)
+     3. Carte blanche centrée (.auth-card)
+     4. Logo et en-tête de la carte
+     5. Titre et sous-titre du formulaire
+     6. Formulaire (.auth-form)
+     7. Groupes de champs (label + input + erreur)
+     8. Champ mot de passe avec bouton afficher/masquer
+     9. Alerte erreur / succès
+    10. Bouton de soumission principal
+    11. Divider décoratif (ligne avec texte "ou")
+    12. Pied de carte (lien vers connexion/inscription)
+    13. Critères de validité du mot de passe
+    14. Responsive
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import './variables.css';
+
+/* ── 2. PAGE D'AUTHENTIFICATION ─────────────────────────── */
+
+/* Fond dégradé pastel couvrant toute la hauteur de l'écran.
+   Le dégradé va de l'orange clair → crème → violet pâle
+   pour un effet doux et accueillant. */
+.auth-page {
+  min-height: 100vh;    /* Toujours aussi haut que l'écran */
+  background: linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 40%, #f3e5f5 100%);
+  display: flex;
+  align-items: center;      /* Centrage vertical */
+  justify-content: center;  /* Centrage horizontal */
+  padding: var(--space-xl); /* Espace sur les bords sur mobile */
+}
+
+/* ── 3. CARTE BLANCHE CENTRÉE ───────────────────────────── */
+
+/* Carte blanche qui contient le formulaire.
+   max-width:480px pour ne pas être trop large sur grand écran.
+   box-shadow:lg pour l'effet "flottant" sur le fond coloré. */
+.auth-card {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-lg);
+  padding:       var(--space-3xl);   /* Grand padding interne */
+  width:         100%;
+  max-width:     480px;
+}
+
+/* ── 4. LOGO ET EN-TÊTE ─────────────────────────────────── */
+
+/* Zone logo en haut de la carte : icône + nom + sous-titre */
+.auth-logo {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+/* Grand emoji coccinelle 🐞 */
+.auth-logo__icone { font-size: 3.5rem; display: block; }
+
+/* Nom de la crèche : orange, grande police de titre */
+.auth-logo__nom {
+  font-family:   var(--font-heading);
+  font-size:     1.8rem;
+  font-weight:   700;
+  color:         var(--primary);
+  display:       block;
+  margin-top:    var(--space-sm);
+}
+
+/* Slogan sous le nom : petit, gris */
+.auth-logo__sous {
+  font-size:  0.9rem;
+  color:      var(--text-gray);
+  margin-top: var(--space-xs);
+}
+
+/* ── 5. TITRE ET SOUS-TITRE DU FORMULAIRE ───────────────── */
+
+/* Titre de la section formulaire : "Se connecter", "Créer un compte"... */
+.auth-titre {
+  font-family:   var(--font-heading);
+  font-size:     1.5rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-xs);
+}
+
+/* Sous-titre explicatif sous le titre */
+.auth-sous-titre {
+  font-size:     0.9rem;
+  color:         var(--text-gray);
+  margin-bottom: var(--space-xl);
+  line-height:   1.5;
+}
+
+/* ── 6. FORMULAIRE ──────────────────────────────────────── */
+
+/* Formulaire en flex vertical avec espace entre chaque groupe */
+.auth-form {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-lg);
+}
+
+/* Groupe label + input + message d'erreur */
+.form-groupe { display: flex; flex-direction: column; gap: var(--space-xs); }
+
+/* ── 7. GROUPES DE CHAMPS ───────────────────────────────── */
+
+/* Label du champ : gras pour être lisible */
+.form-label  { font-weight: 700; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Astérisque rouge indiquant un champ obligatoire */
+.requis      { color: var(--error); }
+
+/* Champ de saisie standard auth */
+.form-input {
+  padding:       var(--space-sm) var(--space-md);
+  border:        2px solid #E0E0E0;
+  border-radius: var(--radius-md);
+  font-family:   var(--font-body);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  background:    var(--white);
+  transition:    var(--transition);
+  outline:       none;
+}
+
+/* Focus : bordure orange + halo pour l'accessibilité */
+.form-input:focus         { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+
+/* Erreur de validation : bordure rouge */
+.form-input--erreur       { border-color: var(--error); }
+
+/* Focus sur un champ en erreur : halo rouge */
+.form-input--erreur:focus { box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
+
+/* Message d'erreur sous le champ : rouge, petit */
+.form-erreur { color: var(--error); font-size: 0.8rem; }
+
+/* Ligne label/lien : label à gauche + "Mot de passe oublié ?" à droite */
+.form-label-row {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+}
+
+/* Lien "Mot de passe oublié ?" : orange discret */
+.form-lien-oublie { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
+.form-lien-oublie:hover { color: var(--primary-dark); }
+
+/* ── 8. CHAMP MOT DE PASSE AVEC TOGGLE ──────────────────── */
+
+/* Conteneur relatif pour positionner le bouton oeil en absolu */
+.password-wrapper {
+  position: relative;
+}
+
+/* Le champ mot de passe laisse de la place à droite pour le bouton */
+.password-wrapper .form-input {
+  padding-right: 4rem;   /* Espace pour le bouton "Voir/Masquer" */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Bouton 👁 / 🔒 positionné absolument dans le champ.
+   translateY(-50%) centre verticalement par rapport au champ. */
+.password-toggle {
+  position:   absolute;
+  right:      var(--space-sm);
+  top:        50%;
+  transform:  translateY(-50%);  /* Centre vertical précis */
+  background: none;
+  border:     none;
+  cursor:     pointer;
+  padding:    var(--space-xs) var(--space-sm);
+  color:      var(--text-gray);
+  font-size:  0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+/* Au survol : le bouton toggle devient orange */
+.password-toggle:hover { color: var(--primary); }
+
+/* ── 9. ALERTE ERREUR / SUCCÈS ──────────────────────────── */
+
+/* Bloc d'alerte rouge : affiché si le login échoue */
+.auth-alerte {
+  display:       flex;
+  gap:           var(--space-sm);
+  padding:       var(--space-md);
+  background:    #ffebee;             /* Fond rouge très clair */
+  border:        1px solid var(--error);
+  border-radius: var(--radius-md);
+  color:         var(--error);
+  font-size:     0.9rem;
+  align-items:   flex-start;
+}
+
+/* Variante succès : fond vert (ex : "Email envoyé, vérifiez votre boîte") */
+.auth-alerte--succes {
+  background: #e8f5e9;
+  border-color: var(--success);
+  color:       var(--success);
+}
+
+/* ── 10. BOUTON DE SOUMISSION ───────────────────────────── */
+
+/* Grand bouton orange pleine largeur en bas du formulaire.
+   box-shadow:colored donne l'effet "lumineux" caractéristique. */
+.btn-auth {
+  width:         100%;
+  padding:       var(--space-md);
+  background:    var(--primary);
+  color:         var(--white);
+  border:        none;
+  border-radius: var(--radius-pill);
+  font-family:   var(--font-body);
+  font-size:     1rem;
+  font-weight:   700;
+  cursor:        pointer;
+  transition:    var(--transition);
+  box-shadow:    var(--shadow-colored);
+}
+
+/* Au survol (si non désactivé) : orange foncé + légère élévation */
+.btn-auth:hover:not(:disabled) {
+  background:  var(--primary-dark);
+  transform:   translateY(-2px);
+  box-shadow:  0 6px 20px rgba(255,152,0,0.4);
+}
+
+/* Désactivé (pendant l'envoi) : semi-transparent et curseur interdit */
+.btn-auth:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ── 11. DIVIDER DÉCORATIF ──────────────────────────────── */
+
+/* Ligne horizontale avec texte au centre : "— ou —"
+   Les ::before et ::after sont les deux traits horizontaux. */
+.auth-divider {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+  color:       var(--text-light);
+  font-size:   0.85rem;
+}
+
+/* Les deux traits horizontaux de part et d'autre du texte */
+.auth-divider::before,
+.auth-divider::after {
+  content:     '';
+  flex:        1;           /* Chaque trait prend la moitié de l'espace restant */
+  height:      1px;
+  background:  var(--bg-gray);
+}
+
+/* ── 12. PIED DE CARTE ──────────────────────────────────── */
+
+/* Ligne "Pas encore de compte ? S'inscrire" en bas de la carte */
+.auth-pied {
+  text-align:  center;
+  margin-top:  var(--space-lg);
+  font-size:   0.9rem;
+  color:       var(--text-gray);
+}
+
+/* Lien dans le pied : orange et gras */
+.auth-pied a {
+  color:       var(--primary);
+  font-weight: 700;
+}
+
+.auth-pied a:hover { color: var(--primary-dark); }
+
+/* ── 13. CRITÈRES MOT DE PASSE ──────────────────────────── */
+
+/* Liste des critères (8 caractères, une majuscule, un chiffre...)
+   Affiché lors de la saisie du mot de passe à l'inscription. */
+.password-criteres {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  padding:        var(--space-md);
+  background:     var(--bg-gray);
+  border-radius:  var(--radius-md);
+  font-size:      0.8rem;
+}
+
+/* Un critère : icône ✓/✗ + texte. Gris par défaut = non validé. */
+.critere { display: flex; align-items: center; gap: var(--space-sm); color: var(--text-light); }
+
+/* Critère validé : devient vert */
+.critere--ok { color: var(--success); }
+
+/* ── 14. RESPONSIVE ─────────────────────────────────────── */
+
+/* Mobile très petit (≤480px) : réduit le padding de la carte */
+@media (max-width: 480px) {
+  .auth-card { padding: var(--space-xl); }
+}

@@ -1,0 +1,93 @@
+/* ============================================================
+   FICHIER : Tarifs.css
+   ROUTE   : /tarifs
+   RÔLE    : Page expliquant le système de tarification de la
+             crèche (calcul CAF basé sur le quotient familial)
+             avec un tableau des tranches tarifaires et des
+             exemples concrets.
+
+   STRUCTURE :
+     1. Imports
+     2. Grille d'explications (3 cartes)
+     3. Tableau des tarifs
+     4. Note de bas de page
+     5. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. GRILLE D'EXPLICATIONS ───────────────────────────── */
+
+/* 3 cartes expliquant comment fonctionnent les tarifs.
+   Ex : "Comment ça marche", "Quotient familial", "Réductions". */
+.tarifs-explication {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
+
+/* Carte d'explication : fond orange clair + barre orange en haut */
+.explication-carte {
+  background:    var(--primary-light);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  text-align:    center;
+  border-top:    3px solid var(--primary);
+}
+
+/* Icône de la carte d'explication */
+.explication-icone { font-size: 3rem; display: block; margin-bottom: var(--space-md); }
+
+/* Titre de la carte */
+.explication-carte h3 { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-sm); }
+
+/* Texte explicatif */
+.explication-carte p  { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
+
+/* ── 3. TABLEAU DES TARIFS ──────────────────────────────── */
+
+/* Wrapper avec scroll horizontal pour les petits écrans */
+.tarifs-tableau-wrapper { overflow-x: auto; margin-top: var(--space-2xl); }
+
+/* Tableau des tranches tarifaires */
+.tarifs-tableau {
+  width:            100%;
+  border-collapse:  collapse;
+  background:       var(--white);
+  border-radius:    var(--radius-lg);
+  overflow:         hidden;
+  box-shadow:       var(--shadow-md);
+}
+
+/* En-tête du tableau : fond orange plein, texte blanc */
+.tarifs-tableau thead { background: var(--primary); color: var(--white); }
+
+/* Cellules d'en-tête : police Fredoka pour les titres de colonnes */
+.tarifs-tableau th { padding: var(--space-md) var(--space-lg); text-align: left; font-family: var(--font-heading); font-weight: 600; }
+
+/* Cellules de données */
+.tarifs-tableau td { padding: var(--space-md) var(--space-lg); border-bottom: 1px solid var(--bg-gray); color: var(--text-dark); }
+
+/* Dernière ligne : pas de bordure en bas */
+.tarifs-tableau tbody tr:last-child td { border-bottom: none; }
+
+/* Survol d'une ligne : fond orange clair */
+.tarifs-tableau tbody tr:hover td { background: var(--primary-light); }
+
+/* Montant du tarif : orange, gras, police Fredoka */
+.tarif-montant { font-weight: 700; color: var(--primary); font-family: var(--font-heading); font-size: 1rem; }
+
+/* ── Note de bas de page ────────────────────────────────── */
+
+/* Note légale sous le tableau (ex: "Tarifs sous réserve de modification") */
+.tarifs-note { margin-top: var(--space-lg); font-size: 0.85rem; color: var(--text-gray); font-style: italic; text-align: center; }
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : la grille d'explications passe en 1 colonne */
+@media (max-width: 768px) {
+  .tarifs-explication { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,271 @@
+/* ============================================================
+   FICHIER : Messagerie.css  (espace admin)
+   PAGE    : /admin/messagerie
+   RÔLE    : Styles de l'interface de messagerie admin.
+             Layout 2 colonnes (liste convs + détail),
+             bulles de messages, modal nouveau message avec
+             sélection multi-destinataires et dropdown.
+
+   STRUCTURE :
+     1. Imports
+     2. Badge "non lus"
+     3. Layout 2 colonnes
+     4. Liste des conversations (colonne gauche)
+     5. Item de conversation
+     6. Détail de conversation (colonne droite)
+     7. Fil de messages (bulles)
+     8. Zone de réponse
+     9. État vide
+    10. Modal nouveau message
+    11. Zone de destinataires multi-select + chips
+    12. Dropdown résultats de recherche
+   ============================================================ */
+
+/* Charge les variables CSS du projet */
+@import '../../../styles/variables.css';
+
+/* Charge les styles communs admin */
+@import '../../../styles/admin.css';
+
+/* ── 2. BADGE NON LUS ───────────────────────────────────── */
+
+/* Petit compteur rouge affiché dans le menu nav à côté de "Messagerie".
+   padding:pill + border-radius donne la forme ovale.
+   vertical-align:middle aligne le badge avec le texte du lien. */
+.nonlus-badge { font-size: 0.7rem; background: var(--error); color: var(--white); padding: 3px var(--space-sm); border-radius: var(--radius-pill); vertical-align: middle; margin-left: var(--space-sm); }
+
+/* ── 3. LAYOUT 2 COLONNES ───────────────────────────────── */
+
+/* 300px pour la liste des conversations, le reste pour le détail.
+   overflow:hidden clip les coins arrondis sur les enfants.
+   height:620px fixe une hauteur constante pour éviter le scroll global. */
+.messagerie-admin-layout { display: grid; grid-template-columns: 300px 1fr; background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 620px; }
+
+/* ── 4. LISTE DES CONVERSATIONS ─────────────────────────── */
+
+/* Colonne gauche scrollable : séparée de la colonne droite par une bordure */
+.conv-liste-admin { border-right: 1px solid var(--bg-gray); overflow-y: auto; }
+
+/* ── 5. ITEM DE CONVERSATION ────────────────────────────── */
+
+/* Chaque bouton de conversation : avatar + infos sur une ligne.
+   background:none + border:none réinitialise les styles du <button>.
+   position:relative pour le point rouge "non lu" en position absolue. */
+.conv-admin-item {
+  display: flex; align-items: flex-start; gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg); border-bottom: 1px solid var(--bg-gray);
+  cursor: pointer; background: none; border-right: none; text-align: left; width: 100%; position: relative; transition: var(--transition);
+}
+
+/* Survol : fond gris clair pour feedback */
+.conv-admin-item:hover    { background: var(--bg-gray); }
+
+/* Conversation sélectionnée : fond orange clair + barre orange à gauche */
+.conv-admin-item--actif   { background: var(--primary-light); border-right: 3px solid var(--primary); }
+
+/* Message non lu : sujet en gras pour attirer l'attention */
+.conv-admin-item--nonlu .conv-admin-sujet { font-weight: 700; color: var(--text-dark); }
+
+/* Cercle initial de l'expéditeur : fond sombre (côté admin) */
+.conv-admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--text-dark); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+
+/* Textes de la conversation */
+.conv-admin-nom    { font-weight: 700; font-size: 0.85rem; color: var(--text-dark); }
+.conv-admin-sujet  { font-size: 0.78rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv-admin-date   { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
+
+/* Point rouge en haut à droite de la conversation non lue */
+.conv-point        { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--error); border-radius: 50%; }
+
+/* ── 6. DÉTAIL DE CONVERSATION ──────────────────────────── */
+
+/* Colonne droite : flex vertical pour empiler entête + fil + réponse */
+.conv-detail-admin   { display: flex; flex-direction: column; overflow: hidden; }
+
+/* En-tête du détail : sujet de la conversation + nom de l'interlocuteur */
+.conv-detail-entete  { padding: var(--space-lg); border-bottom: 1px solid var(--bg-gray); }
+.conv-detail-entete h2 { font-family: var(--font-heading); font-size: 1.1rem; }
+
+/* ── 7. FIL DE MESSAGES ─────────────────────────────────── */
+
+/* Zone scrollable des bulles : flex vertical avec scroll interne */
+.conv-messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Bulle de message : largeur max 75% pour ne pas occuper toute la largeur */
+.msg-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); }
+
+/* Bulle de l'admin (moi) : fond sombre, texte blanc, alignée à droite */
+.msg-bulle--moi   { background: var(--text-dark); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+
+/* Bulle de l'autre (parent) : fond gris clair, texte sombre, alignée à gauche */
+.msg-bulle--autre { background: var(--bg-gray); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; }
+
+/* Contenu texte de la bulle */
+.msg-bulle p      { font-size: 0.9rem; line-height: 1.5; }
+
+/* Horodatage sous le message : petit et discret */
+.msg-bulle small  { font-size: 0.7rem; opacity: 0.6; display: block; margin-top: 4px; }
+
+/* ── 8. ZONE DE RÉPONSE ─────────────────────────────────── */
+
+/* Barre de saisie en bas : textarea + bouton Envoyer côte à côte */
+.conv-reponse { padding: var(--space-md); border-top: 1px solid var(--bg-gray); display: flex; gap: var(--space-md); align-items: flex-end; }
+
+/* Le textarea prend tout l'espace disponible */
+.conv-reponse .a-input { flex: 1; }
+
+/* ── 9. ÉTAT VIDE ───────────────────────────────────────── */
+
+/* Affiché quand aucune conversation n'est sélectionnée */
+.conv-vide { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-md); padding: var(--space-2xl); color: var(--text-gray); font-size: 0.9rem; }
+.conv-vide span { font-size: 2.5rem; }
+
+/* Variante centrée qui prend toute la hauteur disponible */
+.conv-vide--centre { flex: 1; }
+
+/* ── 10. MODAL NOUVEAU MESSAGE ──────────────────────────── */
+
+/* Fond semi-transparent qui couvre toute la page (overlay).
+   z-index:200 pour passer au-dessus de tout le reste. */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: var(--space-xl); }
+
+/* Boîte modale blanche centrée : flex vertical + hauteur max 90% */
+.modal-boite { background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); width: 100%; max-width: 540px; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden; }
+
+/* Variante grande pour les modales avec beaucoup de contenu */
+.modal-boite--lg { max-width: 600px; }
+
+/* En-tête de la modale : titre à gauche, bouton ✕ à droite */
+.modal-entete { display: flex; align-items: center; justify-content: space-between; padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); }
+.modal-titre  { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin: 0; }
+
+/* Bouton de fermeture ✕ : pas de fond, grand pour être cliquable */
+.modal-fermer { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray); line-height: 1; padding: 0; }
+.modal-fermer:hover { color: var(--text-dark); }
+
+/* Corps scrollable de la modale : les champs du formulaire */
+.modal-corps  { padding: var(--space-xl); overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-lg); }
+
+/* Boutons d'action en bas à droite : Annuler + Envoyer */
+.modal-actions { display: flex; gap: var(--space-md); justify-content: flex-end; padding-top: var(--space-md); border-top: 1px solid var(--bg-gray); }
+
+/* Groupe label + champ dans le formulaire de la modale */
+.form-groupe { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Label du formulaire admin : petit, gras */
+.form-label-admin { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); }
+
+/* ── 11. ZONE DESTINATAIRES MULTI-SELECT ────────────────── */
+
+/* Zone où les destinataires sélectionnés apparaissent sous forme de chips.
+   min-height:44px pour qu'elle soit toujours cliquable même vide.
+   cursor:text indique qu'on peut taper pour chercher un destinataire. */
+.dest-zone {
+  display:      flex;
+  flex-wrap:    wrap;          /* les chips passent à la ligne si besoin */
+  gap:          6px;
+  align-items:  center;
+  min-height:   44px;
+  padding:      6px var(--space-md);
+  border:       2px solid #e0e0e0;
+  border-radius:var(--radius-md);
+  background:   var(--white);
+  cursor:       text;
+  transition:   var(--transition);
+}
+
+/* Focus : bordure orange + halo pour indiquer que la zone est active */
+.dest-zone--focus,
+.dest-zone:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+
+/* Chip d'un destinataire sélectionné : mini avatar + nom + bouton ✕ */
+.dest-chip {
+  display:      flex;
+  align-items:  center;
+  gap:          5px;
+  background:   var(--primary-light);  /* fond orange clair */
+  border:       1px solid var(--primary);
+  border-radius:var(--radius-pill);
+  padding:      3px 8px 3px 4px;
+  font-size:    0.8rem;
+  font-weight:  600;
+  color:        var(--primary-dark);
+  white-space:  nowrap;                /* le nom ne passe pas à la ligne */
+}
+
+/* Mini cercle avec l'initiale du destinataire */
+.dest-chip__avatar {
+  width: 20px; height: 20px; border-radius: 50%; background: var(--primary);
+  color: var(--white); font-size: 0.6rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Bouton ✕ pour retirer un destinataire de la sélection */
+.dest-chip__suppr {
+  background: none; border: none; cursor: pointer; font-size: 0.9rem;
+  color: var(--primary-dark); padding: 0; line-height: 1; opacity: 0.6;
+}
+.dest-chip__suppr:hover { opacity: 1; color: var(--error); }
+
+/* Compteur "(3 destinataires)" quand certains chips sont masqués */
+.dest-compteur {
+  font-size: 0.75rem; font-weight: 600; color: var(--primary);
+  background: var(--primary-light); padding: 2px 8px;
+  border-radius: var(--radius-pill); margin-left: var(--space-sm);
+}
+
+/* Champ de saisie invisible pour chercher des destinataires.
+   flex:1 pour qu'il prenne tout l'espace restant après les chips. */
+.dest-input {
+  border: none; outline: none; background: transparent;
+  font-family: var(--font-body); font-size: 0.9rem;
+  color: var(--text-dark); min-width: 140px; flex: 1;
+}
+
+/* ── 12. DROPDOWN RÉSULTATS DE RECHERCHE ────────────────── */
+
+/* Liste déroulante de parents correspondant à la recherche.
+   overflow-y:auto pour scroller si beaucoup de résultats. */
+.parents-liste-dropdown {
+  border: 1px solid #e0e0e0; border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow-md); background: var(--white); margin-top: 2px;
+  max-height: 260px; overflow-y: auto;
+}
+
+/* Message "Aucun résultat" dans le dropdown */
+.dropdown-vide { padding: var(--space-md) var(--space-lg); color: var(--text-gray); font-size: 0.85rem; }
+
+/* Chaque parent dans le dropdown : avatar + infos + bouton "Ajouter" */
+.parent-option {
+  display: flex; align-items: center; gap: var(--space-md);
+  width: 100%; padding: var(--space-sm) var(--space-md);
+  background: none; border: none; border-bottom: 1px solid var(--bg-gray);
+  cursor: pointer; text-align: left; transition: var(--transition);
+}
+.parent-option:last-child { border-bottom: none; }
+.parent-option:hover { background: var(--primary-light); }
+
+/* Option spéciale "Envoyer à tous" : fond gris légèrement différent */
+.parent-option--tous { background: #f8f8f8; }
+.parent-option--tous:hover { background: var(--primary-light); }
+
+/* Cercle avec initiale du parent */
+.parent-option__avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--text-dark); color: var(--white);
+  font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* Infos du parent : nom en gras, email en dessous */
+.parent-option__infos { display: flex; flex-direction: column; flex: 1; }
+.parent-option__infos strong { font-size: 0.85rem; color: var(--text-dark); }
+.parent-option__infos small  { font-size: 0.75rem; color: var(--text-gray); }
+
+/* "Ajouter →" visible uniquement au survol (opacity passe de 0 à 1) */
+.parent-option__ajouter {
+  font-size: 0.75rem; color: var(--primary); font-weight: 600;
+  opacity: 0; transition: var(--transition);
+}
+.parent-option:hover .parent-option__ajouter { opacity: 1; }
+
+/* Texte d'aide gris sous certains champs */
+.a-vide-texte { font-size: 0.8rem; color: var(--text-gray); padding: var(--space-sm) 0; }

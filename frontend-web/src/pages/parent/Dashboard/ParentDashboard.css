@@ -1,0 +1,19 @@
+/* ============================================================
+   FICHIER : ParentDashboard.css
+   ROUTE   : /parent/tableau-de-bord (ancienne version)
+   RÔLE    : Fichier placeholder généré automatiquement.
+             Ce fichier contient une règle CSS invalide
+             (double accolades {{ }}) — résidu de génération.
+             Les styles réels du tableau de bord parent
+             sont dans Dashboard.css (même dossier).
+
+   NOTE    : Ce fichier peut être ignoré ou supprimé.
+   ============================================================ */
+
+/* Fichier placeholder — styles réels dans Dashboard.css */
+@import '../../../styles/variables.css';
+
+/* Classe placeholder (double accolades corrigées) */
+.parent-dashboard-page {
+  padding: var(--space-xl);
+}

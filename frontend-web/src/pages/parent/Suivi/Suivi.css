@@ -1,0 +1,173 @@
+/* ============================================================
+   FICHIER : Suivi.css
+   ROUTE   : /parent/suivi
+   RÔLE    : Page de suivi quotidien de l'enfant.
+             Calendrier des jours à gauche + détail de la journée
+             sélectionnée à droite : repas, sieste, humeur,
+             message de l'équipe.
+
+   STRUCTURE :
+     1. Imports
+     2. Layout 2 colonnes (calendrier + détail)
+     3. Calendrier des jours
+     4. Détail d'une journée
+     5. Repas (3 colonnes)
+     6. Note de la journée
+     7. Sieste
+     8. Humeur
+     9. Activités
+    10. Température
+    11. Message de l'équipe
+    12. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* Lien "← Retour à mes enfants" */
+.retour-lien-parent { color: var(--primary); font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 4px; }
+.retour-lien-parent:hover { color: var(--primary-dark); }
+
+/* ── 2. LAYOUT 2 COLONNES ───────────────────────────────── */
+
+/* Calendrier (220px fixe) à gauche + détail à droite.
+   align-items:flex-start : les deux colonnes ne s'étirent pas. */
+.suivi-layout { display: grid; grid-template-columns: 220px 1fr; gap: var(--space-xl); align-items: flex-start; }
+
+/* ── 3. CALENDRIER ──────────────────────────────────────── */
+
+/* Titre du calendrier : ex "Jours de présence" */
+.suivi-calendrier__titre { font-family: var(--font-heading); font-size: 1rem; color: var(--text-gray); margin-bottom: var(--space-md); }
+
+/* Bouton d'un jour dans le calendrier : blanc, cliable */
+.suivi-jour-btn {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  width:           100%;
+  padding:         var(--space-md);
+  background:      var(--white);
+  border:          2px solid var(--bg-gray);
+  border-radius:   var(--radius-md);
+  cursor:          pointer;
+  margin-bottom:   var(--space-sm);
+  transition:      var(--transition);
+  text-align:      left;
+}
+
+/* Survol : fond orange clair + bordure orange */
+.suivi-jour-btn:hover       { border-color: var(--primary); background: var(--primary-light); }
+
+/* Jour sélectionné : gras + orange */
+.suivi-jour-btn--actif      { border-color: var(--primary); background: var(--primary-light); font-weight: 700; }
+
+/* Date dans le bouton : ex "Lundi 15 jan." */
+.suivi-jour-date  { font-size: 0.85rem; color: var(--text-dark); }
+
+/* Emoji d'humeur affiché dans le bouton pour un aperçu rapide */
+.suivi-jour-humeur { font-size: 1.3rem; }
+
+/* ── 4. DÉTAIL D'UNE JOURNÉE ────────────────────────────── */
+
+/* Date de la journée sélectionnée : grand titre */
+.suivi-detail__date { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); margin-bottom: var(--space-lg); text-transform: capitalize; }
+
+/* Section du détail : repas, sieste, humeur... */
+.suivi-section { margin-bottom: var(--space-lg); }
+
+/* Titre de la section */
+.suivi-section__titre { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-md); }
+
+/* ── 5. REPAS ────────────────────────────────────────────── */
+
+/* 3 blocs côte à côte : Matin | Midi | Goûter */
+.repas-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-md); }
+
+/* Bloc d'un repas : centré, fond coloré selon le résultat */
+.repas-bloc {
+  display:     flex;
+  flex-direction: column;
+  align-items: center;
+  padding:     var(--space-md);
+  border-radius: var(--radius-lg);
+  text-align:  center;
+}
+
+/* Couleurs selon la quantité mangée */
+.repas-bloc--vert   { background: #e8f5e9; }   /* Tout mangé */
+.repas-bloc--orange { background: var(--primary-light); }   /* Partiellement */
+.repas-bloc--rouge  { background: #ffebee; }   /* Peu mangé */
+.repas-bloc--gris   { background: var(--bg-gray); }   /* Absent / pas de données */
+
+/* Emoji du repas */
+.repas-emoji   { font-size: 2rem; margin-bottom: 4px; }
+
+/* Libellé du moment (Déjeuner, Goûter...) : petit, gris */
+.repas-moment  { font-size: 0.75rem; font-weight: 700; color: var(--text-gray); }
+
+/* Résultat en texte : "Tout mangé", "Peu mangé"... */
+.repas-libelle { font-size: 0.8rem; color: var(--text-dark); }
+
+/* ── 6. NOTE DE LA JOURNÉE ──────────────────────────────── */
+
+/* Note écrite par l'équipe : fond gris discret */
+.suivi-note-texte { margin-top: var(--space-md); font-size: 0.9rem; color: var(--text-gray); background: var(--bg-gray); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); }
+
+/* Texte quand il n'y a aucune info : italique, très clair */
+.suivi-info-vide  { color: var(--text-light); font-style: italic; font-size: 0.9rem; }
+
+/* ── 7. SIESTE ───────────────────────────────────────────── */
+
+/* Info sur la sieste : heure de début + durée */
+.sieste-info  { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Heure de sieste : orange, police Fredoka */
+.sieste-heure { font-family: var(--font-heading); font-size: 1.2rem; color: var(--primary); }
+
+/* ── 8. HUMEUR ───────────────────────────────────────────── */
+
+/* Bloc d'humeur : emoji + libellé dans une pilule */
+.humeur-bloc { display: inline-flex; align-items: center; gap: var(--space-sm); padding: var(--space-sm) var(--space-md); background: var(--bg-gray); border-radius: var(--radius-pill); margin-bottom: var(--space-md); }
+
+/* Grand emoji d'humeur : 😊, 😴, 😢... */
+.humeur-emoji { font-size: 1.8rem; }
+
+/* Libellé de l'humeur : "Joyeux", "Fatigué"... */
+.humeur-label { font-weight: 700; color: var(--text-dark); text-transform: capitalize; }
+
+/* ── 9. ACTIVITÉS ────────────────────────────────────────── */
+
+/* Bloc des activités de la journée */
+.activites-bloc      { margin-top: var(--space-sm); }
+.activites-titre     { font-weight: 700; font-size: 0.85rem; color: var(--text-gray); margin-bottom: 4px; }
+.activites-bloc p    { font-size: 0.95rem; color: var(--text-dark); }
+
+/* ── 10. TEMPÉRATURE ─────────────────────────────────────── */
+
+/* Alerte température : fond rouge très clair */
+.temperature-bloc { margin-top: var(--space-md); padding: var(--space-sm) var(--space-md); background: #ffebee; border-radius: var(--radius-md); font-size: 0.9rem; color: var(--error); }
+
+/* ── 11. MESSAGE DE L'ÉQUIPE ─────────────────────────────── */
+
+/* Encart orange clair avec barre orange : message personnalisé de l'éducatrice */
+.suivi-message-equipe {
+  padding:       var(--space-xl);
+  background:    linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 100%);
+  border-radius: var(--radius-xl);
+  border-left:   4px solid var(--primary);
+}
+
+/* Titre du message */
+.suivi-message-equipe h3 { font-family: var(--font-heading); font-size: 1rem; color: var(--primary); margin-bottom: var(--space-sm); }
+
+/* Contenu du message : lisible, légèrement foncé */
+.suivi-message-equipe p  { font-size: 0.95rem; color: var(--text-dark); line-height: 1.6; }
+
+/* ── 12. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) : 2 colonnes → 1 colonne (calendrier au-dessus) */
+@media (max-width: 768px) {
+  .suivi-layout { grid-template-columns: 1fr; }
+  .repas-grille { grid-template-columns: repeat(3, 1fr); }  /* Reste sur 3 colonnes */
+}

@@ -1,0 +1,112 @@
+/* ============================================================
+   FICHIER : ProjetPedagogique.css
+   ROUTE   : /projet-pedagogique
+   RÔLE    : Page présentant le projet pédagogique de la crèche :
+             axes principaux (nature, autonomie, éveil culturel),
+             activités, et journée type de l'enfant (timeline).
+
+   STRUCTURE :
+     1. Imports
+     2. Grille des axes pédagogiques
+     3. Cartes des axes
+     4. Timeline de la journée type
+     5. Responsive
+   ============================================================ */
+
+/* Charge les variables et les styles communs aux pages publiques */
+@import '../../../styles/variables.css';
+@import '../../../styles/pages-publiques.css';
+
+/* ── 2. GRILLE DES AXES ─────────────────────────────────── */
+
+/* 3 colonnes pour les 3 axes du projet pédagogique */
+.axes-grille {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
+
+/* ── 3. CARTES DES AXES ─────────────────────────────────── */
+
+/* Carte d'un axe pédagogique : barre colorée en haut.
+   La couleur identifie l'axe (vert = nature, orange = éveil, violet = culture). */
+.axe-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border-top:    4px solid;   /* Couleur définie par les variantes */
+}
+
+/* Couleurs des axes */
+.axe-carte--vert   { border-top-color: var(--secondary); }  /* Vert = lien avec la nature */
+.axe-carte--orange { border-top-color: var(--primary); }    /* Orange = éveil et créativité */
+.axe-carte--violet { border-top-color: var(--accent-3); }   /* Violet = diversité culturelle */
+
+/* Icône de l'axe */
+.axe-carte__icone { font-size: 2.5rem; display: block; margin-bottom: var(--space-md); }
+
+/* Titre de l'axe */
+.axe-carte__titre { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-md); }
+
+/* Liste des activités de l'axe : sans puce ni indentation */
+.axe-carte__liste { list-style: none; display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Chaque activité listée */
+.axe-carte__liste li { font-size: 0.9rem; color: var(--text-gray); }
+
+/* ── 4. TIMELINE DE LA JOURNÉE TYPE ────────────────────── */
+
+/* Timeline verticale de la journée : chaque item = heure + point + activité.
+   max-width:700px pour une bonne lisibilité, centré. */
+.journee-timeline {
+  display:        flex;
+  flex-direction: column;
+  gap:            0;
+  margin-top:     var(--space-2xl);
+  max-width:      700px;
+  margin-left:    auto;
+  margin-right:   auto;
+}
+
+/* Un item de la timeline : 3 colonnes (heure | point | label).
+   grid-template-columns: 160px (heure) + 50px (point) + 1fr (activité) */
+.timeline-item {
+  display:               grid;
+  grid-template-columns: 160px 50px 1fr;
+  align-items:           center;
+  gap:                   var(--space-md);
+  padding:               var(--space-md) 0;
+  border-bottom:         1px solid var(--bg-gray);  /* Séparateur entre les items */
+}
+
+/* Heure de la journée : droite alignée, gris, gras */
+.timeline-heure { font-size: 0.85rem; font-weight: 700; color: var(--text-gray); text-align: right; }
+
+/* Point de la timeline : cercle orange avec icône
+   width et height fixés pour former un cercle parfait */
+.timeline-point {
+  font-size:       1.5rem;
+  text-align:      center;
+  background:      var(--primary-light);
+  border-radius:   50%;
+  width:           42px;
+  height:          42px;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+
+/* Libellé de l'activité : foncé, lisible */
+.timeline-label { font-size: 0.95rem; color: var(--text-dark); font-weight: 600; }
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) :
+   - Axes en 1 colonne
+   - Timeline légèrement plus compacte (120px au lieu de 160px pour l'heure) */
+@media (max-width: 768px) {
+  .axes-grille  { grid-template-columns: 1fr; }
+  .timeline-item { grid-template-columns: 120px 40px 1fr; }
+}

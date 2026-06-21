@@ -1,0 +1,234 @@
+/* ============================================================
+   FICHIER : NotifCloche.css
+   COMPOSANT : NotifCloche
+   RÔLE    : Cloche de notifications 🔔 dans la topbar.
+             Affiche un badge rouge avec le nombre de notifications
+             non lues. Au clic, un panneau déroulant liste les
+             notifications avec leurs statuts.
+
+   STRUCTURE :
+     1. Import des variables
+     2. Bouton cloche (avec badge)
+     3. Panneau déroulant + animation d'apparition
+     4. En-tête du panneau (titre + "tout marquer lu")
+     5. Liste des notifications
+     6. Item de notification (lu et non lu)
+     7. Boutons (flèche de navigation, supprimer)
+   ============================================================ */
+
+/* Charge les variables CSS du projet */
+@import '../../styles/variables.css';
+
+/* ── 2. BOUTON CLOCHE ───────────────────────────────────── */
+
+/* Conteneur du bouton : position:relative pour placer le badge en absolu */
+.notif-cloche { position: relative; }
+
+/* Bouton cloche proprement dit : arrondi, transition au hover */
+.notif-cloche__btn {
+  position:        relative;
+  background:      none;
+  border:          none;
+  cursor:          pointer;
+  padding:         var(--space-sm);
+  border-radius:   var(--radius-md);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  transition:      var(--transition);
+  font-size:       1.4rem;
+  line-height:     1;
+}
+
+/* Au survol : fond gris très clair */
+.notif-cloche__btn:hover { background: rgba(0,0,0,0.06); }
+
+/* L'emoji cloche : display:block pour éviter l'espace sous l'image */
+.notif-cloche__emoji { display: block; }
+
+/* Badge rouge avec le compteur de notifications non lues.
+   position:absolute en haut à droite de la cloche.
+   min-width:16px car peut contenir "9+" (plusieurs chiffres). */
+.notif-cloche__badge {
+  position:        absolute;
+  top:             2px;
+  right:           2px;
+  background:      var(--error);         /* Rouge vif pour attirer l'attention */
+  color:           var(--white);
+  font-size:       0.6rem;
+  font-weight:     700;
+  min-width:       16px;
+  height:          16px;
+  border-radius:   8px;                  /* Pilule */
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         0 4px;
+  line-height:     1;
+  border:          2px solid var(--white); /* Contour blanc pour détacher du fond */
+}
+
+/* ── 3. PANNEAU DÉROULANT ───────────────────────────────── */
+
+/* Panneau blanc qui s'ouvre sous la cloche.
+   position:absolute depuis le bouton (son parent relatif).
+   width:340px pour lister les notifications lisiblement. */
+.notif-panneau {
+  position:      absolute;
+  top:           calc(100% + 8px);  /* 8px sous le bouton */
+  right:         0;
+  width:         340px;
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-lg);
+  border:        1px solid #eee;
+  z-index:       var(--z-modal);   /* Au-dessus de tout */
+  overflow:      hidden;
+  animation:     notifApparition 0.15s ease;
+}
+
+/* Animation d'apparition : glisse légèrement vers le bas et devient visible */
+@keyframes notifApparition {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── 4. EN-TÊTE DU PANNEAU ──────────────────────────────── */
+
+/* "Notifications" à gauche + "Tout marquer lu" à droite */
+.notif-panneau__entete {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         var(--space-md) var(--space-lg);
+  border-bottom:   1px solid var(--bg-gray);
+}
+
+/* Titre "Notifications" */
+.notif-panneau__titre {
+  font-family: var(--font-heading);
+  font-size:   1rem;
+  color:       var(--text-dark);
+  margin:      0;
+}
+
+/* Bouton "Tout marquer lu" : orange, sans fond */
+.notif-panneau__tout-lire {
+  background:  none;
+  border:      none;
+  color:       var(--primary);
+  font-size:   0.8rem;
+  font-weight: 600;
+  cursor:      pointer;
+  padding:     0;
+}
+
+.notif-panneau__tout-lire:hover { color: var(--primary-dark); }
+
+/* ── 5. LISTE DES NOTIFICATIONS ─────────────────────────── */
+
+/* Zone scrollable : max 380px de haut, puis barre de défilement */
+.notif-panneau__liste { max-height: 380px; overflow-y: auto; }
+
+/* État vide : aucune notification */
+.notif-vide {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-sm);
+  padding:        var(--space-2xl);
+  color:          var(--text-gray);
+  font-size:      0.9rem;
+  text-align:     center;
+}
+
+/* Icône de l'état vide */
+.notif-vide span { font-size: 2rem; }
+
+/* ── 6. ITEM DE NOTIFICATION ────────────────────────────── */
+
+/* Un item : icône + texte + date + boutons.
+   cursor:pointer car cliquable pour naviguer vers la notification. */
+.notif-item {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-md);
+  padding:       var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--bg-gray);
+  cursor:        pointer;
+  transition:    var(--transition);
+  position:      relative;
+}
+
+/* Pas de bordure sous le dernier item */
+.notif-item:last-child { border-bottom: none; }
+
+/* Au survol : fond gris */
+.notif-item:hover { background: var(--bg-gray); }
+
+/* Notification non lue : fond légèrement jaune + barre orange à gauche */
+.notif-item--nonlue {
+  background:  #fffbf0;
+  border-left: 3px solid var(--primary);
+}
+
+/* Fond orange clair au survol d'une notif non lue */
+.notif-item--nonlue:hover { background: #fff3e0; }
+
+/* Icône de la notification : type (message, absence, document...) */
+.notif-item__icone { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
+
+/* Corps de la notification : prend tout l'espace disponible */
+.notif-item__corps { flex: 1; min-width: 0; }
+
+/* Message de la notification */
+.notif-item__message { font-size: 0.85rem; color: var(--text-dark); line-height: 1.4; margin: 0 0 3px; }
+
+/* Date de la notification */
+.notif-item__date { font-size: 0.75rem; color: var(--text-gray); margin: 0; }
+
+/* Notifications cliquables avec lien */
+.notif-item--cliquable { cursor: pointer; }
+.notif-item--cliquable:hover { background: #fff3e0; }
+
+/* Titre de la notification (pour certains types) */
+.notif-item__titre { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin: 0 0 2px; }
+
+/* ── 7. BOUTONS ─────────────────────────────────────────── */
+
+/* Zone droite : flèche de navigation + bouton supprimer */
+.notif-item__droite { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+/* Flèche → invisible par défaut, visible au survol.
+   Indique que l'item est navigable. */
+.notif-item__fleche {
+  color:      var(--primary);
+  font-size:  1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  opacity:    0;
+  transition: var(--transition);
+}
+
+/* Flèche visible au survol */
+.notif-item:hover .notif-item__fleche { opacity: 1; }
+
+/* Bouton ✕ de suppression d'une notif : invisible par défaut */
+.notif-item__suppr {
+  background:  none;
+  border:      none;
+  color:       var(--text-light);
+  font-size:   1.1rem;
+  cursor:      pointer;
+  padding:     0 2px;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity:     0;
+  transition:  var(--transition);
+}
+
+/* Bouton visible au survol de l'item */
+.notif-item:hover .notif-item__suppr { opacity: 1; }
+
+/* Au survol du bouton lui-même : rouge */
+.notif-item__suppr:hover { color: var(--error); }

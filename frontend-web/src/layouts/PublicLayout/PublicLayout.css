@@ -1,0 +1,230 @@
+/* ============================================================
+   FICHIER : PublicLayout.css
+   ROUTE   : Toutes les pages publiques (/, /presentation,
+             /equipe, /horaires, /tarifs, /contact, etc.)
+   RÔLE    : Structure de mise en page des pages publiques :
+             navbar collante en haut, contenu flexible au milieu,
+             footer sombre en bas. Gère aussi le menu mobile.
+
+   STRUCTURE :
+     1. Import des variables
+     2. Conteneur global (.public-layout)
+     3. Barre de navigation (.public-navbar)
+        a. Logo
+        b. Liens de navigation
+        c. Actions (bouton connexion)
+        d. Bouton hamburger (mobile)
+        e. Menu mobile déroulant
+     4. Contenu principal (.public-main)
+     5. Footer
+        a. Grille 3 colonnes
+        b. Barre de bas de footer
+     6. Responsive
+   ============================================================ */
+
+/* Charge toutes les variables CSS du projet */
+@import '../../styles/variables.css';
+
+/* ── 2. CONTENEUR GLOBAL ────────────────────────────────── */
+
+/* Structure flex verticale pour que le footer soit toujours
+   en bas même si le contenu est court (min-height:100vh). */
+.public-layout {
+  min-height:     100vh;
+  background:     var(--bg-light);    /* Fond blanc légèrement chaud */
+  font-family:    var(--font-body);
+  display:        flex;
+  flex-direction: column;
+}
+
+/* ── 3. BARRE DE NAVIGATION ─────────────────────────────── */
+
+/* Navbar collante : reste en haut de l'écran même en défilant.
+   z-index:var(--z-navbar) = 100, passe au-dessus du contenu. */
+.public-navbar {
+  position:        sticky;
+  top:             0;
+  z-index:         var(--z-navbar);
+  background:      var(--white);
+  box-shadow:      var(--shadow-sm);  /* Légère ombre pour la distinguer du contenu */
+  padding:         var(--space-md) var(--space-xl);
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-xl);
+}
+
+/* ── 3a. Logo ───────────────────────────────────────────── */
+
+/* Le logo est un lien <a> pour revenir à l'accueil.
+   flex pour aligner l'icône et le texte côte à côte. */
+.public-navbar__logo {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-sm);
+  text-decoration: none;
+}
+
+/* Icône coccinelle 🐞 */
+.public-navbar__logo-icone { font-size: 1.8rem; }
+
+/* Nom de la crèche : orange, police de titre */
+.public-navbar__logo-text {
+  font-family: var(--font-heading);
+  font-size:   1.4rem;
+  font-weight: 700;
+  color:       var(--primary);
+}
+
+/* ── 3b. Liens de navigation ────────────────────────────── */
+
+/* Les liens sont centrés entre le logo et les boutons d'action.
+   flex:1 leur permet de prendre tout l'espace central disponible. */
+.public-navbar__links {
+  display:         flex;
+  align-items:     center;
+  gap:             var(--space-lg);
+  list-style:      none;
+  flex:            1;
+  justify-content: center;
+}
+
+/* Chaque lien de navigation : souligné à l'état actif/hover */
+.public-navbar__link {
+  font-weight:     600;
+  color:           var(--text-dark);
+  text-decoration: none;
+  transition:      var(--transition);
+  padding-bottom:  2px;
+  border-bottom:   2px solid transparent; /* Trait invisible par défaut */
+}
+
+/* Au survol et sur la page active : orange + trait orange */
+.public-navbar__link:hover,
+.public-navbar__link.active {
+  color:         var(--primary);
+  border-bottom: 2px solid var(--primary);
+}
+
+/* ── 3c. Actions ────────────────────────────────────────── */
+
+/* Zone contenant le bouton "Se connecter" à droite de la navbar */
+.public-navbar__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+}
+
+/* ── 3d. Bouton hamburger (mobile) ──────────────────────── */
+
+/* Bouton ☰ masqué sur desktop, affiché sur mobile (via responsive).
+   background:none pour enlever le style par défaut du bouton. */
+.public-navbar__hamburger {
+  display:    none;
+  background: none;
+  border:     none;
+  font-size:  1.5rem;
+  color:      var(--text-dark);
+  cursor:     pointer;
+}
+
+/* ── 3e. Menu mobile déroulant ──────────────────────────── */
+
+/* Menu vertical qui apparaît sous la navbar sur mobile.
+   Affiche les liens en colonne avec séparateurs. */
+.public-navbar__mobile {
+  display:        flex;
+  flex-direction: column;
+  background:     var(--white);
+  box-shadow:     var(--shadow-md);
+  padding:        var(--space-md);
+  border-top:     1px solid var(--bg-gray);
+}
+
+/* Chaque lien du menu mobile : séparé par une ligne grise */
+.public-navbar__mobile a {
+  padding:       var(--space-md);
+  font-weight:   600;
+  color:         var(--text-dark);
+  border-bottom: 1px solid var(--bg-gray);
+}
+
+/* Au survol : orange */
+.public-navbar__mobile a:hover { color: var(--primary); }
+
+/* ── 4. CONTENU PRINCIPAL ───────────────────────────────── */
+
+/* flex:1 fait que le contenu s'étire pour pousser le footer vers le bas */
+.public-main { flex: 1; }
+
+/* ── 5. FOOTER ──────────────────────────────────────────── */
+
+/* Footer sombre : fond gris très foncé avec texte blanc semi-transparent.
+   margin-top:auto (avec .public-layout en flex) colle le footer en bas. */
+.public-footer {
+  background: var(--text-dark);
+  color:      rgba(255,255,255,0.85);
+  padding:    var(--space-3xl) var(--space-xl) var(--space-xl);
+  margin-top: auto;
+}
+
+/* ── 5a. Grille 3 colonnes ──────────────────────────────── */
+
+/* 3 colonnes : description (2fr) + liens rapides (1fr) + contact (1fr) */
+.public-footer__grid {
+  display:               grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap:                   var(--space-3xl);
+  margin-bottom:         var(--space-xl);
+}
+
+/* Nom de la crèche dans le footer : orange */
+.public-footer__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.4rem;
+  color:         var(--primary);
+  margin-bottom: var(--space-md);
+}
+
+/* Titre des sous-sections du footer : blanc */
+.public-footer__sous-titre {
+  font-family:   var(--font-heading);
+  font-size:     1.1rem;
+  color:         var(--white);
+  margin-bottom: var(--space-md);
+}
+
+/* Texte et liens du footer : petits, semi-transparents */
+.public-footer p     { margin-bottom: var(--space-sm); font-size: 0.9rem; }
+.public-footer ul li { margin-bottom: var(--space-sm); }
+.public-footer a     { color: rgba(255,255,255,0.7); transition: var(--transition); }
+
+/* Lien du footer au survol : orange */
+.public-footer a:hover { color: var(--primary); }
+
+/* ── 5b. Barre de bas de footer ─────────────────────────── */
+
+/* Copyright : séparé du reste par une ligne très subtile */
+.public-footer__bas {
+  border-top:  1px solid rgba(255,255,255,0.1);
+  padding-top: var(--space-lg);
+  text-align:  center;
+  font-size:   0.85rem;
+  color:       rgba(255,255,255,0.5);
+}
+
+/* ── 6. RESPONSIVE ──────────────────────────────────────── */
+
+/* Mobile (≤768px) :
+   - Liens de nav masqués → remplacés par le bouton hamburger
+   - Footer en 1 seule colonne */
+@media (max-width: 768px) {
+  .public-navbar__links     { display: none; }       /* Cache les liens */
+  .public-navbar__hamburger { display: block; }      /* Affiche le hamburger */
+  .public-navbar            { padding: var(--space-md); }
+
+  .public-footer__grid {
+    grid-template-columns: 1fr;    /* Une seule colonne sur mobile */
+    gap: var(--space-xl);
+  }
+}

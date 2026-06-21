@@ -1,0 +1,84 @@
+/* ============================================================
+   FICHIER : Consentement.css
+   ROUTE   : /parent/consentement
+   RÔLE    : Page de gestion des consentements RGPD du parent.
+             Permet d'accorder ou retirer son consentement pour
+             la photo, la vidéo et les données de santé de son
+             enfant.
+
+   STRUCTURE :
+     1. Imports
+     2. Zone d'information RGPD
+     3. Liste des consentements
+     4. Carte d'un consentement
+   ============================================================ */
+
+/* Charge les variables et les styles communs parent */
+@import '../../../styles/variables.css';
+@import '../../../styles/parent.css';
+
+/* ── 2. ZONE D'INFORMATION RGPD ─────────────────────────── */
+
+/* Texte d'explication du RGPD en haut de la page */
+.rgpd-info { margin-bottom: var(--space-xl); }
+.rgpd-info p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; margin-bottom: var(--space-sm); }
+
+/* Liste des droits RGPD */
+.rgpd-info ul { list-style: none; padding: var(--space-sm) var(--space-lg); display: flex; flex-direction: column; gap: var(--space-xs); }
+.rgpd-info li { font-size: 0.9rem; color: var(--text-dark); }
+
+/* Note bleue : info sur le délai de traitement ou contact DPO.
+   border-left:info = barre bleue à gauche. */
+.rgpd-note { background: #e3f2fd; border-radius: var(--radius-md); padding: var(--space-md); color: var(--info) !important; border-left: 4px solid var(--info); }
+
+/* ── 3. LISTE DES CONSENTEMENTS ─────────────────────────── */
+
+/* Cartes empilées verticalement avec espace */
+.consentements-liste { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* ── 4. CARTE D'UN CONSENTEMENT ─────────────────────────── */
+
+/* Carte de consentement : infos à gauche + bouton accordé/refusé à droite.
+   border-left colorée selon le statut actuel du consentement. */
+.consentement-carte {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  display:       flex;
+  align-items:   center;
+  justify-content: space-between;
+  gap:           var(--space-xl);
+  border-left:   4px solid var(--bg-gray);  /* Neutre par défaut */
+  flex-wrap:     wrap;
+}
+
+/* Consentement accordé : barre verte à gauche */
+.consentement-carte--accorde { border-left-color: var(--success); }
+
+/* Consentement refusé : barre rouge à gauche */
+.consentement-carte--refuse  { border-left-color: var(--error); }
+
+/* Zone infos : icône + titre + date */
+.consentement-carte__infos { display: flex; align-items: center; gap: var(--space-lg); }
+
+/* Grand emoji représentant le type de consentement (📷, 🎥, 🩺...) */
+.consentement-avatar { font-size: 3rem; }
+
+/* Titre du type de consentement : Fredoka, foncé */
+.consentement-carte__infos h3 { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); }
+
+/* Date de la dernière modification */
+.consentement-date { font-size: 0.8rem; color: var(--text-gray); margin-top: 4px; }
+
+/* Zone statut + bouton : empilée à droite */
+.consentement-carte__statut { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-md); }
+
+/* Statut actuel du consentement */
+.consentement-statut { font-size: 0.9rem; font-weight: 700; }
+
+/* "Oui, j'accepte" en vert */
+.consentement-statut--oui { color: var(--success); }
+
+/* "Non, je refuse" en rouge */
+.consentement-statut--non { color: var(--error); }
