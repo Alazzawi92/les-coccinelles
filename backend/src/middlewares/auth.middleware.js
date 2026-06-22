@@ -44,4 +44,22 @@ const verifierToken = async (req, res, next) => {
   }
 };
 
-module.exports = { verifierToken };
+// Version optionnelle : lit le token s'il est présent, ne bloque pas sinon
+const verifierTokenOptional = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token      = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return next(); // Pas de token → on continue sans req.user
+
+  try {
+    const decoded = verifierAccessToken(token);
+    const user    = await User.findByPk(decoded.id, {
+      attributes: { exclude: ['password', 'refresh_token', 'token_reset'] }
+    });
+    if (user && user.actif) req.user = user;
+  } catch { /* Token invalide → on ignore, req.user reste undefined */ }
+
+  next();
+};
+
+module.exports = { verifierToken, verifierTokenOptional };

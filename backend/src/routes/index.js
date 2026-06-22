@@ -17,6 +17,7 @@ const notificationRoutes = require('./notification.routes');
 const galerieRoutes      = require('./galerie.routes');
 const cmsRoutes          = require('./cms.routes');
 const contactRoutes      = require('./contact.routes');
+const equipeRoutes       = require('./equipe.routes');
 
 // Enregistrer toutes les routes avec leur préfixe
 router.use('/auth',          authRoutes);
@@ -33,5 +34,6 @@ router.use('/notifications', notificationRoutes);
 router.use('/galerie',       galerieRoutes);
 router.use('/cms',           cmsRoutes);
 router.use('/contact',       contactRoutes);
+router.use('/equipe',        equipeRoutes);
 
 module.exports = router;

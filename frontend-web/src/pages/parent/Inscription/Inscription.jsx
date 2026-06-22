@@ -15,8 +15,20 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Inscription.css';
 
-// Labels des 4 étapes affichés dans la barre de progression
-const ETAPES = ['Enfant', 'Accueil', 'Commentaire', 'Récapitulatif'];
+// Labels des 5 étapes affichés dans la barre de progression
+const ETAPES = ['Enfant', 'Accueil', 'Documents', 'Commentaire', 'Récapitulatif'];
+
+const PIECES = [
+  { icone: '🪪', doc: "Numéro d'assuré social dont dépend l'enfant + photocopie justificative" },
+  { icone: '💼', doc: "Profession et nom de l'employeur de chacun des parents" },
+  { icone: '💳', doc: "Numéro d'Allocations Familiales (CAF PRO) + photocopie justificative" },
+  { icone: '💉', doc: "Carnet de santé de l'enfant : vaccinations obligatoires et à jour" },
+  { icone: '🏥', doc: "Nom et coordonnées du médecin traitant" },
+  { icone: '📋', doc: "Certificat d'aptitude à la vie en collectivité" },
+  { icone: '🛡️', doc: "Attestation de responsabilité civile à jour" },
+  { icone: '📞', doc: "Nom, prénom, adresse et téléphone des personnes susceptibles de reprendre l'enfant" },
+  { icone: '✍️', doc: "Les différents protocoles à signer" },
+];
 
 const Inscription = () => {
   // Indice de l'étape courante (0 à 3)
@@ -25,6 +37,8 @@ const Inscription = () => {
   const [enfants, setEnfants] = useState([]);
   // Indicateur d'envoi pendant la requête POST /inscriptions
   const [envoi,   setEnvoi]   = useState(false);
+  // Fichiers sélectionnés dans l'étape Documents (null = pas encore choisi)
+  const [fichiers, setFichiers] = useState(PIECES.map(() => null));
   // Données du formulaire (partagées entre toutes les étapes)
   const [form,    setForm]    = useState({
     enfant_id: '', date_debut_souhaitee: '', jours_souhaites: '',
@@ -47,7 +61,22 @@ const Inscription = () => {
   const handleSubmit = async () => {
     setEnvoi(true);
     try {
-      await api.post('/inscriptions', form);
+      const res = await api.post('/inscriptions', form);
+      const inscriptionId = res.data.data?.id;
+
+      // Upload des documents sélectionnés si au moins un fichier
+      const aDesFichiers = fichiers.some(f => f !== null);
+      if (inscriptionId && aDesFichiers) {
+        const fd = new FormData();
+        fichiers.forEach((f, i) => {
+          if (f) {
+            fd.append('fichiers', f);
+            fd.append('labels', PIECES[i].doc);
+          }
+        });
+        await api.post(`/inscriptions/${inscriptionId}/documents`, fd);
+      }
+
       toast.success('Demande d\'inscription envoyée !');
       navigate('/parent/mes-enfants');
     } catch (err) {
@@ -152,8 +181,47 @@ const Inscription = () => {
           </div>
         )}
 
-        {/* ── ÉTAPE 3 : COMMENTAIRE ─────────────────────────────── */}
+        {/* ── ÉTAPE 3 : PIÈCES À FOURNIR ───────────────────────── */}
         {etape === 2 && (
+          <div className="etape-section">
+            <h2 className="etape-titre">Pièces à fournir</h2>
+            <p className="etape-intro">
+              Déposez dès maintenant vos documents (PDF ou image). Vous pouvez aussi les apporter en mains propres lors de votre visite — cette étape est facultative.
+            </p>
+            <div className="pieces-liste">
+              {PIECES.map((p, i) => (
+                <div key={p.doc} className={`piece-item ${fichiers[i] ? 'piece-item--coche' : ''}`}>
+                  <span className="piece-item__icone">{p.icone}</span>
+                  <div className="piece-item__info">
+                    <span className="piece-item__doc">{p.doc}</span>
+                    {fichiers[i] && (
+                      <span className="piece-item__fichier">📎 {fichiers[i].name}</span>
+                    )}
+                  </div>
+                  <label className="piece-item__btn">
+                    {fichiers[i] ? '🔄 Changer' : '📤 Choisir'}
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      style={{ display: 'none' }}
+                      onChange={e => {
+                        const f = e.target.files[0];
+                        if (f) setFichiers(prev => prev.map((v, j) => j === i ? f : v));
+                      }}
+                    />
+                  </label>
+                </div>
+              ))}
+            </div>
+            <p className="pieces-info">
+              {fichiers.filter(f => f !== null).length} / {PIECES.length} document(s) ajouté(s)
+              {fichiers.every(f => f !== null) && ' — Dossier complet ✓'}
+            </p>
+          </div>
+        )}
+
+        {/* ── ÉTAPE 4 : COMMENTAIRE ─────────────────────────────── */}
+        {etape === 3 && (
           <div className="etape-section">
             <h2 className="etape-titre">Message à l'équipe (optionnel)</h2>
             <div className="p-form-groupe">
@@ -163,8 +231,8 @@ const Inscription = () => {
           </div>
         )}
 
-        {/* ── ÉTAPE 4 : RÉCAPITULATIF ───────────────────────────── */}
-        {etape === 3 && (
+        {/* ── ÉTAPE 5 : RÉCAPITULATIF ───────────────────────────── */}
+        {etape === 4 && (
           <div className="etape-section">
             <h2 className="etape-titre">Récapitulatif de votre demande</h2>
             {/* Grille résumé des choix des étapes précédentes */}
@@ -194,7 +262,7 @@ const Inscription = () => {
             <button
               className="btn btn--primary"
               onClick={() => setEtape(e => e + 1)}
-              // Désactivé à l'étape 1 si aucun enfant n'est sélectionné
+              // Désactivé si aucun enfant sélectionné à l'étape 1
               disabled={etape === 0 && !form.enfant_id}
             >
               Continuer →

@@ -44,6 +44,9 @@ const Inscriptions = () => {
   const [commentaire,   setCommentaire]   = useState('');
   // Indicateur d'envoi pendant la requête PATCH
   const [envoi,         setEnvoi]         = useState(false);
+  // Documents justificatifs du dossier sélectionné
+  const [documents,     setDocuments]     = useState([]);
+  const [chargeDocs,    setChargeDocs]    = useState(false);
 
   // ── Chargement de tous les dossiers au montage ───────────
   useEffect(() => {
@@ -59,6 +62,13 @@ const Inscriptions = () => {
     setSelected(insc);
     setNouveauStatut(insc.statut);
     setCommentaire(insc.commentaire_admin || '');
+    // Charger les documents justificatifs du dossier
+    setDocuments([]);
+    setChargeDocs(true);
+    api.get(`/inscriptions/${insc.id}/documents`)
+      .then(r => setDocuments(r.data.data || []))
+      .catch(() => setDocuments([]))
+      .finally(() => setChargeDocs(false));
   };
 
   // ── Validation de la décision admin ──────────────────────
@@ -181,6 +191,38 @@ const Inscriptions = () => {
               {/* Message du parent : affiché uniquement s'il y en a un */}
               {selected.commentaire_parent && (
                 <div className="detail-item detail-item--full"><span className="detail-label">Message du parent</span><span className="detail-valeur">{selected.commentaire_parent}</span></div>
+              )}
+            </div>
+
+            {/* ── DOCUMENTS JUSTIFICATIFS ───────────────────────── */}
+            <div className="dossier-docs">
+              <h3 className="dossier-docs__titre">📎 Pièces justificatives</h3>
+              {chargeDocs ? (
+                <p className="dossier-docs__vide">Chargement...</p>
+              ) : documents.length === 0 ? (
+                <p className="dossier-docs__vide">Aucun document déposé par le parent.</p>
+              ) : (
+                <div className="dossier-docs__liste">
+                  {documents.map(doc => {
+                    const estPdf = doc.fichier_nom?.toLowerCase().endsWith('.pdf');
+                    return (
+                      <a
+                        key={doc.id}
+                        href={`http://localhost:3002${doc.fichier_path}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="doc-item"
+                      >
+                        <span className="doc-item__icone">{estPdf ? '📄' : '🖼️'}</span>
+                        <div className="doc-item__info">
+                          <span className="doc-item__label">{doc.label}</span>
+                          <span className="doc-item__nom">{doc.fichier_nom}</span>
+                        </div>
+                        <span className="doc-item__dl">↓</span>
+                      </a>
+                    );
+                  })}
+                </div>
               )}
             </div>
 

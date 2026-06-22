@@ -74,6 +74,14 @@ const Login = () => {
         <h1 className="auth-titre">Connexion</h1>
         <p className="auth-sous-titre">Accédez à votre espace personnel</p>
 
+        {/* Message d'info après inscription (redirigé depuis /creer-un-compte) */}
+        {location.state?.message && (
+          <div className="auth-info" role="status">
+            <span>ℹ️</span>
+            <span>{location.state.message}</span>
+          </div>
+        )}
+
         {/* Alerte d'erreur (identifiants incorrects, compte bloqué...) */}
         {erreur && (
           <div className="auth-alerte" role="alert">

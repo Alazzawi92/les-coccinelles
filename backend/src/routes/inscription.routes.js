@@ -4,7 +4,11 @@ const router  = express.Router();
 
 const { verifierToken }      = require('../middlewares/auth.middleware');
 const { verifierRole }       = require('../middlewares/role.middleware');
+const { uploadDocument }     = require('../middlewares/upload.middleware');
 const inscriptionController  = require('../controllers/inscriptionController');
+
+// Middleware pour cibler le dossier justificatifs
+const dossierJustificatifs = (req, res, next) => { req.uploadDossier = 'justificatifs'; next(); };
 
 // GET /api/inscriptions — Mes inscriptions (parent) ou toutes (admin)
 router.get('/',                    verifierToken, inscriptionController.lister);
@@ -23,5 +27,11 @@ router.put('/:id',                 verifierToken, inscriptionController.modifier
 
 // PATCH /api/inscriptions/:id/statut — Changer le statut (admin)
 router.patch('/:id/statut',        verifierToken, verifierRole('admin', 'super_admin'), inscriptionController.changerStatut);
+
+// POST /api/inscriptions/:id/documents — Uploader des pièces justificatives
+router.post('/:id/documents',      verifierToken, dossierJustificatifs, uploadDocument.array('fichiers', 20), inscriptionController.ajouterDocuments);
+
+// GET /api/inscriptions/:id/documents — Lister les documents d'un dossier
+router.get('/:id/documents',       verifierToken, inscriptionController.listerDocuments);
 
 module.exports = router;

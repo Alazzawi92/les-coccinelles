@@ -51,8 +51,28 @@
 .membre-carte--bleu   { border-top-color: var(--accent-1); }   /* Auxiliaire de puériculture */
 .membre-carte--violet { border-top-color: var(--accent-3); }   /* Assistante maternelle */
 
-/* Avatar emoji de la personne (en attendant de vraies photos) */
-.membre-carte__avatar  { font-size: 4rem; display: block; margin-bottom: var(--space-md); }
+/* Avatar : cercle centré — contient soit une <img> soit des initiales */
+.membre-carte__avatar {
+  width:           100px;
+  height:          100px;
+  border-radius:   50%;
+  overflow:        hidden;
+  margin:          0 auto var(--space-md);
+  background:      var(--primary-light);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       2rem;
+  font-weight:     700;
+  color:           var(--primary);
+}
+
+/* Photo réelle : couvre tout le cercle */
+.membre-carte__avatar img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+}
 
 /* Nom de la personne : police Fredoka, foncé */
 .membre-carte__nom     { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-xs); }

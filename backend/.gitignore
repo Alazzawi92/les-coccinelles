@@ -4,7 +4,11 @@ uploads/avatars/*
 uploads/documents/*
 uploads/photos/*
 uploads/justificatifs/*
+uploads/equipe/*
+uploads/messages/*
 !uploads/avatars/.gitkeep
 !uploads/documents/.gitkeep
 !uploads/photos/.gitkeep
 !uploads/justificatifs/.gitkeep
+!uploads/equipe/.gitkeep
+!uploads/messages/.gitkeep

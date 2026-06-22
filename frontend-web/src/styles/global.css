@@ -178,3 +178,21 @@
 .section-titre span {
   color: var(--primary);
 }
+
+/* ── Rendu HTML Quill (CMS) sur les pages publiques ────── */
+.cms-html               { line-height: 1.7; color: var(--text-dark); }
+.cms-html p             { margin: 0 0 var(--space-md); }
+.cms-html h1,
+.cms-html h2            { font-family: var(--font-heading); color: var(--text-dark); margin: var(--space-lg) 0 var(--space-sm); }
+.cms-html h3,
+.cms-html h4            { font-weight: 700; margin: var(--space-md) 0 var(--space-xs); }
+.cms-html ul,
+.cms-html ol            { margin: 0 0 var(--space-md); padding-left: var(--space-xl); }
+.cms-html li            { margin-bottom: var(--space-xs); }
+.cms-html strong        { font-weight: 700; }
+.cms-html em            { font-style: italic; }
+.cms-html a             { color: var(--primary); text-decoration: underline; }
+.cms-html blockquote    { border-left: 4px solid var(--primary); padding-left: var(--space-lg); color: var(--text-gray); margin: var(--space-md) 0; }
+
+/* Variante accueil : texte centré et plus grand */
+.accueil-cms            { text-align: center; font-size: 1.05rem; max-width: 700px; margin: 0 auto; }

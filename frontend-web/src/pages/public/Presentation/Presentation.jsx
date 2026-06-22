@@ -8,9 +8,12 @@
 // ============================================================
 
 import { Link } from 'react-router-dom';
+import usePageCMS from '../../../hooks/usePageCMS';
 import './Presentation.css';
 
 const Presentation = () => {
+  const { contenu } = usePageCMS('presentation');
+
   return (
     <div className="presentation">
 
@@ -24,28 +27,19 @@ const Presentation = () => {
       </section>
 
       {/* ── QUI SOMMES-NOUS ? ────────────────────────────────── */}
-      {/* Texte de présentation à gauche + visuel emoji à droite */}
       <section className="section-blanche">
         <div className="container contenu-deux-colonnes">
           <div className="contenu-texte">
             <h2 className="titre-section">Qui sommes-nous ?</h2>
-            <p>
-              La crèche Les Coccinelles est une structure d'accueil associative implantée à Puilboreau,
-              en Charente-Maritime. Ouverte depuis plusieurs années, elle accueille les enfants de
-              <strong> 0 à 3 ans</strong> dans un cadre bienveillant et sécurisant.
-            </p>
-            <p>
-              Gérée par une association de parents, notre crèche fonctionne en étroite collaboration
-              avec les familles. Nous croyons fermement que la confiance entre parents et professionnels
-              est la clé d'un accueil réussi pour chaque enfant.
-            </p>
-            <p>
-              Notre capacité d'accueil est de <strong>30 places</strong>, réparties entre
-              temps plein, temps partiel et accueil occasionnel, afin de répondre aux
-              besoins variés des familles.
-            </p>
+            {contenu
+              ? <div className="cms-html" dangerouslySetInnerHTML={{ __html: contenu }} />
+              : <>
+                  <p>La crèche Les Coccinelles est une structure d'accueil associative implantée à Puilboreau, en Charente-Maritime. Ouverte depuis plusieurs années, elle accueille les enfants de <strong>0 à 3 ans</strong> dans un cadre bienveillant et sécurisant.</p>
+                  <p>Gérée par une association de parents, notre crèche fonctionne en étroite collaboration avec les familles. Nous croyons fermement que la confiance entre parents et professionnels est la clé d'un accueil réussi pour chaque enfant.</p>
+                  <p>Notre capacité d'accueil est de <strong>30 places</strong>, réparties entre temps plein, temps partiel et accueil occasionnel, afin de répondre aux besoins variés des familles.</p>
+                </>
+            }
           </div>
-          {/* Visuel décoratif avec bulle d'info */}
           <div className="contenu-visuel">
             <div className="visuel-emoji-grand">🏡</div>
             <div className="info-bulle">

@@ -14,3 +14,16 @@
    flex + gap aligne l'interrupteur et son label côte à côte.
    cursor:pointer indique que c'est cliquable. */
 .publie-toggle { display:flex; align-items:center; gap:var(--space-md); font-weight:600; cursor:pointer; }
+
+/* Éditeur Quill — intégration dans la modal admin */
+.quill-wrapper .ql-container {
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-size: 0.95rem;
+  min-height: 200px;
+}
+.quill-wrapper .ql-toolbar {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  background: var(--bg-light, #f8f8f8);
+}
+.quill-wrapper .ql-editor { min-height: 180px; }
+.quill-wrapper .ql-editor.ql-blank::before { color: var(--text-gray, #999); font-style: normal; }

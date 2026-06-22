@@ -192,6 +192,19 @@
 
 /* ── 9. ALERTE ERREUR / SUCCÈS ──────────────────────────── */
 
+/* Bloc d'info bleu : affiché après inscription (en attente de validation) */
+.auth-info {
+  display:       flex;
+  gap:           var(--space-sm);
+  padding:       var(--space-md);
+  background:    #e3f2fd;
+  border:        1px solid #1976d2;
+  border-radius: var(--radius-md);
+  color:         #1565c0;
+  font-size:     0.9rem;
+  align-items:   flex-start;
+}
+
 /* Bloc d'alerte rouge : affiché si le login échoue */
 .auth-alerte {
   display:       flex;

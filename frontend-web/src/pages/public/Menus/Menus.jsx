@@ -10,8 +10,10 @@ import { useState, useEffect } from 'react';
 import api from '../../../services/api';
 import './Menus.css';
 
-// Noms des jours de la semaine en minuscules (correspond aux clés API)
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+
+// Quill produit "<p><br></p>" pour un champ vide
+const quillVide = v => !v || v === '<p><br></p>';
 
 // ── Utilitaire : calcule la date du lundi de la semaine donnée ──
 // Retourne une chaîne YYYY-MM-DD utilisée comme clé d'API
@@ -106,15 +108,19 @@ const Menus = () => {
                     </h3>
                   </div>
                   <div className="menu-carte__repas">
-                    {/* Déjeuner : clé API = "lundi_midi", "mardi_midi"... */}
                     <div className="repas-section repas-section--midi">
                       <p className="repas-label">🍽️ Déjeuner</p>
-                      <p className="repas-contenu">{menu[`${jour}_midi`] || 'Non renseigné'}</p>
+                      {quillVide(menu[`${jour}_midi`])
+                        ? <p className="repas-contenu repas-vide">Non renseigné</p>
+                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_midi`] }} />
+                      }
                     </div>
-                    {/* Goûter : clé API = "lundi_gouter"... */}
                     <div className="repas-section repas-section--gouter">
                       <p className="repas-label">🍪 Goûter</p>
-                      <p className="repas-contenu">{menu[`${jour}_gouter`] || 'Non renseigné'}</p>
+                      {quillVide(menu[`${jour}_gouter`])
+                        ? <p className="repas-contenu repas-vide">Non renseigné</p>
+                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_gouter`] }} />
+                      }
                     </div>
                   </div>
                 </div>

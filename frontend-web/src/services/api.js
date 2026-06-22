@@ -13,6 +13,11 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`; // Ajouter le token au header
   }
+  // Pour les FormData (uploads), supprimer le Content-Type JSON par défaut
+  // afin qu'Axios le génère automatiquement avec le bon boundary multipart
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
   return config;
 });
 

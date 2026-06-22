@@ -152,7 +152,62 @@
 /* Jour coché : fond orange plein */
 .jour-checkbox--actif    { background: var(--primary); color: var(--white); border-color: var(--primary); }
 
-/* ── 6. ÉTAPE 3 : RÉCAPITULATIF ─────────────────────────── */
+/* ── 6. ÉTAPE 3 : PIÈCES À FOURNIR ─────────────────────── */
+
+/* Phrase d'intro au-dessus de la liste */
+.etape-intro { color: var(--text-gray); font-size: 0.95rem; margin-bottom: var(--space-xl); }
+
+/* Liste verticale des pièces */
+.pieces-liste { display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-lg); }
+
+/* Une pièce : ligne avec icône + infos + bouton upload */
+.piece-item {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+  padding:     var(--space-md) var(--space-lg);
+  border:      2px solid var(--border);
+  border-radius: var(--radius-md);
+  background:  var(--white);
+  transition:  var(--transition);
+}
+
+/* Pièce avec fichier ajouté : bordure verte */
+.piece-item--coche { border-color: var(--success); background: #f0faf4; }
+
+.piece-item__icone { font-size: 1.4rem; flex-shrink: 0; }
+
+/* Zone texte : nom de la pièce + nom du fichier */
+.piece-item__info  { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.piece-item__doc   { font-size: 0.9rem; color: var(--text-dark); font-weight: 500; }
+.piece-item__fichier { font-size: 0.78rem; color: var(--success); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Bouton "Choisir fichier" : label qui déclenche l'input caché */
+.piece-item__btn {
+  flex-shrink:   0;
+  padding:       6px 14px;
+  border:        1.5px solid var(--primary);
+  border-radius: var(--radius-pill);
+  font-size:     0.8rem;
+  font-weight:   600;
+  color:         var(--primary);
+  cursor:        pointer;
+  transition:    var(--transition);
+  white-space:   nowrap;
+}
+.piece-item--coche .piece-item__btn { border-color: var(--success); color: var(--success); }
+.piece-item__btn:hover { background: var(--primary-light); }
+
+/* Compteur de documents ajoutés */
+.pieces-info {
+  font-size:  0.85rem;
+  color:      var(--text-gray);
+  font-weight: 600;
+  padding:    var(--space-sm) 0;
+  margin-bottom: var(--space-md);
+}
+
+/* ── 7. ÉTAPE 4 : RÉCAPITULATIF ─────────────────────────── */
 
 /* Grille 2 colonnes de toutes les infos de la demande */
 .recap-grille {

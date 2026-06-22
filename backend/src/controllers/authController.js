@@ -24,15 +24,16 @@ const register = async (req, res) => {
     // Générer un token de vérification email
     const tokenVerification = crypto.randomBytes(32).toString('hex');
 
-    // Créer l'utilisateur en base de données
+    // Créer l'utilisateur en base de données (actif: false = en attente de validation admin)
     const user = await User.create({
       email,
-      password:    passwordHash,
+      password:     passwordHash,
       prenom,
       nom,
-      telephone:   telephone || null,
-      token_reset: tokenVerification, // Réutiliser token_reset pour la vérification email
-      token_expire: new Date(Date.now() + 24 * 60 * 60 * 1000) // Expire dans 24h
+      telephone:    telephone || null,
+      actif:        false, // Bloqué jusqu'à validation par l'administrateur
+      token_reset:  tokenVerification,
+      token_expire: new Date(Date.now() + 24 * 60 * 60 * 1000)
     });
 
     // Envoyer l'email de vérification (ne pas bloquer si échec)
@@ -49,7 +50,7 @@ const register = async (req, res) => {
       prenom: user.prenom,
       nom:    user.nom,
       role:   user.role
-    }, 'Compte créé. Vérifiez votre email pour activer votre compte.');
+    }, 'Compte créé. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.');
 
   } catch (err) {
     console.error('Erreur register :', err);
@@ -70,9 +71,9 @@ const login = async (req, res) => {
       return erreur(res, 'Email ou mot de passe incorrect', 401);
     }
 
-    // Vérifier que le compte est actif
+    // Vérifier que le compte est actif (en attente de validation ou désactivé)
     if (!user.actif) {
-      return erreur(res, 'Votre compte a été désactivé', 403);
+      return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
     }
 
     // Vérifier le mot de passe avec bcrypt

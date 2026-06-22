@@ -11,33 +11,35 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import api from '../../../services/api';
+import usePageCMS from '../../../hooks/usePageCMS';
 import './Accueil.css';
+
+// Quill produit "<p><br></p>" pour un champ vide
+const quillVide = v => !v || v === '<p><br></p>';
 
 const Accueil = () => {
 
   // Dernières actualités (3 maximum pour la page d'accueil)
   const [actualites, setActualites] = useState([]);
+  const [menu,       setMenu]       = useState(null);
+  const [membres,    setMembres]    = useState([]);
+  const { contenu: contenuCMS } = usePageCMS('accueil');
 
-  // Menu de la semaine en cours
-  const [menu, setMenu] = useState(null);
-
-  // ── Chargement des données API ────────────────────────────
   useEffect(() => {
     const chargerDonnees = async () => {
       try {
-        // Requêtes parallèles pour optimiser le temps de chargement
-        const [resActu, resMenu] = await Promise.all([
-          api.get('/actualites?limite=3'),  // 3 dernières actualités
-          api.get('/menus')                  // Menu de la semaine courante
+        const [resActu, resMenu, resEquipe] = await Promise.all([
+          api.get('/actualites?limite=3'),
+          api.get('/menus'),
+          api.get('/equipe')
         ]);
         setActualites(resActu.data.data?.actualites || []);
         setMenu(resMenu.data.data);
-      } catch {
-        // La page s'affiche même sans données dynamiques (site vitrine)
-      }
+        setMembres((resEquipe.data.data || []).slice(0, 4)); // 4 premiers membres
+      } catch {}
     };
     chargerDonnees();
-  }, []); // S'exécute une seule fois au montage
+  }, []);
 
   return (
     <div className="accueil">
@@ -86,6 +88,15 @@ const Accueil = () => {
         </div>
       </section>
 
+      {/* ── MESSAGE CMS (si l'admin a saisi du contenu) ─────── */}
+      {contenuCMS && (
+        <section className="section-blanche">
+          <div className="container">
+            <div className="cms-html accueil-cms" dangerouslySetInnerHTML={{ __html: contenuCMS }} />
+          </div>
+        </section>
+      )}
+
       {/* ── CHIFFRES CLÉS ───────────────────────────────────── */}
       <section className="chiffres">
         <div className="container chiffres__grille">
@@ -132,6 +143,36 @@ const Accueil = () => {
         </div>
       </section>
 
+      {/* ── NOTRE ÉQUIPE ────────────────────────────────────── */}
+      {membres.length > 0 && (
+        <section className="accueil-equipe">
+          <div className="container">
+            <div className="accueil-equipe__entete">
+              <h2 className="section-titre">Notre <span>équipe</span></h2>
+              <Link to="/equipe" className="btn btn--ghost btn--sm">Toute l'équipe →</Link>
+            </div>
+            <div className="accueil-equipe__grille">
+              {membres.map(m => {
+                let imgUrl = null;
+                try { imgUrl = `http://localhost:3002${JSON.parse(m.photo).miniature}`; } catch {}
+                return (
+                  <div key={m.id} className="accueil-equipe__carte">
+                    <div className="accueil-equipe__photo">
+                      {imgUrl
+                        ? <img src={imgUrl} alt={`${m.prenom} ${m.nom}`} />
+                        : <span>{m.prenom[0]}{m.nom[0]}</span>
+                      }
+                    </div>
+                    <p className="accueil-equipe__nom">{m.prenom} {m.nom}</p>
+                    <p className="accueil-equipe__titre">{m.titre}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── MENU DE LA SEMAINE ──────────────────────────────── */}
       <section className="accueil-menus">
         <div className="container">
@@ -148,11 +189,17 @@ const Accueil = () => {
                   <p className="menu-jour__nom">{jour.charAt(0).toUpperCase() + jour.slice(1)}</p>
                   <div className="menu-jour__repas">
                     <span className="menu-jour__label">🍽️ Midi</span>
-                    <span>{menu[`${jour}_midi`] || '—'}</span>
+                    {quillVide(menu[`${jour}_midi`])
+                      ? <span>—</span>
+                      : <div className="menu-jour__html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_midi`] }} />
+                    }
                   </div>
                   <div className="menu-jour__repas">
                     <span className="menu-jour__label">🍪 Goûter</span>
-                    <span>{menu[`${jour}_gouter`] || '—'}</span>
+                    {quillVide(menu[`${jour}_gouter`])
+                      ? <span>—</span>
+                      : <div className="menu-jour__html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_gouter`] }} />
+                    }
                   </div>
                 </div>
               ))}

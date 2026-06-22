@@ -43,7 +43,7 @@ router.get('/:id', verifierToken, verifierRole('admin', 'super_admin'), userCont
 // PUT /api/users/:id/activer — Activer/désactiver un compte (admin)
 router.put('/:id/activer', verifierToken, verifierRole('admin', 'super_admin'), userController.toggleActif);
 
-// DELETE /api/users/:id — Supprimer un compte (super admin uniquement)
-router.delete('/:id', verifierToken, verifierRole('super_admin'), userController.supprimerUser);
+// DELETE /api/users/:id — Supprimer un compte (admin + super_admin, avec restrictions dans le contrôleur)
+router.delete('/:id', verifierToken, verifierRole('admin', 'super_admin'), userController.supprimerUser);
 
 module.exports = router;

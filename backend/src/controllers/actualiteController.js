@@ -17,7 +17,7 @@ const lister = async (req, res) => {
     });
 
     return succes(res, { total: count, page, pages: Math.ceil(count / limite), actualites: rows });
-  } catch (err) { return erreur(res, 'Erreur récupération actualités'); }
+  } catch (err) { console.error('[ACTUALITES] lister:', err); return erreur(res, 'Erreur récupération actualités'); }
 };
 
 const getActualite = async (req, res) => {

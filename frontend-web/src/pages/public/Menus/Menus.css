@@ -102,10 +102,20 @@
 .repas-section--gouter { background: #f3e5f5; }
 
 /* Label du repas ("Déjeuner", "Goûter") : très petit, gris, gras */
-.repas-label   { font-size: 0.7rem; font-weight: 700; color: var(--text-gray); margin-bottom: 4px; }
+.repas-label   { font-size: 1rem; font-weight: 700; color: var(--text-gray); margin-bottom: 6px; }
 
-/* Contenu du repas : liste des plats, petite taille */
+/* Contenu du repas : texte vide ou HTML Quill */
 .repas-contenu { font-size: 0.85rem; color: var(--text-dark); line-height: 1.4; }
+.repas-vide    { color: var(--text-gray); font-style: italic; }
+
+/* Rendu HTML Quill dans la page publique menus */
+.repas-html    { font-size: 0.85rem; color: var(--text-dark); line-height: 1.5; }
+.repas-html p  { margin: 0 0 4px; }
+.repas-html ul,
+.repas-html ol { margin: 0; padding-left: 1.2em; }
+.repas-html li { margin-bottom: 2px; }
+.repas-html strong { font-weight: 700; }
+.repas-html em     { font-style: italic; }
 
 /* ── 6. ÉTATS ───────────────────────────────────────────── */
 

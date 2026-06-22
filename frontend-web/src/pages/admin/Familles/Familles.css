@@ -19,7 +19,169 @@
 @import '../../../styles/variables.css';
 @import '../../../styles/admin.css';
 
-/* ── 2. COMPTEUR DE RÉSULTATS ───────────────────────────── */
+/* ── 2. ONGLETS DE NAVIGATION ───────────────────────────── */
+
+.familles-onglets {
+  display:   flex;
+  gap:       var(--space-sm);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.familles-onglet {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  padding:       var(--space-sm) var(--space-lg);
+  border:        2px solid var(--border);
+  border-radius: var(--radius-pill);
+  background:    var(--white);
+  color:         var(--text-gray);
+  font-weight:   600;
+  font-size:     0.9rem;
+  cursor:        pointer;
+  transition:    all 0.2s;
+}
+
+.familles-onglet:hover {
+  border-color: var(--primary);
+  color:        var(--primary);
+}
+
+.familles-onglet--actif {
+  background:   var(--primary);
+  border-color: var(--primary);
+  color:        var(--white);
+}
+
+/* Badge rouge sur l'onglet "En attente" indiquant le nombre de comptes à valider */
+.familles-badge-attente {
+  background:    #e53935;
+  color:         var(--white);
+  font-size:     0.75rem;
+  font-weight:   700;
+  padding:       1px 7px;
+  border-radius: var(--radius-pill);
+  min-width:     20px;
+  text-align:    center;
+}
+
+/* ── 3. BOUTON SUPPRIMER (tableau) ─────────────────────── */
+
+.btn-supprimer {
+  background:    transparent;
+  border:        1px solid var(--error);
+  color:         var(--error);
+  border-radius: var(--radius-md);
+  padding:       var(--space-xs) var(--space-md);
+  font-size:     0.8rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    background 0.15s, color 0.15s;
+  white-space:   nowrap;
+}
+
+.btn-supprimer:hover {
+  background: var(--error);
+  color:      var(--white);
+}
+
+/* ── 4. MODAL DE CONFIRMATION DE SUPPRESSION ────────────── */
+
+/* Surcharge de .modal pour la variante danger (bord rouge en haut) */
+.modal--danger {
+  border-top: 4px solid var(--error);
+  max-width:  480px;
+  text-align: center;
+}
+
+/* Grande icône d'avertissement centrée */
+.suppr-icone {
+  font-size:     3rem;
+  margin-bottom: var(--space-md);
+}
+
+/* Titre rouge et gras */
+.suppr-titre {
+  font-size:     1.2rem;
+  font-weight:   800;
+  color:         var(--error);
+  margin-bottom: var(--space-md);
+}
+
+/* Phrase principale : nom + email de l'utilisateur ciblé */
+.suppr-message {
+  font-size:     0.95rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-lg);
+  line-height:   1.5;
+}
+
+.suppr-email {
+  font-style:  italic;
+  color:       var(--text-gray);
+  font-size:   0.85rem;
+}
+
+/* Bloc liste des conséquences : fond orangé d'alerte */
+.suppr-avertissements {
+  background:    #fff3e0;
+  border:        1px solid #ff9800;
+  border-radius: var(--radius-md);
+  padding:       var(--space-md) var(--space-lg);
+  text-align:    left;
+  margin-bottom: var(--space-xl);
+}
+
+.suppr-avertissements p {
+  font-weight:   700;
+  font-size:     0.85rem;
+  color:         #e65100;
+  margin-bottom: var(--space-sm);
+}
+
+.suppr-avertissements ul {
+  margin:     0;
+  padding-left: var(--space-lg);
+}
+
+.suppr-avertissements li {
+  font-size:   0.85rem;
+  color:       var(--text-dark);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Boutons en bas de la modal */
+.suppr-actions {
+  display:         flex;
+  gap:             var(--space-md);
+  justify-content: center;
+}
+
+/* Bouton de confirmation destructif : fond rouge plein */
+.btn-supprimer-confirmer {
+  background:    var(--error);
+  color:         var(--white);
+  border:        none;
+  border-radius: var(--radius-md);
+  padding:       var(--space-sm) var(--space-xl);
+  font-weight:   700;
+  font-size:     0.9rem;
+  cursor:        pointer;
+  transition:    background 0.15s, opacity 0.15s;
+}
+
+.btn-supprimer-confirmer:hover:not(:disabled) {
+  background: #c62828;
+}
+
+.btn-supprimer-confirmer:disabled {
+  opacity: 0.6;
+  cursor:  not-allowed;
+}
+
+/* ── 5. COMPTEUR DE RÉSULTATS ───────────────────────────── */
 
 /* Badge gris discret affichant le nombre total de résultats.
    Affiché dans la barre de filtres à côté du champ de recherche. */

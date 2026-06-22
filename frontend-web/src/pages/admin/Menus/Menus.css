@@ -20,7 +20,7 @@
 
 /* Affiche lundi→vendredi en 5 colonnes égales.
    Sur tablette (≤1200px) → 3 colonnes, sur mobile → 1 colonne. */
-.menus-admin-grille { display:grid; grid-template-columns:repeat(5,1fr); gap:var(--space-md); }
+.menus-admin-grille { display:grid; grid-template-columns:1fr; gap:var(--space-md); }
 
 /* ── COLONNE D'UN JOUR ──────────────────────────────────── */
 
@@ -32,10 +32,74 @@
    bordure orange en bas pour séparer visuellement du contenu. */
 .menu-admin-jour { font-family:var(--font-heading); font-size:1.1rem; color:var(--primary); padding-bottom:var(--space-sm); border-bottom:2px solid var(--primary-light); margin-bottom:var(--space-sm); }
 
+/* ── APERÇU LECTURE SEULE ───────────────────────────────── */
+
+/* Colonne en mode aperçu (pas de champs, juste du texte) :
+   fond légèrement grisé pour distinguer du mode édition. */
+.menu-admin-col--apercu { background:var(--bg-light, #f9f9f9); }
+
+/* Ligne de texte dans l'aperçu (midi ou goûter) */
+.apercu-label { font-size:0.88rem; color:var(--text-dark); margin:0 0 var(--space-sm); line-height:1.5; }
+
+/* ── ÉDITEURS QUILL DANS LES MENUS ─────────────────────── */
+
+/* Wrapper commun autour de chaque éditeur Quill par jour */
+.menu-quill-wrapper {
+  border:        1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow:      hidden;
+  background:    var(--white);
+}
+
+/* Barre d'outils Quill : fond gris clair, séparateur bas */
+.menu-quill-wrapper .ql-toolbar {
+  background:    var(--bg-gray);
+  border:        none;
+  border-bottom: 1px solid var(--border);
+  padding:       4px var(--space-sm);
+}
+
+/* Zone de saisie : sans bordure, typo admin */
+.menu-quill-wrapper .ql-container {
+  border:      none;
+  font-family: var(--font-sans, sans-serif);
+  font-size:   0.9rem;
+}
+
+/* Hauteur confortable pour le déjeuner */
+.menu-quill-wrapper .ql-editor {
+  min-height:  100px;
+  padding:     var(--space-sm) var(--space-md);
+  line-height: 1.6;
+  color:       var(--text-dark);
+}
+
+/* Goûter : éditeur plus petit (une ou deux lignes suffisent) */
+.menu-quill-wrapper--petit .ql-editor {
+  min-height: 56px;
+}
+
+/* Placeholder */
+.menu-quill-wrapper .ql-editor.ql-blank::before {
+  color:      var(--text-light);
+  font-style: normal;
+}
+
+/* Affichage HTML dans l'aperçu lecture seule */
+.menu-apercu-html {
+  font-size:   0.88rem;
+  color:       var(--text-dark);
+  line-height: 1.5;
+  margin-bottom: var(--space-sm);
+}
+
+.menu-apercu-html p    { margin: 0 0 4px; }
+.menu-apercu-html ul,
+.menu-apercu-html ol   { margin: 0; padding-left: var(--space-lg); }
+.menu-apercu-html li   { margin-bottom: 2px; }
+.menu-apercu-html strong { font-weight: 700; }
+.menu-apercu-html em   { font-style: italic; }
+
+
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 
-/* Tablette : 3 colonnes pour éviter des cases trop étroites */
-@media(max-width:1200px){.menus-admin-grille{grid-template-columns:repeat(3,1fr);}}
-
-/* Mobile : 1 colonne, les jours s'empilent verticalement */
-@media(max-width:768px){.menus-admin-grille{grid-template-columns:1fr;}}

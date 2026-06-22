@@ -4,16 +4,29 @@
 // RÔLE     : Gestion des articles d'actualité de la crèche.
 //            Tableau avec statut Publié/Brouillon.
 //            Modal création/édition : titre, extrait, contenu
-//            HTML, checkbox "Publier immédiatement".
+//            via éditeur WYSIWYG (React Quill), checkbox publier.
 //            Actions : modifier (PUT), toggle publier (PATCH),
 //            supprimer (DELETE avec confirm).
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Actualites.css';
+
+// Barre d'outils Quill adaptée à un usage non-technique
+const QUILL_MODULES = {
+  toolbar: [
+    [{ header: [2, 3, false] }],
+    ['bold', 'italic', 'underline'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    ['link'],
+    ['clean'],
+  ],
+};
 
 const ActualitesAdmin = () => {
   // Liste des actualités chargées depuis l'API (admin : toutes, publiées + brouillons)
@@ -52,6 +65,9 @@ const ActualitesAdmin = () => {
   // ── Soumission du formulaire (création ou mise à jour) ───
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Quill renvoie "<p><br></p>" quand le champ est visuellement vide
+    const contenuVide = !form.contenu || form.contenu.replace(/<[^>]*>/g, '').trim() === '';
+    if (contenuVide) { toast.error('Le contenu est obligatoire'); return; }
     setEnvoi(true);
     try {
       if (editing) {
@@ -124,8 +140,15 @@ const ActualitesAdmin = () => {
               </div>
               <div className="a-form-groupe">
                 <label className="a-label">Contenu complet <span className="requis">*</span></label>
-                {/* Contenu : accepte du HTML pour la mise en forme */}
-                <textarea className="a-input a-textarea" rows={8} value={form.contenu} onChange={e => setForm(p => ({...p, contenu:e.target.value}))} placeholder="Contenu de l'actualité (HTML accepté)..." required />
+                <div className="quill-wrapper">
+                  <ReactQuill
+                    theme="snow"
+                    value={form.contenu}
+                    onChange={val => setForm(p => ({ ...p, contenu: val }))}
+                    modules={QUILL_MODULES}
+                    placeholder="Rédigez le contenu de l'actualité..."
+                  />
+                </div>
               </div>
               {/* Checkbox : publier immédiatement ou enregistrer en brouillon */}
               <label className="publie-toggle">

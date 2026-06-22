@@ -22,7 +22,13 @@ app.use(express.urlencoded({ extended: true })); // Parser les formulaires
 app.use(morgan('dev'));               // Afficher les logs de requêtes
 
 // ── DOSSIER STATIQUE POUR LES FICHIERS UPLOADÉS ─────────────────────
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Cross-Origin-Resource-Policy est mis à "cross-origin" pour permettre
+// au frontend (localhost:3003) d'afficher les images du backend (localhost:3002).
+// Helmet le force à "same-origin" par défaut, ce middleware l'écrase.
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+}, express.static(path.join(__dirname, 'uploads')));
 
 // ── ROUTES API ───────────────────────────────────────────────────────
 app.use('/api', routes); // Toutes les routes préfixées par /api

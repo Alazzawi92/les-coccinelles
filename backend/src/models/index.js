@@ -16,6 +16,8 @@ const GalerieAlbum   = require('./GalerieAlbum');
 const GaleriePhoto   = require('./GaleriePhoto');
 const Consentement   = require('./Consentement');
 const CmsPage        = require('./CmsPage');
+const EquipeMembre          = require('./EquipeMembre');
+const InscriptionDocument   = require('./InscriptionDocument');
 
 // ── ASSOCIATIONS ────────────────────────────────────────────────────
 
@@ -81,8 +83,14 @@ User.hasMany(GaleriePhoto,     { foreignKey: 'cree_par', as: 'photosUplodees' })
 GaleriePhoto.belongsTo(User,   { foreignKey: 'cree_par', as: 'uploadeur' });
 
 // Photos ↔ Enfants (many-to-many via photo_enfants)
-GaleriePhoto.belongsToMany(Enfant,  { through: 'photo_enfants', foreignKey: 'photo_id',  as: 'enfants' });
-Enfant.belongsToMany(GaleriePhoto,  { through: 'photo_enfants', foreignKey: 'enfant_id', as: 'photos' });
+// La table pivot n'a pas de timestamps : on déclare un modèle explicite pour éviter
+// que Sequelize tente de sélectionner created_at (inexistant dans photo_enfants)
+const PhotoEnfant = sequelize.define('photo_enfants', {}, {
+  tableName:  'photo_enfants',
+  timestamps: false
+});
+GaleriePhoto.belongsToMany(Enfant,  { through: PhotoEnfant, foreignKey: 'photo_id',  as: 'enfants' });
+Enfant.belongsToMany(GaleriePhoto,  { through: PhotoEnfant, foreignKey: 'enfant_id', as: 'photos' });
 
 // Consentements RGPD
 Enfant.hasOne(Consentement,    { foreignKey: 'enfant_id', as: 'consentement' });
@@ -93,6 +101,10 @@ Consentement.belongsTo(User,   { foreignKey: 'user_id',   as: 'parent' });
 // CMS Pages
 User.hasMany(CmsPage,          { foreignKey: 'modifie_par', as: 'pagesModifiees' });
 CmsPage.belongsTo(User,        { foreignKey: 'modifie_par', as: 'auteur' });
+
+// Inscription → Documents justificatifs
+Inscription.hasMany(InscriptionDocument, { foreignKey: 'inscription_id', as: 'pieces' });
+InscriptionDocument.belongsTo(Inscription, { foreignKey: 'inscription_id', as: 'inscription' });
 
 // Exporter tous les modèles et l'instance sequelize
 module.exports = {
@@ -110,5 +122,7 @@ module.exports = {
   GalerieAlbum,
   GaleriePhoto,
   Consentement,
-  CmsPage
+  CmsPage,
+  EquipeMembre,
+  InscriptionDocument
 };

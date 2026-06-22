@@ -120,12 +120,20 @@ const toggleActif = async (req, res) => {
   }
 };
 
-// DELETE /api/users/:id — Supprimer un compte (super admin)
+// DELETE /api/users/:id — Supprimer un compte
+// super_admin : peut supprimer tout le monde (sauf lui-même)
+// admin       : peut supprimer uniquement les parents
 const supprimerUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return erreur(res, 'Utilisateur non trouvé', 404);
-    if (user.id === req.user.id) return erreur(res, 'Impossible de supprimer votre propre compte', 400);
+
+    if (user.id === req.user.id)
+      return erreur(res, 'Impossible de supprimer votre propre compte', 400);
+
+    // Un admin simple ne peut pas supprimer un autre admin ou super_admin
+    if (req.user.role === 'admin' && user.role !== 'parent')
+      return erreur(res, 'Vous n\'êtes pas autorisé à supprimer ce compte', 403);
 
     await user.destroy();
     return succes(res, null, 'Compte supprimé');

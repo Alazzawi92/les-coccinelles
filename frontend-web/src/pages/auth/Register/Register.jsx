@@ -82,10 +82,9 @@ const Register = () => {
         telephone: form.telephone
       });
 
-      toast.success('Compte créé ! Vérifiez votre email.');
-      // Redirige vers la connexion avec un message d'info
+      toast.success('Compte créé ! En attente de validation par l\'administrateur.');
       navigate('/connexion', {
-        state: { message: 'Compte créé. Vérifiez votre email avant de vous connecter.' }
+        state: { message: 'Votre compte a été créé. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.' }
       });
     } catch (err) {
       setErreur(err.response?.data?.message || 'Erreur lors de la création du compte');

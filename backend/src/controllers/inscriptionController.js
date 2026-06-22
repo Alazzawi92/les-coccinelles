@@ -1,5 +1,5 @@
 // Contrôleur inscriptions — Les Coccinelles
-const { Inscription, Enfant, User } = require('../models');
+const { Inscription, Enfant, User, InscriptionDocument } = require('../models');
 const { notifierStatutInscription } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 
@@ -111,4 +111,55 @@ const changerStatut = async (req, res) => {
   }
 };
 
-module.exports = { lister, stats, creer, getInscription, modifier, changerStatut };
+// POST /api/inscriptions/:id/documents — Upload des pièces justificatives (parent ou admin)
+const ajouterDocuments = async (req, res) => {
+  try {
+    const filtre = req.user.role === 'parent'
+      ? { id: req.params.id, user_id: req.user.id }
+      : { id: req.params.id };
+    const inscription = await Inscription.findOne({ where: filtre });
+    if (!inscription) return erreur(res, 'Inscription non trouvée', 404);
+
+    const fichiers = req.files || [];
+    if (fichiers.length === 0) return erreur(res, 'Aucun fichier reçu', 400);
+
+    // labels[] en body correspond à chaque fichier dans le même ordre
+    const labels = req.body.labels
+      ? (Array.isArray(req.body.labels) ? req.body.labels : [req.body.labels])
+      : [];
+
+    const docs = await Promise.all(
+      fichiers.map((f, i) => InscriptionDocument.create({
+        inscription_id: inscription.id,
+        label:          labels[i] || f.originalname,
+        fichier_path:   `/uploads/justificatifs/${f.filename}`,
+        fichier_nom:    f.originalname
+      }))
+    );
+
+    return cree(res, docs, 'Documents ajoutés');
+  } catch (err) {
+    return erreur(res, 'Erreur lors de l\'ajout des documents');
+  }
+};
+
+// GET /api/inscriptions/:id/documents — Liste des documents du dossier
+const listerDocuments = async (req, res) => {
+  try {
+    const filtre = req.user.role === 'parent'
+      ? { id: req.params.id, user_id: req.user.id }
+      : { id: req.params.id };
+    const inscription = await Inscription.findOne({ where: filtre });
+    if (!inscription) return erreur(res, 'Inscription non trouvée', 404);
+
+    const docs = await InscriptionDocument.findAll({
+      where: { inscription_id: inscription.id },
+      order: [['created_at', 'ASC']]
+    });
+    return succes(res, docs);
+  } catch (err) {
+    return erreur(res, 'Erreur lors de la récupération des documents');
+  }
+};
+
+module.exports = { lister, stats, creer, getInscription, modifier, changerStatut, ajouterDocuments, listerDocuments };
