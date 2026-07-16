@@ -51,6 +51,8 @@ import InscriptionsAdmin from '../pages/admin/Inscriptions/Inscriptions';
 import EnfantsAdmin      from '../pages/admin/Enfants/Enfants';
 import SuiviAdmin        from '../pages/admin/SuiviAdmin/SuiviAdmin';
 import AbsencesAdmin     from '../pages/admin/Absences/Absences';
+import CalendrierAdmin   from '../pages/admin/Calendrier/Calendrier';
+import EmargementAdmin   from '../pages/admin/Emargement/Emargement';
 import MessagerieAdmin   from '../pages/admin/Messagerie/Messagerie';
 import ActualitesAdmin   from '../pages/admin/Actualites/Actualites';
 import MenusAdmin        from '../pages/admin/Menus/Menus';
@@ -120,6 +122,8 @@ const AppRouter = () => {
             <Route path="/admin/enfants"          element={<EnfantsAdmin />} />
             <Route path="/admin/suivi"            element={<SuiviAdmin />} />
             <Route path="/admin/absences"         element={<AbsencesAdmin />} />
+            <Route path="/admin/calendrier"       element={<CalendrierAdmin />} />
+            <Route path="/admin/emargement"       element={<EmargementAdmin />} />
             <Route path="/admin/messagerie"       element={<MessagerieAdmin />} />
             <Route path="/admin/actualites"       element={<ActualitesAdmin />} />
             <Route path="/admin/menus"            element={<MenusAdmin />} />

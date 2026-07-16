@@ -46,7 +46,7 @@ services:
       DB_PORT:           3306
       DB_NAME:           coccinelles_db
       DB_USER:           coccinelles_user
-      DB_PASSWORD:       Root123!                # Doit correspondre à MYSQL_PASSWORD
+      DB_PASSWORD:       coccinelles_pass        # Doit correspondre à MYSQL_PASSWORD
       JWT_SECRET:        dev_jwt_secret_change_in_production_xxxxxxxxxxxxxxxx
       JWT_EXPIRES_IN:    15m
       JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_xxxxxxxxxx

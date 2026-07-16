@@ -75,15 +75,147 @@
 /* Select de saisie du repas : petit, compact */
 .repas-select { padding: 4px; border: 2px solid #E0E0E0; border-radius: var(--radius-sm); font-size: 0.8rem; background: var(--white); }
 
-/* ── 6. SAISIE DE LA SIESTE ─────────────────────────────── */
+/* ── 6. SAISIE DES BIBERONS ─────────────────────────────── */
 
-/* Ligne horizontale : input temps + label */
-.sieste-row { display: flex; align-items: center; gap: var(--space-sm); }
+/* Rangée compteur +/- avec valeur et unité */
+.compteur-row { display: flex; align-items: center; gap: var(--space-sm); }
 
-/* Le champ de durée de sieste prend tout l'espace restant */
-.sieste-row .a-input { flex: 1; }
+/* Version inline : s'imbrique dans une autre rangée (selles) */
+.compteur-row--inline { margin-left: var(--space-sm); }
 
-/* ── 7. SAISIE DE L'HUMEUR ──────────────────────────────── */
+/* Bouton + ou − du compteur */
+.compteur-btn {
+  width:         2rem;
+  height:        2rem;
+  border-radius: 50%;
+  border:        2px solid var(--primary);
+  background:    var(--white);
+  color:         var(--primary);
+  font-size:     1.1rem;
+  font-weight:   700;
+  cursor:        pointer;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  transition:    var(--transition);
+  line-height:   1;
+}
+.compteur-btn:hover:not(:disabled) { background: var(--primary); color: var(--white); }
+.compteur-btn:disabled             { border-color: #ccc; color: #ccc; cursor: default; }
+
+/* Valeur numérique du compteur */
+.compteur-valeur {
+  min-width:   2rem;
+  text-align:  center;
+  font-weight: 700;
+  font-size:   1.1rem;
+  color:       var(--text-dark);
+}
+
+/* Label unité (biberons, fois…) */
+.compteur-unite { font-size: 0.85rem; color: var(--text-gray); }
+
+/* Ligne champ ml par biberon */
+.biberon-ml-row { display: flex; align-items: center; gap: var(--space-sm); margin-top: 4px; }
+
+/* Champ ml : petite largeur fixe */
+.biberon-ml-input { width: 7rem; }
+
+/* ── 7. SAISIE DES SIESTES MULTIPLES ────────────────────── */
+
+/* Une ligne de sieste : numéro + début + flèche + fin + durée + suppression */
+.sieste-item {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+}
+
+/* Numéro de la sieste (1, 2…) */
+.sieste-numero {
+  width:         1.4rem;
+  height:        1.4rem;
+  border-radius: 50%;
+  background:    var(--primary-light);
+  color:         var(--primary);
+  font-size:     0.75rem;
+  font-weight:   700;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  flex-shrink:   0;
+}
+
+/* Champ horaire début / fin de sieste */
+.sieste-time { width: 7rem; flex-shrink: 0; }
+
+/* Séparateur "→" entre début et fin */
+.sieste-fleche { color: var(--text-gray); font-size: 0.9rem; }
+
+/* Badge durée calculée automatiquement (ex: 1h30) */
+.sieste-duree {
+  background:    var(--primary-light);
+  color:         var(--primary);
+  font-size:     0.75rem;
+  font-weight:   700;
+  padding:       2px var(--space-sm);
+  border-radius: var(--radius-pill);
+  white-space:   nowrap;
+}
+
+/* Bouton supprimer une sieste */
+.sieste-supprimer {
+  margin-left:   auto;
+  background:    none;
+  border:        none;
+  color:         #ccc;
+  font-size:     0.9rem;
+  cursor:        pointer;
+  padding:       2px 4px;
+  border-radius: var(--radius-sm);
+  transition:    var(--transition);
+}
+.sieste-supprimer:hover { color: var(--danger, #e53935); background: #fff0f0; }
+
+/* Bouton "Ajouter une sieste" */
+.sieste-ajouter {
+  background:    none;
+  border:        2px dashed var(--primary);
+  color:         var(--primary);
+  font-size:     0.85rem;
+  font-weight:   600;
+  padding:       var(--space-xs) var(--space-md);
+  border-radius: var(--radius-sm);
+  cursor:        pointer;
+  width:         100%;
+  text-align:    center;
+  transition:    var(--transition);
+}
+.sieste-ajouter:hover { background: var(--primary-light); }
+
+/* ── 8. SAISIE DES SELLES ───────────────────────────────── */
+
+/* Rangée : boutons Oui/Non + compteur inline */
+.selles-row { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* Bouton bascule Oui / Non */
+.selles-toggle {
+  padding:       var(--space-xs) var(--space-md);
+  border:        2px solid #E0E0E0;
+  border-radius: var(--radius-pill);
+  background:    var(--white);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    var(--transition);
+  color:         var(--text-gray);
+}
+.selles-toggle:hover                        { border-color: var(--primary); }
+/* Actif Non : rouge doux */
+.selles-toggle--non.selles-toggle--actif   { background: #ffeaea; border-color: #e53935; color: #e53935; }
+/* Actif Oui : vert doux */
+.selles-toggle--oui.selles-toggle--actif   { background: #e8f5e9; border-color: #43a047; color: #43a047; }
+
+/* ── 9. SAISIE DE L'HUMEUR ──────────────────────────────── */
 
 /* Rangée de boutons emoji pour sélectionner l'humeur */
 .humeur-row { display: flex; gap: var(--space-sm); }
@@ -97,7 +229,7 @@
 /* Humeur sélectionnée : bordure orange + fond orange clair */
 .humeur-btn--actif   { border-color: var(--primary); background: var(--primary-light); }
 
-/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+/* ── 10. RESPONSIVE ─────────────────────────────────────── */
 
 /* Tablette (≤1200px) : 3 → 2 cartes par ligne */
 @media (max-width: 1200px) { .suivi-admin-grille { grid-template-columns: repeat(2, 1fr); } }

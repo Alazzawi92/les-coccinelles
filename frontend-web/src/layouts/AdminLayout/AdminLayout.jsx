@@ -30,8 +30,10 @@ const GROUPES_NAV = [
   {
     titre: 'Quotidien',
     liens: [
-      { to: '/admin/suivi',      label: 'Suivi quotidien', icone: '📋' },
+      { to: '/admin/emargement',  label: 'Émargement',      icone: '✍️' },
+      { to: '/admin/suivi',       label: 'Suivi quotidien', icone: '📋' },
       { to: '/admin/absences',   label: 'Absences',        icone: '📅' },
+      { to: '/admin/calendrier', label: 'Calendrier',      icone: '🗓️' },
       { to: '/admin/messagerie', label: 'Messagerie',      icone: '✉️' }
     ]
   },

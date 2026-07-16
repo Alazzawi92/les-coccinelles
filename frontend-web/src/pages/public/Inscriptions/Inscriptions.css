@@ -66,7 +66,102 @@
 /* Texte descriptif de l'étape */
 .etape-texte { font-size: 0.85rem; color: var(--text-gray); line-height: 1.6; }
 
-/* ── 4. LISTE DES DOCUMENTS ─────────────────────────────── */
+/* ── 4. PARAGRAPHES CONDITIONS ──────────────────────────── */
+
+/* Bloc de texte des conditions : paragraphes espacés avec barre gauche */
+.insc-paragraphes {
+  max-width:    700px;
+  display:      flex;
+  flex-direction: column;
+  gap:          var(--space-md);
+  margin-top:   var(--space-xl);
+}
+.insc-paragraphes p {
+  font-size:   1rem;
+  color:       var(--text-dark);
+  line-height: 1.7;
+  padding-left: var(--space-md);
+  border-left:  3px solid var(--primary-light);
+}
+
+/* Bouton Pirouette : turquoise, centré sous les paragraphes */
+.insc-pirouette { margin-top: var(--space-xl); }
+.btn-pirouette {
+  display:         inline-block;
+  background:      #26a69a;
+  color:           var(--white);
+  font-weight:     700;
+  font-size:       1rem;
+  padding:         var(--space-md) var(--space-xl);
+  border-radius:   var(--radius-pill);
+  text-decoration: none;
+  transition:      var(--transition);
+}
+.btn-pirouette:hover { background: #00897b; transform: translateY(-2px); }
+
+/* ── BLOC INCLUSION HANDICAP ────────────────────────────── */
+
+/* Carte horizontale : icône + texte */
+.insc-handicap {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-xl);
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border-left:   5px solid #26a69a;
+  max-width:     800px;
+}
+.insc-handicap__icone {
+  font-size:   2.5rem;
+  flex-shrink: 0;
+  margin-top:  4px;
+}
+.insc-handicap__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+.insc-handicap p { font-size: 0.95rem; color: var(--text-gray); line-height: 1.7; }
+
+/* ── FICHE PRÉ-INSCRIPTION ──────────────────────────────── */
+
+/* Deux colonnes : aperçu image + bouton téléchargement */
+.insc-fiche {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--space-xl);
+  align-items:           center;
+  max-width:             900px;
+  margin:                0 auto;
+}
+
+/* Aperçu de la fiche : image avec ombre */
+.insc-fiche__apercu {
+  border-radius: var(--radius-xl);
+  overflow:      hidden;
+  box-shadow:    var(--shadow-md);
+  border:        1px solid rgba(0,0,0,0.08);
+}
+.insc-fiche__img { width: 100%; display: block; }
+
+/* Colonne droite : bouton + note */
+.insc-fiche__actions {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-lg);
+  align-items:    flex-start;
+}
+.insc-fiche__hint {
+  font-size: 0.9rem;
+  color:     var(--text-gray);
+  line-height: 1.6;
+}
+.insc-fiche__hint a { color: var(--primary); text-decoration: underline; }
+
+/* ── 5. LISTE DES DOCUMENTS ─────────────────────────────── */
 
 /* Liste verticale centrée des documents requis.
    max-width:700px + margin:auto pour la centrer dans la page. */
@@ -104,5 +199,8 @@
 
 /* Mobile (≤768px) : 4 étapes → 2 colonnes */
 @media (max-width: 768px) {
-  .etapes-grille { grid-template-columns: repeat(2, 1fr); }
+  .etapes-grille        { grid-template-columns: repeat(2, 1fr); }
+  .insc-fiche           { grid-template-columns: 1fr; }
+  .insc-fiche__actions  { align-items: center; text-align: center; }
+  .insc-handicap        { flex-direction: column; gap: var(--space-md); }
 }

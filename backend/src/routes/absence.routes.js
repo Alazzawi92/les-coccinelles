@@ -7,6 +7,9 @@ const { verifierRole }   = require('../middlewares/role.middleware');
 const { uploadDocument } = require('../middlewares/upload.middleware');
 const absenceController  = require('../controllers/absenceController');
 
+// GET /api/absences/presences/:date — Présences/absences pour un jour (admin) — AVANT /:id
+router.get('/presences/:date',  verifierToken, verifierRole('admin', 'super_admin'), absenceController.getPresences);
+
 // GET /api/absences — Mes absences (parent) ou toutes (admin)
 router.get('/',                 verifierToken, absenceController.lister);
 

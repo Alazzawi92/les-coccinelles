@@ -27,16 +27,14 @@ const Accueil = () => {
 
   useEffect(() => {
     const chargerDonnees = async () => {
-      try {
-        const [resActu, resMenu, resEquipe] = await Promise.all([
-          api.get('/actualites?limite=3'),
-          api.get('/menus'),
-          api.get('/equipe')
-        ]);
-        setActualites(resActu.data.data?.actualites || []);
-        setMenu(resMenu.data.data);
-        setMembres((resEquipe.data.data || []).slice(0, 4)); // 4 premiers membres
-      } catch {}
+      const [resActu, resMenu, resEquipe] = await Promise.allSettled([
+        api.get('/actualites?limite=3'),
+        api.get('/menus'),
+        api.get('/equipe')
+      ]);
+      if (resActu.status === 'fulfilled')   setActualites(resActu.value.data.data?.actualites || []);
+      if (resMenu.status === 'fulfilled')   setMenu(resMenu.value.data.data);
+      if (resEquipe.status === 'fulfilled') setMembres((resEquipe.value.data.data || []).slice(0, 4));
     };
     chargerDonnees();
   }, []);

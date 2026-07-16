@@ -1,0 +1,190 @@
+/* ============================================================
+   FICHIER : Emargement.css
+   ROUTE   : /admin/emargement
+   RÔLE    : Pointage journalier des enfants.
+             Tableau avec statut coloré par ligne
+             (en attente / présent / reparti).
+
+   STRUCTURE :
+     1. Imports
+     2. Résumé du jour (3 tuiles)
+     3. Tableau de pointage
+     4. Ligne par statut
+     5. Cellule enfant
+     6. Inputs heures
+     7. Badges statut
+     8. Boutons d'action spécifiques
+     9. Responsive
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. RÉSUMÉ DU JOUR ──────────────────────────────────── */
+
+/* 3 tuiles côte à côte */
+.ema-resume {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-md);
+  margin-bottom:         var(--space-xl);
+}
+
+/* Tuile chiffrée */
+.ema-resume-tuile {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg);
+  text-align:    center;
+  box-shadow:    var(--shadow-sm);
+  border-left:   4px solid transparent;
+}
+.ema-resume-tuile--present { border-color: #43a047; }
+.ema-resume-tuile--parti   { border-color: #1e88e5; }
+.ema-resume-tuile--attente { border-color: #e0e0e0; }
+
+/* Grand chiffre */
+.ema-resume-nb {
+  display:     block;
+  font-family: var(--font-heading);
+  font-size:   2.2rem;
+  font-weight: 800;
+}
+.ema-resume-tuile--present .ema-resume-nb { color: #2e7d32; }
+.ema-resume-tuile--parti   .ema-resume-nb { color: #1565c0; }
+.ema-resume-tuile--attente .ema-resume-nb { color: var(--text-gray); }
+
+/* Label sous le chiffre */
+.ema-resume-label {
+  font-size:  0.85rem;
+  font-weight: 600;
+  color:      var(--text-gray);
+}
+
+/* ── 3. TABLEAU DE POINTAGE ─────────────────────────────── */
+
+/* Largeur des colonnes : enfant large, heures compactes */
+.ema-table th:nth-child(1) { width: 30%; }
+.ema-table th:nth-child(2),
+.ema-table th:nth-child(3) { width: 14%; }
+.ema-table th:nth-child(4) { width: 10%; }
+.ema-table th:nth-child(5) { width: 12%; }
+.ema-table th:nth-child(6) { width: 20%; }
+
+/* ── 4. LIGNE PAR STATUT ────────────────────────────────── */
+
+/* Ligne neutre (en attente) : fond par défaut */
+.ema-ligne--non_arrive { background: var(--white); }
+
+/* Ligne présent : fond vert très clair */
+.ema-ligne--present { background: #f1fff2; }
+
+/* Ligne reparti : fond bleu très clair */
+.ema-ligne--parti { background: #f0f6ff; }
+
+/* ── 5. CELLULE ENFANT ──────────────────────────────────── */
+
+/* Flex horizontal : emoji + nom + groupe */
+.ema-enfant {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+}
+
+/* Emoji avatar */
+.ema-avatar { font-size: 1.4rem; flex-shrink: 0; }
+
+/* Badge groupe de l'enfant */
+.ema-groupe {
+  display:       block;
+  font-size:     0.7rem;
+  color:         var(--text-gray);
+  font-weight:   400;
+}
+
+/* ── 6. INPUTS HEURES ───────────────────────────────────── */
+
+/* Conteneur de l'input heure */
+.ema-heure-bloc { display: flex; align-items: center; gap: 4px; }
+
+/* Champ time compact */
+.ema-input-heure {
+  width:     7.5rem;
+  padding:   4px 6px;
+  font-size: 0.9rem;
+}
+
+/* Tiret quand pas encore pointé */
+.ema-non-pointe { color: #ccc; font-size: 1.1rem; }
+
+/* ── 7. BADGES STATUT ───────────────────────────────────── */
+
+.ema-badge {
+  display:       inline-block;
+  padding:       3px 10px;
+  border-radius: var(--radius-pill);
+  font-size:     0.75rem;
+  font-weight:   700;
+  white-space:   nowrap;
+}
+/* En attente : gris */
+.ema-badge--non_arrive { background: #f5f5f5;  color: #9e9e9e; }
+/* Présent : vert */
+.ema-badge--present    { background: #e8f5e9;  color: #2e7d32; }
+/* Reparti : bleu */
+.ema-badge--parti      { background: #e3f2fd;  color: #1565c0; }
+
+/* ── 8. DURÉE ET BOUTONS SPÉCIFIQUES ────────────────────── */
+
+/* Badge durée de présence */
+.ema-duree {
+  background:    var(--primary-light);
+  color:         var(--primary);
+  padding:       2px 8px;
+  border-radius: var(--radius-pill);
+  font-size:     0.8rem;
+  font-weight:   700;
+  white-space:   nowrap;
+}
+
+/* Bouton "Départ" : orange */
+.ema-btn-depart {
+  background: var(--primary);
+  color:      var(--white);
+  border:     none;
+}
+.ema-btn-depart:hover { opacity: 0.9; }
+
+/* Bouton "Annuler départ" : gris doux */
+.ema-btn-annuler {
+  background: #f5f5f5;
+  color:      var(--text-gray);
+  border:     1px solid #ddd;
+}
+.ema-btn-annuler:hover { background: #e0e0e0; }
+
+/* Bouton corbeille : icône seul, fond transparent */
+.ema-btn-supprimer {
+  background: none;
+  border:     1px solid #ffcdd2;
+  color:      #e53935;
+  padding:    4px 8px;
+}
+.ema-btn-supprimer:hover { background: #ffebee; }
+
+/* ── 9. RESPONSIVE ──────────────────────────────────────── */
+
+/* Tablette : résumé en 3 colonnes compressées */
+@media (max-width: 900px) {
+  .ema-resume { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
+  /* Masquer la colonne durée sur petits écrans */
+  .ema-table th:nth-child(4),
+  .ema-table td:nth-child(4) { display: none; }
+}
+
+/* Mobile : résumé empilé */
+@media (max-width: 600px) {
+  .ema-resume { grid-template-columns: 1fr; }
+  /* Masquer groupe sur mobile */
+  .ema-groupe { display: none; }
+}

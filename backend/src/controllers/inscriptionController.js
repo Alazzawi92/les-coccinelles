@@ -139,7 +139,8 @@ const ajouterDocuments = async (req, res) => {
 
     return cree(res, docs, 'Documents ajoutés');
   } catch (err) {
-    return erreur(res, 'Erreur lors de l\'ajout des documents');
+    console.error('Erreur ajouterDocuments :', err.message);
+    return erreur(res, 'Erreur lors de l\'ajout des documents : ' + err.message);
   }
 };
 

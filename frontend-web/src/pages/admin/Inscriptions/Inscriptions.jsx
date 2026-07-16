@@ -182,17 +182,94 @@ const Inscriptions = () => {
               <button className="modal__fermer" onClick={() => setSelected(null)}>✕</button>
             </div>
 
-            {/* Récapitulatif des infos du dossier (lecture seule) */}
-            <div className="dossier-grille">
-              <div className="detail-item"><span className="detail-label">Parent</span><span className="detail-valeur">{selected.parent?.prenom} {selected.parent?.nom} — {selected.parent?.email}</span></div>
-              <div className="detail-item"><span className="detail-label">Type d'accueil</span><span className="detail-valeur">{{ temps_plein:'Temps plein', temps_partiel:'Temps partiel', occasionnel:'Occasionnel' }[selected.temps_accueil] || '—'}</span></div>
-              <div className="detail-item"><span className="detail-label">Date souhaitée</span><span className="detail-valeur">{selected.date_debut_souhaitee ? new Date(selected.date_debut_souhaitee).toLocaleDateString('fr-FR') : '—'}</span></div>
-              <div className="detail-item"><span className="detail-label">Jours souhaités</span><span className="detail-valeur">{selected.jours_souhaites || '—'}</span></div>
-              {/* Message du parent : affiché uniquement s'il y en a un */}
-              {selected.commentaire_parent && (
-                <div className="detail-item detail-item--full"><span className="detail-label">Message du parent</span><span className="detail-valeur">{selected.commentaire_parent}</span></div>
-              )}
+            {/* ── INFORMATIONS DEMANDE ─────────────────────────── */}
+            <div className="dossier-section">
+              <h3 className="dossier-section__titre">📋 Demande d'accueil</h3>
+              <div className="dossier-grille">
+                <div className="detail-item"><span className="detail-label">Enfant</span><span className="detail-valeur">{selected.enfant?.prenom} {selected.enfant?.nom}</span></div>
+                <div className="detail-item"><span className="detail-label">Type d'accueil</span><span className="detail-valeur">{{ temps_plein:'Temps plein', temps_partiel:'Temps partiel', occasionnel:'Occasionnel' }[selected.temps_accueil] || '—'}</span></div>
+                <div className="detail-item"><span className="detail-label">Date souhaitée</span><span className="detail-valeur">{selected.date_debut_souhaitee ? new Date(selected.date_debut_souhaitee).toLocaleDateString('fr-FR') : '—'}</span></div>
+                <div className="detail-item"><span className="detail-label">Jours souhaités</span><span className="detail-valeur">{selected.jours_souhaites || '—'}</span></div>
+                {selected.commentaire_parent && (
+                  <div className="detail-item detail-item--full"><span className="detail-label">Message du parent</span><span className="detail-valeur">{selected.commentaire_parent}</span></div>
+                )}
+              </div>
             </div>
+
+            {/* ── PRÉ-INSCRIPTION ──────────────────────────────── */}
+            {selected.preinscription && (() => {
+              const pi = selected.preinscription;
+              return (
+                <>
+                  {/* Parents */}
+                  <div className="dossier-section">
+                    <h3 className="dossier-section__titre">👤 Parents</h3>
+                    <div className="dossier-parents">
+                      {[['parent1', 'Parent 1'], ['parent2', 'Parent 2']].map(([cle, lbl]) => (
+                        pi[cle]?.nom ? (
+                          <div key={cle} className="dossier-parent-bloc">
+                            <p className="dossier-parent-bloc__titre">{lbl}</p>
+                            <div className="dossier-grille dossier-grille--compact">
+                              <div className="detail-item"><span className="detail-label">Nom complet</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
+                              <div className="detail-item"><span className="detail-label">Téléphone</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">Email</span><span className="detail-valeur">{pi[cle].email || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">Situation familiale</span><span className="detail-valeur">{pi[cle].situation_familiale || '—'}</span></div>
+                              <div className="detail-item detail-item--full"><span className="detail-label">Adresse</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
+                            </div>
+                          </div>
+                        ) : null
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Employeurs */}
+                  {(pi.employeur1?.profession || pi.employeur2?.profession) && (
+                    <div className="dossier-section">
+                      <h3 className="dossier-section__titre">💼 Profession & employeur</h3>
+                      <div className="dossier-grille">
+                        {pi.employeur1?.profession && <>
+                          <div className="detail-item"><span className="detail-label">Profession — Parent 1</span><span className="detail-valeur">{pi.employeur1.profession}</span></div>
+                          <div className="detail-item"><span className="detail-label">Employeur — Parent 1</span><span className="detail-valeur">{pi.employeur1.nom_employeur || '—'}</span></div>
+                        </>}
+                        {pi.employeur2?.profession && <>
+                          <div className="detail-item"><span className="detail-label">Profession — Parent 2</span><span className="detail-valeur">{pi.employeur2.profession}</span></div>
+                          <div className="detail-item"><span className="detail-label">Employeur — Parent 2</span><span className="detail-valeur">{pi.employeur2.nom_employeur || '—'}</span></div>
+                        </>}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Fratrie + RPE */}
+                  <div className="dossier-section">
+                    <h3 className="dossier-section__titre">👨‍👩‍👧‍👦 Famille</h3>
+                    <div className="dossier-grille">
+                      <div className="detail-item"><span className="detail-label">Place dans la fratrie</span><span className="detail-valeur">{pi.place_fratrie || '—'}</span></div>
+                      <div className="detail-item"><span className="detail-label">Autorisation RPE</span><span className="detail-valeur">{pi.autorisation_rpe ? '✅ Oui' : '❌ Non'}</span></div>
+                    </div>
+                  </div>
+
+                  {/* Contacts d'urgence */}
+                  <div className="dossier-section">
+                    <h3 className="dossier-section__titre">🚨 Personnes à contacter en cas d'urgence</h3>
+                    <div className="dossier-parents">
+                      {[['contact1', 'Contact n°1'], ['contact2', 'Contact n°2']].map(([cle, lbl]) => (
+                        pi[cle]?.nom ? (
+                          <div key={cle} className="dossier-parent-bloc dossier-parent-bloc--urgence">
+                            <p className="dossier-parent-bloc__titre">{lbl}</p>
+                            <div className="dossier-grille dossier-grille--compact">
+                              <div className="detail-item"><span className="detail-label">Nom complet</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
+                              <div className="detail-item"><span className="detail-label">Lien de parenté</span><span className="detail-valeur">{pi[cle].parente || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">Téléphone</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
+                              <div className="detail-item detail-item--full"><span className="detail-label">Adresse</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
+                            </div>
+                          </div>
+                        ) : null
+                      ))}
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
 
             {/* ── DOCUMENTS JUSTIFICATIFS ───────────────────────── */}
             <div className="dossier-docs">

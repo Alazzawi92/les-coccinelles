@@ -16,15 +16,59 @@
 @import '../../../styles/variables.css';
 @import '../../../styles/admin.css';
 
-/* ── 2. GRILLE DE DÉTAIL D'UN DOSSIER ──────────────────── */
+/* ── 2. SECTIONS DE LA MODALE ───────────────────────────── */
 
-/* 2 colonnes dans la modale de détail : infos enfant | infos famille.
-   margin-bottom pour l'espace avant les boutons d'action. */
+/* En-tête de section dans la modale */
+.dossier-section {
+  margin-bottom: var(--space-xl);
+}
+.dossier-section__titre {
+  font-family:   var(--font-heading);
+  font-size:     0.95rem;
+  font-weight:   700;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom:  2px solid var(--bg-gray);
+}
+
+/* Grille 2 colonnes pour les champs de détail */
 .dossier-grille {
   display:               grid;
   grid-template-columns: repeat(2, 1fr);
-  gap:                   var(--space-md);
-  margin-bottom:         var(--space-xl);
+  gap:                   var(--space-sm);
+}
+/* Variante compacte avec gap réduit */
+.dossier-grille--compact { gap: var(--space-sm); }
+
+/* ── BLOCS PARENTS / CONTACTS ───────────────────────────── */
+
+/* Conteneur côte-à-côte pour les 2 blocs parent ou 2 contacts */
+.dossier-parents {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+}
+
+/* Carte d'un parent ou contact */
+.dossier-parent-bloc {
+  background:    var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding:       var(--space-md);
+  border-left:   3px solid var(--primary);
+}
+/* Variante rouge pour les contacts d'urgence */
+.dossier-parent-bloc--urgence { border-left-color: #ef5350; }
+
+/* Titre du bloc (Parent 1, Contact n°1...) */
+.dossier-parent-bloc__titre {
+  font-family:   var(--font-heading);
+  font-size:     0.82rem;
+  font-weight:   700;
+  color:         var(--primary);
+  margin-bottom: var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* ── 3. PIÈCES JUSTIFICATIVES ───────────────────────────── */

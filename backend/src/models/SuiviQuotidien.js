@@ -13,9 +13,13 @@ const SuiviQuotidien = sequelize.define('SuiviQuotidien', {
   sieste_debut:  { type: DataTypes.TIME },
   sieste_fin:    { type: DataTypes.TIME },
   sieste_note:   { type: DataTypes.TEXT },
+  siestes:       { type: DataTypes.JSON },                         // Tableau [{debut, fin}] pour siestes multiples
   activites:     { type: DataTypes.TEXT },
   humeur:        { type: DataTypes.ENUM('joyeux', 'calme', 'fatigue', 'pleureur', 'autre') },
-  selles:        { type: DataTypes.BOOLEAN, defaultValue: false },
+  biberon_nb:    { type: DataTypes.TINYINT.UNSIGNED, defaultValue: 0 }, // Nombre de biberons
+  biberon_ml:    { type: DataTypes.SMALLINT.UNSIGNED },                  // Ml par biberon (optionnel)
+  selles:        { type: DataTypes.BOOLEAN, defaultValue: false },        // Selles oui/non
+  selles_nb:     { type: DataTypes.TINYINT.UNSIGNED, defaultValue: 0 },  // Nombre de selles
   temperature:   { type: DataTypes.DECIMAL(4, 1) },
   note_generale: { type: DataTypes.TEXT },
   redige_par:    { type: DataTypes.INTEGER, allowNull: false }

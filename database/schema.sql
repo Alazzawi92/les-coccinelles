@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS inscriptions (
   jours_souhaites       VARCHAR(100),                     -- Jours souhaités (lundi, mardi...)
   temps_accueil         ENUM('temps_plein','temps_partiel','occasionnel'),
   commentaire_parent    TEXT,                             -- Message du parent
+  preinscription        JSON,                             -- Fiche pré-inscription complète (parents, contacts, employeurs)
   commentaire_admin     TEXT,                             -- Note interne de l'admin
   traite_par            INT,                              -- Admin ayant traité le dossier
   date_traitement       DATETIME,                         -- Date de traitement
@@ -114,12 +115,16 @@ CREATE TABLE IF NOT EXISTS suivi_quotidien (
   repas_midi     ENUM('tout','peu','rien','absent') DEFAULT 'absent', -- Déjeuner
   repas_gouter   ENUM('tout','peu','rien','absent') DEFAULT 'absent', -- Goûter
   repas_note     TEXT,                                    -- Remarque sur les repas
-  sieste_debut   TIME,                                    -- Heure de début de sieste
-  sieste_fin     TIME,                                    -- Heure de fin de sieste
+  sieste_debut   TIME,                                    -- Heure de début de sieste (legacy)
+  sieste_fin     TIME,                                    -- Heure de fin de sieste (legacy)
   sieste_note    TEXT,                                    -- Remarque sur la sieste
+  siestes        JSON,                                    -- Tableau de siestes [{debut, fin}] (multiple)
   activites      TEXT,                                    -- Description des activités du jour
   humeur         ENUM('joyeux','calme','fatigue','pleureur','autre'), -- Humeur générale
-  selles         BOOLEAN DEFAULT FALSE,                   -- A eu des selles (hygiène)
+  biberon_nb     TINYINT UNSIGNED DEFAULT 0,              -- Nombre de biberons donnés
+  biberon_ml     SMALLINT UNSIGNED,                       -- Quantité en ml par biberon (optionnel)
+  selles         BOOLEAN DEFAULT FALSE,                   -- A eu des selles oui/non (hygiène)
+  selles_nb      TINYINT UNSIGNED DEFAULT 0,              -- Nombre de selles dans la journée
   temperature    DECIMAL(4,1),                            -- Température si fièvre (ex: 38.5)
   note_generale  TEXT,                                    -- Message général pour les parents
   redige_par     INT NOT NULL,                            -- Puéricultrice / admin auteur
@@ -131,7 +136,25 @@ CREATE TABLE IF NOT EXISTS suivi_quotidien (
   INDEX idx_suivi_date (date_suivi)
 );
 
--- ── TABLE 6 : documents ─────────────────────────────────────
+-- ── TABLE 6 : emargements ───────────────────────────────────
+-- Pointages journaliers des enfants (heure d'arrivée et de départ)
+CREATE TABLE IF NOT EXISTS emargements (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  enfant_id       INT NOT NULL,                            -- Enfant concerné
+  date_presence   DATE NOT NULL,                           -- Date de présence
+  heure_arrivee   TIME,                                    -- Heure d'arrivée à la crèche
+  heure_depart    TIME,                                    -- Heure de départ de la crèche
+  signe_par       INT NOT NULL,                            -- Admin / puéricultrice qui a pointé
+  note            TEXT,                                    -- Remarque optionnelle
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (enfant_id) REFERENCES enfants(id) ON DELETE CASCADE,
+  FOREIGN KEY (signe_par) REFERENCES users(id)   ON DELETE CASCADE,
+  UNIQUE KEY unique_emargement (enfant_id, date_presence), -- 1 pointage par enfant par jour
+  INDEX idx_emargements_date (date_presence)
+);
+
+-- ── TABLE 7 : documents ─────────────────────────────────────
 -- Documents uploadés par les parents ou l'admin
 CREATE TABLE IF NOT EXISTS documents (
   id              INT AUTO_INCREMENT PRIMARY KEY,
@@ -158,7 +181,20 @@ CREATE TABLE IF NOT EXISTS documents (
   INDEX idx_documents_enfant (enfant_id)
 );
 
--- ── TABLE 7 : messages ──────────────────────────────────────
+-- ── TABLE 8 : inscription_documents ────────────────────────
+-- Pièces justificatives uploadées pour un dossier d'inscription
+CREATE TABLE IF NOT EXISTS inscription_documents (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  inscription_id INT NOT NULL,                             -- Dossier d'inscription concerné
+  label          VARCHAR(255),                             -- Libellé de la pièce (ex: Carnet de santé)
+  fichier_path   VARCHAR(500),                             -- Chemin relatif /uploads/justificatifs/xxx.pdf
+  fichier_nom    VARCHAR(255),                             -- Nom original du fichier
+  created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (inscription_id) REFERENCES inscriptions(id) ON DELETE CASCADE,
+  INDEX idx_insc_doc_inscription (inscription_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── TABLE 9 : messages ──────────────────────────────────────
 -- Messagerie interne entre parents et équipe crèche
 CREATE TABLE IF NOT EXISTS messages (
   id               INT AUTO_INCREMENT PRIMARY KEY,
@@ -169,6 +205,8 @@ CREATE TABLE IF NOT EXISTS messages (
   lu               BOOLEAN DEFAULT FALSE,                 -- Message lu par le destinataire
   date_lecture     DATETIME,                              -- Date et heure de lecture
   parent_id        INT,                                   -- ID du message parent (fil de discussion)
+  piece_jointe     VARCHAR(500),                          -- Chemin vers la pièce jointe (optionnel)
+  piece_jointe_nom VARCHAR(255),                          -- Nom original de la pièce jointe
   created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (expediteur_id)   REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (destinataire_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -310,6 +348,21 @@ CREATE TABLE IF NOT EXISTS cms_pages (
   created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at       DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (modifie_par) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- ── TABLE 15 : equipe_membres ────────────────────────────────
+-- Membres de l'équipe affichés sur le site public
+CREATE TABLE IF NOT EXISTS equipe_membres (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  prenom      VARCHAR(100) NOT NULL,
+  nom         VARCHAR(100) NOT NULL,
+  titre       VARCHAR(200) NOT NULL,                    -- Fonction (ex: Directrice, Éducatrice)
+  photo       VARCHAR(500),                             -- JSON {web, miniature} des chemins d'image
+  ordre       INT DEFAULT 0,                             -- Ordre d'affichage
+  actif       BOOLEAN DEFAULT TRUE,                      -- Visible sur le site public
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX idx_equipe_actif (actif)
 );
 
 -- ── DONNÉES INITIALES ────────────────────────────────────────

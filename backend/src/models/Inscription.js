@@ -14,6 +14,7 @@ const Inscription = sequelize.define('Inscription', {
   jours_souhaites:      { type: DataTypes.STRING(100) },
   temps_accueil:        { type: DataTypes.ENUM('temps_plein', 'temps_partiel', 'occasionnel') },
   commentaire_parent:   { type: DataTypes.TEXT },
+  preinscription:       { type: DataTypes.JSON },  // Données de la fiche de pré-inscription
   commentaire_admin:    { type: DataTypes.TEXT },
   traite_par:           { type: DataTypes.INTEGER },
   date_traitement:      { type: DataTypes.DATE }

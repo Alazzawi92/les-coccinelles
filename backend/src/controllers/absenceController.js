@@ -1,14 +1,20 @@
 // Contrôleur absences — Les Coccinelles
-const { Absence, Enfant } = require('../models');
+const { Op }               = require('sequelize');
+const { Absence, Enfant }  = require('../models');
 const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 
 const lister = async (req, res) => {
   try {
+    const { User } = require('../models');
     const filtre = req.user.role === 'parent' ? { user_id: req.user.id } : {};
     const absences = await Absence.findAll({
       where: filtre,
-      include: [{ model: Enfant, as: 'enfant', attributes: ['id', 'prenom', 'nom'] }],
+      include: [
+        { model: Enfant, as: 'enfant', attributes: ['id', 'prenom', 'nom'] },
+        // Inclure le parent pour afficher son nom dans la liste admin
+        { model: User, as: 'parent', attributes: ['id', 'prenom', 'nom', 'email', 'telephone'] }
+      ],
       order: [['date_debut', 'DESC']]
     });
     return succes(res, absences);
@@ -75,4 +81,48 @@ const supprimer = async (req, res) => {
   } catch (err) { return erreur(res, 'Erreur lors de la suppression'); }
 };
 
-module.exports = { lister, creer, getAbsence, modifier, valider, supprimer };
+// GET /api/absences/presences/:date — Présences et absences pour un jour donné (admin)
+const getPresences = async (req, res) => {
+  try {
+    const { User } = require('../models');
+    const { date } = req.params; // Format YYYY-MM-DD
+
+    // Tous les enfants actifs inscrits à la crèche
+    const tousEnfants = await Enfant.findAll({
+      where:      { actif: true },
+      attributes: ['id', 'prenom', 'nom', 'sexe', 'groupe'],
+      order:      [['prenom', 'ASC']]
+    });
+
+    // Absences couvrant cette date (date_debut ≤ date ≤ date_fin), sauf les refusées
+    const absencesDuJour = await Absence.findAll({
+      where: {
+        date_debut: { [Op.lte]: date },
+        date_fin:   { [Op.gte]: date },
+        statut:     { [Op.ne]: 'refusee' }
+      },
+      include: [{ model: User, as: 'parent', attributes: ['prenom', 'nom'] }],
+      attributes: ['id', 'enfant_id', 'motif', 'date_debut', 'date_fin', 'statut']
+    });
+
+    // Construire un index enfant_id → absence pour lookup O(1)
+    const absenceParEnfant = {};
+    absencesDuJour.forEach(a => { absenceParEnfant[a.enfant_id] = a; });
+
+    // Séparer présents et absents
+    const presents = [];
+    const absents  = [];
+    tousEnfants.forEach(e => {
+      const abs = absenceParEnfant[e.id];
+      if (abs) {
+        absents.push({ ...e.toJSON(), absence: abs });
+      } else {
+        presents.push(e.toJSON());
+      }
+    });
+
+    return succes(res, { date, presents, absents });
+  } catch (err) { return erreur(res, 'Erreur récupération présences'); }
+};
+
+module.exports = { lister, creer, getAbsence, modifier, valider, supprimer, getPresences };

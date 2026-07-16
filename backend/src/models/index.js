@@ -7,6 +7,7 @@ const Enfant         = require('./Enfant');
 const Inscription    = require('./Inscription');
 const Absence        = require('./Absence');
 const SuiviQuotidien = require('./SuiviQuotidien');
+const Emargement     = require('./Emargement');
 const Document       = require('./Document');
 const Message        = require('./Message');
 const Actualite      = require('./Actualite');
@@ -45,6 +46,11 @@ Absence.belongsTo(Enfant,      { foreignKey: 'enfant_id',  as: 'enfant' });
 Enfant.hasMany(SuiviQuotidien,         { foreignKey: 'enfant_id',  as: 'suivis' });
 SuiviQuotidien.belongsTo(Enfant,       { foreignKey: 'enfant_id',  as: 'enfant' });
 SuiviQuotidien.belongsTo(User,         { foreignKey: 'redige_par', as: 'auteur' });
+
+// Enfant → Émargements (pointages journaliers)
+Enfant.hasMany(Emargement,             { foreignKey: 'enfant_id',  as: 'emargements' });
+Emargement.belongsTo(Enfant,           { foreignKey: 'enfant_id',  as: 'enfant' });
+Emargement.belongsTo(User,             { foreignKey: 'signe_par',  as: 'signataire' });
 
 // User → Documents
 User.hasMany(Document,         { foreignKey: 'user_id',   as: 'documents' });
@@ -114,6 +120,7 @@ module.exports = {
   Inscription,
   Absence,
   SuiviQuotidien,
+  Emargement,
   Document,
   Message,
   Actualite,

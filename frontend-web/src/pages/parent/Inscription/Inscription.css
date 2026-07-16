@@ -252,6 +252,274 @@
 /* Icône ℹ️ dans la note d'info */
 .recap-info span { font-size: 1.3rem; flex-shrink: 0; }
 
+/* ── ÉTAPE PRÉ-INSCRIPTION : CONDITIONS ─────────────────── */
+
+/* Paragraphes des conditions : barre gauche turquoise */
+.cond-paragraphes {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  margin-bottom:  var(--space-xl);
+}
+.cond-paragraphes p {
+  font-size:    0.95rem;
+  color:        var(--text-dark);
+  line-height:  1.7;
+  padding-left: var(--space-md);
+  border-left:  3px solid var(--primary-light);
+}
+
+/* Bouton Pirouette */
+.cond-pirouette { margin-bottom: var(--space-xl); }
+.btn-pirouette {
+  display:         inline-block;
+  background:      #26a69a;
+  color:           var(--white);
+  font-weight:     700;
+  font-size:       0.9rem;
+  padding:         var(--space-sm) var(--space-lg);
+  border-radius:   var(--radius-pill);
+  text-decoration: none;
+  transition:      var(--transition);
+}
+.btn-pirouette:hover { background: #00897b; transform: translateY(-2px); }
+
+/* Bloc inclusion handicap */
+.cond-handicap {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-lg);
+  background:    #f0fdfb;
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg);
+  border-left:   4px solid #26a69a;
+  margin-bottom: var(--space-xl);
+}
+.cond-handicap__icone { font-size: 2rem; flex-shrink: 0; margin-top: 2px; }
+.cond-handicap__titre {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+.cond-handicap p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
+
+/* ── BLOCS TARIFS ───────────────────────────────────────── */
+
+/* Carte blanche pour chaque bloc tarifaire */
+.tarif-bloc {
+  background:    var(--white);
+  border:        1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+.tarif-bloc p { font-size: 0.92rem; color: var(--text-dark); line-height: 1.7; margin-bottom: var(--space-sm); }
+.tarif-bloc p:last-child { margin-bottom: 0; }
+
+/* Titre du bloc */
+.tarif-bloc__titre {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+/* Pastilles adhésion */
+.tarif-pills { display: flex; gap: var(--space-md); flex-wrap: wrap; margin: var(--space-md) 0; }
+.tarif-pill {
+  padding:       var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-pill);
+  font-size:     0.9rem;
+}
+.tarif-pill--regular { background: #fff3e0; color: #e65100; border: 1.5px solid #ffcc80; }
+.tarif-pill--occa    { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
+
+/* Note grise sous les pastilles */
+.tarif-note { font-size: 0.85rem !important; color: var(--text-gray) !important; }
+
+/* Formule de calcul du tarif horaire */
+.tarif-formule {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-lg);
+  background:  #f3f4f6;
+  border-radius: var(--radius-md);
+  padding:     var(--space-md) var(--space-lg);
+  margin:      var(--space-md) 0;
+  flex-wrap:   wrap;
+}
+.tarif-formule__fraction {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            2px;
+}
+.tarif-formule__num  { font-size: 0.88rem; color: var(--text-dark); font-weight: 600; }
+.tarif-formule__trait {
+  width:      100%;
+  height:     2px;
+  background: var(--text-dark);
+  display:    block;
+}
+.tarif-formule__den  { font-size: 1rem; color: var(--text-dark); font-weight: 700; }
+.tarif-formule__op   { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+.tarif-formule__label { font-size: 0.9rem; color: var(--text-dark); font-style: italic; }
+
+/* Sous-titre "Le taux d'effort est de" */
+.tarif-sous-titre { font-weight: 600; font-size: 0.9rem !important; margin: var(--space-md) 0 var(--space-sm) !important; }
+
+/* Liste des taux */
+.tarif-taux {
+  list-style:   none;
+  padding:      0;
+  margin:       0 0 var(--space-md);
+  display:      flex;
+  flex-direction: column;
+  gap:          6px;
+}
+.tarif-taux li {
+  font-size:    0.9rem;
+  color:        var(--text-dark);
+  padding-left: var(--space-md);
+  border-left:  3px solid var(--primary-light);
+}
+
+/* Encadré plancher / plafond */
+.tarif-plancher {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-md);
+  margin-top:            var(--space-md);
+}
+.tarif-plancher__item {
+  background:    var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding:       var(--space-md);
+  display:       flex;
+  flex-direction: column;
+  gap:           4px;
+}
+.tarif-plancher__lbl { font-size: 0.78rem; color: var(--text-gray); }
+.tarif-plancher__val { font-size: 0.92rem; color: var(--text-dark); }
+
+/* Calcul accueil régulier : A × B × C */
+.tarif-calcul {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  flex-wrap:     wrap;
+  background:    #f3f4f6;
+  border-radius: var(--radius-md);
+  padding:       var(--space-md) var(--space-lg);
+  margin-top:    var(--space-md);
+}
+.tarif-calcul__item {
+  background:    var(--white);
+  border:        1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding:       6px var(--space-md);
+  font-size:     0.85rem;
+  color:         var(--text-dark);
+  font-weight:   600;
+}
+.tarif-calcul__op { font-size: 1.2rem; font-weight: 700; color: var(--primary); }
+
+/* ── SÉPARATEUR FICHE PRÉ-INSCRIPTION ───────────────────── */
+
+/* Ligne horizontale avec texte centré qui délimite conditions / formulaire */
+.preinsc-separateur {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+  margin:      var(--space-2xl) 0 var(--space-xl);
+}
+.preinsc-separateur::before,
+.preinsc-separateur::after {
+  content:    '';
+  flex:       1;
+  height:     2px;
+  background: var(--primary);
+  opacity:    0.25;
+}
+.preinsc-separateur span {
+  font-family:  var(--font-heading);
+  font-size:    1rem;
+  font-weight:  700;
+  color:        var(--primary);
+  white-space:  nowrap;
+}
+
+/* ── SECTIONS DU FORMULAIRE PRÉ-INSCRIPTION ─────────────── */
+
+/* Carte blanche pour chaque bloc (parent, contact...) */
+.preinsc-section {
+  background:    var(--white);
+  border:        1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+/* Variante rouge/urgence pour les contacts */
+.preinsc-section--contact { border-color: #ffccbc; background: #fffaf8; }
+
+/* Titre de section : petit, gras, avec icône */
+.preinsc-section__titre {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+/* Grille 2 colonnes pour les champs nom/prénom/tél/email */
+.preinsc-grille {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-md);
+  margin-bottom:         var(--space-md);
+}
+
+/* ── AUTORISATION RPE ───────────────────────────────────── */
+
+/* Case à cocher + texte, ligne cliquable */
+.preinsc-autorisation {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-md);
+  background:    #fff8e1;
+  border:        1.5px solid #ffe082;
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg);
+  margin-bottom: var(--space-lg);
+  cursor:        pointer;
+  font-size:     0.95rem;
+  color:         var(--text-dark);
+  line-height:   1.6;
+}
+.preinsc-autorisation input[type="checkbox"] {
+  width:       18px;
+  height:      18px;
+  flex-shrink: 0;
+  margin-top:  2px;
+  accent-color: var(--primary);
+  cursor:      pointer;
+}
+
+/* ── INTRO PERSONNES À CONTACTER ────────────────────────── */
+
+.preinsc-intro-contacts {
+  background:    #fff3e0;
+  border-left:   4px solid #ff9800;
+  border-radius: var(--radius-md);
+  padding:       var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-lg);
+  font-size:     0.9rem;
+  color:         var(--text-dark);
+  line-height:   1.6;
+}
+
+
 /* ── 7. NAVIGATION ENTRE ÉTAPES ─────────────────────────── */
 
 /* Barre "Précédent | Suivant" en bas de chaque étape.
@@ -263,4 +531,42 @@
   margin-top: var(--space-2xl);
   padding-top: var(--space-xl);
   border-top: 1px solid var(--bg-gray);
+}
+
+/* ── ÉTAPE DOCUMENTS : EMPLOYEURS ───────────────────────── */
+
+/* Carte pour les champs profession/employeur */
+.docs-employeur {
+  background:    var(--white);
+  border:        1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg) var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+.docs-employeur__titre {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+/* Titre séparateur avant la liste de documents */
+.docs-titre-section {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin:        var(--space-xl) 0 var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom:  2px solid var(--bg-gray);
+}
+
+/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  /* Grille 2 colonnes → 1 colonne sur petit écran */
+  .preinsc-grille { grid-template-columns: 1fr; }
+  /* Autorisation : alignement vertical */
+  .preinsc-autorisation { flex-direction: row; }
+  /* Sections : padding réduit */
+  .preinsc-section { padding: var(--space-md); }
 }

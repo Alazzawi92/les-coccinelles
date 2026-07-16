@@ -1,0 +1,313 @@
+/* ============================================================
+   FICHIER : Calendrier.css
+   ROUTE   : /admin/calendrier
+   RÔLE    : Calendrier mensuel des présences/absences.
+             Grille 7 colonnes (lun→dim). Panneau latéral
+             qui s'affiche après sélection d'un jour.
+
+   STRUCTURE :
+     1. Imports
+     2. Conteneur principal (2 colonnes)
+     3. Bloc calendrier
+     4. Navigation mois
+     5. Grille des jours
+     6. Cases du calendrier
+     7. Légende
+     8. Panneau latéral des présences
+     9. Listes présents / absents
+    10. Responsive
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. CONTENEUR PRINCIPAL ─────────────────────────────── */
+
+/* 2 colonnes : calendrier à gauche (fixe) + panneau à droite (flexible) */
+.cal-conteneur {
+  display:               grid;
+  grid-template-columns: 420px 1fr;
+  gap:                   var(--space-xl);
+  align-items:           start;
+}
+
+/* ── 3. BLOC CALENDRIER ─────────────────────────────────── */
+
+/* Carte blanche contenant la navigation + la grille */
+.cal-bloc {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border:        1px solid rgba(0,0,0,0.06);
+}
+
+/* ── 4. NAVIGATION MOIS ─────────────────────────────────── */
+
+/* Rangée : < Juillet 2026 > */
+.cal-nav {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--space-lg);
+}
+
+/* Titre du mois : Fredoka, centré */
+.cal-nav-titre {
+  font-family: var(--font-heading);
+  font-size:   1.25rem;
+  color:       var(--text-dark);
+}
+
+/* Boutons < et > de navigation */
+.cal-nav-btn {
+  width:           2.2rem;
+  height:          2.2rem;
+  border-radius:   50%;
+  border:          2px solid var(--primary);
+  background:      var(--white);
+  color:           var(--primary);
+  font-size:       1.3rem;
+  cursor:          pointer;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  transition:      var(--transition);
+  line-height:     1;
+}
+.cal-nav-btn:hover { background: var(--primary); color: var(--white); }
+
+/* ── 5. GRILLE DES JOURS ────────────────────────────────── */
+
+/* 7 colonnes égales : lundi → dimanche */
+.cal-grille {
+  display:               grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:                   4px;
+}
+
+/* En-têtes Lun Mar Mer… */
+.cal-entete-jour {
+  text-align:  center;
+  font-size:   0.7rem;
+  font-weight: 700;
+  color:       var(--text-gray);
+  padding:     var(--space-xs) 0;
+  text-transform: uppercase;
+}
+
+/* ── 6. CASES DU CALENDRIER ─────────────────────────────── */
+
+/* Case de base : bouton carré cliquable */
+.cal-case {
+  aspect-ratio:    1;
+  border:          2px solid transparent;
+  border-radius:   var(--radius-sm);
+  background:      var(--bg-gray);
+  font-size:       0.9rem;
+  font-weight:     600;
+  color:           var(--text-dark);
+  cursor:          pointer;
+  transition:      var(--transition);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+}
+.cal-case:hover { border-color: var(--primary); background: var(--primary-light); }
+
+/* Case vide (hors du mois courant) */
+.cal-case--vide { background: transparent; cursor: default; }
+.cal-case--vide:hover { border-color: transparent; background: transparent; }
+
+/* Aujourd'hui : contour orange */
+.cal-case--aujourd {
+  border-color: var(--primary);
+  color:        var(--primary);
+  font-weight:  800;
+}
+
+/* Jour sélectionné : fond orange, texte blanc */
+.cal-case--selec {
+  background:   var(--primary);
+  border-color: var(--primary);
+  color:        var(--white);
+}
+.cal-case--selec:hover { background: var(--primary); }
+
+/* Week-end : fond légèrement plus foncé, texte gris */
+.cal-case--weekend {
+  background: #f0f0f0;
+  color:      var(--text-gray);
+}
+
+/* ── 7. LÉGENDE ─────────────────────────────────────────── */
+
+/* Rangée de légende sous le calendrier */
+.cal-legende {
+  display:        flex;
+  gap:            var(--space-md);
+  margin-top:     var(--space-md);
+  padding-top:    var(--space-sm);
+  border-top:     1px solid var(--bg-gray);
+  flex-wrap:      wrap;
+}
+.cal-legende-item {
+  display:     flex;
+  align-items: center;
+  gap:         6px;
+  font-size:   0.75rem;
+  color:       var(--text-gray);
+}
+/* Pastille de couleur dans la légende */
+.cal-legende-point {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  flex-shrink:   0;
+}
+.cal-legende-point--aujourd { border: 2px solid var(--primary); background: transparent; }
+.cal-legende-point--selec   { background: var(--primary); }
+.cal-legende-point--weekend { background: #f0f0f0; border: 1px solid #ddd; }
+
+/* ── 8. PANNEAU LATÉRAL DES PRÉSENCES ───────────────────── */
+
+/* Carte blanche collée au calendrier */
+.cal-panneau {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+  border:        1px solid rgba(0,0,0,0.06);
+  min-height:    300px;
+}
+
+/* État vide : icone + message centré */
+.cal-panneau-vide {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  min-height:      220px;
+  gap:             var(--space-sm);
+  color:           var(--text-gray);
+}
+.cal-panneau-icone { font-size: 2.5rem; }
+
+/* Titre du panneau : date sélectionnée */
+.cal-panneau-titre {
+  font-family:   var(--font-heading);
+  font-size:     1.1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+  text-transform: capitalize;
+}
+
+/* ── RÉSUMÉ PRÉSENTS / ABSENTS ──────────────────────────── */
+
+/* 2 tuiles côte à côte */
+.cal-resume {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   var(--space-sm);
+  margin-bottom:         var(--space-lg);
+}
+.cal-resume-item {
+  border-radius: var(--radius-md);
+  padding:       var(--space-md);
+  text-align:    center;
+}
+/* Tuile présents : vert doux */
+.cal-resume-item--present { background: #e8f5e9; }
+/* Tuile absents : rouge doux */
+.cal-resume-item--absent  { background: #ffeaea; }
+
+/* Nombre en grand */
+.cal-resume-nb {
+  display:     block;
+  font-family: var(--font-heading);
+  font-size:   2rem;
+  font-weight: 800;
+}
+.cal-resume-item--present .cal-resume-nb { color: #2e7d32; }
+.cal-resume-item--absent  .cal-resume-nb { color: #c62828; }
+
+/* Libellé sous le nombre */
+.cal-resume-label { font-size: 0.8rem; font-weight: 600; }
+.cal-resume-item--present .cal-resume-label { color: #2e7d32; }
+.cal-resume-item--absent  .cal-resume-label { color: #c62828; }
+
+/* ── 9. LISTES PRÉSENTS / ABSENTS ───────────────────────── */
+
+/* Bloc d'une section (présents ou absents) */
+.cal-section { margin-bottom: var(--space-lg); }
+
+/* Titre de section : petite majuscule colorée */
+.cal-section-titre {
+  font-size:     0.8rem;
+  font-weight:   700;
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+  padding-bottom: var(--space-xs);
+  border-bottom:  2px solid;
+}
+.cal-section-titre--present { color: #2e7d32; border-color: #a5d6a7; }
+.cal-section-titre--absent  { color: #c62828; border-color: #ef9a9a; }
+
+/* Liste sans puce */
+.cal-liste { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+/* Message si liste vide */
+.cal-vide-msg { font-size: 0.85rem; color: var(--text-gray); font-style: italic; }
+
+/* Ligne d'un enfant : avatar + nom + groupe */
+.cal-enfant {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+  padding:     var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background:  var(--bg-gray);
+}
+/* Fond légèrement rosé pour les absents */
+.cal-enfant--absent { background: #fff5f5; }
+
+/* Emoji avatar */
+.cal-enfant-avatar { font-size: 1.3rem; flex-shrink: 0; }
+
+/* Colonne info : nom + groupe/motif */
+.cal-enfant-info { display: flex; flex-direction: column; gap: 1px; }
+
+/* Nom de l'enfant */
+.cal-enfant-nom { font-weight: 600; font-size: 0.9rem; color: var(--text-dark); }
+
+/* Groupe (présents) ou motif (absents) */
+.cal-enfant-groupe { font-size: 0.75rem; color: var(--text-gray); }
+.cal-enfant-motif  { font-size: 0.75rem; color: #c62828; }
+
+/* Badge "En attente" pour absence non encore validée */
+.cal-badge-attente {
+  display:       inline-block;
+  font-size:     0.65rem;
+  font-weight:   700;
+  background:    #fff3cd;
+  color:         #856404;
+  border:        1px solid #ffc107;
+  border-radius: var(--radius-pill);
+  padding:       1px 6px;
+  margin-top:    2px;
+}
+
+/* ── 10. RESPONSIVE ─────────────────────────────────────── */
+
+/* Tablette : empilement vertical */
+@media (max-width: 1100px) {
+  .cal-conteneur { grid-template-columns: 1fr; }
+  .cal-bloc { max-width: 420px; margin: 0 auto; }
+}
+
+/* Mobile : calendrier pleine largeur */
+@media (max-width: 480px) {
+  .cal-bloc      { padding: var(--space-md); }
+  .cal-panneau   { padding: var(--space-md); }
+  .cal-case      { font-size: 0.8rem; }
+}

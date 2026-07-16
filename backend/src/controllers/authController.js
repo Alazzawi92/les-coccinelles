@@ -108,7 +108,9 @@ const login = async (req, res) => {
     console.error('Erreur login :', err);
     return erreur(res, 'Erreur lors de la connexion');
   }
+
 };
+
 
 // ── DÉCONNEXION ─────────────────────────────────────────────────────
 // POST /api/auth/logout

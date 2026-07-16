@@ -6,7 +6,8 @@
 //            Charge en parallèle le suivi existant de chaque
 //            enfant pour la date sélectionnée.
 //            Pour chaque enfant : formulaire repas (3 selects),
-//            sieste (heures début/fin), humeur (5 boutons emoji),
+//            biberons (compteur), siestes multiples (liste début/fin),
+//            selles (oui/non + compteur), humeur (5 boutons emoji),
 //            activités et note générale (textareas).
 //            POST si nouveau (_nouveau flag), PUT si existant.
 //            envoi{} : objet pour désactiver le bouton par enfant.
@@ -20,6 +21,25 @@ import './SuiviAdmin.css';
 
 // Date du jour au format YYYY-MM-DD (constante, ne change pas au rendu)
 const today = new Date().toISOString().split('T')[0];
+
+// Calculer la durée en minutes entre deux horaires "HH:MM"
+const calcDuree = (debut, fin) => {
+  if (!debut || !fin) return null;
+  const [dh, dm] = debut.split(':').map(Number);
+  const [fh, fm] = fin.split(':').map(Number);
+  const diff = (fh * 60 + fm) - (dh * 60 + dm);
+  return diff > 0 ? diff : null;
+};
+
+// Formater une durée en minutes en "Xh Ym" pour l'affichage
+const formatDuree = (minutes) => {
+  if (!minutes) return '';
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  if (h === 0) return `${m}min`;
+  if (m === 0) return `${h}h`;
+  return `${h}h${m.toString().padStart(2, '0')}`;
+};
 
 const SuiviAdmin = () => {
   // Liste des enfants inscrits chargée une seule fois au montage
@@ -54,7 +74,11 @@ const SuiviAdmin = () => {
       await Promise.all(enfants.map(async e => {
         try {
           const r = await api.get(`/suivi/${e.id}/${date}`);
-          nouveauxSuivis[e.id] = r.data.data;
+          nouveauxSuivis[e.id] = {
+            ...r.data.data,
+            // S'assurer que siestes est toujours un tableau
+            siestes: r.data.data.siestes || []
+          };
         } catch {
           // Pas de suivi pour ce jour → initialiser un objet vide marqué _nouveau
           // _nouveau : flag interne, jamais envoyé à l'API
@@ -65,15 +89,16 @@ const SuiviAdmin = () => {
             repas_midi:    'absent',
             repas_gouter:  'absent',
             repas_note:    '',
-            sieste_debut:  '',
-            sieste_fin:    '',
-            sieste_note:   '',
+            siestes:       [],           // Tableau vide — siestes multiples
             activites:     '',
             humeur:        '',
-            selles:        false,
+            biberon_nb:    0,            // Nombre de biberons
+            biberon_ml:    '',           // Ml par biberon
+            selles:        false,        // Selles oui/non
+            selles_nb:     0,            // Nombre de selles
             temperature:   '',
             note_generale: '',
-            _nouveau:      true  // Indique qu'il faut faire un POST et non PUT
+            _nouveau:      true          // Indique qu'il faut faire un POST et non PUT
           };
         }
       }));
@@ -86,6 +111,34 @@ const SuiviAdmin = () => {
   // Merge immutable sur l'objet suivis pour un seul enfant
   const majSuivi = (enfantId, champ, valeur) =>
     setSuivis(prev => ({ ...prev, [enfantId]: { ...prev[enfantId], [champ]: valeur } }));
+
+  // ── Ajouter une sieste vide à la liste ───────────────────
+  const ajouterSieste = (enfantId) => {
+    const actuelles = suivis[enfantId]?.siestes || [];
+    majSuivi(enfantId, 'siestes', [...actuelles, { debut: '', fin: '' }]);
+  };
+
+  // ── Modifier le début ou la fin d'une sieste ─────────────
+  const majSieste = (enfantId, index, champ, valeur) => {
+    const actuelles = [...(suivis[enfantId]?.siestes || [])];
+    actuelles[index] = { ...actuelles[index], [champ]: valeur };
+    majSuivi(enfantId, 'siestes', actuelles);
+  };
+
+  // ── Supprimer une sieste de la liste ─────────────────────
+  const supprimerSieste = (enfantId, index) => {
+    const actuelles = [...(suivis[enfantId]?.siestes || [])];
+    actuelles.splice(index, 1);
+    majSuivi(enfantId, 'siestes', actuelles);
+  };
+
+  // ── Incrémenter / décrémenter un compteur numérique ──────
+  // champ : 'biberon_nb' ou 'selles_nb' | min : valeur minimale (0)
+  const incrementer = (enfantId, champ, delta, min = 0) => {
+    const actuel = suivis[enfantId]?.[champ] || 0;
+    const nouvel = Math.max(min, actuel + delta);
+    majSuivi(enfantId, champ, nouvel);
+  };
 
   // ── Sauvegarde du suivi d'un enfant ──────────────────────
   // POST si _nouveau ou pas d'id, PUT sinon
@@ -101,18 +154,19 @@ const SuiviAdmin = () => {
         enfant_id:    enfantId,
         date_suivi:   date,
         humeur:       payload.humeur       || null,
-        sieste_debut: payload.sieste_debut || null,
-        sieste_fin:   payload.sieste_fin   || null,
         temperature:  payload.temperature  || null,
+        biberon_ml:   payload.biberon_ml   || null,
+        // Filtrer les siestes incomplètes (sans début ET fin)
+        siestes:      (payload.siestes || []).filter(sv => sv.debut && sv.fin),
       };
       if (_nouveau || !id) {
         // Création : POST /suivi
         const res = await api.post('/suivi', propre);
-        setSuivis(prev => ({ ...prev, [enfantId]: res.data.data }));
+        setSuivis(prev => ({ ...prev, [enfantId]: { ...res.data.data, siestes: res.data.data.siestes || [] } }));
       } else {
         // Mise à jour : PUT /suivi/:id
         const res = await api.put(`/suivi/${id}`, propre);
-        setSuivis(prev => ({ ...prev, [enfantId]: res.data.data }));
+        setSuivis(prev => ({ ...prev, [enfantId]: { ...res.data.data, siestes: res.data.data.siestes || [] } }));
       }
       const enfant = enfants.find(e => e.id === enfantId);
       toast.success(`Suivi de ${enfant?.prenom} enregistré`);
@@ -187,14 +241,133 @@ const SuiviAdmin = () => {
                 </div>
               </div>
 
-              {/* ── SIESTE ────────────────────────────────────── */}
-              {/* 2 inputs time : début → fin */}
+              {/* ── BIBERON ───────────────────────────────────── */}
+              {/* Compteur boutons - / + pour le nombre de biberons + champ ml optionnel */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">😴 Sieste</p>
-                <div className="sieste-row">
-                  <input type="time" className="a-input" value={s.sieste_debut || ''} onChange={e => majSuivi(enfant.id, 'sieste_debut', e.target.value)} placeholder="Début" />
-                  <span style={{ color:'var(--text-gray)' }}>→</span>
-                  <input type="time" className="a-input" value={s.sieste_fin || ''} onChange={e => majSuivi(enfant.id, 'sieste_fin', e.target.value)} placeholder="Fin" />
+                <p className="suivi-admin-label">🍼 Biberon</p>
+                <div className="compteur-row">
+                  {/* Bouton diminuer — ne descend pas en dessous de 0 */}
+                  <button
+                    type="button"
+                    className="compteur-btn"
+                    onClick={() => incrementer(enfant.id, 'biberon_nb', -1)}
+                    disabled={!s.biberon_nb || s.biberon_nb <= 0}
+                  >−</button>
+                  {/* Valeur actuelle */}
+                  <span className="compteur-valeur">{s.biberon_nb || 0}</span>
+                  {/* Bouton augmenter */}
+                  <button
+                    type="button"
+                    className="compteur-btn"
+                    onClick={() => incrementer(enfant.id, 'biberon_nb', 1)}
+                  >+</button>
+                  <span className="compteur-unite">biberon{s.biberon_nb > 1 ? 's' : ''}</span>
+                </div>
+                {/* Champ ml optionnel — s'affiche seulement si au moins 1 biberon */}
+                {s.biberon_nb > 0 && (
+                  <div className="biberon-ml-row">
+                    <input
+                      type="number"
+                      className="a-input biberon-ml-input"
+                      value={s.biberon_ml || ''}
+                      onChange={e => majSuivi(enfant.id, 'biberon_ml', e.target.value)}
+                      placeholder="ml par biberon"
+                      min="0"
+                      max="500"
+                    />
+                    <span className="compteur-unite">ml / biberon</span>
+                  </div>
+                )}
+              </div>
+
+              {/* ── SIESTES MULTIPLES ─────────────────────────── */}
+              {/* Liste de siestes avec début + fin + durée calculée automatiquement */}
+              <div className="suivi-admin-section">
+                <p className="suivi-admin-label">😴 Siestes</p>
+                {/* Liste des siestes saisies */}
+                {(s.siestes || []).map((sv, idx) => {
+                  const duree = calcDuree(sv.debut, sv.fin);
+                  return (
+                    <div key={idx} className="sieste-item">
+                      {/* Numéro de la sieste */}
+                      <span className="sieste-numero">{idx + 1}</span>
+                      {/* Heure de début */}
+                      <input
+                        type="time"
+                        className="a-input sieste-time"
+                        value={sv.debut || ''}
+                        onChange={e => majSieste(enfant.id, idx, 'debut', e.target.value)}
+                      />
+                      <span className="sieste-fleche">→</span>
+                      {/* Heure de fin */}
+                      <input
+                        type="time"
+                        className="a-input sieste-time"
+                        value={sv.fin || ''}
+                        onChange={e => majSieste(enfant.id, idx, 'fin', e.target.value)}
+                      />
+                      {/* Durée calculée automatiquement si début et fin renseignés */}
+                      {duree && (
+                        <span className="sieste-duree">{formatDuree(duree)}</span>
+                      )}
+                      {/* Bouton supprimer cette sieste */}
+                      <button
+                        type="button"
+                        className="sieste-supprimer"
+                        onClick={() => supprimerSieste(enfant.id, idx)}
+                        title="Supprimer cette sieste"
+                      >✕</button>
+                    </div>
+                  );
+                })}
+                {/* Bouton ajouter une nouvelle sieste */}
+                <button
+                  type="button"
+                  className="sieste-ajouter"
+                  onClick={() => ajouterSieste(enfant.id)}
+                >
+                  + Ajouter une sieste
+                </button>
+              </div>
+
+              {/* ── SELLES ────────────────────────────────────── */}
+              {/* Bascule oui / non puis compteur + / - si oui */}
+              <div className="suivi-admin-section">
+                <p className="suivi-admin-label">🚼 Selles</p>
+                <div className="selles-row">
+                  {/* Bouton Non */}
+                  <button
+                    type="button"
+                    className={`selles-toggle ${!s.selles ? 'selles-toggle--actif selles-toggle--non' : ''}`}
+                    onClick={() => {
+                      majSuivi(enfant.id, 'selles', false);
+                      majSuivi(enfant.id, 'selles_nb', 0);
+                    }}
+                  >Non</button>
+                  {/* Bouton Oui */}
+                  <button
+                    type="button"
+                    className={`selles-toggle ${s.selles ? 'selles-toggle--actif selles-toggle--oui' : ''}`}
+                    onClick={() => majSuivi(enfant.id, 'selles', true)}
+                  >Oui</button>
+                  {/* Compteur nombre de selles — visible uniquement si selles=oui */}
+                  {s.selles && (
+                    <div className="compteur-row compteur-row--inline">
+                      <button
+                        type="button"
+                        className="compteur-btn"
+                        onClick={() => incrementer(enfant.id, 'selles_nb', -1)}
+                        disabled={!s.selles_nb || s.selles_nb <= 1}
+                      >−</button>
+                      <span className="compteur-valeur">{s.selles_nb || 1}</span>
+                      <button
+                        type="button"
+                        className="compteur-btn"
+                        onClick={() => incrementer(enfant.id, 'selles_nb', 1)}
+                      >+</button>
+                      <span className="compteur-unite">fois</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
