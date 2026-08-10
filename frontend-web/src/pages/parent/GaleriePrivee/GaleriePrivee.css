@@ -252,16 +252,40 @@
 .lightbox-parent__dl { align-self: center; }
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Tablette (≤1024px) : 3 albums → 2 albums, 4 photos → 3 photos */
-@media (max-width: 1024px) {
+/* Petit ordinateur (≤1279px) : 3 albums restent, photos resserrées à 3 */
+@media (max-width: 1279px) {
+  .photos-grille-parent { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Tablette (≤1023px) : 3 albums → 2 albums, 4 photos → 3 photos */
+@media (max-width: 1023px) {
   .albums-grille-parent  { grid-template-columns: repeat(2, 1fr); }
   .photos-grille-parent  { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Mobile (≤768px) : 1 album, 2 photos, boutons toujours visibles */
-@media (max-width: 768px) {
+/* Mobile (≤767px) : 1 album, 2 photos, boutons toujours visibles */
+@media (max-width: 767px) {
   .albums-grille-parent  { grid-template-columns: 1fr; }
   .photos-grille-parent  { grid-template-columns: repeat(2, 1fr); }
   .photo-actions         { opacity: 1; }  /* Toujours visibles sur tactile */
+  .rgpd-alerte             { padding: var(--space-md); flex-direction: column; }
+  .lightbox-parent        { padding: var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : 1 photo par ligne, alertes et lightbox compactes */
+@media (max-width: 479px) {
+  .photos-grille-parent   { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .album-couverture-parent { height: 140px; }
+  .album-infos-parent      { padding: var(--space-md); }
+  .lightbox-parent__fermer { top: -40px; width: 34px; height: 34px; }
+}
+
+/* Grand écran (≥1440px) : la grille de photos peut accueillir une
+   colonne de plus sans que les cartes ne s'étirent trop */
+@media (min-width: 1440px) {
+  .albums-grille-parent { max-width: 1400px; margin: 0 auto; }
+  .photos-grille-parent { grid-template-columns: repeat(5, 1fr); }
 }

@@ -18,9 +18,10 @@
 
 /* ── GRILLE DES 5 JOURS ─────────────────────────────────── */
 
-/* Affiche lundi→vendredi en 5 colonnes égales.
-   Sur tablette (≤1200px) → 3 colonnes, sur mobile → 1 colonne. */
-.menus-admin-grille { display:grid; grid-template-columns:1fr; gap:var(--space-md); }
+/* Affiche lundi→vendredi en 5 colonnes égales sur ordinateur.
+   Sur petit ordinateur (≤1279px) → 3 colonnes, sur tablette (≤1023px)
+   → 2 colonnes, sur mobile (≤767px) → 1 colonne. */
+.menus-admin-grille { display:grid; grid-template-columns:repeat(5, 1fr); gap:var(--space-md); }
 
 /* ── COLONNE D'UN JOUR ──────────────────────────────────── */
 
@@ -102,4 +103,38 @@
 
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Petit ordinateur (≤1279px) : 3 colonnes (2 lignes : 3 jours puis 2) */
+@media (max-width: 1279px) {
+  .menus-admin-grille { grid-template-columns: repeat(3, 1fr); }
+  .menu-admin-col { padding: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : 2 colonnes */
+@media (max-width: 1023px) {
+  .menus-admin-grille { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (≤767px) : 1 colonne, chaque jour occupe toute la largeur */
+@media (max-width: 767px) {
+  .menus-admin-grille { grid-template-columns: 1fr; }
+  .menu-admin-col { padding: var(--space-md); }
+  .menu-quill-wrapper .ql-editor { min-height: 80px; }
+}
+
+/* Petit mobile (≤479px) : espacements et éditeurs encore réduits
+   pour éviter tout débordement */
+@media (max-width: 479px) {
+  .menus-admin-grille { gap: var(--space-sm); }
+  .menu-admin-col { padding: var(--space-sm); }
+  .menu-admin-jour { font-size: 1rem; }
+  .menu-quill-wrapper .ql-editor { min-height: 64px; padding: var(--space-xs) var(--space-sm); }
+  .menu-quill-wrapper--petit .ql-editor { min-height: 44px; }
+}
+
+/* Grand écran (≥1440px) : les 5 jours restent côte à côte avec
+   davantage d'espace entre les colonnes */
+@media (min-width: 1440px) {
+  .menus-admin-grille { grid-template-columns: repeat(5, 1fr); gap: var(--space-lg); }
+}
 

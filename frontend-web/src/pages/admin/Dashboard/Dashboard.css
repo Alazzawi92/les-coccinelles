@@ -137,29 +137,47 @@
 .legende-couleur { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
 
 /* ── 7. RESPONSIVE ──────────────────────────────────────── */
+/* Base (aucune media query) = Ordinateur standard 1280-1439px : 3 colonnes. */
 
-/* Grand écran (≥1600px) : 6 colonnes pour stats et raccourcis
-   (1600 - 280px sidebar - 64px padding = 1256px / 6 = ~210px par col) */
-@media (min-width: 1600px) {
-  .stats-grille     { grid-template-columns: repeat(6, 1fr); }
-  .raccourcis-admin { grid-template-columns: repeat(6, 1fr); }
+/* Petit mobile (≤479px) : tout en 1 colonne, espacements resserrés */
+@media (max-width: 479px) {
+  .stats-grille       { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .raccourcis-admin   { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .raccourci-admin    { padding: var(--space-md); }
+  .alerte-item        { flex-wrap: wrap; padding: var(--space-sm) var(--space-md); }
+  .alerte-lien        { margin-left: 0; }
+  .repartition-legende{ gap: var(--space-sm); }
 }
 
-/* Écran large (1280px–1599px) : 4 colonnes
-   (1280 - 240px sidebar - 64px padding = 976px / 4 = ~244px par col) */
-@media (min-width: 1280px) and (max-width: 1599px) {
-  .stats-grille     { grid-template-columns: repeat(4, 1fr); }
-  .raccourcis-admin { grid-template-columns: repeat(4, 1fr); }
+/* Mobile (≤767px) : 2 colonnes pour les stats, raccourcis empilés en 1 colonne
+   (icône + label + description trop dense en 2 colonnes sur petit écran) */
+@media (max-width: 767px) {
+  .stats-grille     { grid-template-columns: repeat(2, 1fr); }
+  .raccourcis-admin { grid-template-columns: 1fr; }
 }
 
-/* Mobile (≤768px) : 2 colonnes pour stats et raccourcis */
-@media (max-width: 768px) {
+/* Tablette (≤1023px) : 2 colonnes pour stats et raccourcis */
+@media (max-width: 1023px) {
   .stats-grille     { grid-template-columns: repeat(2, 1fr); }
   .raccourcis-admin { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Très petit mobile (≤480px) : stats en 1 colonne */
-@media (max-width: 480px) {
-  .stats-grille     { grid-template-columns: 1fr; }
-  .raccourcis-admin { grid-template-columns: repeat(2, 1fr); }
+/* Petit ordinateur (≤1279px) : 3 colonnes conservées, espacement resserré */
+@media (max-width: 1279px) {
+  .stats-grille     { gap: var(--space-sm); }
+  .raccourcis-admin { gap: var(--space-sm); }
+}
+
+/* Grand écran (≥1440px) : 4 colonnes
+   (1440 - 240px sidebar - 64px padding = 1136px / 4 = ~284px par col) */
+@media (min-width: 1440px) {
+  .stats-grille     { grid-template-columns: repeat(4, 1fr); }
+  .raccourcis-admin { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Très grand écran (≥1600px) : 6 colonnes
+   (palier intermédiaire supplémentaire conservé pour les grands monitors) */
+@media (min-width: 1600px) {
+  .stats-grille     { grid-template-columns: repeat(6, 1fr); }
+  .raccourcis-admin { grid-template-columns: repeat(6, 1fr); }
 }

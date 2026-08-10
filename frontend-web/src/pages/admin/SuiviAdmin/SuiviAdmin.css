@@ -23,8 +23,8 @@
 
 /* ── 2. GRILLE DES CARTES ENFANTS ───────────────────────── */
 
-/* 3 cartes par ligne par défaut (une par enfant présent) */
-.suivi-admin-grille { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-lg); }
+/* 2 cartes par ligne par défaut (une par enfant présent) */
+.suivi-admin-grille { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
 
 /* ── 3. CARTE DE SUIVI D'UN ENFANT ─────────────────────── */
 
@@ -231,8 +231,28 @@
 
 /* ── 10. RESPONSIVE ─────────────────────────────────────── */
 
-/* Tablette (≤1200px) : 3 → 2 cartes par ligne */
-@media (max-width: 1200px) { .suivi-admin-grille { grid-template-columns: repeat(2, 1fr); } }
+/* Grand écran (≥1440px) : 3 cartes par ligne (2 par défaut sinon) */
+@media (min-width: 1440px) {
+  .suivi-admin-grille { grid-template-columns: repeat(3, 1fr); }
+}
 
-/* Mobile (≤768px) : 1 carte par ligne */
-@media (max-width: 768px)  { .suivi-admin-grille { grid-template-columns: 1fr; } }
+/* Tablette (≤1023px) : toujours 2 cartes, espacement resserré */
+@media (max-width: 1023px) {
+  .suivi-admin-grille { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  .suivi-admin-carte  { padding: var(--space-lg); }
+}
+
+/* Mobile (≤767px) : 1 carte par ligne */
+@media (max-width: 767px) {
+  .suivi-admin-grille { grid-template-columns: 1fr; }
+}
+
+/* Petit mobile (≤479px) : repas et siestes empilés verticalement */
+@media (max-width: 479px) {
+  .suivi-admin-carte { padding: var(--space-md); }
+  .repas-row         { grid-template-columns: 1fr; gap: var(--space-xs); }
+  .sieste-item       { flex-wrap: wrap; }
+  .sieste-time       { width: 100%; }
+  .selles-row        { gap: var(--space-xs); }
+  .humeur-row        { flex-wrap: wrap; }
+}

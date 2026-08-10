@@ -8,11 +8,11 @@ const menuController     = require('../controllers/menuController');
 
 router.get('/',           menuController.lister);              // Semaine courante (public)
 // /defaut AVANT /:semaine pour ne pas être capturé comme paramètre
-router.get('/defaut',     verifierToken, verifierRole('admin', 'super_admin'), menuController.getMenuDefaut);
-router.post('/defaut',    verifierToken, verifierRole('admin', 'super_admin'), menuController.sauvegarderMenuDefaut);
+router.get('/defaut',     verifierToken, verifierRole('super_admin'), menuController.getMenuDefaut);
+router.post('/defaut',    verifierToken, verifierRole('super_admin'), menuController.sauvegarderMenuDefaut);
 router.get('/:semaine',   menuController.getMenuSemaine);      // Semaine précise (public + fallback défaut)
-router.post('/',          verifierToken, verifierRole('admin', 'super_admin'), menuController.creer);
-router.put('/:id',        verifierToken, verifierRole('admin', 'super_admin'), menuController.modifier);
-router.delete('/:id',     verifierToken, verifierRole('admin', 'super_admin'), menuController.supprimer);
+router.post('/',          verifierToken, verifierRole('super_admin'), menuController.creer);
+router.put('/:id',        verifierToken, verifierRole('super_admin'), menuController.modifier);
+router.delete('/:id',     verifierToken, verifierRole('super_admin'), menuController.supprimer);
 
 module.exports = router;

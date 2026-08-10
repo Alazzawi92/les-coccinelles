@@ -50,7 +50,8 @@ const GROUPES_NAV = [
     titre: 'Gestion',
     liens: [
       { to: '/admin/documents',    label: 'Documents',    icone: '📄' },
-      { to: '/admin/statistiques', label: 'Statistiques', icone: '📈' }
+      { to: '/admin/statistiques', label: 'Statistiques', icone: '📈' },
+      { to: '/admin/rapports',     label: 'Rapports',     icone: '🧾' }
     ]
   }
 ];
@@ -65,6 +66,12 @@ const AdminLayout = () => {
     await deconnecter();
     toast.success('Déconnexion réussie');
   };
+
+  // Un admin simple ne voit que le groupe "Quotidien" (émargement, suivi,
+  // absences, calendrier, messagerie) ; le super_admin voit tout.
+  const groupesNav = user?.role === 'super_admin'
+    ? GROUPES_NAV
+    : GROUPES_NAV.filter(g => g.titre === 'Quotidien');
 
   return (
     <div className="admin-layout">
@@ -84,7 +91,7 @@ const AdminLayout = () => {
         {/* Navigation groupée : titre de groupe + liens NavLink.
             isActive : React Router injecte la classe 'active' sur le lien courant. */}
         <nav className="admin-sidebar__nav">
-          {GROUPES_NAV.map(({ titre, liens }) => (
+          {groupesNav.map(({ titre, liens }) => (
             <div key={titre} className="admin-sidebar__groupe">
               <p className="admin-sidebar__groupe-titre">{titre}</p>
               {liens.map(({ to, label, icone }) => (

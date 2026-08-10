@@ -9,6 +9,7 @@
      1. Imports
      2. Carte d'identité (avatar + nom + rôle)
      3. Navigation par onglets
+     4. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs parent */
@@ -89,3 +90,40 @@
 
 /* Onglet actif : orange + bordure orange en bas (l'onglet "couvre" la ligne grise) */
 .onglet--actif     { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* ── 4. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
+
+/* Petit ordinateur (≤1279px) : bannière légèrement resserrée */
+@media (max-width: 1279px) {
+  .profil-identite { padding: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : onglets avec padding réduit */
+@media (max-width: 1023px) {
+  .onglet { padding: var(--space-sm) var(--space-lg); }
+}
+
+/* Mobile (≤767px) : bannière compacte, onglets scrollables horizontalement */
+@media (max-width: 767px) {
+  .profil-identite      { padding: var(--space-lg); gap: var(--space-md); }
+  .profil-avatar          { width: 64px; height: 64px; font-size: 1.6rem; }
+  .profil-identite__infos h2 { font-size: 1.1rem; }
+  .profil-onglets          { overflow-x: auto; scrollbar-width: none; }
+  .profil-onglets::-webkit-scrollbar { display: none; }
+  .onglet                    { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; white-space: nowrap; }
+}
+
+/* Petit mobile (≤479px) : identité empilée, avatar réduit */
+@media (max-width: 479px) {
+  .profil-identite       { flex-direction: column; align-items: flex-start; padding: var(--space-md); }
+  .profil-avatar           { width: 56px; height: 56px; font-size: 1.4rem; }
+  .profil-identite__infos h2 { font-size: 1rem; }
+  .onglet                     { padding: var(--space-sm); font-size: 0.8rem; }
+}
+
+/* Grand écran (≥1440px) : bannière plus aérée */
+@media (min-width: 1440px) {
+  .profil-identite { padding: var(--space-2xl); }
+}

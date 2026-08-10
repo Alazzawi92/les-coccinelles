@@ -16,3 +16,30 @@
 .galerie-admin-page {
   padding: var(--space-xl);
 }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+
+/* Petit ordinateur (≤1279px) : padding inchangé, page déjà confortable */
+@media (max-width: 1279px) {
+  .galerie-admin-page { padding: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : padding resserré */
+@media (max-width: 1023px) {
+  .galerie-admin-page { padding: var(--space-lg); }
+}
+
+/* Mobile (≤767px) : padding réduit pour laisser plus de place au contenu */
+@media (max-width: 767px) {
+  .galerie-admin-page { padding: var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : padding minimal */
+@media (max-width: 479px) {
+  .galerie-admin-page { padding: var(--space-sm); }
+}
+
+/* Grand écran (≥1440px) : padding généreux */
+@media (min-width: 1440px) {
+  .galerie-admin-page { padding: var(--space-2xl); }
+}

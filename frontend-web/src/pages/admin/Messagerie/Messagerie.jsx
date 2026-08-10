@@ -234,12 +234,17 @@ const MessagerieAdmin = () => {
             </div>
           ) : (
             <>
-              {/* En-tête du détail : sujet + expéditeur + date */}
+              {/* En-tête du détail : avatar + sujet + expéditeur + date */}
               <div className="conv-detail-entete">
-                <h2>{detail.sujet}</h2>
-                <p style={{ color:'var(--text-gray)', fontSize:'0.85rem' }}>
-                  De : {detail.expediteur?.prenom} {detail.expediteur?.nom} · {formatDate(detail.created_at)}
-                </p>
+                <div className="conv-detail-avatar">
+                  {detail.expediteur_id === user.id ? detail.destinataire?.prenom?.[0] : detail.expediteur?.prenom?.[0]}
+                </div>
+                <div className="conv-detail-textes">
+                  <h2>{detail.sujet}</h2>
+                  <p className="conv-detail-sous-titre">
+                    De : {detail.expediteur?.prenom} {detail.expediteur?.nom} · {formatDate(detail.created_at)}
+                  </p>
+                </div>
               </div>
 
               {/* Fil de messages : message principal + réponses */}

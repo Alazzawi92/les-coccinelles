@@ -188,9 +188,39 @@
 .p-textarea { resize: vertical; min-height: 100px; }
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Mobile (≤768px) : toutes les grilles passent en 1 colonne */
-@media (max-width: 768px) {
+/* Petit ordinateur (≤1279px) : la grille 3 colonnes se resserre à 2 */
+@media (max-width: 1279px) {
+  .p-grille-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Tablette (≤1023px) : toutes les grilles passent en 1 colonne */
+@media (max-width: 1023px) {
   .p-grille-2, .p-grille-3, .p-form-row { grid-template-columns: 1fr; }
+}
+
+/* Mobile (≤767px) : en-tête empilé, cartes resserrées, tableau scrollable */
+@media (max-width: 767px) {
   .parent-page-header { flex-direction: column; align-items: flex-start; }
+  .parent-page-titre  { font-size: 1.5rem; }
+  .p-card              { padding: var(--space-lg); }
+  .p-table             { display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+  .p-chargement, .p-vide { padding: var(--space-2xl); }
+}
+
+/* Petit mobile (≤479px) : espacements minimaux, boutons pleine largeur */
+@media (max-width: 479px) {
+  .parent-page-titre  { font-size: 1.25rem; }
+  .p-card              { padding: var(--space-md); }
+  .p-card__titre       { font-size: 1rem; }
+  .p-vide              { padding: var(--space-xl); }
+  .p-vide__icone       { font-size: 2.5rem; }
+  .p-input, .p-textarea { font-size: 0.9rem; }
+}
+
+/* Grand écran (≥1440px) : un peu plus d'air entre les cartes */
+@media (min-width: 1440px) {
+  .p-grille-2, .p-grille-3 { gap: var(--space-xl); }
 }

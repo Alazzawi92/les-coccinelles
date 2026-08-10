@@ -1,0 +1,90 @@
+/* ============================================================
+   FICHIER : Rapports.css
+   ROUTE   : /admin/rapports
+   RÔLE    : Filtres de période/groupe, KPIs de la vue détail,
+             badge de groupe. Le reste (cartes, tableaux) réutilise
+             les classes communes admin.css (.a-card, .a-table...).
+
+   STRUCTURE :
+     1. Imports
+     2. Barre de filtres
+     3. En-tête de la vue détail
+     4. KPIs de la vue détail
+     5. Responsive
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+@import '../../../styles/admin.css';
+
+/* ── 2. BARRE DE FILTRES ────────────────────────────────── */
+
+/* Ligne de filtres : dates, raccourcis, groupe — tout aligné en bas */
+.rapport-filtres {
+  display:       flex;
+  align-items:   flex-end;
+  flex-wrap:     wrap;
+  gap:           var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+/* Un champ de filtre : label au-dessus, input en dessous */
+.rapport-filtre-champ { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+/* Boutons raccourcis "Cette semaine" / "Ce mois" */
+.rapport-filtre-raccourcis { display: flex; gap: var(--space-sm); }
+
+/* ── 3. EN-TÊTE DE LA VUE DÉTAIL ────────────────────────── */
+
+/* Bouton retour + nom de l'enfant sur la même ligne */
+.rapport-detail-entete { display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-xl); flex-wrap: wrap; }
+
+/* Petit badge orange avec le groupe de l'enfant, à côté du nom */
+.rapport-badge-groupe {
+  font-size:     0.75rem;
+  font-weight:   600;
+  color:         var(--primary-dark);
+  background:    var(--primary-light);
+  padding:       2px var(--space-sm);
+  border-radius: var(--radius-pill);
+  margin-left:   var(--space-sm);
+  vertical-align: middle;
+}
+
+/* ── 4. KPIs DE LA VUE DÉTAIL ───────────────────────────── */
+
+/* 4 cartes chiffrées : temps de présence, jours, repas, siestes */
+.rapport-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-md); margin-bottom: var(--space-xl); }
+
+.rapport-kpi         { background: var(--bg-light); border-radius: var(--radius-lg); padding: var(--space-lg); text-align: center; }
+.rapport-kpi__valeur { font-family: var(--font-heading); font-size: 1.5rem; color: var(--primary-dark); font-weight: 700; }
+.rapport-kpi__label  { font-size: 0.8rem; color: var(--text-gray); margin-top: 4px; }
+
+/* ── 5. RESPONSIVE ───────────────────────────────────────── */
+
+/* Grand écran (≥1440px) : un peu plus d'air entre les KPIs */
+@media (min-width: 1440px) {
+  .rapport-kpis { gap: var(--space-lg); }
+}
+
+/* Petit ordinateur (≤1279px) : garde 4 KPIs mais resserre l'espacement */
+@media (max-width: 1279px) {
+  .rapport-kpis { gap: var(--space-sm); }
+}
+
+/* Tablette (≤1023px) : 2 KPIs par ligne */
+@media (max-width: 1023px) {
+  .rapport-kpis   { grid-template-columns: repeat(2, 1fr); }
+  .rapport-filtres { gap: var(--space-md); }
+}
+
+/* Mobile (≤767px) : filtres en colonne */
+@media (max-width: 767px) {
+  .rapport-filtres { flex-direction: column; align-items: stretch; }
+  .rapport-kpis     { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Petit mobile (≤479px) : 1 KPI par ligne, en-tête détail en colonne */
+@media (max-width: 479px) {
+  .rapport-kpis           { grid-template-columns: 1fr; }
+  .rapport-detail-entete  { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+}

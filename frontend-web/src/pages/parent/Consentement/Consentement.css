@@ -11,6 +11,7 @@
      2. Zone d'information RGPD
      3. Liste des consentements
      4. Carte d'un consentement
+     5. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs parent */
@@ -82,3 +83,38 @@
 
 /* "Non, je refuse" en rouge */
 .consentement-statut--non { color: var(--error); }
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
+
+/* Petit ordinateur (≤1279px) : padding des cartes légèrement réduit */
+@media (max-width: 1279px) {
+  .consentement-carte { padding: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : infos et statut se resserrent avant l'empilement */
+@media (max-width: 1023px) {
+  .consentement-carte__infos { gap: var(--space-md); }
+}
+
+/* Mobile (≤767px) : carte empilée verticalement (infos au-dessus du statut) */
+@media (max-width: 767px) {
+  .consentement-carte          { flex-direction: column; align-items: flex-start; gap: var(--space-md); padding: var(--space-lg); }
+  .consentement-carte__statut { align-items: flex-start; width: 100%; }
+  .rgpd-info ul                  { padding: var(--space-sm) var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : avatars et textes resserrés */
+@media (max-width: 479px) {
+  .consentement-carte          { padding: var(--space-md); }
+  .consentement-avatar          { font-size: 2.2rem; }
+  .consentement-carte__infos h3 { font-size: 1.05rem; }
+  .consentement-carte__infos   { gap: var(--space-sm); }
+  .rgpd-note                      { padding: var(--space-sm); font-size: 0.85rem; }
+}
+
+/* Grand écran (≥1440px) : cartes plus aérées */
+@media (min-width: 1440px) {
+  .consentements-liste { gap: var(--space-lg); }
+}

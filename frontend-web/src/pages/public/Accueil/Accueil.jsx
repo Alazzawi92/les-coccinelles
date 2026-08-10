@@ -53,6 +53,19 @@ const Accueil = () => {
           <span className="hero__bulle hero__bulle--3">⭐</span>
           <span className="hero__bulle hero__bulle--4">🌸</span>
           <span className="hero__bulle hero__bulle--5">🦋</span>
+          <span className="hero__bulle hero__bulle--6">🍄</span>
+          <span className="hero__bulle hero__bulle--7">🌼</span>
+          <span className="hero__bulle hero__bulle--8">🌈</span>
+          <span className="hero__bulle hero__bulle--9">🐝</span>
+          <span className="hero__bulle hero__bulle--10">🍃</span>
+          <span className="hero__bulle hero__bulle--11">☁️</span>
+          <span className="hero__bulle hero__bulle--12">✨</span>
+          {/* Petit groupe supplémentaire autour de l'arc-en-ciel, en bas à gauche */}
+          <span className="hero__bulle hero__bulle--13">🌻</span>
+          <span className="hero__bulle hero__bulle--14">🐌</span>
+          <span className="hero__bulle hero__bulle--15">🌱</span>
+          <span className="hero__bulle hero__bulle--16">✨</span>
+          <span className="hero__bulle hero__bulle--17">🌾</span>
         </div>
 
         <div className="container hero__contenu">
@@ -78,6 +91,33 @@ const Accueil = () => {
 
           {/* Visuels décoratifs à droite */}
           <div className="hero__visuel" aria-hidden="true">
+            {/* Arcs-en-ciel derrière la coccinelle : 3 arcs SVG (même dessin,
+                tailles/angles/positions différents via les classes --1/--2/--3),
+                chacun flotte doucement (voir animation "flotter-arc") */}
+            <svg className="hero__arc-en-ciel hero__arc-en-ciel--1" viewBox="0 0 400 220" fill="none">
+              <path d="M 20 200 A 180 180 0 0 1 380 200" stroke="#F06292" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 44 200 A 156 156 0 0 1 356 200" stroke="#FF9800" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 68 200 A 132 132 0 0 1 332 200" stroke="#FFEB3B" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 92 200 A 108 108 0 0 1 308 200" stroke="#66BB6A" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 116 200 A 84 84 0 0 1 284 200"  stroke="#4FC3F7" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 140 200 A 60 60 0 0 1 260 200"  stroke="#BA68C8" strokeWidth="20" strokeLinecap="round" />
+            </svg>
+            <svg className="hero__arc-en-ciel hero__arc-en-ciel--2" viewBox="0 0 400 220" fill="none">
+              <path d="M 20 200 A 180 180 0 0 1 380 200" stroke="#F06292" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 44 200 A 156 156 0 0 1 356 200" stroke="#FF9800" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 68 200 A 132 132 0 0 1 332 200" stroke="#FFEB3B" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 92 200 A 108 108 0 0 1 308 200" stroke="#66BB6A" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 116 200 A 84 84 0 0 1 284 200"  stroke="#4FC3F7" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 140 200 A 60 60 0 0 1 260 200"  stroke="#BA68C8" strokeWidth="20" strokeLinecap="round" />
+            </svg>
+            <svg className="hero__arc-en-ciel hero__arc-en-ciel--3" viewBox="0 0 400 220" fill="none">
+              <path d="M 20 200 A 180 180 0 0 1 380 200" stroke="#F06292" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 44 200 A 156 156 0 0 1 356 200" stroke="#FF9800" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 68 200 A 132 132 0 0 1 332 200" stroke="#FFEB3B" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 92 200 A 108 108 0 0 1 308 200" stroke="#66BB6A" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 116 200 A 84 84 0 0 1 284 200"  stroke="#4FC3F7" strokeWidth="20" strokeLinecap="round" />
+              <path d="M 140 200 A 60 60 0 0 1 260 200"  stroke="#BA68C8" strokeWidth="20" strokeLinecap="round" />
+            </svg>
             <div className="hero__coccinelle-grande">🐞</div>
             <div className="hero__deco">
               <span>🌿</span><span>🌼</span><span>🍄</span>

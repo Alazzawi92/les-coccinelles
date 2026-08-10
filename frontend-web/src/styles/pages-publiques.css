@@ -220,20 +220,66 @@
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
 
-/* Tablette (≤1024px) : grilles réduites de 4/3 à 2 colonnes */
-@media (max-width: 1024px) {
+/* Desktop-first : blocs classés du plus grand au plus petit écran
+   pour que la règle la plus étroite prime toujours dans la cascade. */
+
+/* Grand écran (≥1440px) : les grilles et contenus ne s'étirent pas
+   indéfiniment sur les très larges écrans. */
+@media (min-width: 1440px) {
+  .espaces-grille,
+  .infos-grille,
+  .contenu-deux-colonnes,
+  .cta-bas__contenu {
+    max-width:    1600px;
+    margin-left:  auto;
+    margin-right: auto;
+  }
+}
+
+/* Petit ordinateur (≤1279px) : espacements verticaux légèrement
+   resserrés, les grilles gardent encore leur nombre de colonnes. */
+@media (max-width: 1279px) {
+  .page-hero { padding: var(--space-2xl) 0; }
+  .section-blanche,
+  .section-grise,
+  .section-couleur { padding: var(--space-2xl) 0; }
+
+  .espaces-grille,
+  .infos-grille { gap: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : grilles réduites de 4/3 à 2 colonnes */
+@media (max-width: 1023px) {
   .espaces-grille { grid-template-columns: repeat(2, 1fr); }
   .infos-grille   { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Mobile (≤768px) :
+/* Mobile (≤767px) :
    - Layout 2 colonnes passe en 1 colonne (visuel au-dessus du texte)
    - Grilles en 1 colonne ou 2 colonnes selon les cas
    - CTA en colonne et centré */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .contenu-deux-colonnes { flex-direction: column; }
   .contenu-visuel { order: -1; }  /* Le visuel passe en premier sur mobile */
   .espaces-grille { grid-template-columns: 1fr; }
   .infos-grille   { grid-template-columns: repeat(2, 1fr); }
   .cta-bas__contenu { flex-direction: column; text-align: center; }
+
+  .page-hero__titre   { font-size: clamp(1.6rem, 6vw, 2.2rem); }
+  .titre-section       { font-size: 1.4rem; }
+  .visuel-emoji-grand  { font-size: 5rem; }
+}
+
+/* Petit mobile (≤479px) : typographie et espacements encore
+   resserrés, toutes les grilles repassent en 1 colonne */
+@media (max-width: 479px) {
+  .page-hero { padding: var(--space-xl) 0; }
+  .section-blanche,
+  .section-grise,
+  .section-couleur { padding: var(--space-xl) 0; }
+
+  .infos-grille { grid-template-columns: 1fr; }
+  .info-bulle { padding: var(--space-sm) var(--space-lg); }
+  .visuel-emoji-grand { font-size: 4rem; }
+  .cta-bas p { font-size: 1rem; }
 }

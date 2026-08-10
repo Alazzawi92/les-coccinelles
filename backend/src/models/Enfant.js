@@ -15,7 +15,11 @@ const Enfant = sequelize.define('Enfant', {
   medecin_nom:    { type: DataTypes.STRING(200) },
   medecin_tel:    { type: DataTypes.STRING(20) },
   photo:          { type: DataTypes.STRING(255) },
-  actif:          { type: DataTypes.BOOLEAN, defaultValue: true }
+  actif:          { type: DataTypes.BOOLEAN, defaultValue: true },
+  // Jours de la semaine où l'enfant vient habituellement (contrat de garde),
+  // ex: ["lundi","mercredi","vendredi"]. NULL = vient tous les jours ouvrés
+  // (lundi à vendredi) — comportement par défaut pour les enfants existants.
+  jours_presence: { type: DataTypes.JSON }
 }, {
   tableName:  'enfants',
   timestamps: true,

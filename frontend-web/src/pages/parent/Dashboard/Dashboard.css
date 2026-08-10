@@ -257,21 +257,42 @@
 
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Grand écran (≥1100px) : les 6 raccourcis tiennent en 1 seule ligne */
-@media (min-width: 1100px) {
+/* Grand écran (≥1440px) : les 6 raccourcis tiennent en 1 seule ligne
+   et les widgets profitent d'un peu plus d'espace */
+@media (min-width: 1440px) {
   .dashboard__raccourcis { grid-template-columns: repeat(6, 1fr); }
+  .dashboard__grille     { gap: var(--space-xl); }
 }
 
-/* Tablette (≤1100px) : les 3 widgets passent en colonne unique
-   pour éviter d'être trop étroits avec une barre latérale */
-@media (max-width: 1100px) {
+/* Petit ordinateur (≤1279px) : les 3 widgets passent en colonne unique
+   pour éviter d'être trop étroits avec la sidebar */
+@media (max-width: 1279px) {
   .dashboard__grille { grid-template-columns: 1fr; }
 }
 
-/* Mobile (≤600px) : raccourcis en 2 colonnes, titres réduits */
-@media (max-width: 600px) {
+/* Tablette (≤1023px) : raccourcis en 3 colonnes (déjà la base), espacements resserrés */
+@media (max-width: 1023px) {
+  .dashboard__raccourcis { gap: var(--space-sm); }
+}
+
+/* Mobile (≤767px) : raccourcis en 2 colonnes, titres réduits */
+@media (max-width: 767px) {
   .dashboard__raccourcis { grid-template-columns: repeat(2, 1fr); } /* 2 colonnes au lieu de 3 */
   .dashboard__titre      { font-size: 1.4rem; }                     /* titre plus petit */
   .dashboard__sous       { font-size: 0.85rem; }                    /* sous-titre plus petit */
+  .suivi-repas-row       { flex-wrap: wrap; }
+}
+
+/* Petit mobile (≤479px) : raccourcis en 1 colonne, badge et widgets resserrés */
+@media (max-width: 479px) {
+  .dashboard__raccourcis { grid-template-columns: repeat(2, 1fr); gap: var(--space-sm); }
+  .dashboard__titre      { font-size: 1.2rem; }
+  .notif-badge            { font-size: 0.8rem; padding: var(--space-xs) var(--space-sm); }
+  .raccourci               { padding: var(--space-md); }
+  .raccourci__icone       { font-size: 1.5rem; }
+  .enfant-item             { padding: var(--space-sm); }
+  .enfant-avatar           { width: 36px; height: 36px; font-size: 1rem; }
 }

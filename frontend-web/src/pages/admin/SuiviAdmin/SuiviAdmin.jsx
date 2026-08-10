@@ -3,6 +3,10 @@
 // ROUTE    : /admin/suivi
 // RÔLE     : Saisie du suivi quotidien pour chaque enfant.
 //            Sélection de la date (max = aujourd'hui).
+//            N'affiche que les enfants "présents" (arrivés et pas
+//            encore repartis) selon l'émargement de la date, comme
+//            sur /admin/emargement — pas la peine de remplir un
+//            suivi pour un enfant absent ou pas encore arrivé.
 //            Charge en parallèle le suivi existant de chaque
 //            enfant pour la date sélectionnée.
 //            Pour chaque enfant : formulaire repas (3 selects),
@@ -41,6 +45,13 @@ const formatDuree = (minutes) => {
   return `${h}h${m.toString().padStart(2, '0')}`;
 };
 
+// Statut de présence à partir de l'émargement — même logique que /admin/emargement
+const getStatutPresence = (emargement) => {
+  if (!emargement)              return 'non_arrive';
+  if (!emargement.heure_depart) return 'present';
+  return 'parti';
+};
+
 const SuiviAdmin = () => {
   // Liste des enfants inscrits chargée une seule fois au montage
   const [enfants,    setEnfants]    = useState([]);
@@ -58,17 +69,27 @@ const SuiviAdmin = () => {
   // Options disponibles pour les boutons d'humeur
   const HUMEUR_OPTIONS  = ['joyeux', 'calme', 'fatigue', 'pleureur', 'autre'];
 
-  // ── Chargement de la liste des enfants (une seule fois) ──
+  // ── Chargement des enfants présents ce jour-là ───────────
+  // Réutilise /emargements/:date (même source que /admin/emargement) et
+  // ne garde que les enfants "présents" (arrivés, pas encore repartis).
   useEffect(() => {
-    api.get('/enfants')
-      .then(r => setEnfants(r.data.data || []))
+    setChargement(true);
+    api.get(`/emargements/${date}`)
+      .then(r => {
+        const donnees = r.data.data || [];
+        const presents = donnees
+          .filter(({ emargement }) => getStatutPresence(emargement) === 'present')
+          .map(({ enfant }) => enfant);
+        setEnfants(presents);
+      })
+      .catch(() => setEnfants([]))
       .finally(() => setChargement(false));
-  }, []);
+  }, [date]);
 
   // ── Chargement des suivis quand la date ou les enfants changent ─
   // Appels parallèles : un GET /suivi/:id/:date par enfant
   useEffect(() => {
-    if (enfants.length === 0) return;
+    if (enfants.length === 0) { setSuivis({}); return; }
     const chargerSuivis = async () => {
       const nouveauxSuivis = {};
       await Promise.all(enfants.map(async e => {
@@ -178,8 +199,8 @@ const SuiviAdmin = () => {
 
   // Garde : spinner si chargement des enfants en cours
   if (chargement) return <div className="a-chargement">Chargement...</div>;
-  // Garde : aucun enfant inscrit
-  if (enfants.length === 0) return <div className="a-vide"><span className="a-vide__icone">👶</span><p>Aucun enfant inscrit.</p></div>;
+  // Garde : aucun enfant présent ce jour-là (voir /admin/emargement pour pointer les arrivées)
+  if (enfants.length === 0) return <div className="a-vide"><span className="a-vide__icone">👶</span><p>Aucun enfant présent pour le moment.</p></div>;
 
   return (
     <div>

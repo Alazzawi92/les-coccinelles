@@ -314,16 +314,51 @@
 .a-actions { display: flex; gap: var(--space-sm); }
 
 /* ── 12. RESPONSIVE ─────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran).
+   Ce fichier est partagé par presque toutes les pages admin — les règles
+   ici bénéficient donc à des pages sans CSS propre (Absences, Documents,
+   Enfants...) qui délèguent tout leur style responsive à ce fichier. */
 
-/* Tablette (≤900px) : les rangées de formulaire passent en 1 colonne */
-@media (max-width: 900px) {
+/* Grand écran (≥1440px) : un peu plus d'air dans les cartes et le tableau */
+@media (min-width: 1440px) {
+  .a-card       { padding: var(--space-2xl); }
+  .a-table th, .a-table td { padding: var(--space-lg) var(--space-xl); }
+}
+
+/* Petit ordinateur (≤1279px) : les rangées de formulaire passent en 1 colonne */
+@media (max-width: 1279px) {
   .a-form-row { grid-template-columns: 1fr; }
 }
 
-/* Mobile (≤768px) : en-tête en colonne, filtres en colonne, textes réduits */
-@media (max-width: 768px) {
+/* Tablette (≤1023px) : espacements de carte resserrés, filtres s'enroulent plus tôt */
+@media (max-width: 1023px) {
+  .a-card        { padding: var(--space-lg); }
+  .a-recherche   { min-width: 160px; }
+  .stat-card     { padding: var(--space-lg); gap: var(--space-md); }
+}
+
+/* Mobile (≤767px) : en-tête en colonne, filtres en colonne, textes réduits */
+@media (max-width: 767px) {
   .admin-page-entete { flex-direction: column; align-items: flex-start; }
+  .admin-page-titre  { font-size: 1.4rem; }
   .a-filtres { flex-direction: column; align-items: stretch; }
+  .a-recherche, .a-select { width: 100%; }
   .a-table th, .a-table td { padding: var(--space-sm) var(--space-md); font-size: 0.82rem; }
+  .a-card:has(.a-table) .a-table th:first-child,
+  .a-card:has(.a-table) .a-table td:first-child { padding-left:  var(--space-md); }
+  .a-card:has(.a-table) .a-table th:last-child,
+  .a-card:has(.a-table) .a-table td:last-child  { padding-right: var(--space-md); }
   .modal { padding: var(--space-xl) var(--space-lg); }
+  .stat-card__icone  { font-size: 2rem; }
+  .stat-card__valeur { font-size: 1.6rem; }
+}
+
+/* Petit mobile (≤479px) : modale quasi plein écran, actions/formulaire empilés */
+@media (max-width: 479px) {
+  .a-card         { padding: var(--space-md); }
+  .modal          { padding: var(--space-lg) var(--space-md); max-width: 100%; border-radius: var(--radius-lg); }
+  .modal__titre   { font-size: 1.1rem; }
+  .a-actions      { flex-direction: column; gap: 4px; }
+  .stat-card      { flex-direction: column; align-items: flex-start; text-align: left; }
 }

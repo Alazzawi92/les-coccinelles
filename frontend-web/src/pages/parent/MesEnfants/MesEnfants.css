@@ -13,6 +13,7 @@
      4. En-tête de la fiche
      5. Informations de santé
      6. Actions sur la fiche
+     7. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs parent */
@@ -120,4 +121,44 @@
   justify-content: flex-end;
   padding-top:     var(--space-md);
   border-top:      1px solid var(--bg-gray);
+}
+
+/* ── 7. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
+
+/* Petit ordinateur (≤1279px) : en-tête de fiche légèrement resserrée */
+@media (max-width: 1279px) {
+  .enfant-fiche__entete { padding: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : actions et santé un peu plus compactes */
+@media (max-width: 1023px) {
+  .enfant-fiche__actions, .enfant-fiche__sante { padding-left: var(--space-lg); padding-right: var(--space-lg); }
+}
+
+/* Mobile (≤767px) : en-tête empilée, avatar réduit, actions pleine largeur */
+@media (max-width: 767px) {
+  .enfant-fiche__entete          { padding: var(--space-lg); gap: var(--space-md); }
+  .enfant-fiche__avatar           { width: 56px; height: 56px; font-size: 2.6rem; }
+  .enfant-fiche__identite h3     { font-size: 1.15rem; }
+  .enfant-fiche__sante             { padding: var(--space-sm) var(--space-lg); }
+  .enfant-fiche__actions          { padding: var(--space-sm) var(--space-lg); }
+}
+
+/* Petit mobile (≤479px) : fiche entièrement empilée, boutons pleine largeur */
+@media (max-width: 479px) {
+  .enfant-fiche__entete       { flex-direction: column; align-items: flex-start; padding: var(--space-md); }
+  .enfant-fiche__avatar        { width: 48px; height: 48px; font-size: 2.2rem; }
+  .enfant-fiche__identite h3  { font-size: 1.05rem; }
+  .enfant-fiche__sante          { padding: var(--space-sm) var(--space-md); }
+  .enfant-fiche__actions       { padding: var(--space-sm) var(--space-md); flex-direction: column; }
+  .enfant-fiche__actions .btn  { width: 100%; }
+  .enfant-form__actions        { flex-direction: column; }
+  .enfant-form__actions .btn   { width: 100%; }
+}
+
+/* Grand écran (≥1440px) : fiches un peu plus aérées */
+@media (min-width: 1440px) {
+  .enfants-grille { gap: var(--space-xl); }
 }

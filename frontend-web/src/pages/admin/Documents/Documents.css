@@ -9,3 +9,11 @@
 
 /* Tous les styles viennent de admin.css via cet import */
 @import '../../../styles/admin.css';
+
+/* ── RESPONSIVE ──────────────────────────────────────────
+   Ce fichier ne définit aucune classe propre : tous les
+   styles (tableau, filtres, badges, modale) proviennent de
+   admin.css, qui gère déjà les 6 paliers responsive de façon
+   globale (scroll horizontal du tableau, grilles de filtres,
+   modales plein écran sur mobile, etc.). Aucun override
+   spécifique à Documents n'est nécessaire ici. */

@@ -38,8 +38,12 @@ const envoyer = async (req, res) => {
       piece_jointe_nom: req.file ? req.file.originalname : null
     });
 
-    // Notifier le destinataire
-    await creerNotification(destinataire_id, 'Nouveau message', `Message de ${req.user.prenom} ${req.user.nom}`, 'message', '/parent/messages');
+    // Notifier le destinataire — mentionne la pièce jointe si le message en contient une
+    const texteNotif = req.file
+      ? `${req.user.prenom} ${req.user.nom} a envoyé une pièce jointe (${req.file.originalname})`
+      : `Message de ${req.user.prenom} ${req.user.nom}`;
+    const lienNotif = req.user.role === 'parent' ? '/admin/messagerie' : '/parent/messages';
+    await creerNotification(destinataire_id, 'Nouveau message', texteNotif, 'message', lienNotif);
 
     return cree(res, message, 'Message envoyé');
   } catch (err) { return erreur(res, 'Erreur lors de l\'envoi'); }

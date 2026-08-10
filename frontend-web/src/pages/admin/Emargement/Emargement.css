@@ -173,18 +173,42 @@
 .ema-btn-supprimer:hover { background: #ffebee; }
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
+/* Base (aucune media query) = Ordinateur standard 1280-1439px : résumé en 3 tuiles. */
 
-/* Tablette : résumé en 3 colonnes compressées */
-@media (max-width: 900px) {
+/* Petit mobile (≤479px) : résumé empilé, boutons et inputs compacts,
+   page consultable en urgence depuis un téléphone → priorité lisibilité */
+@media (max-width: 479px) {
+  .ema-resume       { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .ema-resume-tuile { padding: var(--space-md); }
+  .ema-resume-nb    { font-size: 1.8rem; }
+  .ema-input-heure  { width: 6rem; }
+  .ema-heure-bloc   { flex-wrap: wrap; }
+  .ema-enfant       { gap: 4px; }
+  /* Masquer le groupe sur très petit écran, l'enfant reste identifiable */
+  .ema-groupe { display: none; }
+}
+
+/* Mobile (≤767px) : résumé empilé, colonne groupe masquée */
+@media (max-width: 767px) {
+  .ema-resume { grid-template-columns: 1fr; }
+  /* Masquer groupe sur mobile */
+  .ema-groupe { display: none; }
+}
+
+/* Tablette (≤1023px) : résumé en 3 colonnes compressées, colonne durée masquée */
+@media (max-width: 1023px) {
   .ema-resume { grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
   /* Masquer la colonne durée sur petits écrans */
   .ema-table th:nth-child(4),
   .ema-table td:nth-child(4) { display: none; }
 }
 
-/* Mobile : résumé empilé */
-@media (max-width: 600px) {
-  .ema-resume { grid-template-columns: 1fr; }
-  /* Masquer groupe sur mobile */
-  .ema-groupe { display: none; }
+/* Petit ordinateur (≤1279px) : résumé 3 colonnes, espacement resserré */
+@media (max-width: 1279px) {
+  .ema-resume { gap: var(--space-sm); }
+}
+
+/* Grand écran (≥1440px) : plus de respiration entre les tuiles */
+@media (min-width: 1440px) {
+  .ema-resume { gap: var(--space-lg); }
 }

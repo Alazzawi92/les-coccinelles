@@ -87,7 +87,49 @@
 
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
 
-/* Mobile (≤768px) : la grille d'explications passe en 1 colonne */
-@media (max-width: 768px) {
-  .tarifs-explication { grid-template-columns: 1fr; }
+/* Petit ordinateur (≤1279px) : légère réduction des espacements,
+   la grille d'explications reste en 3 colonnes */
+@media (max-width: 1279px) {
+  .tarifs-explication { gap: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : grille d'explications en 2 colonnes */
+@media (max-width: 1023px) {
+  .tarifs-explication { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (≤767px) : la grille d'explications passe en 1 colonne */
+@media (max-width: 767px) {
+  .tarifs-explication { grid-template-columns: 1fr; gap: var(--space-lg); margin-top: var(--space-xl); }
+  .explication-carte  { padding: var(--space-lg); }
+  .tarifs-tableau th, .tarifs-tableau td { padding: var(--space-sm) var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : espacements et typographie resserrés */
+@media (max-width: 479px) {
+  .tarifs-explication { gap: var(--space-md); margin-top: var(--space-lg); }
+  .explication-carte  { padding: var(--space-md); }
+  .explication-icone  { font-size: 2.25rem; }
+  .explication-carte h3 { font-size: 1rem; }
+  .explication-carte p  { font-size: 0.85rem; }
+
+  .tarifs-tableau th, .tarifs-tableau td { padding: var(--space-xs) var(--space-sm); font-size: 0.85rem; }
+  .tarif-montant { font-size: 0.9rem; }
+  .tarifs-note { font-size: 0.8rem; }
+}
+
+/* Grand écran (≥1440px) : conteneur limité en largeur pour éviter
+   l'étirement infini, grille légèrement agrandie */
+@media (min-width: 1440px) {
+  .tarifs-explication {
+    max-width:    1600px;
+    margin-left:  auto;
+    margin-right: auto;
+    gap:          var(--space-2xl);
+  }
+  .tarifs-tableau-wrapper {
+    max-width:    1600px;
+    margin-left:  auto;
+    margin-right: auto;
+  }
 }

@@ -60,6 +60,20 @@
 .hero__bulle--3 { top: 20%; right: 10%; font-size: 2.5rem; animation-delay: 0.8s; }
 .hero__bulle--4 { bottom: 15%; left: 30%; font-size: 3rem; animation-delay: 2s;   }
 .hero__bulle--5 { top: 70%; left:  15%; font-size: 2rem;   animation-delay: 1s;   }
+.hero__bulle--6  { top: 40%; left:  45%; font-size: 1.8rem; animation-delay: 2.6s; opacity: 0.18; }
+.hero__bulle--7  { top: 85%; right: 25%; font-size: 2.2rem; animation-delay: 0.4s; }
+.hero__bulle--8  { top: 30%; left:  60%; font-size: 2.4rem; animation-delay: 1.8s; opacity: 0.16; }
+.hero__bulle--9  { top: 50%; right: 40%; font-size: 1.6rem; animation-delay: 3.2s; }
+.hero__bulle--10 { bottom: 30%; right: 8%;  font-size: 2rem;   animation-delay: 0.9s; }
+.hero__bulle--11 { top: 8%;  left:  40%; font-size: 3.2rem; animation-delay: 2.2s; opacity: 0.12; }
+.hero__bulle--12 { top: 55%; left:  8%;  font-size: 1.4rem; animation-delay: 1.2s; opacity: 0.2;  }
+
+/* Petit groupe supplémentaire autour de l'arc-en-ciel, en bas à gauche */
+.hero__bulle--13 { bottom: 8%;  left: 4%;  font-size: 2.6rem; animation-delay: 0.3s; opacity: 0.16; }
+.hero__bulle--14 { bottom: 22%; left: 18%; font-size: 1.5rem; animation-delay: 2.4s; opacity: 0.14; }
+.hero__bulle--15 { bottom: 4%;  left: 20%; font-size: 1.8rem; animation-delay: 1.6s; opacity: 0.18; }
+.hero__bulle--16 { bottom: 34%; left: 2%;  font-size: 1.2rem; animation-delay: 3s;   opacity: 0.22; }
+.hero__bulle--17 { bottom: 14%; left: 30%; font-size: 2rem;   animation-delay: 0.7s; opacity: 0.15; }
 
 /* ── 2b. Animation "flotter" ────────────────────────────── */
 
@@ -125,8 +139,64 @@
 /* Boutons d'action côte à côte : inscription + visite */
 .hero__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 
-/* Colonne visuelle : ne rétrécit jamais, centrée */
-.hero__visuel { flex-shrink: 0; text-align: center; }
+/* Colonne visuelle : ne rétrécit jamais, centrée.
+   position:relative pour ancrer l'arc-en-ciel derrière la coccinelle. */
+.hero__visuel { position: relative; flex-shrink: 0; text-align: center; }
+
+/* ── 2d'. Arcs-en-ciel décoratifs ───────────────────────── */
+
+/* Base commune aux 3 arcs : positionnés derrière la coccinelle
+   (z-index négatif), très transparents pour rester discrets.
+   Chaque variante (--1/--2/--3) définit sa propre taille, position
+   et angle de rotation, et flotte doucement en boucle. */
+.hero__arc-en-ciel {
+  position: absolute;
+  height:   auto;
+  z-index:  -1;
+  animation-name:            flotter-arc;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Grand arc principal, incliné à 45°, très transparent */
+.hero__arc-en-ciel--1 {
+  top:       -50%;
+  left:      125%;
+  width:     clamp(560px, 70vw, 980px);
+  opacity:   0.50;
+  --angle:   45deg;
+  animation-duration: 8s;
+}
+
+/* Petit arc secondaire, penché de l'autre côté (-30°) */
+.hero__arc-en-ciel--2 {
+  top:       20%;
+  left:      -260%;
+  width:     clamp(180px, 22vw, 300px);
+  opacity:   0.35;
+  --angle:   -30deg;
+  animation-duration: 10s;
+  animation-delay:    1.5s;
+}
+
+/* Petit arc secondaire, presque vertical (110°) */
+.hero__arc-en-ciel--3 {
+  top:       110%;
+  left:      140%;
+  width:     clamp(140px, 16vw, 220px);
+  opacity:   0.3;
+  --angle:   260deg;
+  animation-duration: 7s;
+  animation-delay:    0.6s;
+}
+
+/* Chaque variante garde sa rotation (--angle) constante et flotte
+   verticalement de ±14px — l'angle est une variable CSS pour éviter
+   de dupliquer les keyframes pour chaque arc. */
+@keyframes flotter-arc {
+  0%, 100% { transform: translateX(-50%) rotate(var(--angle)) translateY(0);    }
+  50%       { transform: translateX(-50%) rotate(var(--angle)) translateY(-14px); }
+}
 
 /* ── 2d. Grande coccinelle animée ───────────────────────── */
 
@@ -475,31 +545,78 @@
 
 /* ── 8. RESPONSIVE ──────────────────────────────────────── */
 
-/* Tablette (≤1024px) :
+/* Petit ordinateur (≤1279px) : légère transition vers le desktop plein,
+   on resserre un peu les grilles avant de passer en mode tablette */
+@media (max-width: 1279px) {
+  .hero__contenu { gap: var(--space-2xl); }
+  .hero__coccinelle-grande { font-size: clamp(7rem, 13vw, 11rem); }
+  .accueil-equipe__grille { gap: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) :
+   - Hero : texte + visuel empilés
    - Valeurs : 4 → 2 colonnes
    - Menus : 5 → 3 colonnes
-   - Actualités : 3 → 2 colonnes */
-@media (max-width: 1024px) {
+   - Actualités : 3 → 2 colonnes
+   - Équipe (accueil) : 4 → 2 colonnes */
+@media (max-width: 1023px) {
+  .hero { min-height: auto; padding: var(--space-2xl) 0; }
+  .hero__contenu  { flex-direction: column; text-align: center; }
+  .hero__visuel   { order: -1; }              /* Coccinelle en premier sur tablette */
+  .hero__texte    { max-width: 100%; }
+  .hero__description { max-width: 100%; margin-left: auto; margin-right: auto; }
+  .hero__actions  { justify-content: center; }
+  .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
+  .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
   .menu-semaine      { grid-template-columns: repeat(3, 1fr); }
   .actualites-grille { grid-template-columns: repeat(2, 1fr); }
 }
 
-/* Mobile (≤768px) : tout en 1 ou 2 colonnes */
-@media (max-width: 768px) {
-  .hero { min-height: auto; padding: var(--space-2xl) 0; }
-  .hero__contenu  { flex-direction: column; text-align: center; }
-  .hero__visuel   { order: -1; }              /* Coccinelle en premier sur mobile */
+/* Mobile (≤767px) : tout en 1 ou 2 colonnes, hero réduit */
+@media (max-width: 767px) {
   .hero__coccinelle-grande { font-size: 6rem; }
-  .hero__actions  { justify-content: center; }
-  .hero__description { max-width: 100%; }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: 1fr; }
+  .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
   .menu-semaine      { grid-template-columns: repeat(2, 1fr); }
   .actualites-grille { grid-template-columns: 1fr; }
   .accueil-menus__entete,
-  .accueil-actualites__entete { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
+  .accueil-actualites__entete,
+  .accueil-equipe__entete { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
   .cta__titre { font-size: 1.6rem; }
+}
+
+/* Petit mobile (≤479px) : 1 colonne partout, espacements et typo resserrés */
+@media (max-width: 479px) {
+  .hero { padding: var(--space-xl) 0; }
+  .hero__surtitle { font-size: 0.75rem; padding: var(--space-xs) var(--space-sm); }
+  .hero__titre { font-size: clamp(1.8rem, 8vw, 2.2rem); }
+  .hero__description { font-size: 1rem; }
+  .hero__coccinelle-grande { font-size: 4.5rem; }
+  .hero__actions { flex-direction: column; align-items: stretch; }
+  .hero__deco { font-size: 1.8rem; gap: var(--space-md); }
+  .chiffres__grille  { grid-template-columns: 1fr; }
+  .accueil-equipe__grille { grid-template-columns: 1fr; }
+  .menu-semaine      { grid-template-columns: 1fr; }
+  .cta__titre { font-size: 1.4rem; }
+  .cta__texte { font-size: 1rem; }
+  .cta__actions { flex-direction: column; align-items: stretch; }
+  .cta__btn-contact { justify-content: center; }
+}
+
+/* Grand écran (≥1440px) : on limite la largeur des grilles et on
+   agrandit légèrement les cartes pour éviter l'étirement infini */
+@media (min-width: 1440px) {
+  .hero__contenu { max-width: 1600px; margin: 0 auto; }
+  .chiffres__grille,
+  .valeurs__grille,
+  .accueil-equipe__grille,
+  .menu-semaine,
+  .actualites-grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
+  .valeurs__grille { gap: var(--space-2xl); }
+  .actualites-grille { gap: var(--space-2xl); }
+  .cta__contenu { max-width: 800px; }
 }
 
 /* Conteneur simple pour la version connectée de la page */

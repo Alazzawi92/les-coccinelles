@@ -14,7 +14,7 @@ const dossierJustificatifs = (req, res, next) => { req.uploadDossier = 'justific
 router.get('/',                    verifierToken, inscriptionController.lister);
 
 // GET /api/inscriptions/stats — Statistiques (admin)
-router.get('/stats',               verifierToken, verifierRole('admin', 'super_admin'), inscriptionController.stats);
+router.get('/stats',               verifierToken, verifierRole('super_admin'), inscriptionController.stats);
 
 // POST /api/inscriptions — Créer une demande d'inscription
 router.post('/',                   verifierToken, inscriptionController.creer);
@@ -26,7 +26,7 @@ router.get('/:id',                 verifierToken, inscriptionController.getInscr
 router.put('/:id',                 verifierToken, inscriptionController.modifier);
 
 // PATCH /api/inscriptions/:id/statut — Changer le statut (admin)
-router.patch('/:id/statut',        verifierToken, verifierRole('admin', 'super_admin'), inscriptionController.changerStatut);
+router.patch('/:id/statut',        verifierToken, verifierRole('super_admin'), inscriptionController.changerStatut);
 
 // POST /api/inscriptions/:id/documents — Uploader des pièces justificatives
 router.post('/:id/documents',      verifierToken, dossierJustificatifs, uploadDocument.array('fichiers', 20), inscriptionController.ajouterDocuments);

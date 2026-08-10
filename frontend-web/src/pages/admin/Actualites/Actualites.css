@@ -27,3 +27,38 @@
 }
 .quill-wrapper .ql-editor { min-height: 180px; }
 .quill-wrapper .ql-editor.ql-blank::before { color: var(--text-gray, #999); font-style: normal; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────
+   6 paliers (desktop-first). Le tableau .a-table et la
+   modale viennent de admin.css. Ici on ajuste seulement le
+   toggle publié/brouillon et l'éditeur Quill. */
+
+/* Grand écran (1440px et +) : éditeur un peu plus haut */
+@media (min-width: 1440px) {
+  .quill-wrapper .ql-container { min-height: 220px; }
+  .quill-wrapper .ql-editor { min-height: 200px; }
+}
+
+/* Petit ordinateur (1024-1279px) : pas d'ajustement particulier */
+@media (max-width: 1279px) {
+  .quill-wrapper .ql-container { min-height: 190px; }
+}
+
+/* Tablette (768-1023px) */
+@media (max-width: 1023px) {
+  .publie-toggle { gap: var(--space-sm); }
+  .quill-wrapper .ql-editor { min-height: 160px; }
+}
+
+/* Mobile (480-767px) */
+@media (max-width: 767px) {
+  .publie-toggle { font-size: 0.9rem; gap: var(--space-sm); }
+  .quill-wrapper .ql-toolbar { padding: var(--space-xs) var(--space-sm); }
+  .quill-wrapper .ql-editor { min-height: 140px; font-size: 0.9rem; }
+}
+
+/* Petit mobile (320-479px) */
+@media (max-width: 479px) {
+  .publie-toggle { font-size: 0.85rem; gap: var(--space-xs); }
+  .quill-wrapper .ql-editor { min-height: 120px; }
+}

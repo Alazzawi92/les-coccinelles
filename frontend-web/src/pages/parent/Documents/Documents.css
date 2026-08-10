@@ -12,6 +12,7 @@
      4. Ligne d'un document
      5. Catégories et métadonnées
      6. Actions sur un document
+     7. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs parent */
@@ -118,3 +119,40 @@
 
 /* Zone des boutons à droite (télécharger, supprimer) */
 .doc-actions { display: flex; gap: var(--space-sm); flex-shrink: 0; }
+
+/* ── 7. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
+
+/* Petit ordinateur (≤1279px) : zone d'upload légèrement resserrée */
+@media (max-width: 1279px) {
+  .drop-zone { padding: var(--space-xl); }
+}
+
+/* Tablette (≤1023px) : ligne de document avec un peu moins de gap */
+@media (max-width: 1023px) {
+  .document-ligne { gap: var(--space-sm); }
+}
+
+/* Mobile (≤767px) : ligne de document empilée, upload compact */
+@media (max-width: 767px) {
+  .drop-zone       { padding: var(--space-lg); }
+  .document-ligne    { flex-wrap: wrap; padding: var(--space-md) var(--space-sm); }
+  .doc-infos           { min-width: 60%; }
+  .doc-actions         { margin-left: auto; }
+}
+
+/* Petit mobile (≤479px) : document entièrement empilé (icône, infos, actions) */
+@media (max-width: 479px) {
+  .drop-zone           { padding: var(--space-md); }
+  .drop-zone__nom      { font-size: 0.85rem; word-break: break-word; }
+  .document-ligne        { flex-direction: column; align-items: flex-start; gap: var(--space-xs); }
+  .doc-infos               { min-width: 0; width: 100%; }
+  .doc-nom                  { white-space: normal; }
+  .doc-actions             { margin-left: 0; width: 100%; justify-content: flex-end; }
+}
+
+/* Grand écran (≥1440px) : liste de documents plus aérée */
+@media (min-width: 1440px) {
+  .document-ligne { padding: var(--space-lg) var(--space-md); }
+}

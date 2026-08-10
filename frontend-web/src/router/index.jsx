@@ -38,6 +38,7 @@ import MonProfil       from '../pages/parent/MonProfil/MonProfil';
 import MesEnfants      from '../pages/parent/MesEnfants/MesEnfants';
 import Inscription     from '../pages/parent/Inscription/Inscription';
 import Suivi           from '../pages/parent/Suivi/Suivi';
+import SuiviIndex      from '../pages/parent/Suivi/SuiviIndex';
 import Absences        from '../pages/parent/Absences/Absences';
 import Documents       from '../pages/parent/Documents/Documents';
 import Messages        from '../pages/parent/Messages/Messages';
@@ -60,9 +61,11 @@ import DocumentsAdmin    from '../pages/admin/Documents/Documents';
 import GalerieAdmin      from '../pages/admin/Galerie/Galerie';
 import CMS               from '../pages/admin/CMS/CMS';
 import Statistiques      from '../pages/admin/Statistiques/Statistiques';
+import Rapports          from '../pages/admin/Rapports/Rapports';
 
 // Garde des routes (vérifie auth + rôle)
 import ProtectedRoute from './ProtectedRoute';
+import SuperAdminRoute from './SuperAdminRoute';
 
 const AppRouter = () => {
   return (
@@ -103,6 +106,7 @@ const AppRouter = () => {
             <Route path="/parent/mon-profil"      element={<MonProfil />} />
             <Route path="/parent/mes-enfants"     element={<MesEnfants />} />
             <Route path="/parent/inscription"     element={<Inscription />} />
+            <Route path="/parent/suivi"           element={<SuiviIndex />} />  {/* Sans id : redirige ou fait choisir un enfant */}
             <Route path="/parent/suivi/:id"       element={<Suivi />} />  {/* :id = id de l'enfant */}
             <Route path="/parent/absences"        element={<Absences />} />
             <Route path="/parent/documents"       element={<Documents />} />
@@ -113,24 +117,33 @@ const AppRouter = () => {
         </Route>
 
         {/* ── ESPACE ADMIN ────────────────────────────────────
-            Réservé aux rôles admin et super_admin uniquement */}
+            Réservé aux rôles admin et super_admin.
+            Un admin simple ne voit que le groupe "Quotidien" ;
+            tout le reste est réservé au super_admin (voir SuperAdminRoute). */}
         <Route element={<ProtectedRoute roles={['admin', 'super_admin']} />}>
           <Route element={<AdminLayout />}>
-            <Route path="/admin/tableau-de-bord"  element={<AdminDashboard />} />
-            <Route path="/admin/familles"         element={<Familles />} />
-            <Route path="/admin/inscriptions"     element={<InscriptionsAdmin />} />
-            <Route path="/admin/enfants"          element={<EnfantsAdmin />} />
+
+            {/* Quotidien — accessible à l'admin ET au super_admin */}
             <Route path="/admin/suivi"            element={<SuiviAdmin />} />
             <Route path="/admin/absences"         element={<AbsencesAdmin />} />
             <Route path="/admin/calendrier"       element={<CalendrierAdmin />} />
             <Route path="/admin/emargement"       element={<EmargementAdmin />} />
             <Route path="/admin/messagerie"       element={<MessagerieAdmin />} />
-            <Route path="/admin/actualites"       element={<ActualitesAdmin />} />
-            <Route path="/admin/menus"            element={<MenusAdmin />} />
-            <Route path="/admin/documents"        element={<DocumentsAdmin />} />
-            <Route path="/admin/galerie"          element={<GalerieAdmin />} />
-            <Route path="/admin/cms"              element={<CMS />} />
-            <Route path="/admin/statistiques"     element={<Statistiques />} />
+
+            {/* Réservé au super_admin — un admin simple est renvoyé vers /admin/emargement */}
+            <Route element={<SuperAdminRoute />}>
+              <Route path="/admin/tableau-de-bord"  element={<AdminDashboard />} />
+              <Route path="/admin/familles"         element={<Familles />} />
+              <Route path="/admin/inscriptions"     element={<InscriptionsAdmin />} />
+              <Route path="/admin/enfants"          element={<EnfantsAdmin />} />
+              <Route path="/admin/actualites"       element={<ActualitesAdmin />} />
+              <Route path="/admin/menus"            element={<MenusAdmin />} />
+              <Route path="/admin/documents"        element={<DocumentsAdmin />} />
+              <Route path="/admin/galerie"          element={<GalerieAdmin />} />
+              <Route path="/admin/cms"              element={<CMS />} />
+              <Route path="/admin/statistiques"     element={<Statistiques />} />
+              <Route path="/admin/rapports"         element={<Rapports />} />
+            </Route>
           </Route>
         </Route>
 

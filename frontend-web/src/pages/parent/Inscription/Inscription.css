@@ -561,12 +561,52 @@
 }
 
 /* ── 8. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-@media (max-width: 640px) {
-  /* Grille 2 colonnes → 1 colonne sur petit écran */
-  .preinsc-grille { grid-template-columns: 1fr; }
+/* Petit ordinateur (≤1279px) : contenu de l'étape légèrement resserré */
+@media (max-width: 1279px) {
+  .inscription-contenu { padding: var(--space-xl); }
+}
+
+/* Tablette (≤1023px) : grilles 2 colonnes → 1 colonne, étapes compactes */
+@media (max-width: 1023px) {
+  .recap-grille    { grid-template-columns: 1fr; }
+  .preinsc-grille  { grid-template-columns: 1fr; }
+  .tarif-plancher  { grid-template-columns: 1fr; }
+  .etapes-barre    { padding: 0 var(--space-md); }
+}
+
+/* Mobile (≤767px) : sections et cartes resserrées, labels d'étapes réduits */
+@media (max-width: 767px) {
+  .inscription-contenu   { padding: var(--space-lg); }
+  .etape-titre             { font-size: 1.2rem; }
+  .etape-step__label      { font-size: 0.7rem; }
+  .preinsc-section         { padding: var(--space-md); }
+  .tarif-bloc               { padding: var(--space-md) var(--space-lg); }
+  .docs-employeur           { padding: var(--space-md) var(--space-lg); }
   /* Autorisation : alignement vertical */
   .preinsc-autorisation { flex-direction: row; }
   /* Sections : padding réduit */
   .preinsc-section { padding: var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : navigation d'étapes et cartes en 1 colonne serrée */
+@media (max-width: 479px) {
+  .inscription-contenu    { padding: var(--space-md); }
+  .etapes-barre             { padding: 0; }
+  .etape-step__cercle      { width: 32px; height: 32px; font-size: 0.8rem; }
+  .etape-step__label       { font-size: 0.62rem; }
+  .enfant-option             { padding: var(--space-md); flex-direction: column; text-align: center; }
+  .jours-checkboxes          { justify-content: center; }
+  .etape-nav                  { flex-direction: column; align-items: stretch; }
+  .etape-nav .btn             { width: 100%; }
+  .tarif-formule              { flex-direction: column; align-items: flex-start; }
+  .tarif-calcul                { flex-direction: column; align-items: flex-start; }
+  .preinsc-autorisation      { flex-direction: column; }
+}
+
+/* Grand écran (≥1440px) : le contenu de l'étape reste lisible et centré */
+@media (min-width: 1440px) {
+  .inscription-contenu { padding: var(--space-2xl) var(--space-2xl); }
 }

@@ -4,9 +4,83 @@
    RÔLE    : Page de gestion des fiches enfants inscrits.
              Tableau avec recherche, filtres. Modale pour
              voir / modifier la fiche d'un enfant.
-             Ce fichier délègue tous ses styles à admin.css
-             (tableau, filtres, badges, modale).
+             La plupart des styles viennent de admin.css
+             (tableau, filtres, badges, modale) ; ce fichier
+             ajoute seulement les pastilles "jours habituels"
+             et les boutons de sélection de la modale dédiée.
+
+   STRUCTURE :
+     1. Import
+     2. Pastilles "jours habituels" (colonne du tableau)
+     3. Sélecteur de jours (modale d'édition)
+     4. Responsive
    ============================================================ */
 
-/* Tous les styles viennent de admin.css via cet import */
+/* ── 1. IMPORT ───────────────────────────────────────────── */
 @import '../../../styles/admin.css';
+
+/* ── 2. PASTILLES "JOURS HABITUELS" ─────────────────────── */
+
+/* Bouton cliquable dans la cellule du tableau : pastilles + icône crayon */
+.jours-btn {
+  display:      inline-flex;
+  align-items:  center;
+  gap:          3px;
+  background:   none;
+  border:       none;
+  cursor:       pointer;
+  padding:      var(--space-xs);
+  border-radius: var(--radius-md);
+  transition:   var(--transition);
+}
+.jours-btn:hover { background: var(--bg-gray); }
+
+/* Icône crayon : visible seulement au survol pour ne pas surcharger le tableau */
+.jours-btn__icone { font-size: 0.75rem; opacity: 0; transition: var(--transition); margin-left: 2px; }
+.jours-btn:hover .jours-btn__icone { opacity: 1; }
+
+/* Pastille d'un jour : petit rond avec l'initiale */
+.jours-pastille {
+  width:           20px;
+  height:          20px;
+  border-radius:   50%;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       0.65rem;
+  font-weight:     700;
+  flex-shrink:     0;
+}
+/* Jour actif (fait partie du contrat) : orange plein */
+.jours-pastille--actif { background: var(--primary); color: var(--white); }
+/* Aucun jour restreint = vient tous les jours : pastilles grises neutres */
+.jours-pastille--tous  { background: var(--bg-gray); color: var(--text-gray); }
+
+/* ── 3. SÉLECTEUR DE JOURS (MODALE) ─────────────────────── */
+
+/* Rangée de boutons Lundi/Mardi/.../Vendredi, passe à la ligne si besoin */
+.jours-choix { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+
+/* Bouton d'un jour : pilule grise par défaut */
+.jours-choix-btn {
+  padding:       var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-pill);
+  border:        2px solid #E0E0E0;
+  background:    var(--white);
+  color:         var(--text-dark);
+  font-size:     0.85rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    var(--transition);
+}
+.jours-choix-btn:hover { border-color: var(--primary); }
+
+/* Jour sélectionné : orange plein */
+.jours-choix-btn--actif { background: var(--primary); border-color: var(--primary); color: var(--white); }
+
+/* ── 4. RESPONSIVE ───────────────────────────────────────── */
+/* Mobile (≤767px) : boutons de la modale pleine largeur, plus faciles à toucher */
+@media (max-width: 767px) {
+  .jours-choix     { flex-direction: column; }
+  .jours-choix-btn { width: 100%; text-align: center; }
+}

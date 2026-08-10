@@ -296,15 +296,20 @@ const Messages = () => {
             </div>
           ) : (
             <>
-              {/* En-tête : sujet + interlocuteur */}
+              {/* En-tête : avatar + sujet + interlocuteur */}
               <div className="detail-entete">
-                <h2>{detail.sujet}</h2>
-                <p className="detail-interlocuteur">
-                  {detail.expediteur_id === user.id
-                    ? `À : ${detail.destinataire?.prenom} ${detail.destinataire?.nom}`
-                    : `De : ${detail.expediteur?.prenom} ${detail.expediteur?.nom}`
-                  }
-                </p>
+                <div className="detail-avatar">
+                  {detail.expediteur_id === user.id ? detail.destinataire?.prenom?.[0] : detail.expediteur?.prenom?.[0]}
+                </div>
+                <div className="detail-entete-textes">
+                  <h2>{detail.sujet}</h2>
+                  <p className="detail-interlocuteur">
+                    {detail.expediteur_id === user.id
+                      ? `À : ${detail.destinataire?.prenom} ${detail.destinataire?.nom}`
+                      : `De : ${detail.expediteur?.prenom} ${detail.expediteur?.nom}`
+                    }
+                  </p>
+                </div>
               </div>
 
               {/* ── FIL DE MESSAGES ─────────────────────────── */}
@@ -353,7 +358,7 @@ const Messages = () => {
                 <div className="reponse-actions">
                   {/* Bouton 📎 : label cliquable pour déclencher l'input file masqué */}
                   <label className="btn btn--ghost btn--sm pj-btn" title="Joindre un fichier">
-                    📎
+                    📎 Joindre
                     <input ref={fileRepRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="pj-input--hidden" onChange={e => setFichierRep(e.target.files[0] || null)} />
                   </label>
                   {/* Désactivé si ni texte ni fichier */}

@@ -156,8 +156,39 @@
 
 /* ── 9. RESPONSIVE ──────────────────────────────────────── */
 
-/* Tablette : 2 albums par ligne, 4 photos par ligne */
-@media (max-width: 1200px) { .albums-admin-grille { grid-template-columns: repeat(2, 1fr); } .photos-admin-grille { grid-template-columns: repeat(4, 1fr); } }
+/* Petit ordinateur (≤1279px) : 2 albums par ligne, 4 photos par ligne */
+@media (max-width: 1279px) {
+  .albums-admin-grille { grid-template-columns: repeat(2, 1fr); }
+  .photos-admin-grille { grid-template-columns: repeat(4, 1fr); }
+}
 
-/* Mobile : 1 album par ligne (pleine largeur), 3 photos par ligne */
-@media (max-width: 768px)  { .albums-admin-grille { grid-template-columns: 1fr; }            .photos-admin-grille { grid-template-columns: repeat(3, 1fr); } }
+/* Tablette (≤1023px) : 2 albums par ligne, 3 photos par ligne */
+@media (max-width: 1023px) {
+  .albums-admin-grille { grid-template-columns: repeat(2, 1fr); }
+  .photos-admin-grille { grid-template-columns: repeat(3, 1fr); }
+  .album-admin-couverture { height: 140px; }
+}
+
+/* Mobile (≤767px) : 1 album par ligne (pleine largeur), 3 photos par ligne */
+@media (max-width: 767px) {
+  .albums-admin-grille { grid-template-columns: 1fr; }
+  .photos-admin-grille { grid-template-columns: repeat(3, 1fr); }
+  .upload-photos-actions { flex-direction: column; align-items: stretch; }
+}
+
+/* Petit mobile (≤479px) : albums pleine largeur, 2 photos par ligne,
+   espacements et couverture réduits pour rester lisible */
+@media (max-width: 479px) {
+  .photos-admin-grille { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+  .album-admin-couverture { height: 120px; }
+  .album-admin-couverture span { font-size: 2.5rem; }
+  .album-admin-actions { flex-wrap: wrap; }
+  .tag-enfant-option { padding: var(--space-xs) var(--space-sm); font-size: 0.8rem; }
+}
+
+/* Grand écran (≥1440px) : plus d'albums et de photos par ligne pour
+   profiter de l'espace disponible */
+@media (min-width: 1440px) {
+  .albums-admin-grille { grid-template-columns: repeat(4, 1fr); }
+  .photos-admin-grille { grid-template-columns: repeat(7, 1fr); }
+}

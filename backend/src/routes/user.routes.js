@@ -34,16 +34,20 @@ router.put('/me/avatar', verifierToken, uploadAvatar.single('avatar'), userContr
 router.get('/admins', verifierToken, userController.listerAdmins);
 
 // ── ROUTES ADMIN ─────────────────────────────────────────────────────
-// GET /api/users — Liste de tous les utilisateurs (admin seulement)
+// GET /api/users — Liste de tous les utilisateurs.
+// Reste ouvert à l'admin simple (pas seulement super_admin) car la
+// messagerie admin (Quotidien) en a besoin pour lister les parents.
+// La page "Familles" (gestion des comptes), elle, est réservée au
+// super_admin via les routes ci-dessous.
 router.get('/', verifierToken, verifierRole('admin', 'super_admin'), userController.listerUsers);
 
-// GET /api/users/:id — Détail d'un utilisateur (admin)
-router.get('/:id', verifierToken, verifierRole('admin', 'super_admin'), userController.getUser);
+// GET /api/users/:id — Détail d'un utilisateur (super admin — page Familles)
+router.get('/:id', verifierToken, verifierRole('super_admin'), userController.getUser);
 
-// PUT /api/users/:id/activer — Activer/désactiver un compte (admin)
-router.put('/:id/activer', verifierToken, verifierRole('admin', 'super_admin'), userController.toggleActif);
+// PUT /api/users/:id/activer — Activer/désactiver un compte (super admin — page Familles)
+router.put('/:id/activer', verifierToken, verifierRole('super_admin'), userController.toggleActif);
 
-// DELETE /api/users/:id — Supprimer un compte (admin + super_admin, avec restrictions dans le contrôleur)
-router.delete('/:id', verifierToken, verifierRole('admin', 'super_admin'), userController.supprimerUser);
+// DELETE /api/users/:id — Supprimer un compte (super admin — page Familles)
+router.delete('/:id', verifierToken, verifierRole('super_admin'), userController.supprimerUser);
 
 module.exports = router;

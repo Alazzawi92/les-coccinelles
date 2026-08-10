@@ -12,9 +12,9 @@ router.get('/',    verifierTokenOptional, actualiteController.lister);       // 
 router.get('/:id', verifierTokenOptional, actualiteController.getActualite); // Détail
 
 // Routes admin
-router.post('/',            verifierToken, verifierRole('admin', 'super_admin'), uploadDocument.single('image'), actualiteController.creer);
-router.put('/:id',          verifierToken, verifierRole('admin', 'super_admin'), actualiteController.modifier);
-router.patch('/:id/publier',verifierToken, verifierRole('admin', 'super_admin'), actualiteController.togglePublier);
-router.delete('/:id',       verifierToken, verifierRole('admin', 'super_admin'), actualiteController.supprimer);
+router.post('/',            verifierToken, verifierRole('super_admin'), uploadDocument.single('image'), actualiteController.creer);
+router.put('/:id',          verifierToken, verifierRole('super_admin'), actualiteController.modifier);
+router.patch('/:id/publier',verifierToken, verifierRole('super_admin'), actualiteController.togglePublier);
+router.delete('/:id',       verifierToken, verifierRole('super_admin'), actualiteController.supprimer);
 
 module.exports = router;

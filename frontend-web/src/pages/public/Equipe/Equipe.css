@@ -85,7 +85,31 @@
 
 /* ── 4. RESPONSIVE ──────────────────────────────────────── */
 
-/* Mobile (≤768px) : 3 colonnes → 2 colonnes */
-@media (max-width: 768px) {
+/* Petit ordinateur (≤1279px) : léger resserrement avant la tablette */
+@media (max-width: 1279px) {
+  .equipe-grille { gap: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : 3 colonnes → 2 colonnes */
+@media (max-width: 1023px) {
   .equipe-grille { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (≤767px) : cartes resserrées, toujours 2 colonnes */
+@media (max-width: 767px) {
+  .equipe-grille { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  .membre-carte { padding: var(--space-lg); }
+  .membre-carte__avatar { width: 80px; height: 80px; font-size: 1.6rem; }
+}
+
+/* Petit mobile (≤479px) : 1 colonne */
+@media (max-width: 479px) {
+  .equipe-grille { grid-template-columns: 1fr; }
+  .membre-carte__avatar { width: 90px; height: 90px; }
+  .membre-carte__nom { font-size: 1rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur et grille légèrement agrandie */
+@media (min-width: 1440px) {
+  .equipe-grille { max-width: 1600px; margin: var(--space-2xl) auto 0; gap: var(--space-2xl); }
 }

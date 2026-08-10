@@ -10,6 +10,9 @@ const absenceController  = require('../controllers/absenceController');
 // GET /api/absences/presences/:date — Présences/absences pour un jour (admin) — AVANT /:id
 router.get('/presences/:date',  verifierToken, verifierRole('admin', 'super_admin'), absenceController.getPresences);
 
+// GET /api/absences/presences-mois?annee=&mois= — Résumé jour par jour pour tout un mois (admin) — AVANT /:id
+router.get('/presences-mois',   verifierToken, verifierRole('admin', 'super_admin'), absenceController.getPresencesMois);
+
 // GET /api/absences — Mes absences (parent) ou toutes (admin)
 router.get('/',                 verifierToken, absenceController.lister);
 

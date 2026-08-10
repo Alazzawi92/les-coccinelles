@@ -27,7 +27,10 @@ router.get('/:id', verifierToken, enfantController.getEnfant);
 // PUT /api/enfants/:id — Modifier un enfant
 router.put('/:id', verifierToken, reglesEnfant, validerDonnees, enfantController.modifier);
 
-// DELETE /api/enfants/:id — Supprimer un enfant (admin seulement)
-router.delete('/:id', verifierToken, verifierRole('admin', 'super_admin'), enfantController.supprimer);
+// PATCH /api/enfants/:id/jours-presence — Jours de garde habituels (super admin — page Enfants, groupe Familles)
+router.patch('/:id/jours-presence', verifierToken, verifierRole('super_admin'), enfantController.modifierJoursPresence);
+
+// DELETE /api/enfants/:id — Supprimer un enfant (super admin — page Enfants, groupe Familles)
+router.delete('/:id', verifierToken, verifierRole('super_admin'), enfantController.supprimer);
 
 module.exports = router;

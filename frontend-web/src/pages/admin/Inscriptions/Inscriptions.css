@@ -10,6 +10,7 @@
      1. Imports
      2. Grille 2 colonnes (infos enfant + infos famille)
      3. Actions sur le dossier
+     4. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs admin */
@@ -117,3 +118,41 @@
 /* Colonne de boutons d'action : Valider, Refuser, Liste d'attente.
    Disposition verticale pour séparer visuellement chaque action. */
 .dossier-actions { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* ── 4. RESPONSIVE ───────────────────────────────────────── */
+
+/* Petit ordinateur (≤1279px) : grilles resserrées, gap réduit */
+@media (max-width: 1279px) {
+  .dossier-grille { gap: var(--space-xs); }
+  .dossier-parents { gap: var(--space-sm); }
+}
+
+/* Tablette (≤1023px) : les blocs parents/contacts passent en 1 colonne,
+   la grille de champs reste à 2 colonnes (assez de largeur) */
+@media (max-width: 1023px) {
+  .dossier-parents { grid-template-columns: 1fr; }
+}
+
+/* Mobile (≤767px) : tous les formulaires longs passent en 1 colonne,
+   les pièces jointes s'adaptent, padding des blocs réduit */
+@media (max-width: 767px) {
+  .dossier-grille { grid-template-columns: 1fr; }
+  .dossier-parent-bloc { padding: var(--space-sm); }
+  .dossier-docs { padding: var(--space-md); }
+  .doc-item { flex-wrap: wrap; }
+}
+
+/* Petit mobile (≤479px) : textes et espacements réduits pour éviter
+   toute coupure de contenu */
+@media (max-width: 479px) {
+  .dossier-section__titre { font-size: 0.85rem; }
+  .dossier-parent-bloc__titre { font-size: 0.78rem; }
+  .doc-item__icone { font-size: 1.1rem; }
+  .dossier-docs { padding: var(--space-sm); }
+}
+
+/* Grand écran (≥1440px) : un peu plus d'air entre les blocs */
+@media (min-width: 1440px) {
+  .dossier-grille { gap: var(--space-md); }
+  .dossier-parents { gap: var(--space-lg); }
+}

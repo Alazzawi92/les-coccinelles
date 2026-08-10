@@ -98,7 +98,8 @@
 
 /* ── 6. CASES DU CALENDRIER ─────────────────────────────── */
 
-/* Case de base : bouton carré cliquable */
+/* Case de base : bouton carré cliquable.
+   flex-direction:column pour empiler le numéro du jour et le badge. */
 .cal-case {
   aspect-ratio:    1;
   border:          2px solid transparent;
@@ -110,10 +111,30 @@
   cursor:          pointer;
   transition:      var(--transition);
   display:         flex;
+  flex-direction:  column;
   align-items:     center;
   justify-content: center;
+  gap:             1px;
+  position:        relative;
 }
 .cal-case:hover { border-color: var(--primary); background: var(--primary-light); }
+
+/* Numéro du jour (1, 2, 3...) */
+.cal-case-jour { line-height: 1; }
+
+/* Badge : nombre d'enfants attendus ce jour, sous le numéro */
+.cal-case-badge {
+  font-size:     0.62rem;
+  font-weight:   700;
+  color:         var(--white);
+  background:    var(--secondary);
+  border-radius: var(--radius-pill);
+  padding:       0 5px;
+  line-height:   1.4;
+  min-width:     14px;
+}
+/* Sur la case sélectionnée (fond orange) : badge blanc semi-transparent pour rester lisible */
+.cal-case--selec .cal-case-badge { background: rgba(255,255,255,0.3); color: var(--white); }
 
 /* Case vide (hors du mois courant) */
 .cal-case--vide { background: transparent; cursor: default; }
@@ -204,22 +225,26 @@
 
 /* ── RÉSUMÉ PRÉSENTS / ABSENTS ──────────────────────────── */
 
-/* 2 tuiles côte à côte */
+/* 2 tuiles côte à côte (ou 3 avec .cal-resume--3) */
 .cal-resume {
   display:               grid;
   grid-template-columns: 1fr 1fr;
   gap:                   var(--space-sm);
   margin-bottom:         var(--space-lg);
 }
+.cal-resume--3 { grid-template-columns: repeat(3, 1fr); }
+
 .cal-resume-item {
   border-radius: var(--radius-md);
   padding:       var(--space-md);
   text-align:    center;
 }
 /* Tuile présents : vert doux */
-.cal-resume-item--present { background: #e8f5e9; }
+.cal-resume-item--present  { background: #e8f5e9; }
 /* Tuile absents : rouge doux */
-.cal-resume-item--absent  { background: #ffeaea; }
+.cal-resume-item--absent   { background: #ffeaea; }
+/* Tuile "pas prévu" : gris/orange doux — neutre, pas une alerte */
+.cal-resume-item--nonprevu { background: #fff3e0; }
 
 /* Nombre en grand */
 .cal-resume-nb {
@@ -228,13 +253,15 @@
   font-size:   2rem;
   font-weight: 800;
 }
-.cal-resume-item--present .cal-resume-nb { color: #2e7d32; }
-.cal-resume-item--absent  .cal-resume-nb { color: #c62828; }
+.cal-resume-item--present  .cal-resume-nb { color: #2e7d32; }
+.cal-resume-item--absent   .cal-resume-nb { color: #c62828; }
+.cal-resume-item--nonprevu .cal-resume-nb { color: #e65100; }
 
 /* Libellé sous le nombre */
 .cal-resume-label { font-size: 0.8rem; font-weight: 600; }
-.cal-resume-item--present .cal-resume-label { color: #2e7d32; }
-.cal-resume-item--absent  .cal-resume-label { color: #c62828; }
+.cal-resume-item--present  .cal-resume-label { color: #2e7d32; }
+.cal-resume-item--absent   .cal-resume-label { color: #c62828; }
+.cal-resume-item--nonprevu .cal-resume-label { color: #e65100; }
 
 /* ── 9. LISTES PRÉSENTS / ABSENTS ───────────────────────── */
 
@@ -250,8 +277,9 @@
   padding-bottom: var(--space-xs);
   border-bottom:  2px solid;
 }
-.cal-section-titre--present { color: #2e7d32; border-color: #a5d6a7; }
-.cal-section-titre--absent  { color: #c62828; border-color: #ef9a9a; }
+.cal-section-titre--present  { color: #2e7d32; border-color: #a5d6a7; }
+.cal-section-titre--absent   { color: #c62828; border-color: #ef9a9a; }
+.cal-section-titre--nonprevu { color: #e65100; border-color: #ffcc80; }
 
 /* Liste sans puce */
 .cal-liste { list-style: none; display: flex; flex-direction: column; gap: 6px; }
@@ -269,7 +297,9 @@
   background:  var(--bg-gray);
 }
 /* Fond légèrement rosé pour les absents */
-.cal-enfant--absent { background: #fff5f5; }
+.cal-enfant--absent   { background: #fff5f5; }
+/* Fond légèrement orangé pour les "pas prévu" */
+.cal-enfant--nonprevu { background: #fff8f0; }
 
 /* Emoji avatar */
 .cal-enfant-avatar { font-size: 1.3rem; flex-shrink: 0; }
@@ -298,16 +328,48 @@
 }
 
 /* ── 10. RESPONSIVE ─────────────────────────────────────── */
+/* 6 paliers (desktop-first). Le conteneur 2 colonnes (calendrier
+   fixe + panneau flexible) s'empile dès la tablette ; les cases,
+   le résumé et les listes se resserrent en cascade jusqu'au
+   petit mobile, car cette page doit rester consultable en
+   urgence depuis un téléphone. */
 
-/* Tablette : empilement vertical */
-@media (max-width: 1100px) {
+/* Grand écran (1440px et +) : un peu plus d'air */
+@media (min-width: 1440px) {
+  .cal-conteneur { gap: var(--space-2xl); }
+}
+
+/* Petit ordinateur (1024-1279px) : colonne calendrier légèrement réduite */
+@media (max-width: 1279px) {
+  .cal-conteneur { grid-template-columns: 360px 1fr; }
+}
+
+/* Tablette (768-1023px) : empilement vertical du conteneur */
+@media (max-width: 1023px) {
   .cal-conteneur { grid-template-columns: 1fr; }
   .cal-bloc { max-width: 420px; margin: 0 auto; }
 }
 
-/* Mobile : calendrier pleine largeur */
-@media (max-width: 480px) {
-  .cal-bloc      { padding: var(--space-md); }
+/* Mobile (480-767px) : calendrier pleine largeur, cases resserrées */
+@media (max-width: 767px) {
+  .cal-bloc      { max-width: 100%; padding: var(--space-md); }
   .cal-panneau   { padding: var(--space-md); }
-  .cal-case      { font-size: 0.8rem; }
+  .cal-case      { font-size: 0.85rem; }
+  .cal-resume    { grid-template-columns: 1fr 1fr; }
+  .cal-resume--3 { grid-template-columns: repeat(3, 1fr); }
+  .cal-resume-nb { font-size: 1.6rem; }
+  .cal-nav-titre { font-size: 1.1rem; }
+}
+
+/* Petit mobile (320-479px) : lisibilité minimale garantie */
+@media (max-width: 479px) {
+  .cal-bloc      { padding: var(--space-sm); }
+  .cal-panneau   { padding: var(--space-sm); }
+  .cal-case      { font-size: 0.75rem; }
+  .cal-nav-btn   { width: 1.9rem; height: 1.9rem; font-size: 1.1rem; }
+  .cal-nav-titre { font-size: 1rem; }
+  .cal-grille    { gap: 3px; }
+  .cal-legende   { gap: var(--space-sm); }
+  .cal-resume-nb { font-size: 1.4rem; }
+  .cal-enfant-avatar { font-size: 1.1rem; }
 }

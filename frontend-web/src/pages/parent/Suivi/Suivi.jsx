@@ -134,9 +134,19 @@ const Suivi = () => {
               </div>
 
               {/* ── SIESTE ─────────────────────────────────────── */}
+              {/* L'équipe saisit les siestes dans le tableau "siestes" (siestes multiples
+                  possibles) ; sieste_debut/sieste_fin sont d'anciens champs conservés
+                  en repli si jamais renseignés directement. */}
               <div className="p-card suivi-section">
                 <h3 className="suivi-section__titre">😴 Sieste</h3>
-                {selectionne.sieste_debut ? (
+                {selectionne.siestes?.length > 0 ? (
+                  <div className="sieste-info">
+                    {selectionne.siestes.map((sv, idx) => (
+                      <span key={idx} className="sieste-heure">{sv.debut} → {sv.fin}</span>
+                    ))}
+                    {selectionne.sieste_note && <p className="suivi-note-texte">💬 {selectionne.sieste_note}</p>}
+                  </div>
+                ) : selectionne.sieste_debut ? (
                   <div className="sieste-info">
                     {/* Plage horaire : HH:mm → HH:mm */}
                     <span className="sieste-heure">{selectionne.sieste_debut} → {selectionne.sieste_fin}</span>

@@ -103,10 +103,56 @@
 
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
 
-/* Mobile (≤768px) :
+/* Petit ordinateur (≤1279px) : légère réduction des espacements,
+   la grille des axes reste en 3 colonnes */
+@media (max-width: 1279px) {
+  .axes-grille  { gap: var(--space-lg); }
+  .timeline-item { grid-template-columns: 150px 48px 1fr; }
+}
+
+/* Tablette (≤1023px) : axes en 2 colonnes */
+@media (max-width: 1023px) {
+  .axes-grille  { grid-template-columns: repeat(2, 1fr); }
+  .timeline-item { grid-template-columns: 140px 45px 1fr; }
+}
+
+/* Mobile (≤767px) :
    - Axes en 1 colonne
    - Timeline légèrement plus compacte (120px au lieu de 160px pour l'heure) */
-@media (max-width: 768px) {
-  .axes-grille  { grid-template-columns: 1fr; }
+@media (max-width: 767px) {
+  .axes-grille  { grid-template-columns: 1fr; gap: var(--space-lg); margin-top: var(--space-xl); }
+  .axe-carte    { padding: var(--space-lg); }
   .timeline-item { grid-template-columns: 120px 40px 1fr; }
+}
+
+/* Petit mobile (≤479px) : espacements et typographie resserrés,
+   timeline très compacte */
+@media (max-width: 479px) {
+  .axes-grille  { gap: var(--space-md); margin-top: var(--space-lg); }
+  .axe-carte    { padding: var(--space-md); }
+  .axe-carte__icone { font-size: 2rem; }
+  .axe-carte__titre { font-size: 1rem; }
+  .axe-carte__liste li { font-size: 0.85rem; }
+
+  .journee-timeline { margin-top: var(--space-lg); max-width: 100%; }
+  .timeline-item {
+    grid-template-columns: 90px 32px 1fr;
+    gap:                   var(--space-sm);
+    padding:               var(--space-sm) 0;
+  }
+  .timeline-heure { font-size: 0.75rem; }
+  .timeline-point { width: 32px; height: 32px; font-size: 1.1rem; }
+  .timeline-label { font-size: 0.85rem; }
+}
+
+/* Grand écran (≥1440px) : conteneur limité en largeur pour éviter
+   l'étirement infini, grilles légèrement agrandies */
+@media (min-width: 1440px) {
+  .axes-grille {
+    max-width:    1600px;
+    margin-left:  auto;
+    margin-right: auto;
+    gap:          var(--space-2xl);
+  }
+  .journee-timeline { max-width: 800px; }
 }

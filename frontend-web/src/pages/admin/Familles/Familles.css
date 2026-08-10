@@ -13,6 +13,7 @@
      3. Identité dans le tableau (avatar + nom)
      4. Modale de détail famille
      5. Grille des informations de la famille
+     6. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs admin */
@@ -247,3 +248,46 @@
 
 /* Valeur du champ : lisible, foncé */
 .detail-valeur { font-size: 0.95rem; color: var(--text-dark); }
+
+/* ── 6. RESPONSIVE ───────────────────────────────────────── */
+
+/* Petit ordinateur (≤1279px) : la grille de détail garde 2 colonnes
+   mais avec un espacement resserré */
+@media (max-width: 1279px) {
+  .user-detail-grille { gap: var(--space-sm); }
+}
+
+/* Tablette (≤1023px) : les informations famille passent en 1 colonne,
+   la cellule identité du tableau est un peu plus compacte */
+@media (max-width: 1023px) {
+  .user-detail-grille { grid-template-columns: 1fr; }
+  .user-identite { width: 200px; }
+}
+
+/* Mobile (≤767px) : onglets plus compacts, identité pleine largeur,
+   actions de suppression empilées, modale presque pleine largeur */
+@media (max-width: 767px) {
+  .familles-onglet { padding: var(--space-xs) var(--space-md); font-size: 0.85rem; }
+  .user-identite { width: 100%; }
+  .suppr-actions { flex-direction: column; }
+  .modal--danger { max-width: 92vw; }
+}
+
+/* Petit mobile (≤479px) : tout est empilé, textes et paddings réduits
+   pour rester lisible sans être coupé */
+@media (max-width: 479px) {
+  .familles-onglets { flex-direction: column; align-items: stretch; }
+  .familles-onglet { justify-content: center; }
+  .user-avatar { width: 30px; height: 30px; font-size: 0.7rem; }
+  .user-nom { font-size: 0.85rem; }
+  .detail-item { padding: var(--space-sm); }
+  .suppr-avertissements { padding: var(--space-sm) var(--space-md); }
+  .btn-supprimer-confirmer { padding: var(--space-sm) var(--space-lg); }
+}
+
+/* Grand écran (≥1440px) : un peu plus d'air dans la grille de détail
+   et entre les onglets */
+@media (min-width: 1440px) {
+  .user-detail-grille { gap: var(--space-lg); }
+  .familles-onglets { gap: var(--space-md); }
+}

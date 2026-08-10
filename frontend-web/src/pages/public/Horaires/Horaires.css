@@ -10,6 +10,7 @@
      2. Tableau des horaires
      3. Lignes de l'horaire
      4. Boîtes d'information
+     5. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs aux pages publiques */
@@ -95,3 +96,53 @@
 
 /* Icône à gauche du texte : grande, ne rétrécit pas */
 .info-box span { font-size: 1.3rem; flex-shrink: 0; }
+
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
+/* Ordre du + large au + étroit : une règle @media (max-width) plus
+   étroite doit apparaître APRÈS une règle plus large pour bien la
+   surcharger en cascade CSS (même sélecteur, dernière règle gagne). */
+
+/* Petit ordinateur (≤1279px) : transition douce vers le style plein desktop */
+@media (max-width: 1279px) {
+  .horaires-tableau,
+  .horaires-info { max-width: 640px; }
+}
+
+/* Tablette (≤1023px) : tableau occupe davantage de largeur */
+@media (max-width: 1023px) {
+  .horaires-tableau,
+  .horaires-info { max-width: 90%; }
+}
+
+/* Mobile (480-767px) : un peu plus d'air que le petit mobile */
+@media (max-width: 767px) {
+  .horaires-tableau { margin-top: var(--space-xl); border-radius: var(--radius-lg); }
+  .horaire-ligne    { padding: var(--space-md) var(--space-lg); }
+  .horaire-jour     { font-size: 0.95rem; }
+  .horaire-statut   { font-size: 0.9rem; }
+  .horaires-info    { margin-top: var(--space-xl); }
+  .info-box p       { font-size: 0.85rem; }
+}
+
+/* Petit mobile (≤479px) : ligne d'horaire en colonne, espacements resserrés */
+@media (max-width: 479px) {
+  .horaires-tableau { margin-top: var(--space-lg); border-radius: var(--radius-md); }
+  .horaire-ligne {
+    flex-direction: column;
+    align-items:    flex-start;
+    gap:            4px;
+    padding:        var(--space-md);
+  }
+  .horaire-jour   { font-size: 0.9rem; }
+  .horaire-statut { font-size: 0.85rem; }
+  .horaires-info  { gap: var(--space-sm); margin-top: var(--space-lg); }
+  .info-box       { padding: var(--space-sm) var(--space-md); gap: var(--space-sm); }
+  .info-box p     { font-size: 0.8rem; }
+  .info-box span  { font-size: 1.1rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur pour éviter l'étirement */
+@media (min-width: 1440px) {
+  .horaires-tableau,
+  .horaires-info { max-width: 700px; }
+}

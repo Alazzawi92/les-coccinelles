@@ -1,7 +1,8 @@
 // Contrôleur documents — Les Coccinelles
 const path = require('path');
 const fs   = require('fs');
-const { Document } = require('../models');
+const { Document, User } = require('../models');
+const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 
 const lister = async (req, res) => {
@@ -29,6 +30,19 @@ const uploader = async (req, res) => {
       categorie:      req.body.categorie || 'autre',
       description:    req.body.description || null
     });
+
+    // Notifier l'équipe quand c'est un parent qui dépose un document
+    if (req.user.role === 'parent') {
+      const admins = await User.findAll({ where: { role: ['admin', 'super_admin'], actif: true } });
+      await Promise.all(admins.map(admin => creerNotification(
+        admin.id,
+        'Nouveau document',
+        `${req.user.prenom} ${req.user.nom} a déposé un document (${req.file.originalname})`,
+        'document',
+        '/admin/documents'
+      )));
+    }
+
     return cree(res, document, 'Document uploadé');
   } catch (err) { return erreur(res, 'Erreur lors de l\'upload'); }
 };

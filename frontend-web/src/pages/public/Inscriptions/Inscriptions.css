@@ -196,11 +196,52 @@
 .document-item span:first-child { font-size: 1.5rem; flex-shrink: 0; }
 
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
+/* Ordre du + large au + étroit : une règle @media (max-width) plus
+   étroite doit apparaître APRÈS une règle plus large pour bien la
+   surcharger en cascade CSS (même sélecteur, dernière règle gagne). */
 
-/* Mobile (≤768px) : 4 étapes → 2 colonnes */
-@media (max-width: 768px) {
-  .etapes-grille        { grid-template-columns: repeat(2, 1fr); }
-  .insc-fiche           { grid-template-columns: 1fr; }
-  .insc-fiche__actions  { align-items: center; text-align: center; }
-  .insc-handicap        { flex-direction: column; gap: var(--space-md); }
+/* Petit ordinateur (≤1279px) : transition douce vers le desktop plein */
+@media (max-width: 1279px) {
+  .etapes-grille   { grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
+  .insc-fiche      { max-width: 700px; }
+}
+
+/* Tablette (≤1023px) : 4 étapes → 2 colonnes */
+@media (max-width: 1023px) {
+  .etapes-grille   { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile (480-767px) : étapes en 1 colonne, un peu plus d'air */
+@media (max-width: 767px) {
+  .etapes-grille   { grid-template-columns: 1fr; }
+  .insc-fiche      { grid-template-columns: 1fr; }
+  .insc-fiche__actions { align-items: center; text-align: center; }
+  .insc-handicap   { flex-direction: column; gap: var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : tout en 1 colonne, espacements resserrés */
+@media (max-width: 479px) {
+  .etapes-grille   { grid-template-columns: 1fr; gap: var(--space-md); margin-top: var(--space-lg); }
+  .etape-carte     { padding: var(--space-md); }
+  .etape-numero    { width: 40px; height: 40px; font-size: 1.1rem; margin-bottom: var(--space-sm); }
+  .etape-titre     { font-size: 0.9rem; }
+  .etape-texte     { font-size: 0.8rem; }
+  .insc-paragraphes { gap: var(--space-sm); margin-top: var(--space-lg); }
+  .insc-paragraphes p { font-size: 0.9rem; padding-left: var(--space-sm); }
+  .insc-handicap   { flex-direction: column; gap: var(--space-sm); padding: var(--space-md); }
+  .insc-handicap__icone { font-size: 2rem; }
+  .insc-fiche      { grid-template-columns: 1fr; gap: var(--space-md); }
+  .insc-fiche__actions { align-items: center; text-align: center; }
+  .documents-liste { gap: var(--space-sm); margin-top: var(--space-lg); }
+  .document-item   { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
+  .btn-pirouette   { width: 100%; text-align: center; padding: var(--space-md); }
+}
+
+/* Grand écran (≥1440px) : conteneurs plus larges, grille légèrement agrandie */
+@media (min-width: 1440px) {
+  .etapes-grille    { gap: var(--space-2xl); max-width: 1600px; margin-left: auto; margin-right: auto; }
+  .insc-paragraphes { max-width: 800px; }
+  .insc-handicap    { max-width: 900px; }
+  .insc-fiche       { max-width: 1000px; }
+  .documents-liste  { max-width: 800px; }
 }

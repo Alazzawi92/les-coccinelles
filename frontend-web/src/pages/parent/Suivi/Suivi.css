@@ -68,6 +68,13 @@
 /* Emoji d'humeur affiché dans le bouton pour un aperçu rapide */
 .suivi-jour-humeur { font-size: 1.3rem; }
 
+/* ── SÉLECTEUR D'ENFANT (SuiviIndex, quand le parent a plusieurs enfants) ── */
+/* Réutilise .suivi-jour-btn (bouton) mais appliqué à des <Link> :
+   max-width évite que la liste s'étire sur toute la largeur de la page. */
+.suivi-selecteur { max-width: 400px; }
+.suivi-selecteur .suivi-jour-btn { display: flex; text-decoration: none; }
+.suivi-selecteur .suivi-jour-date { font-weight: 600; }
+
 /* ── 4. DÉTAIL D'UNE JOURNÉE ────────────────────────────── */
 
 /* Date de la journée sélectionnée : grand titre */
@@ -165,9 +172,37 @@
 .suivi-message-equipe p  { font-size: 0.95rem; color: var(--text-dark); line-height: 1.6; }
 
 /* ── 12. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Mobile (≤768px) : 2 colonnes → 1 colonne (calendrier au-dessus) */
-@media (max-width: 768px) {
+/* Petit ordinateur (≤1279px) : colonne calendrier légèrement réduite */
+@media (max-width: 1279px) {
+  .suivi-layout { grid-template-columns: 200px 1fr; }
+}
+
+/* Tablette (≤1023px) : 2 colonnes → 1 colonne (calendrier au-dessus) */
+@media (max-width: 1023px) {
   .suivi-layout { grid-template-columns: 1fr; }
-  .repas-grille { grid-template-columns: repeat(3, 1fr); }  /* Reste sur 3 colonnes */
+}
+
+/* Mobile (≤767px) : repas en 3 colonnes resserrées, espacements réduits */
+@media (max-width: 767px) {
+  .repas-grille          { gap: var(--space-sm); }
+  .suivi-message-equipe  { padding: var(--space-lg); }
+  .suivi-selecteur       { max-width: 100%; }
+}
+
+/* Petit mobile (≤479px) : repas empilés en 1 colonne, textes resserrés */
+@media (max-width: 479px) {
+  .repas-grille           { grid-template-columns: 1fr; }
+  .repas-bloc              { flex-direction: row; justify-content: flex-start; gap: var(--space-sm); text-align: left; }
+  .repas-emoji             { margin-bottom: 0; font-size: 1.6rem; }
+  .suivi-detail__date     { font-size: 1.05rem; }
+  .suivi-message-equipe   { padding: var(--space-md); }
+  .humeur-bloc             { flex-wrap: wrap; }
+}
+
+/* Grand écran (≥1440px) : plus d'air entre les deux colonnes */
+@media (min-width: 1440px) {
+  .suivi-layout { grid-template-columns: 260px 1fr; gap: var(--space-2xl); }
 }

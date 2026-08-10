@@ -7,5 +7,6 @@
              admin.css (tableau, badges, filtres, modale).
    ============================================================ */
 
-/* Tous les styles viennent de admin.css via cet import */
+/* Tous les styles viennent de admin.css via cet import,
+   y compris les 6 paliers responsive (voir sa section 12). */
 @import '../../../styles/admin.css';

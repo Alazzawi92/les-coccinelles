@@ -19,6 +19,7 @@
     10. Modal nouveau message
     11. Zone de destinataires multi-select + chips
     12. Dropdown résultats de recherche
+    13. Responsive
    ============================================================ */
 
 /* Charge les variables CSS du projet */
@@ -39,7 +40,7 @@
 /* 300px pour la liste des conversations, le reste pour le détail.
    overflow:hidden clip les coins arrondis sur les enfants.
    height:620px fixe une hauteur constante pour éviter le scroll global. */
-.messagerie-admin-layout { display: grid; grid-template-columns: 300px 1fr; background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 620px; }
+.messagerie-admin-layout { display: grid; grid-template-columns: 300px 1fr; background: var(--white); border: 1px solid var(--bg-gray); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 620px; }
 
 /* ── 4. LISTE DES CONVERSATIONS ─────────────────────────── */
 
@@ -66,39 +67,43 @@
 /* Message non lu : sujet en gras pour attirer l'attention */
 .conv-admin-item--nonlu .conv-admin-sujet { font-weight: 700; color: var(--text-dark); }
 
-/* Cercle initial de l'expéditeur : fond sombre (côté admin) */
-.conv-admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--text-dark); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+/* Cercle initial de l'expéditeur : dégradé sombre (côté admin) + ombre douce */
+.conv-admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
 
 /* Textes de la conversation */
 .conv-admin-nom    { font-weight: 700; font-size: 0.85rem; color: var(--text-dark); }
 .conv-admin-sujet  { font-size: 0.78rem; color: var(--text-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .conv-admin-date   { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
 
-/* Point rouge en haut à droite de la conversation non lue */
-.conv-point        { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--error); border-radius: 50%; }
+/* Point rouge en haut à droite de la conversation non lue, avec halo doux */
+.conv-point        { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--error); border-radius: 50%; box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
 
 /* ── 6. DÉTAIL DE CONVERSATION ──────────────────────────── */
 
 /* Colonne droite : flex vertical pour empiler entête + fil + réponse */
 .conv-detail-admin   { display: flex; flex-direction: column; overflow: hidden; }
 
-/* En-tête du détail : sujet de la conversation + nom de l'interlocuteur */
-.conv-detail-entete  { padding: var(--space-lg); border-bottom: 1px solid var(--bg-gray); }
-.conv-detail-entete h2 { font-family: var(--font-heading); font-size: 1.1rem; }
+/* En-tête du détail : avatar + sujet de la conversation + nom de l'interlocuteur */
+.conv-detail-entete    { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg); border-bottom: 1px solid var(--bg-gray); background: var(--white); }
+.conv-detail-avatar     { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.conv-detail-textes     { min-width: 0; }
+.conv-detail-entete h2  { font-family: var(--font-heading); font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.conv-detail-sous-titre { color: var(--text-gray); font-size: 0.85rem; margin-top: 2px; }
 
 /* ── 7. FIL DE MESSAGES ─────────────────────────────────── */
 
-/* Zone scrollable des bulles : flex vertical avec scroll interne */
-.conv-messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+/* Zone scrollable des bulles : fond légèrement teinté pour faire
+   ressortir les bulles, flex vertical avec scroll interne */
+.conv-messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); background: var(--bg-light); }
 
-/* Bulle de message : largeur max 75% pour ne pas occuper toute la largeur */
-.msg-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); }
+/* Bulle de message : largeur max 75%, légère ombre pour la profondeur */
+.msg-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
 
-/* Bulle de l'admin (moi) : fond sombre, texte blanc, alignée à droite */
-.msg-bulle--moi   { background: var(--text-dark); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+/* Bulle de l'admin (moi) : dégradé sombre, texte blanc, alignée à droite */
+.msg-bulle--moi   { background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
 
-/* Bulle de l'autre (parent) : fond gris clair, texte sombre, alignée à gauche */
-.msg-bulle--autre { background: var(--bg-gray); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; }
+/* Bulle de l'autre (parent) : blanc bordé, texte sombre, alignée à gauche */
+.msg-bulle--autre { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
 
 /* Contenu texte de la bulle */
 .msg-bulle p      { font-size: 0.9rem; line-height: 1.5; }
@@ -109,19 +114,20 @@
 /* ── 8. ZONE DE RÉPONSE ─────────────────────────────────── */
 
 /* Barre de saisie en bas : textarea + bouton Envoyer côte à côte */
-.conv-reponse { padding: var(--space-md); border-top: 1px solid var(--bg-gray); display: flex; gap: var(--space-md); align-items: flex-end; }
+.conv-reponse { padding: var(--space-md); border-top: 1px solid var(--bg-gray); background: var(--white); display: flex; gap: var(--space-md); align-items: flex-end; }
 
-/* Le textarea prend tout l'espace disponible */
-.conv-reponse .a-input { flex: 1; }
+/* Le textarea prend tout l'espace disponible, surlignage orange au focus */
+.conv-reponse .a-input { flex: 1; resize: none; transition: var(--transition); }
+.conv-reponse .a-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
 /* ── 9. ÉTAT VIDE ───────────────────────────────────────── */
 
 /* Affiché quand aucune conversation n'est sélectionnée */
 .conv-vide { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-md); padding: var(--space-2xl); color: var(--text-gray); font-size: 0.9rem; }
-.conv-vide span { font-size: 2.5rem; }
+.conv-vide span { font-size: 2.5rem; color: var(--text-light); }
 
 /* Variante centrée qui prend toute la hauteur disponible */
-.conv-vide--centre { flex: 1; }
+.conv-vide--centre { flex: 1; background: var(--bg-light); }
 
 /* ── 10. MODAL NOUVEAU MESSAGE ──────────────────────────── */
 
@@ -269,3 +275,42 @@
 
 /* Texte d'aide gris sous certains champs */
 .a-vide-texte { font-size: 0.8rem; color: var(--text-gray); padding: var(--space-sm) 0; }
+
+/* ── 13. RESPONSIVE ─────────────────────────────────────── */
+
+/* Grand écran (≥1440px) : colonne liste des conversations un peu plus large */
+@media (min-width: 1440px) {
+  .messagerie-admin-layout { grid-template-columns: 340px 1fr; }
+}
+
+/* Petit ordinateur (≤1279px) : colonne liste légèrement réduite */
+@media (max-width: 1279px) {
+  .messagerie-admin-layout { grid-template-columns: 260px 1fr; }
+}
+
+/* Tablette (≤1023px) : colonne liste plus étroite, hauteur réduite */
+@media (max-width: 1023px) {
+  .messagerie-admin-layout { grid-template-columns: 220px 1fr; height: 520px; }
+  .modal-boite, .modal-boite--lg { max-width: 90vw; }
+}
+
+/* Mobile (≤767px) : layout 1 colonne (liste au-dessus, détail en dessous), hauteur automatique */
+@media (max-width: 767px) {
+  .messagerie-admin-layout { grid-template-columns: 1fr; height: auto; }
+  .conv-liste-admin { border-right: none; border-bottom: 1px solid var(--bg-gray); max-height: 260px; }
+  .conv-detail-admin { min-height: 420px; }
+  .msg-bulle { max-width: 88%; }
+  .modal-overlay { padding: var(--space-md); }
+  .modal-boite, .modal-boite--lg { max-width: 100%; }
+  .dest-input { min-width: 100px; }
+}
+
+/* Petit mobile (≤479px) : espacements resserrés, réponse en colonne */
+@media (max-width: 479px) {
+  .conv-messages-fil { padding: var(--space-md); }
+  .msg-bulle { max-width: 95%; }
+  .conv-reponse { flex-direction: column; align-items: stretch; }
+  .modal-corps { padding: var(--space-lg); }
+  .modal-entete { padding: var(--space-md) var(--space-lg); }
+  .form-groupe .dest-zone { min-height: 40px; }
+}

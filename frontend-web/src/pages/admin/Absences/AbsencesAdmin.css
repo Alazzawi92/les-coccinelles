@@ -16,3 +16,32 @@
 .absences-admin-page {
   padding: var(--space-xl);
 }
+
+/* ── RESPONSIVE ──────────────────────────────────────────
+   Réduction progressive du padding de page selon la largeur
+   d'écran (6 paliers, desktop-first). */
+
+/* Grand écran (1440px et +) */
+@media (min-width: 1440px) {
+  .absences-admin-page { padding: var(--space-2xl); }
+}
+
+/* Petit ordinateur (1024-1279px) */
+@media (max-width: 1279px) {
+  .absences-admin-page { padding: var(--space-lg); }
+}
+
+/* Tablette (768-1023px) */
+@media (max-width: 1023px) {
+  .absences-admin-page { padding: var(--space-md); }
+}
+
+/* Mobile (480-767px) */
+@media (max-width: 767px) {
+  .absences-admin-page { padding: var(--space-sm); }
+}
+
+/* Petit mobile (320-479px) */
+@media (max-width: 479px) {
+  .absences-admin-page { padding: var(--space-xs); }
+}

@@ -14,6 +14,7 @@
      5. Liste des notifications
      6. Item de notification (lu et non lu)
      7. Boutons (flèche de navigation, supprimer)
+     8. Responsive
    ============================================================ */
 
 /* Charge les variables CSS du projet */
@@ -232,3 +233,44 @@
 
 /* Au survol du bouton lui-même : rouge */
 .notif-item__suppr:hover { color: var(--error); }
+
+/* ── 8. RESPONSIVE ───────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran). */
+
+/* Grand écran (≥1440px) : panneau un peu plus large */
+@media (min-width: 1440px) {
+  .notif-panneau { width: 360px; }
+}
+
+/* Petit ordinateur (≤1279px) : panneau standard, pas de changement notable */
+@media (max-width: 1279px) {
+  .notif-panneau { width: 320px; }
+}
+
+/* Tablette (≤1023px) : panneau légèrement réduit */
+@media (max-width: 1023px) {
+  .notif-panneau { width: 300px; }
+}
+
+/* Mobile (≤767px) : panneau adapté à la largeur de l'écran,
+   boutons flèche/supprimer visibles en permanence (pas de hover fiable au tactile) */
+@media (max-width: 767px) {
+  .notif-panneau {
+    width:     min(320px, calc(100vw - 32px));
+    right:     -8px;
+  }
+  .notif-item__fleche,
+  .notif-item__suppr { opacity: 1; }
+}
+
+/* Petit mobile (≤479px) : panneau quasi pleine largeur, textes resserrés */
+@media (max-width: 479px) {
+  .notif-panneau {
+    width: calc(100vw - 24px);
+    right: -12px;
+  }
+  .notif-panneau__liste { max-height: 60vh; }
+  .notif-item { padding: var(--space-sm) var(--space-md); }
+  .notif-item__message { font-size: 0.8rem; }
+}

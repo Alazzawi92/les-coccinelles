@@ -62,14 +62,33 @@
 
 /* ── 6. RESPONSIVE ──────────────────────────────────────── */
 
-/* Grand écran (≥1600px) : 6 KPIs sur une ligne */
+/* Grand écran (≥1440px) : 4 KPIs sur une ligne */
+@media (min-width: 1440px) { .kpi-grille { grid-template-columns: repeat(4, 1fr); } }
+
+/* Palier intermédiaire supplémentaire (≥1600px) : très grand écran,
+   6 KPIs tiennent sur une seule ligne sans être trop étroits */
 @media (min-width: 1600px) { .kpi-grille { grid-template-columns: repeat(6, 1fr); } }
 
-/* Large (1280–1599px) : 4 KPIs sur une ligne */
-@media (min-width: 1280px) and (max-width: 1599px) { .kpi-grille { grid-template-columns: repeat(4, 1fr); } }
+/* Petit ordinateur (≤1279px) : 3 KPIs (valeur par défaut) */
+@media (max-width: 1279px) { .kpi-grille { grid-template-columns: repeat(3, 1fr); } }
 
-/* Tablette (≤1024px) : sections en 1 colonne */
-@media (max-width: 1024px) { .stats-sections { grid-template-columns: 1fr; } }
+/* Tablette (≤1023px) : sections en 1 colonne, 2 KPIs par ligne */
+@media (max-width: 1023px) {
+  .stats-sections { grid-template-columns: 1fr; }
+  .kpi-grille      { grid-template-columns: repeat(2, 1fr); }
+}
 
-/* Mobile (≤768px) : 2 KPIs + barres plus compactes */
-@media (max-width: 768px)  { .kpi-grille { grid-template-columns: repeat(2, 1fr); } .stat-bar-ligne { grid-template-columns: 120px 1fr 60px; } }
+/* Mobile (≤767px) : 2 KPIs + barres plus compactes */
+@media (max-width: 767px) {
+  .kpi-grille      { grid-template-columns: repeat(2, 1fr); }
+  .stat-bar-ligne  { grid-template-columns: 120px 1fr 60px; }
+  .comptes-stats   { gap: var(--space-lg); flex-wrap: wrap; }
+}
+
+/* Petit mobile (≤479px) : 1 KPI par ligne, barres et compteurs empilés */
+@media (max-width: 479px) {
+  .kpi-grille      { grid-template-columns: 1fr; }
+  .stat-bar-ligne  { grid-template-columns: 90px 1fr 50px; gap: var(--space-sm); }
+  .stat-bar-label  { font-size: 0.75rem; }
+  .comptes-stats   { flex-direction: column; gap: var(--space-md); }
+}

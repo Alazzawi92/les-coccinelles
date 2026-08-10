@@ -2,15 +2,18 @@
 // FICHIER  : Calendrier.jsx (admin)
 // ROUTE    : /admin/calendrier
 // RÔLE     : Calendrier mensuel de présences/absences.
-//            L'admin navigue mois par mois, clique sur un jour
-//            et voit en temps réel la liste des enfants présents
-//            et absents pour cette date.
+//            Chaque case du mois affiche directement le nombre
+//            d'enfants attendus ce jour-là (GET /absences/presences-mois),
+//            sans avoir besoin de cliquer — utile pour anticiper
+//            le nombre d'éducatrices nécessaires.
+//            L'admin peut aussi cliquer sur un jour pour voir le
+//            détail : présents / absents / "pas prévu ce jour"
+//            (enfants dont ce n'est pas un jour de garde habituel,
+//            à distinguer d'une absence déclarée).
 //            GET /api/absences/presences/:date au clic sur un jour.
-//            Logique : absent = a une absence validée/en_attente
-//            couvrant ce jour. Présent = tous les autres.
 // ============================================================
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -77,8 +80,18 @@ const CalendrierAdmin = () => {
   // Indicateur de chargement du panneau latéral
   const [chargement, setChargement] = useState(false);
 
+  // Résumé jour par jour du mois affiché : { 'YYYY-MM-DD': {presents, absents, nonPrevus} }
+  const [resumeMois, setResumeMois] = useState({});
+
   // Grille des jours du mois courant
   const grille = construireGrilleMois(annee, mois);
+
+  // ── Chargement du résumé du mois (un chiffre par case) ───
+  useEffect(() => {
+    api.get(`/absences/presences-mois?annee=${annee}&mois=${mois}`)
+      .then(r => setResumeMois(r.data.data || {}))
+      .catch(() => setResumeMois({}));
+  }, [annee, mois]);
 
   // ── Navigation mois précédent / suivant ──────────────────
   const naviguer = (delta) => {
@@ -159,6 +172,9 @@ const CalendrierAdmin = () => {
               const posGrille  = idx % 7;
               const estWeekend = posGrille === 5 || posGrille === 6;
 
+              // Chiffre affiché directement sur la case : nb d'enfants attendus ce jour
+              const resume = resumeMois[dateStr];
+
               return (
                 <button
                   key={jour}
@@ -171,7 +187,11 @@ const CalendrierAdmin = () => {
                   onClick={() => selectionnerJour(jour)}
                   title={`Voir les présences du ${jour} ${MOIS_FR[mois]} ${annee}`}
                 >
-                  {jour}
+                  <span className="cal-case-jour">{jour}</span>
+                  {/* Pas de badge le week-end (fermé) ni si les données ne sont pas encore chargées */}
+                  {resume && !estWeekend && (
+                    <span className="cal-case-badge">{resume.presents}</span>
+                  )}
                 </button>
               );
             })}
@@ -209,8 +229,8 @@ const CalendrierAdmin = () => {
               {/* En-tête du panneau : date sélectionnée */}
               <h3 className="cal-panneau-titre">{labelJourSelec}</h3>
 
-              {/* Résumé rapide : X présents / Y absents */}
-              <div className="cal-resume">
+              {/* Résumé rapide : X présents / Y absents / Z pas prévus */}
+              <div className="cal-resume cal-resume--3">
                 <div className="cal-resume-item cal-resume-item--present">
                   <span className="cal-resume-nb">{presences.presents.length}</span>
                   <span className="cal-resume-label">Présent{presences.presents.length !== 1 ? 's' : ''}</span>
@@ -218,6 +238,10 @@ const CalendrierAdmin = () => {
                 <div className="cal-resume-item cal-resume-item--absent">
                   <span className="cal-resume-nb">{presences.absents.length}</span>
                   <span className="cal-resume-label">Absent{presences.absents.length !== 1 ? 's' : ''}</span>
+                </div>
+                <div className="cal-resume-item cal-resume-item--nonprevu">
+                  <span className="cal-resume-nb">{presences.nonPrevus?.length || 0}</span>
+                  <span className="cal-resume-label">Pas prévu{(presences.nonPrevus?.length || 0) !== 1 ? 's' : ''}</span>
                 </div>
               </div>
 
@@ -270,6 +294,28 @@ const CalendrierAdmin = () => {
                   </ul>
                 )}
               </div>
+
+              {/* ── LISTE DES "PAS PRÉVU CE JOUR" ────────────── */}
+              {/* Enfants dont ce n'est pas un jour de garde habituel
+                  (contrat) — à ne pas confondre avec une absence déclarée. */}
+              {(presences.nonPrevus?.length || 0) > 0 && (
+                <div className="cal-section">
+                  <p className="cal-section-titre cal-section-titre--nonprevu">
+                    ⏳ Pas prévu ce jour ({presences.nonPrevus.length})
+                  </p>
+                  <ul className="cal-liste">
+                    {presences.nonPrevus.map(e => (
+                      <li key={e.id} className="cal-enfant cal-enfant--nonprevu">
+                        <span className="cal-enfant-avatar">{e.sexe === 'F' ? '👧' : '👦'}</span>
+                        <div className="cal-enfant-info">
+                          <span className="cal-enfant-nom">{e.prenom} {e.nom}</span>
+                          {e.groupe && <span className="cal-enfant-groupe">{e.groupe}</span>}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </>
           )}
         </div>

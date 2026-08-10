@@ -156,3 +156,17 @@
   --z-modal:   200;  /* Modales — au-dessus de tout le reste de la page */
   --z-toast:   300;  /* Notifications toast — au-dessus même des modales */
 }
+
+/* ============================================================
+   11. PALIERS RESPONSIVE (référence — non utilisables en @media,
+       CSS ne permet pas les var() dans une condition de media query
+       sans build tool dédié). À recopier en valeurs littérales dans
+       chaque @media du projet.
+
+       Petit mobile        : max-width: 479px
+       Mobile               : max-width: 767px
+       Tablette              : max-width: 1023px
+       Petit ordinateur      : max-width: 1279px
+       Ordinateur standard   : max-width: 1439px  (base de conception par défaut)
+       Grand écran           : min-width: 1440px
+   ============================================================ */

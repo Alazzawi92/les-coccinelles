@@ -142,8 +142,43 @@
 
 /* ── 7. RESPONSIVE ──────────────────────────────────────── */
 
-/* Mobile (≤768px) : 2 colonnes → 1 colonne */
-@media (max-width: 768px) {
+/* Petit ordinateur (≤1279px) : léger resserrement avant la tablette */
+@media (max-width: 1279px) {
+  .actualites-liste-grille,
+  .chargement-grille { gap: var(--space-lg); }
+}
+
+/* Tablette (≤1023px) : 2 colonnes → 1 colonne, image de détail réduite */
+@media (max-width: 1023px) {
   .actualites-liste-grille,
   .chargement-grille { grid-template-columns: 1fr; }
+  .detail-image { max-height: 350px; }
+}
+
+/* Mobile (≤767px) : cartes et détail resserrés */
+@media (max-width: 767px) {
+  .actu-carte-grande__image { height: 180px; }
+  .detail-article { padding: var(--space-xl); }
+  .detail-titre { font-size: 1.6rem; }
+  .pagination { gap: var(--space-md); flex-wrap: wrap; }
+}
+
+/* Petit mobile (≤479px) : typo et espacements resserrés */
+@media (max-width: 479px) {
+  .actu-carte-grande__image { height: 150px; }
+  .actu-carte-grande__corps { padding: var(--space-lg); }
+  .actu-titre-liste { font-size: 1.1rem; }
+  .detail-image { max-height: 220px; }
+  .detail-article { padding: var(--space-lg); }
+  .detail-titre { font-size: 1.3rem; }
+  .detail-contenu { font-size: 0.9rem; }
+  .liste-vide { padding: var(--space-xl); }
+  .liste-vide span { font-size: 3rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur pour éviter l'étirement infini */
+@media (min-width: 1440px) {
+  .actualites-liste-grille,
+  .chargement-grille { max-width: 1600px; margin-left: auto; margin-right: auto; gap: var(--space-2xl); }
+  .detail-article { max-width: 1000px; margin-left: auto; margin-right: auto; }
 }

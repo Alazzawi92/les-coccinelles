@@ -45,9 +45,13 @@ const Login = () => {
       connecter(data.user, data.accessToken, data.refreshToken);
       toast.success(`Bienvenue, ${data.user.prenom} !`);
 
-      // Rediriger admin/super_admin vers leur dashboard dédié
-      if (data.user.role === 'admin' || data.user.role === 'super_admin') {
+      // Rediriger admin/super_admin vers leur page d'accueil dédiée.
+      // L'admin simple n'a pas accès au dashboard (réservé au super_admin,
+      // voir SuperAdminRoute) : il part directement sur l'émargement.
+      if (data.user.role === 'super_admin') {
         navigate('/admin/tableau-de-bord', { replace: true });
+      } else if (data.user.role === 'admin') {
+        navigate('/admin/emargement', { replace: true });
       } else {
         navigate(destination, { replace: true }); // Retour à la page demandée
       }

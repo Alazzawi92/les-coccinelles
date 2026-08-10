@@ -17,7 +17,8 @@
      4. Zone contenu (.parent-content)
         a. Topbar sticky
         b. Contenu principal
-     5. Responsive mobile (barre en bas)
+     5. Responsive (grand écran, petit ordinateur, tablette,
+        mobile et petit mobile — barre en bas sous 767px)
    ============================================================ */
 
 /* Charge toutes les variables CSS du projet */
@@ -211,11 +212,29 @@
   padding: var(--space-xl);
 }
 
-/* ── 5. RESPONSIVE MOBILE ───────────────────────────────── */
+/* ── 5. RESPONSIVE ───────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Mobile (≤768px) : layout en colonne, sidebar fixée en bas de l'écran.
+/* Petit ordinateur (≤1279px) : sidebar légèrement plus étroite pour
+   laisser plus de place au contenu (messagerie, tableaux...) */
+@media (max-width: 1279px) {
+  .parent-sidebar { width: 220px; }
+}
+
+/* Tablette (≤1023px) : sidebar encore réduite, liens plus compacts */
+@media (max-width: 1023px) {
+  .parent-sidebar { width: 76px; }
+  .parent-sidebar__user-nom,
+  .parent-sidebar__user-role { display: none; }
+  .parent-sidebar__link { justify-content: center; padding: var(--space-md) var(--space-sm); }
+  .parent-sidebar__link span:last-child { display: none; }  /* masque le libellé, garde l'icône */
+  .layout-main { padding: var(--space-lg); }
+}
+
+/* Mobile (≤767px) : layout en colonne, sidebar fixée en bas de l'écran.
    Ce pattern "tab bar" est familier des apps mobiles natives. */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   /* Layout devient flex vertical */
   .parent-layout  { flex-direction: column; }
 
@@ -273,6 +292,10 @@
     flex-shrink:    0;
   }
 
+  /* Le libellé (masqué sur tablette) redevient visible sous l'icône
+     dans la barre de nav mobile */
+  .parent-sidebar__link span:last-child { display: block; }
+
   /* Actif sur mobile : barre en haut + fond orange */
   .parent-sidebar__link.active {
     border-top:   3px solid var(--primary);
@@ -290,4 +313,18 @@
     top:      0;
     z-index:  10;
   }
+}
+
+/* Petit mobile (≤479px) : tab bar encore plus compacte, topbar resserrée */
+@media (max-width: 479px) {
+  .parent-sidebar__link { min-width: 48px; font-size: 0.55rem; padding: var(--space-xs); }
+  .layout-topbar        { padding: var(--space-sm) var(--space-md); }
+  .layout-topbar__titre { font-size: 0.75rem; }
+  .layout-main          { padding: var(--space-sm); padding-bottom: 76px; }
+}
+
+/* Grand écran (≥1440px) : le contenu garde sa largeur max et se centre
+   dans l'espace restant pour éviter un vide asymétrique à droite */
+@media (min-width: 1440px) {
+  .parent-content { margin: 0 auto; }
 }

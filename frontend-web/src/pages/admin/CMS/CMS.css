@@ -11,7 +11,8 @@
      3. Liste des pages (colonne gauche)
      4. Item de page dans la liste
      5. Éditeur (colonne droite)
-     6. Responsive
+     6. Gestionnaire équipe
+     7. Responsive
    ============================================================ */
 
 /* Charge tous les styles communs de l'espace admin */
@@ -221,9 +222,44 @@
 .equipe-admin-actions { display: flex; flex-direction: column; gap: var(--space-xs); flex-shrink: 0; }
 
 /* ── 7. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers (desktop-first) : le layout 2 colonnes (liste des
+   pages + éditeur) passe en 1 colonne dès la tablette, et les
+   grilles/cartes de la gestion d'équipe s'adaptent en cascade. */
 
-@media(max-width:768px){
+/* Grand écran (1440px et +) : un peu plus d'air dans la colonne liste */
+@media (min-width: 1440px) {
+  .cms-layout { grid-template-columns: 280px 1fr; }
+}
+
+/* Petit ordinateur (1024-1279px) : colonne liste légèrement resserrée */
+@media (max-width: 1279px) {
+  .cms-layout { grid-template-columns: 200px 1fr; }
+}
+
+/* Tablette (768-1023px) : empilement du layout 2 colonnes */
+@media (max-width: 1023px) {
   .cms-layout { grid-template-columns: 1fr; }
+  .cms-pages-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: var(--space-sm); }
   .equipe-form { flex-direction: column; }
+  .equipe-form-champs { grid-template-columns: 1fr 1fr; }
+  .equipe-admin-grille { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+
+/* Mobile (480-767px) */
+@media (max-width: 767px) {
+  .cms-pages-liste { grid-template-columns: 1fr; }
+  .cms-quill-wrapper .ql-editor { min-height: 220px; padding: var(--space-md); }
   .equipe-form-champs { grid-template-columns: 1fr; }
+  .equipe-admin-grille { grid-template-columns: 1fr; }
+  .equipe-admin-carte { flex-wrap: wrap; }
+  .equipe-admin-actions { flex-direction: row; }
+}
+
+/* Petit mobile (320-479px) */
+@media (max-width: 479px) {
+  .cms-pages-liste { padding: var(--space-md); }
+  .cms-quill-wrapper .ql-editor { min-height: 160px; padding: var(--space-sm); }
+  .equipe-form-panneau { padding: var(--space-md); }
+  .equipe-photo-preview { width: 90px; height: 90px; }
+  .equipe-admin-carte { padding: var(--space-md); }
 }

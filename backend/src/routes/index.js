@@ -19,6 +19,7 @@ const galerieRoutes      = require('./galerie.routes');
 const cmsRoutes          = require('./cms.routes');
 const contactRoutes      = require('./contact.routes');
 const equipeRoutes       = require('./equipe.routes');
+const rapportRoutes      = require('./rapport.routes');
 
 // Enregistrer toutes les routes avec leur préfixe
 router.use('/auth',          authRoutes);
@@ -37,5 +38,6 @@ router.use('/galerie',       galerieRoutes);
 router.use('/cms',           cmsRoutes);
 router.use('/contact',       contactRoutes);
 router.use('/equipe',        equipeRoutes);
+router.use('/rapports',      rapportRoutes);
 
 module.exports = router;

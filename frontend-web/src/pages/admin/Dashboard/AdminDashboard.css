@@ -19,3 +19,22 @@
 .admin-dashboard-page {
   padding: var(--space-xl);
 }
+
+/* ── RESPONSIVE ──────────────────────────────────────────
+   Fichier placeholder inutilisé : on aligne quand même le
+   padding sur les 6 paliers du projet, par cohérence. */
+@media (min-width: 1440px) {
+  .admin-dashboard-page { padding: var(--space-xl); }
+}
+@media (max-width: 1279px) {
+  .admin-dashboard-page { padding: var(--space-lg); }
+}
+@media (max-width: 1023px) {
+  .admin-dashboard-page { padding: var(--space-lg); }
+}
+@media (max-width: 767px) {
+  .admin-dashboard-page { padding: var(--space-md); }
+}
+@media (max-width: 479px) {
+  .admin-dashboard-page { padding: var(--space-sm); }
+}

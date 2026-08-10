@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS enfants (
   medecin_tel    VARCHAR(20),                             -- Téléphone du médecin
   photo          VARCHAR(255),                            -- Photo de l'enfant (chemin)
   actif          BOOLEAN DEFAULT TRUE,                    -- Enfant actuellement inscrit
+  jours_presence JSON,                                    -- Jours habituels de garde (ex: ["lundi","mercredi"]) ; NULL = tous les jours ouvrés
   created_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

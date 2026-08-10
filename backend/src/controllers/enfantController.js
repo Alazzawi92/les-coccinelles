@@ -64,6 +64,32 @@ const modifier = async (req, res) => {
   }
 };
 
+// PATCH /api/enfants/:id/jours-presence — Modifier les jours de garde
+// habituels (admin uniquement). Route séparée du PUT générique car ce
+// dernier exige tous les champs obligatoires (prénom, nom...) via son
+// validateur, alors qu'ici on ne modifie qu'un seul champ.
+const modifierJoursPresence = async (req, res) => {
+  try {
+    const { jours_presence } = req.body;
+    const joursValides = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+
+    // null/tableau vide = tous les jours ouvrés (comportement par défaut)
+    if (jours_presence !== null && jours_presence !== undefined) {
+      if (!Array.isArray(jours_presence) || jours_presence.some(j => !joursValides.includes(j))) {
+        return erreur(res, 'jours_presence doit être un tableau parmi : ' + joursValides.join(', '), 400);
+      }
+    }
+
+    const enfant = await Enfant.findByPk(req.params.id);
+    if (!enfant) return erreur(res, 'Enfant non trouvé', 404);
+
+    await enfant.update({ jours_presence: jours_presence || null });
+    return succes(res, enfant, 'Jours habituels mis à jour');
+  } catch (err) {
+    return erreur(res, 'Erreur lors de la mise à jour des jours habituels');
+  }
+};
+
 // DELETE /api/enfants/:id — Désactiver un enfant (soft delete)
 const supprimer = async (req, res) => {
   try {
@@ -77,4 +103,4 @@ const supprimer = async (req, res) => {
   }
 };
 
-module.exports = { lister, creer, getEnfant, modifier, supprimer };
+module.exports = { lister, creer, getEnfant, modifier, modifierJoursPresence, supprimer };

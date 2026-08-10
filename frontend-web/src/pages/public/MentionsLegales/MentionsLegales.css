@@ -13,6 +13,7 @@
      4. Tableau des cookies
      5. Grille des droits RGPD
      6. Date de mise à jour
+     7. Responsive
    ============================================================ */
 
 /* Charge les variables et les styles communs aux pages publiques */
@@ -113,4 +114,52 @@
   text-align:   right;
   padding-top:  var(--space-lg);
   border-top:   1px solid var(--bg-gray);
+}
+
+/* ── 7. RESPONSIVE ───────────────────────────────────────── */
+/* Ordre du + large au + étroit : une règle @media (max-width) plus
+   étroite doit apparaître APRÈS une règle plus large pour bien la
+   surcharger en cascade CSS (même sélecteur, dernière règle gagne). */
+
+/* Petit ordinateur (≤1279px) : transition douce vers le desktop plein */
+@media (max-width: 1279px) {
+  .mentions-contenu { max-width: 800px; }
+}
+
+/* Tablette (≤1023px) : conteneur pleine largeur disponible */
+@media (max-width: 1023px) {
+  .mentions-contenu { max-width: 100%; }
+}
+
+/* Mobile (480-767px) : un peu plus d'air que le petit mobile */
+@media (max-width: 767px) {
+  .mentions-contenu    { gap: var(--space-xl); }
+  .mentions-section h2 { font-size: 1.2rem; }
+  .mentions-section p,
+  .mentions-section li { font-size: 0.9rem; }
+  .mentions-tableau th,
+  .mentions-tableau td { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
+  .mentions-date       { text-align: left; }
+}
+
+/* Petit mobile (≤479px) : typo réduite, espacements resserrés */
+@media (max-width: 479px) {
+  .mentions-contenu   { gap: var(--space-lg); }
+  .mentions-section h2 { font-size: 1.1rem; margin-bottom: var(--space-sm); padding-bottom: 4px; }
+  .mentions-section p,
+  .mentions-section li { font-size: 0.85rem; line-height: 1.6; }
+  .mentions-section ul { padding-left: var(--space-lg); }
+  .mentions-tableau th,
+  .mentions-tableau td { padding: var(--space-sm) var(--space-md); font-size: 0.8rem; }
+  .droits-grille      { gap: var(--space-sm); }
+  .droit-item         { padding: var(--space-sm); gap: var(--space-sm); }
+  .droit-item > span  { font-size: 1.2rem; }
+  .droit-item strong  { font-size: 0.85rem; }
+  .droit-item p       { font-size: 0.8rem; }
+  .mentions-date      { text-align: left; font-size: 0.8rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur pour la lisibilité du texte long */
+@media (min-width: 1440px) {
+  .mentions-contenu { max-width: 960px; }
 }

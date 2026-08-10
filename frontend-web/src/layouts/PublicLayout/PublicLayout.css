@@ -215,16 +215,66 @@
 
 /* ── 6. RESPONSIVE ──────────────────────────────────────── */
 
-/* Mobile (≤768px) :
-   - Liens de nav masqués → remplacés par le bouton hamburger
-   - Footer en 1 seule colonne */
-@media (max-width: 768px) {
+/* Desktop-first : blocs classés du plus grand au plus petit écran
+   pour que la règle la plus étroite prime toujours dans la cascade. */
+
+/* Grand écran (≥1440px) : centre le contenu de la navbar et du
+   footer sans dépasser une largeur confortable — le fond reste en
+   plein écran grâce à max(), seul le padding intérieur grandit. */
+@media (min-width: 1440px) {
+  .public-navbar {
+    padding-left:  max(var(--space-xl), calc((100vw - 1600px) / 2));
+    padding-right: max(var(--space-xl), calc((100vw - 1600px) / 2));
+  }
+  .public-footer {
+    padding-left:  max(var(--space-xl), calc((100vw - 1600px) / 2));
+    padding-right: max(var(--space-xl), calc((100vw - 1600px) / 2));
+  }
+}
+
+/* Petit ordinateur (≤1279px) : resserre les espacements de la
+   navbar sans encore basculer sur le menu hamburger. */
+@media (max-width: 1279px) {
+  .public-navbar        { padding: var(--space-md) var(--space-lg); gap: var(--space-lg); }
+  .public-navbar__links { gap: var(--space-md); }
+}
+
+/* Tablette (≤1023px) :
+   - Les liens de nav manquent de place → bascule sur le bouton
+     hamburger et le menu mobile déroulant
+   - Footer en 2 colonnes */
+@media (max-width: 1023px) {
   .public-navbar__links     { display: none; }       /* Cache les liens */
   .public-navbar__hamburger { display: block; }      /* Affiche le hamburger */
-  .public-navbar            { padding: var(--space-md); }
+  .public-navbar            { padding: var(--space-md) var(--space-lg); }
 
+  .public-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+}
+
+/* Mobile (≤767px) : navbar resserrée, footer en 1 seule colonne */
+@media (max-width: 767px) {
+  .public-navbar            { padding: var(--space-md); }
+  .public-navbar__logo-text { font-size: 1.2rem; }
+
+  .public-footer {
+    padding: var(--space-2xl) var(--space-lg) var(--space-lg);
+  }
   .public-footer__grid {
     grid-template-columns: 1fr;    /* Une seule colonne sur mobile */
     gap: var(--space-xl);
   }
+}
+
+/* Petit mobile (≤479px) : typographie et espacements encore réduits */
+@media (max-width: 479px) {
+  .public-navbar             { padding: var(--space-sm) var(--space-md); gap: var(--space-sm); }
+  .public-navbar__logo-icone { font-size: 1.4rem; }
+  .public-navbar__logo-text  { font-size: 1.05rem; }
+  .public-navbar__hamburger  { font-size: 1.3rem; }
+
+  .public-footer        { padding: var(--space-xl) var(--space-md) var(--space-md); }
+  .public-footer__titre { font-size: 1.2rem; }
 }

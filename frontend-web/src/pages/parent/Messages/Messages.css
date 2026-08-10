@@ -35,6 +35,7 @@
   gap:           0;
   background:    var(--white);
   border-radius: var(--radius-xl);
+  border:        1px solid var(--bg-gray);
   box-shadow:    var(--shadow-md);
   overflow:      hidden;
   height:        600px;
@@ -73,8 +74,20 @@
 /* Sujet gras si conversation non lue */
 .conv-item--nonlu .conv-sujet { font-weight: 700; color: var(--text-dark); }
 
-/* Avatar circulaire de l'interlocuteur : fond orange + initiale */
-.conv-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--primary); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+/* Avatar circulaire de l'interlocuteur : dégradé orange + initiale */
+.conv-avatar {
+  width:         38px;
+  height:        38px;
+  border-radius: 50%;
+  background:    linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color:         var(--white);
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  font-weight:   700;
+  flex-shrink:   0;
+  box-shadow:    var(--shadow-sm);
+}
 
 /* Zone infos : prend le reste de la largeur.
    min-width:0 pour permettre l'ellipsis sur le sujet. */
@@ -89,8 +102,8 @@
 /* Date du dernier message */
 .conv-date  { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
 
-/* Petit point orange indiquant un message non lu */
-.conv-point-nonlu { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--primary); border-radius: 50%; }
+/* Petit point orange indiquant un message non lu, avec halo doux */
+.conv-point-nonlu { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 0 3px var(--primary-light); }
 
 /* ── 5. DÉTAIL DE LA CONVERSATION ───────────────────────── */
 
@@ -99,29 +112,32 @@
 .conversation-detail { display: flex; flex-direction: column; overflow: hidden; }
 
 /* État vide : aucune conversation sélectionnée */
-.detail-vide   { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: var(--text-gray); gap: var(--space-md); font-size: 3rem; }
-.detail-vide p { font-size: 1rem; }
+.detail-vide   { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; color: var(--text-light); gap: var(--space-md); font-size: 3rem; background: var(--bg-light); }
+.detail-vide p { font-size: 1rem; color: var(--text-gray); }
 
-/* En-tête du détail : sujet + interlocuteur */
-.detail-entete              { padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); }
-.detail-entete h2           { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); }
-.detail-interlocuteur       { font-size: 0.85rem; color: var(--text-gray); margin-top: 4px; }
+/* En-tête du détail : avatar + sujet + interlocuteur */
+.detail-entete               { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); background: var(--white); }
+.detail-avatar                { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.detail-entete-textes        { min-width: 0; }
+.detail-entete h2            { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.detail-interlocuteur        { font-size: 0.85rem; color: var(--text-gray); margin-top: 2px; }
 
 /* ── 6. FIL DES MESSAGES ────────────────────────────────── */
 
-/* Zone scrollable des messages : flex colonne avec les bulles */
-.messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); }
+/* Zone scrollable des messages : fond légèrement teinté pour faire
+   ressortir les bulles blanches/orange, flex colonne */
+.messages-fil { flex: 1; overflow-y: auto; padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); background: var(--bg-light); }
 
-/* Bulle d'un message : max 75% de largeur */
-.message-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); }
+/* Bulle d'un message : max 75% de largeur, légère ombre pour la profondeur */
+.message-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
 
 /* Mes messages : orange, alignés à droite.
    border-bottom-right-radius:4px = coin plat = bulle "sortant de moi" */
-.message-bulle--moi   { background: var(--primary); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+.message-bulle--moi   { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
 
-/* Messages de l'autre : gris, alignés à gauche.
+/* Messages de l'autre : blanc, alignés à gauche.
    border-bottom-left-radius:4px = bulle "venant de l'autre" */
-.message-bulle--autre { background: var(--bg-gray); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; }
+.message-bulle--autre { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
 
 /* Texte du message : white-space:pre-wrap pour garder les retours à la ligne */
 .message-contenu { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
@@ -133,13 +149,14 @@
 
 /* Barre de réponse en bas : textarea + bouton trombone + bouton envoyer.
    align-items:flex-end = les éléments s'alignent sur la ligne basse. */
-.reponse-zone    { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--bg-gray); display: flex; gap: var(--space-md); align-items: flex-end; }
+.reponse-zone    { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--bg-gray); background: var(--white); display: flex; gap: var(--space-md); align-items: flex-end; }
 
 /* Côté gauche : textarea + aperçu de la pièce jointe */
 .reponse-gauche  { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-/* Textarea du message */
-.reponse-input   { flex: 1; }
+/* Textarea du message : surlignage orange au focus pour guider l'œil */
+.reponse-input   { flex: 1; resize: none; transition: var(--transition); }
+.reponse-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
 /* Boutons à droite : trombone + envoyer, empilés */
 .reponse-actions { display: flex; flex-direction: column; gap: var(--space-sm); flex-shrink: 0; }
@@ -201,8 +218,11 @@
 /* Aperçu dans la zone de réponse rapide : légèrement décalé */
 .pj-apercu--rep    { margin-top: 4px; }
 
-/* Bouton trombone : position:relative pour l'input file hidden en absolu */
-.pj-btn            { position: relative; overflow: hidden; font-size: 1rem; padding: 6px 10px; }
+/* Bouton "📎 Joindre" : reprend le système .btn/.btn--ghost/.btn--sm,
+   même gabarit que le bouton Envoyer juste en dessous.
+   position:relative pour l'input file hidden en absolu. */
+.pj-btn        { position: relative; overflow: hidden; cursor: pointer; }
+.pj-btn:hover  { background: var(--primary-light); border-color: var(--primary); }
 
 /* Input file invisible sur toute la surface du bouton trombone :
    opacity:0 masque l'input, pointer-events actifs pour le clic */
@@ -236,11 +256,45 @@
 .pj-bulle--doc:hover { opacity: 0.85; }
 
 /* ── 11. RESPONSIVE ──────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Mobile (≤768px) : 2 colonnes → 1 colonne.
+/* Petit ordinateur (≤1279px) : colonne conversations un peu plus étroite */
+@media (max-width: 1279px) {
+  .messagerie-layout { grid-template-columns: 260px 1fr; }
+}
+
+/* Tablette (≤1023px) : colonne conversations resserrée, hauteur réduite */
+@media (max-width: 1023px) {
+  .messagerie-layout { grid-template-columns: 220px 1fr; height: 520px; }
+  .message-bulle      { max-width: 85%; }
+}
+
+/* Mobile (≤767px) : 2 colonnes → 1 colonne.
    La liste des conversations prend 250px et passe au-dessus du détail. */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .messagerie-layout    { grid-template-columns: 1fr; height: auto; }
   .conversations-liste  { height: 250px; border-right: none; border-bottom: 1px solid var(--bg-gray); }
   .conversation-detail  { height: 400px; }
+  .message-bulle        { max-width: 90%; }
+  .modal                { padding: var(--space-xl); }
+}
+
+/* Petit mobile (≤479px) : listes et fil de discussion encore plus compacts */
+@media (max-width: 479px) {
+  .conversations-liste   { height: 200px; }
+  .conversation-detail   { height: 340px; }
+  .conv-item              { padding: var(--space-sm) var(--space-md); }
+  .detail-entete          { padding: var(--space-md) var(--space-lg); }
+  .messages-fil           { padding: var(--space-md); }
+  .message-bulle          { max-width: 100%; }
+  .reponse-zone            { padding: var(--space-sm) var(--space-md); flex-wrap: wrap; }
+  .modal                  { padding: var(--space-lg); }
+  .modal__entete h2       { font-size: 1.1rem; }
+}
+
+/* Grand écran (≥1440px) : la messagerie profite d'un peu plus de hauteur
+   et la colonne conversations reste large sans s'étirer démesurément */
+@media (min-width: 1440px) {
+  .messagerie-layout { grid-template-columns: 320px 1fr; height: 680px; }
 }

@@ -206,21 +206,26 @@
 
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
 
-/* Tablette paysage (≤1280px) : sidebar un peu plus étroite */
-@media (max-width: 1280px) {
+/* Grand écran (≥1440px) : sidebar un peu plus large, plus confortable */
+@media (min-width: 1440px) {
+  .admin-sidebar { width: 300px; }
+}
+
+/* Petit ordinateur (≤1279px) : sidebar un peu plus étroite */
+@media (max-width: 1279px) {
   .admin-sidebar { width: 240px; }
 }
 
-/* Tablette portrait (≤1024px) : sidebar encore réduite + textes plus petits */
-@media (max-width: 1024px) {
+/* Tablette (≤1023px) : sidebar encore réduite + textes plus petits */
+@media (max-width: 1023px) {
   .admin-sidebar { width: 200px; }
   .admin-sidebar__groupe-titre { font-size: 0.6rem; padding: var(--space-xs) var(--space-md); }
   .admin-sidebar__link         { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
   .layout-main                 { padding: var(--space-lg); }
 }
 
-/* Mobile (≤768px) : layout en colonne, sidebar horizontale en haut */
-@media (max-width: 768px) {
+/* Mobile (≤767px) : layout en colonne, sidebar horizontale en haut */
+@media (max-width: 767px) {
   /* Layout passe de flex horizontal à flex vertical */
   .admin-layout  { flex-direction: column; }
 
@@ -276,4 +281,20 @@
 
   /* Moins de padding pour le contenu sur mobile */
   .layout-main { padding: var(--space-md); }
+}
+
+/* Petit mobile (≤479px) : nav encore plus compacte, contenu resserré
+   pour rester lisible sans débordement horizontal */
+@media (max-width: 479px) {
+  .admin-sidebar__link {
+    padding:   var(--space-xs) var(--space-sm);
+    font-size: 0.6rem;
+    min-width: 48px;
+  }
+
+  .admin-page-titre { font-size: 1.4rem; }
+
+  .admin-page-header { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
+
+  .layout-main { padding: var(--space-sm); }
 }

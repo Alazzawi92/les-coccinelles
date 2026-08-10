@@ -155,13 +155,36 @@
 
 /* ── 7. RESPONSIVE ──────────────────────────────────────── */
 
-/* Tablette (≤1024px) : 2 colonnes → 1 colonne, infos en premier */
-@media (max-width: 1024px) {
+/* Petit ordinateur (≤1279px) : colonne infos légèrement réduite */
+@media (max-width: 1279px) {
+  .contact-grille { grid-template-columns: 1fr 340px; gap: var(--space-2xl); }
+}
+
+/* Tablette (≤1023px) : 2 colonnes → 1 colonne, infos en premier */
+@media (max-width: 1023px) {
   .contact-grille { grid-template-columns: 1fr; }
   .contact-infos  { order: -1; }   /* Les infos passent au-dessus du formulaire */
 }
 
-/* Mobile (≤768px) : Prénom | Nom en 2 colonnes → 1 colonne */
-@media (max-width: 768px) {
+/* Mobile (≤767px) : Prénom | Nom en 2 colonnes → 1 colonne */
+@media (max-width: 767px) {
   .form-row { grid-template-columns: 1fr; }
+  .envoi-succes { padding: var(--space-2xl); }
+  .carte-placeholder { height: 160px; }
+}
+
+/* Petit mobile (≤479px) : espacements et typo resserrés */
+@media (max-width: 479px) {
+  .contact-form { gap: var(--space-md); }
+  .envoi-succes { padding: var(--space-xl); }
+  .envoi-succes span { font-size: 3rem; }
+  .envoi-succes h3 { font-size: 1.2rem; }
+  .contact-info-item { padding: var(--space-sm); gap: var(--space-sm); }
+  .carte-placeholder { height: 140px; }
+  .carte-placeholder span { font-size: 2rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur du layout 2 colonnes */
+@media (min-width: 1440px) {
+  .contact-grille { grid-template-columns: 1fr 420px; max-width: 1600px; margin-left: auto; margin-right: auto; }
 }

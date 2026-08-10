@@ -148,16 +148,53 @@
 .nutrition-info p      { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
 
 /* ── 8. RESPONSIVE ──────────────────────────────────────── */
+/* Ordre du + large au + étroit : une règle @media (max-width) plus
+   étroite doit apparaître APRÈS une règle plus large pour bien la
+   surcharger en cascade CSS (même sélecteur, dernière règle gagne). */
 
-/* Tablette (≤1024px) : 5 jours → 3 colonnes */
-@media (max-width: 1024px) {
-  .menus-grille { grid-template-columns: repeat(3, 1fr); }
+/* Petit ordinateur (≤1279px) : transition douce vers le desktop plein, 5 → 4 colonnes */
+@media (max-width: 1279px) {
+  .menus-grille { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* Mobile (≤768px) :
+/* Tablette (≤1023px) : 5 jours → 3 colonnes */
+@media (max-width: 1023px) {
+  .menus-grille { grid-template-columns: repeat(3, 1fr); }
+  .semaine-titre { font-size: 1.1rem; }
+}
+
+/* Mobile (480-767px) :
    - Menus : 5 → 2 colonnes
    - Navigation de semaine en colonne centrée */
-@media (max-width: 768px) {
-  .menus-grille { grid-template-columns: repeat(2, 1fr); }
-  .semaine-nav  { flex-direction: column; text-align: center; }
+@media (max-width: 767px) {
+  .menus-grille  { grid-template-columns: repeat(2, 1fr); }
+  .semaine-nav   { flex-direction: column; text-align: center; padding: var(--space-md); }
+  .semaine-titre { font-size: 1rem; }
+  .nutrition-info { flex-direction: column; align-items: flex-start; padding: var(--space-lg); }
+}
+
+/* Petit mobile (≤479px) : 1 colonne, espacements et typo resserrés */
+@media (max-width: 479px) {
+  .menus-grille   { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .semaine-nav    { padding: var(--space-sm); gap: var(--space-sm); margin-bottom: var(--space-lg); }
+  .semaine-titre  { font-size: 0.9rem; }
+  .menu-carte__entete { padding: var(--space-sm); }
+  .menu-carte__icone  { font-size: 1.2rem; }
+  .menu-carte__jour   { font-size: 0.9rem; }
+  .menu-carte__repas  { padding: var(--space-sm); gap: var(--space-sm); }
+  .repas-label    { font-size: 0.9rem; }
+  .repas-contenu,
+  .repas-html     { font-size: 0.8rem; }
+  .nutrition-info { padding: var(--space-md); gap: var(--space-sm); margin-top: var(--space-lg); }
+  .nutrition-info > span { font-size: 2rem; }
+  .nutrition-info h3     { font-size: 1rem; }
+  .nutrition-info p      { font-size: 0.85rem; }
+  .liste-vide span { font-size: 3rem; }
+}
+
+/* Grand écran (≥1440px) : limite de largeur pour éviter l'étirement des cartes */
+@media (min-width: 1440px) {
+  .menus-grille   { max-width: 1600px; margin: 0 auto; gap: var(--space-lg); }
+  .semaine-nav    { max-width: 1600px; margin-left: auto; margin-right: auto; }
+  .nutrition-info { max-width: 1600px; margin-left: auto; margin-right: auto; }
 }
