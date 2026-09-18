@@ -33,7 +33,7 @@ const MentionsLegales = () => {
               <>
                 <div className="mentions-section">
                   <h2>1. Éditeur du site</h2>
-                  <p>Association Les Coccinelles<br />Rue des Coccinelles, 17138 Puilboreau<br />Téléphone : 05 46 XX XX XX<br />Email : contact@lescoccinelles.fr<br />SIRET : XXX XXX XXX XXXXX</p>
+                  <p>Association Les Coccinelles<br />10 rue Saint Vincent, 17138 Puilboreau<br />Téléphone : 05 46 69 68 25<br />Email : les.coccinelles17@orange.fr<br />SIRET : XXX XXX XXX XXXXX</p>
                 </div>
 
                 <div className="mentions-section">

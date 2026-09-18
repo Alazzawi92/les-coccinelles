@@ -62,21 +62,15 @@
   border-bottom: 1px solid var(--bg-gray);
 }
 
-/* Lien logo : flex pour emoji + texte */
+/* Lien logo */
 .parent-sidebar__logo-lien {
   display:     flex;
   align-items: center;
-  gap:         var(--space-sm);
-  font-size:   1.3rem;
 }
 
-/* Nom de la crèche : orange, police Fredoka */
-.parent-sidebar__logo-text {
-  font-family: var(--font-heading);
-  font-size:   1.2rem;
-  font-weight: 700;
-  color:       var(--primary);
-}
+/* Logo image (remplace l'ancien emoji + texte) — fond blanc de la
+   sidebar, pas besoin de chip contrairement à l'admin (fond sombre) */
+.parent-sidebar__logo-img { height: 48px; width: auto; }
 
 /* ── 3b. Infos utilisateur ──────────────────────────────── */
 
@@ -170,6 +164,13 @@
 /* Au survol : rouge pour signaler l'action de déconnexion */
 .parent-sidebar__deconnexion:hover { color: var(--error); }
 
+/* ── 3d. Barre + menu burger mobile ─────────────────────── */
+/* Masqués par défaut (desktop/tablette) — affichés uniquement
+   ≤767px dans la section RESPONSIVE ci-dessous. */
+
+.parent-mobile-topbar { display: none; }
+.parent-mobile-menu   { display: none; }
+
 /* ── 4. ZONE CONTENU ────────────────────────────────────── */
 
 /* max-width:1100px pour ne pas trop étirer le contenu sur très grand écran */
@@ -232,82 +233,92 @@
   .layout-main { padding: var(--space-lg); }
 }
 
-/* Mobile (≤767px) : layout en colonne, sidebar fixée en bas de l'écran.
-   Ce pattern "tab bar" est familier des apps mobiles natives. */
+/* Mobile (≤767px) : la sidebar complète est masquée et remplacée
+   par une barre logo + burger, qui ouvre un menu plein écran. */
 @media (max-width: 767px) {
   /* Layout devient flex vertical */
   .parent-layout  { flex-direction: column; }
 
-  /* La sidebar devient une barre fixe en bas de l'écran.
-     position:fixed + bottom:0 pour rester en bas même en défilant.
-     box-shadow haut pour la distinguer du contenu au-dessus. */
-  .parent-sidebar {
-    width:          100%;
-    height:         auto;
-    min-height:     auto;
-    position:       fixed;
-    top:            auto;         /* Annule le top:0 de la règle desktop */
-    bottom:         0;
-    left:           0;
-    right:          0;
-    z-index:        var(--z-sidebar);
-    flex-direction: row;
-    align-items:    center;
-    overflow-x:     auto;
-    overflow-y:     hidden;
-    box-shadow:     0 -2px 12px rgba(0,0,0,0.08);  /* Ombre vers le haut */
-    border-top:     1px solid var(--bg-gray);
-  }
+  /* Sidebar desktop entièrement masquée sur mobile */
+  .parent-sidebar { display: none; }
 
-  /* Logo, infos utilisateur et déconnexion masqués sur mobile
-     (la sidebar en bas n'a pas la place pour ça) */
-  .parent-sidebar__logo,
-  .parent-sidebar__user,
-  .parent-sidebar__deconnexion { display: none; }
-
-  /* Navigation horizontale : scrollable si les liens dépassent */
-  .parent-sidebar__nav {
+  /* Barre mobile : logo à gauche, burger à droite.
+     position:sticky pour rester visible même en scrollant le contenu. */
+  .parent-mobile-topbar {
     display:         flex;
-    flex-direction:  row;
     align-items:     center;
-    padding:         0;
-    width:           100%;
-    overflow-x:      auto;
-    scrollbar-width: none;   /* Masque la scrollbar horizontale (Firefox) */
+    justify-content: space-between;
+    padding:         var(--space-sm) var(--space-md);
+    background:      var(--white);
+    box-shadow:      var(--shadow-sm);
+    position:        sticky;
+    top:             0;
+    z-index:         var(--z-sidebar);
+  }
+  .parent-mobile-topbar__logo img { height: 36px; width: auto; display: block; }
+
+  /* Bouton burger : orange, cohérent avec l'identité parent (fond blanc) */
+  .parent-mobile-burger {
+    background:  none;
+    border:      none;
+    color:       var(--primary);
+    font-size:   1.5rem;
+    line-height: 1;
+    cursor:      pointer;
+    padding:     var(--space-xs) var(--space-sm);
   }
 
-  /* Masque la scrollbar sur Chrome/Safari */
-  .parent-sidebar__nav::-webkit-scrollbar { display: none; }
-
-  /* Chaque lien : icône en haut + label en bas, barre en haut (pas à droite) */
-  .parent-sidebar__link {
+  /* Menu déroulant plein écran (sous la barre) : fond blanc comme la
+     sidebar desktop. position:fixed + inset pour couvrir le reste
+     de l'écran, overflow-y:auto si la liste dépasse la hauteur. */
+  .parent-mobile-menu {
+    display:    flex;
     flex-direction: column;
-    gap:            2px;
-    padding:        var(--space-sm) var(--space-xs);
-    font-size:      0.6rem;
-    border-right:   none;
-    border-top:     3px solid transparent;  /* Barre en haut sur mobile */
-    min-width:      56px;
-    text-align:     center;
-    flex-shrink:    0;
+    position:   fixed;
+    top:        60px;   /* Hauteur approximative de .parent-mobile-topbar */
+    left:       0;
+    right:      0;
+    bottom:     0;
+    background: var(--white);
+    z-index:    calc(var(--z-sidebar) - 1);
+    overflow-y: auto;
+    padding:    var(--space-lg) 0;
   }
 
-  /* Le libellé (masqué sur tablette) redevient visible sous l'icône
-     dans la barre de nav mobile */
-  .parent-sidebar__link span:last-child { display: block; }
-
-  /* Actif sur mobile : barre en haut + fond orange */
-  .parent-sidebar__link.active {
-    border-top:   3px solid var(--primary);
-    border-right: none;
-    background:   var(--primary-light);
+  /* Avatar + nom en haut du menu, comme dans la sidebar desktop */
+  .parent-mobile-menu__user {
+    display:       flex;
+    align-items:   center;
+    gap:           var(--space-md);
+    padding:       0 var(--space-lg) var(--space-lg);
+    border-bottom: 1px solid var(--bg-gray);
+    margin-bottom: var(--space-md);
   }
 
-  /* padding-bottom:80px laisse de l'espace pour la barre de nav fixe
-     (évite que le contenu soit masqué derrière la barre) */
-  .layout-main { padding: var(--space-md); padding-bottom: 80px; }
+  .parent-mobile-menu__nav { display: flex; flex-direction: column; flex: 1; }
 
-  /* Topbar reste collant en haut du contenu sur mobile */
+  /* Lien du menu mobile : grande zone tactile, icône + libellé côte à côte */
+  .parent-mobile-menu__link {
+    display:         flex;
+    align-items:     center;
+    gap:             var(--space-md);
+    padding:         var(--space-md) var(--space-lg);
+    color:           var(--text-gray);
+    text-decoration: none;
+    font-size:       1rem;
+    font-weight:     500;
+    border-left:     3px solid transparent;
+  }
+  .parent-mobile-menu__link.active {
+    color:       var(--primary);
+    background:  var(--primary-light);
+    border-left: 3px solid var(--primary);
+    font-weight: 700;
+  }
+
+  .parent-mobile-menu__deconnexion { margin: var(--space-md) var(--space-lg) 0; width: auto; }
+
+  /* Topbar de contenu reste collant en haut sous la barre mobile */
   .layout-topbar {
     position: sticky;
     top:      0;
@@ -315,12 +326,12 @@
   }
 }
 
-/* Petit mobile (≤479px) : tab bar encore plus compacte, topbar resserrée */
+/* Petit mobile (≤479px) : menu et topbar resserrés */
 @media (max-width: 479px) {
-  .parent-sidebar__link { min-width: 48px; font-size: 0.55rem; padding: var(--space-xs); }
-  .layout-topbar        { padding: var(--space-sm) var(--space-md); }
-  .layout-topbar__titre { font-size: 0.75rem; }
-  .layout-main          { padding: var(--space-sm); padding-bottom: 76px; }
+  .parent-mobile-menu__link { padding: var(--space-sm) var(--space-md); font-size: 0.9rem; }
+  .layout-topbar             { padding: var(--space-sm) var(--space-md); }
+  .layout-topbar__titre      { font-size: 0.75rem; }
+  .layout-main               { padding: var(--space-sm); }
 }
 
 /* Grand écran (≥1440px) : le contenu garde sa largeur max et se centre

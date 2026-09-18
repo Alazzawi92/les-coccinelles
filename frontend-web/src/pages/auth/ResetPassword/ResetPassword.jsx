@@ -75,8 +75,7 @@ const ResetPassword = () => {
 
         {/* Logo */}
         <div className="auth-logo">
-          <span className="auth-logo__icone">🐞</span>
-          <span className="auth-logo__nom">Les Coccinelles</span>
+          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
         </div>
 
         <h1 className="auth-titre">Nouveau mot de passe</h1>

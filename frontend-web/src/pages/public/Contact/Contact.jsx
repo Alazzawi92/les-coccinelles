@@ -172,10 +172,11 @@ const Contact = () => {
             <h2 className="titre-section">Retrouvez-nous</h2>
             <div className="contact-infos__liste">
               {[
-                { icone: '📍', titre: 'Adresse',   contenu: 'Rue des Coccinelles\n17138 Puilboreau' },
-                { icone: '📞', titre: 'Téléphone', contenu: '05 46 XX XX XX\n(Lun–Ven, 9h–17h)'    },
-                { icone: '✉️', titre: 'Email',     contenu: 'contact@lescoccinelles.fr'              },
-                { icone: '🕐', titre: 'Horaires',  contenu: 'Lun–Ven : 8h30–18h00\nFermé jours fériés' }
+                { icone: '📍', titre: 'Adresse',   contenu: '10 rue Saint Vincent\n17138 Puilboreau' },
+                { icone: '📞', titre: 'Téléphone', contenu: '05 46 69 68 25'    },
+                { icone: '✉️', titre: 'Email',     contenu: 'les.coccinelles17@orange.fr'              },
+                { icone: '🕐', titre: 'Horaires',  contenu: 'Lun–Ven : 7h30–18h30\nFermé jours fériés' },
+                { icone: '👶', titre: 'Communes accueillies', contenu: 'Puilboreau, Saint-Xandre, Esnandes' }
               ].map(({ icone, titre, contenu }) => (
                 <div key={titre} className="contact-info-item">
                   <span className="contact-info-icone">{icone}</span>

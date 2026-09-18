@@ -12,13 +12,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import api from '../../../services/api';
+import api, { BACKEND_URL as BACKEND } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Messages.css';
-
-// URL de base du serveur pour construire les chemins des pièces jointes
-const BACKEND = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:3002';
 
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document

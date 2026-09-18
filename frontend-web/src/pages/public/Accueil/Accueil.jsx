@@ -10,7 +10,7 @@
 
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import api from '../../../services/api';
+import api, { BACKEND_URL } from '../../../services/api';
 import usePageCMS from '../../../hooks/usePageCMS';
 import './Accueil.css';
 
@@ -118,7 +118,7 @@ const Accueil = () => {
               <path d="M 116 200 A 84 84 0 0 1 284 200"  stroke="#4FC3F7" strokeWidth="20" strokeLinecap="round" />
               <path d="M 140 200 A 60 60 0 0 1 260 200"  stroke="#BA68C8" strokeWidth="20" strokeLinecap="round" />
             </svg>
-            <div className="hero__coccinelle-grande">🐞</div>
+            <img src="/images/logo.png" alt="Crèche Les Coccinelles" className="hero__logo-grand" />
             <div className="hero__deco">
               <span>🌿</span><span>🌼</span><span>🍄</span>
             </div>
@@ -192,7 +192,7 @@ const Accueil = () => {
             <div className="accueil-equipe__grille">
               {membres.map(m => {
                 let imgUrl = null;
-                try { imgUrl = `http://localhost:3002${JSON.parse(m.photo).miniature}`; } catch {}
+                try { imgUrl = `${BACKEND_URL}${JSON.parse(m.photo).miniature}`; } catch {}
                 return (
                   <div key={m.id} className="accueil-equipe__carte">
                     <div className="accueil-equipe__photo">

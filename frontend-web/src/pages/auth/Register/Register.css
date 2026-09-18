@@ -18,6 +18,6 @@
    Utilisé pour : "Prénom | Nom" sur une même ligne. */
 .form-row-double  { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); }
 
-/* Sur mobile très petit (≤480px) : les 2 colonnes passent en 1
+/* Petit mobile (≤479px) : les 2 colonnes passent en 1
    pour éviter que les champs soient trop étroits. */
-@media (max-width: 480px) { .form-row-double { grid-template-columns: 1fr; } }
+@media (max-width: 479px) { .form-row-double { grid-template-columns: 1fr; } }

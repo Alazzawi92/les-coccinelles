@@ -3,10 +3,15 @@
 // RÔLE     : Layout de l'espace administration.
 //            Sidebar sombre à gauche avec navigation groupée
 //            par catégorie. Topbar avec titre + cloche de notifs.
+//            Sur mobile (≤767px) : la sidebar est masquée et
+//            remplacée par une barre avec logo + bouton burger,
+//            qui ouvre un menu déroulant plein écran reprenant
+//            la même navigation groupée (voir .admin-mobile-menu).
 //            Les pages admin s'insèrent via <Outlet />.
 // ============================================================
 
 import { Outlet, NavLink, Link } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
@@ -61,6 +66,9 @@ const AdminLayout = () => {
   // Récupère le profil admin et la fonction de déconnexion
   const { user, deconnecter } = useAuth();
 
+  // Contrôle l'ouverture du menu burger (mobile uniquement)
+  const [menuOuvert, setMenuOuvert] = useState(false);
+
   // Déconnecte et affiche une notification de confirmation
   const handleDeconnexion = async () => {
     await deconnecter();
@@ -82,8 +90,7 @@ const AdminLayout = () => {
         {/* Logo : cliquable pour retourner au site public */}
         <div className="admin-sidebar__logo">
           <Link to="/" className="admin-sidebar__logo-lien">
-            <span>🐞</span>
-            <span className="admin-sidebar__logo-text">Les Coccinelles</span>
+            <img src="/images/logo.png" alt="Les Coccinelles" className="admin-sidebar__logo-img" />
           </Link>
           <p className="admin-sidebar__logo-sous">Administration</p>
         </div>
@@ -121,6 +128,62 @@ const AdminLayout = () => {
           </button>
         </div>
       </aside>
+
+      {/* ── BARRE MOBILE (logo + burger) ─────────────────────── */}
+      {/* Visible uniquement ≤767px (voir CSS) — remplace la sidebar
+          sur mobile, qui n'a pas la place de s'afficher en entier. */}
+      <header className="admin-mobile-topbar">
+        <Link to="/" className="admin-mobile-topbar__logo">
+          <img src="/images/logo.png" alt="Les Coccinelles" />
+        </Link>
+        <button
+          className={`admin-mobile-burger ${menuOuvert ? 'admin-mobile-burger--actif' : ''}`}
+          onClick={() => setMenuOuvert(!menuOuvert)}
+          aria-label="Menu"
+          aria-expanded={menuOuvert}
+        >
+          {menuOuvert ? '✕' : '☰'}
+        </button>
+      </header>
+
+      {/* ── MENU BURGER DÉROULANT (mobile) ───────────────────── */}
+      {/* Reprend la même navigation groupée que la sidebar desktop.
+          onClick sur chaque lien referme le menu après navigation. */}
+      {menuOuvert && (
+        <div className="admin-mobile-menu">
+          <nav className="admin-mobile-menu__nav">
+            {groupesNav.map(({ titre, liens }) => (
+              <div key={titre} className="admin-mobile-menu__groupe">
+                <p className="admin-mobile-menu__groupe-titre">{titre}</p>
+                {liens.map(({ to, label, icone }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={() => setMenuOuvert(false)}
+                    className={({ isActive }) =>
+                      `admin-mobile-menu__link ${isActive ? 'active' : ''}`
+                    }
+                  >
+                    <span>{icone}</span>
+                    <span>{label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            ))}
+          </nav>
+
+          {/* Profil + déconnexion, comme dans le pied de la sidebar desktop */}
+          <div className="admin-mobile-menu__pied">
+            <p className="admin-mobile-menu__user-nom">{user?.prenom} {user?.nom}</p>
+            <p className="admin-mobile-menu__user-role">
+              {user?.role === 'super_admin' ? 'Super Admin' : 'Administrateur'}
+            </p>
+            <button className="admin-sidebar__deconnexion" onClick={handleDeconnexion}>
+              🚪 Déconnexion
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ── ZONE DE CONTENU ─────────────────────────────────── */}
       <div className="admin-content">

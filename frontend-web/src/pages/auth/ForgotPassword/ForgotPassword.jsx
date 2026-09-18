@@ -41,8 +41,7 @@ const ForgotPassword = () => {
 
         {/* Logo */}
         <div className="auth-logo">
-          <span className="auth-logo__icone">🐞</span>
-          <span className="auth-logo__nom">Les Coccinelles</span>
+          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
         </div>
 
         {/* Après l'envoi : écran de confirmation (même si email inconnu) */}

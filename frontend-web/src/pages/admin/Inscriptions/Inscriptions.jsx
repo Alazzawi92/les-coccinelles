@@ -9,7 +9,7 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
-import api from '../../../services/api';
+import api, { BACKEND_URL } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Inscriptions.css';
@@ -285,7 +285,7 @@ const Inscriptions = () => {
                     return (
                       <a
                         key={doc.id}
-                        href={`http://localhost:3002${doc.fichier_path}`}
+                        href={`${BACKEND_URL}${doc.fichier_path}`}
                         target="_blank"
                         rel="noreferrer"
                         className="doc-item"

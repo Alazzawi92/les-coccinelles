@@ -3,7 +3,7 @@
 // ROUTE    : /parent/mes-enfants
 // RÔLE     : Gestion des enfants du parent : liste + ajout + modification.
 //            FormulaireEnfant : sous-composant réutilisable (ajout et édition).
-//            Validation locale des champs obligatoires (prénom, nom, date, sexe).
+//            Validation locale : TOUS les champs sont obligatoires.
 //            Affiche sante badges (allergies ⚠️, médicaments 💊).
 //            Liens : Suivi, Inscription, Modifier.
 // ============================================================
@@ -40,13 +40,17 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
 
   const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
-  // ── Validation locale des champs obligatoires ─────────────
+  // ── Validation locale : tous les champs sont obligatoires ─
   const valider = () => {
     const e = {};
-    if (!form.prenom.trim())         e.prenom         = 'Prénom requis';
-    if (!form.nom.trim())            e.nom            = 'Nom requis';
-    if (!form.date_naissance)        e.date_naissance = 'Date de naissance requise';
-    if (!form.sexe)                  e.sexe           = 'Sexe requis';
+    if (!form.prenom.trim())            e.prenom         = 'Prénom requis';
+    if (!form.nom.trim())               e.nom            = 'Nom requis';
+    if (!form.date_naissance)           e.date_naissance = 'Date de naissance requise';
+    if (!form.sexe)                     e.sexe           = 'Sexe requis';
+    if (!form.allergies.trim())         e.allergies      = 'Champ requis (indiquer « Aucune » si besoin)';
+    if (!form.medicaments.trim())       e.medicaments    = 'Champ requis (indiquer « Aucun » si besoin)';
+    if (!form.medecin_nom.trim())       e.medecin_nom    = 'Nom du médecin requis';
+    if (!form.medecin_tel.trim())       e.medecin_tel    = 'Téléphone du médecin requis';
     return e;
   };
 
@@ -95,25 +99,29 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
 
       {/* Santé : allergies */}
       <div className="p-form-groupe">
-        <label className="p-label">Allergies connues</label>
-        <textarea name="allergies" className="p-input p-textarea" rows={2} value={form.allergies} onChange={handleChange} placeholder="Ex : allergie aux arachides, intolérance au gluten..." />
+        <label className="p-label">Allergies connues <span className="requis">*</span></label>
+        <textarea name="allergies" className={`p-input p-textarea ${erreurs.allergies ? 'p-input--erreur' : ''}`} rows={2} value={form.allergies} onChange={handleChange} placeholder="Ex : allergie aux arachides, intolérance au gluten... (ou « Aucune »)" />
+        {erreurs.allergies && <p className="p-erreur">{erreurs.allergies}</p>}
       </div>
 
       {/* Santé : traitements en cours */}
       <div className="p-form-groupe">
-        <label className="p-label">Traitements médicaux en cours</label>
-        <textarea name="medicaments" className="p-input p-textarea" rows={2} value={form.medicaments} onChange={handleChange} placeholder="Ex : Ventoline si besoin..." />
+        <label className="p-label">Traitements médicaux en cours <span className="requis">*</span></label>
+        <textarea name="medicaments" className={`p-input p-textarea ${erreurs.medicaments ? 'p-input--erreur' : ''}`} rows={2} value={form.medicaments} onChange={handleChange} placeholder="Ex : Ventoline si besoin... (ou « Aucun »)" />
+        {erreurs.medicaments && <p className="p-erreur">{erreurs.medicaments}</p>}
       </div>
 
-      {/* Médecin traitant (facultatif) */}
+      {/* Médecin traitant */}
       <div className="p-form-row">
         <div className="p-form-groupe">
-          <label className="p-label">Médecin traitant</label>
-          <input name="medecin_nom" className="p-input" value={form.medecin_nom} onChange={handleChange} placeholder="Dr. Martin" />
+          <label className="p-label">Médecin traitant <span className="requis">*</span></label>
+          <input name="medecin_nom" className={`p-input ${erreurs.medecin_nom ? 'p-input--erreur' : ''}`} value={form.medecin_nom} onChange={handleChange} placeholder="Dr. Martin" />
+          {erreurs.medecin_nom && <p className="p-erreur">{erreurs.medecin_nom}</p>}
         </div>
         <div className="p-form-groupe">
-          <label className="p-label">Téléphone du médecin</label>
-          <input name="medecin_tel" type="tel" className="p-input" value={form.medecin_tel} onChange={handleChange} placeholder="05 46 XX XX XX" />
+          <label className="p-label">Téléphone du médecin <span className="requis">*</span></label>
+          <input name="medecin_tel" type="tel" className={`p-input ${erreurs.medecin_tel ? 'p-input--erreur' : ''}`} value={form.medecin_tel} onChange={handleChange} placeholder="05 46 XX XX XX" />
+          {erreurs.medecin_tel && <p className="p-erreur">{erreurs.medecin_tel}</p>}
         </div>
       </div>
 

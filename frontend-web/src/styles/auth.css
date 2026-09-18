@@ -60,18 +60,8 @@
   margin-bottom: var(--space-2xl);
 }
 
-/* Grand emoji coccinelle 🐞 */
-.auth-logo__icone { font-size: 3.5rem; display: block; }
-
-/* Nom de la crèche : orange, grande police de titre */
-.auth-logo__nom {
-  font-family:   var(--font-heading);
-  font-size:     1.8rem;
-  font-weight:   700;
-  color:         var(--primary);
-  display:       block;
-  margin-top:    var(--space-sm);
-}
+/* Logo image (remplace l'ancien emoji + nom texte) */
+.auth-logo__img { height: 96px; width: auto; margin: 0 auto; display: block; }
 
 /* Slogan sous le nom : petit, gris */
 .auth-logo__sous {
@@ -314,8 +304,34 @@
 .critere--ok { color: var(--success); }
 
 /* ── 14. RESPONSIVE ─────────────────────────────────────── */
+/* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /
+   1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
-/* Mobile très petit (≤480px) : réduit le padding de la carte */
-@media (max-width: 480px) {
-  .auth-card { padding: var(--space-xl); }
+/* Grand écran (≥1440px) : carte et logo légèrement plus grands */
+@media (min-width: 1440px) {
+  .auth-card      { max-width: 520px; padding: var(--space-3xl) calc(var(--space-3xl) + var(--space-md)); }
+  .auth-logo__img { height: 108px; }
+}
+
+/* Petit ordinateur / tablette (≤1279px et ≤1023px) : la carte centrée
+   n'a pas besoin d'ajustement particulier, elle reste confortable
+   jusqu'au mobile grâce à width:100% + max-width. */
+
+/* Mobile (≤767px) : padding et logo réduits */
+@media (max-width: 767px) {
+  .auth-page      { padding: var(--space-lg); }
+  .auth-card      { padding: var(--space-2xl) var(--space-xl); }
+  .auth-logo__img { height: 80px; }
+  .auth-titre     { font-size: 1.3rem; }
+}
+
+/* Petit mobile (≤479px) : encore plus resserré pour tenir sur un petit écran */
+@media (max-width: 479px) {
+  .auth-page       { padding: var(--space-md); }
+  .auth-card       { padding: var(--space-xl) var(--space-lg); }
+  .auth-logo__img  { height: 64px; }
+  .auth-logo       { margin-bottom: var(--space-lg); }
+  .auth-titre      { font-size: 1.2rem; }
+  .auth-sous-titre { font-size: 0.85rem; }
+  .form-label-row  { flex-direction: column; align-items: flex-start; gap: 4px; }
 }

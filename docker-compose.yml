@@ -72,6 +72,8 @@ services:
     environment:
       REACT_APP_API_URL: http://localhost:3001/api
       REACT_APP_NAME:    Les Coccinelles
+      CHOKIDAR_USEPOLLING: "true"              # Nécessaire pour le hot-reload sous Docker Desktop (Windows)
+      WATCHPACK_POLLING:   "true"
     ports:
       - "3000:3000"
     volumes:

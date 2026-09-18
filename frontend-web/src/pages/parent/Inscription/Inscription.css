@@ -472,6 +472,13 @@
   margin-bottom: var(--space-md);
 }
 
+/* Mention « facultatif » sous un titre de section */
+.preinsc-section__aide {
+  font-size:     0.85rem;
+  color:         var(--text-light);
+  margin:        calc(-1 * var(--space-sm)) 0 var(--space-md);
+}
+
 /* Grille 2 colonnes pour les champs nom/prénom/tél/email */
 .preinsc-grille {
   display:               grid;

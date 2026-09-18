@@ -24,10 +24,10 @@ const PublicLayout = () => {
       {/* ── BARRE DE NAVIGATION ─────────────────────────────── */}
       <nav className="public-navbar">
 
-        {/* Logo avec emoji coccinelle → lien vers l'accueil */}
+        {/* Logo → lien vers l'accueil. Le texte "Crèche Coccinelles"
+            est déjà intégré à l'image, pas besoin de le répéter. */}
         <Link to="/" className="public-navbar__logo">
-          <span className="public-navbar__logo-icone">🐞</span>
-          <span className="public-navbar__logo-text">Les Coccinelles</span>
+          <img src="/images/logo.png" alt="Crèche Les Coccinelles" className="public-navbar__logo-img" />
         </Link>
 
         {/* Liens de navigation (visibles sur desktop) */}
@@ -90,9 +90,13 @@ const PublicLayout = () => {
 
             {/* Colonne 1 : identité de la crèche */}
             <div>
-              <h3 className="public-footer__titre">🐞 Les Coccinelles</h3>
+              <h3 className="public-footer__titre">
+                <img src="/images/logo.png" alt="" className="public-footer__logo-img" />
+                Les Coccinelles
+              </h3>
               <p>Crèche associative à Puilboreau (17)</p>
               <p>Accueil des enfants de 0 à 3 ans</p>
+              <p>Communes accueillies : Puilboreau, Saint-Xandre, Esnandes</p>
             </div>
 
             {/* Colonne 2 : liens rapides de navigation */}
@@ -109,9 +113,9 @@ const PublicLayout = () => {
             {/* Colonne 3 : informations de contact */}
             <div>
               <h4 className="public-footer__sous-titre">Contact</h4>
-              <p>📍 Puilboreau, 17138</p>
-              <p>📞 05 46 XX XX XX</p>
-              <p>✉️ contact@lescoccinelles.fr</p>
+              <p>📍 10 rue Saint Vincent, 17138 Puilboreau</p>
+              <p>📞 05 46 69 68 25</p>
+              <p>✉️ les.coccinelles17@orange.fr</p>
             </div>
           </div>
 

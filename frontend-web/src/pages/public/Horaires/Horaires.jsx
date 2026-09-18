@@ -9,11 +9,11 @@ import usePageCMS from '../../../hooks/usePageCMS';
 import './Horaires.css';
 
 const JOURS = [
-  { jour: 'Lundi',    ouverture: '8h30', fermeture: '18h00', ouvert: true  },
-  { jour: 'Mardi',    ouverture: '8h30', fermeture: '18h00', ouvert: true  },
-  { jour: 'Mercredi', ouverture: '8h30', fermeture: '18h00', ouvert: true  },
-  { jour: 'Jeudi',    ouverture: '8h30', fermeture: '18h00', ouvert: true  },
-  { jour: 'Vendredi', ouverture: '8h30', fermeture: '18h00', ouvert: true  },
+  { jour: 'Lundi',    ouverture: '7h30', fermeture: '18h30', ouvert: true  },
+  { jour: 'Mardi',    ouverture: '7h30', fermeture: '18h30', ouvert: true  },
+  { jour: 'Mercredi', ouverture: '7h30', fermeture: '18h30', ouvert: true  },
+  { jour: 'Jeudi',    ouverture: '7h30', fermeture: '18h30', ouvert: true  },
+  { jour: 'Vendredi', ouverture: '7h30', fermeture: '18h30', ouvert: true  },
   { jour: 'Samedi',   ouverture: '',     fermeture: '',       ouvert: false },
   { jour: 'Dimanche', ouverture: '',     fermeture: '',       ouvert: false }
 ];

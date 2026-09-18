@@ -131,10 +131,14 @@
 /* ── 5. GRILLE PRINCIPALE DU DASHBOARD ─────────────────── */
 
 /* Grille qui contient les 3 widgets : Mes enfants | Suivi du jour | Notifications.
-   3 colonnes de taille égale. Passe à 1 colonne sous 1100px (voir responsive). */
+   Empilés verticalement, une seule colonne.
+   minmax(0, 1fr) au lieu de 1fr : sans le minimum à 0, une grille ne
+   peut jamais être plus étroite que le contenu le plus large de ses
+   items (min-content), ce qui provoquait un débordement horizontal
+   sur mobile dès qu'un texte était un peu long. */
 .dashboard__grille {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-lg);                  /* espace entre les widgets */
 }
 
@@ -172,11 +176,13 @@
   flex-shrink: 0;                       /* ne rétrécit pas */
 }
 
-/* Zone texte à droite de l'avatar : prend tout l'espace disponible */
-.enfant-infos { flex: 1; }
+/* Zone texte à droite de l'avatar : prend tout l'espace disponible.
+   min-width:0 autorise le texte à se tronquer au lieu de pousser
+   le bouton "Suivi" hors de l'écran sur mobile. */
+.enfant-infos { flex: 1; min-width: 0; }
 
-/* Nom de l'enfant : gras et foncé */
-.enfant-nom   { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); }
+/* Nom de l'enfant : gras et foncé. Tronqué avec "..." si trop long. */
+.enfant-nom   { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Âge de l'enfant : plus petit, gris */
 .enfant-age   { font-size: 0.8rem; color: var(--text-gray); }
@@ -270,7 +276,7 @@
 /* Petit ordinateur (≤1279px) : les 3 widgets passent en colonne unique
    pour éviter d'être trop étroits avec la sidebar */
 @media (max-width: 1279px) {
-  .dashboard__grille { grid-template-columns: 1fr; }
+  .dashboard__grille { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Tablette (≤1023px) : raccourcis en 3 colonnes (déjà la base), espacements resserrés */

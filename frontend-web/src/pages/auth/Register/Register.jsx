@@ -98,8 +98,7 @@ const Register = () => {
       <div className="auth-card auth-card--large">
 
         <div className="auth-logo">
-          <span className="auth-logo__icone">🐞</span>
-          <span className="auth-logo__nom">Les Coccinelles</span>
+          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
           <span className="auth-logo__sous">Création de votre espace parent</span>
         </div>
 

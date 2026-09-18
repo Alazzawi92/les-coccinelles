@@ -7,13 +7,13 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../../../services/api';
+import api, { BACKEND_URL } from '../../../services/api';
 import './Equipe.css';
 
 const photoUrl = (membre) => {
   try {
     const data = JSON.parse(membre.photo);
-    return `http://localhost:3002${data.web}`;
+    return `${BACKEND_URL}${data.web}`;
   } catch { return null; }
 };
 

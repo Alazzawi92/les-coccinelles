@@ -68,10 +68,9 @@ const Login = () => {
     <div className="auth-page">
       <div className="auth-card">
 
-        {/* Logo coccinelle + sous-titre */}
+        {/* Logo + sous-titre */}
         <div className="auth-logo">
-          <span className="auth-logo__icone">🐞</span>
-          <span className="auth-logo__nom">Les Coccinelles</span>
+          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
           <span className="auth-logo__sous">Espace parents & administration</span>
         </div>
 

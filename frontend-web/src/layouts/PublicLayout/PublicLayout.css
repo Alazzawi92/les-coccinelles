@@ -65,16 +65,9 @@
   text-decoration: none;
 }
 
-/* Icône coccinelle 🐞 */
-.public-navbar__logo-icone { font-size: 1.8rem; }
-
-/* Nom de la crèche : orange, police de titre */
-.public-navbar__logo-text {
-  font-family: var(--font-heading);
-  font-size:   1.4rem;
-  font-weight: 700;
-  color:       var(--primary);
-}
+/* Logo image (remplace l'ancien emoji + texte séparés) : hauteur fixe,
+   largeur automatique pour garder les proportions du fichier. */
+.public-navbar__logo-img { height: 52px; width: auto; display: block; }
 
 /* ── 3b. Liens de navigation ────────────────────────────── */
 
@@ -178,13 +171,19 @@
   margin-bottom:         var(--space-xl);
 }
 
-/* Nom de la crèche dans le footer : orange */
+/* Nom de la crèche dans le footer : orange, logo + texte alignés */
 .public-footer__titre {
   font-family:   var(--font-heading);
   font-size:     1.4rem;
   color:         var(--primary);
   margin-bottom: var(--space-md);
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
 }
+
+/* Petit logo dans le footer (fond sombre, l'image transparente ressort bien) */
+.public-footer__logo-img { height: 32px; width: auto; }
 
 /* Titre des sous-sections du footer : blanc */
 .public-footer__sous-titre {
@@ -257,7 +256,7 @@
 /* Mobile (≤767px) : navbar resserrée, footer en 1 seule colonne */
 @media (max-width: 767px) {
   .public-navbar            { padding: var(--space-md); }
-  .public-navbar__logo-text { font-size: 1.2rem; }
+  .public-navbar__logo-img  { height: 44px; }
 
   .public-footer {
     padding: var(--space-2xl) var(--space-lg) var(--space-lg);
@@ -271,8 +270,7 @@
 /* Petit mobile (≤479px) : typographie et espacements encore réduits */
 @media (max-width: 479px) {
   .public-navbar             { padding: var(--space-sm) var(--space-md); gap: var(--space-sm); }
-  .public-navbar__logo-icone { font-size: 1.4rem; }
-  .public-navbar__logo-text  { font-size: 1.05rem; }
+  .public-navbar__logo-img   { height: 36px; }
   .public-navbar__hamburger  { font-size: 1.3rem; }
 
   .public-footer        { padding: var(--space-xl) var(--space-md) var(--space-md); }

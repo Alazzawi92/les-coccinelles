@@ -21,5 +21,94 @@
 @import '../../../styles/variables.css';
 @import '../../../styles/pages-publiques.css';
 
-/* Aucun style spécifique à la page Présentation —
-   tous les composants viennent de pages-publiques.css */
+/* ── GOUVERNANCE ASSOCIATIVE ────────────────────────────── */
+/* Section "Notre fonctionnement associatif" : intro centrée +
+   3 cartes (Assemblée générale, Conseil d'Administration, Bureau).
+   Réutilise .espace-carte de pages-publiques.css pour les cartes. */
+
+/* Paragraphe d'introduction : centré, largeur limitée pour la lisibilité */
+.gouvernance-intro {
+  max-width:  760px;
+  margin:     var(--space-lg) auto 0;
+  text-align: center;
+  color:      var(--text-gray);
+  line-height: 1.7;
+}
+
+/* Grille des 3 cartes : même structure que .espaces-grille */
+.gouvernance-grille {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+  align-items:           start;
+}
+
+/* Sous-titre "Qu'est-ce qu'un(e) ... ?" à l'intérieur de la carte */
+.gouvernance-question {
+  font-weight:   700;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+/* Liste à puces personnalisée (le reset global retire les puces natives) */
+.gouvernance-liste {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+}
+
+.gouvernance-liste li {
+  position:    relative;
+  padding-left: var(--space-md);
+  font-size:   0.9rem;
+  color:       var(--text-gray);
+  line-height: 1.6;
+}
+
+/* Puce orange dessinée en CSS plutôt qu'avec list-style */
+.gouvernance-liste li::before {
+  content:      '';
+  position:     absolute;
+  left:         0;
+  top:          0.55em;
+  width:        6px;
+  height:       6px;
+  border-radius: 50%;
+  background:   var(--primary);
+}
+
+/* ── HISTORIQUE ──────────────────────────────────────────── */
+/* Section "Historique" : paragraphes centrés + 2 blocs de
+   répartition par commune (avant/après le retrait de Marsilly). */
+
+/* Bloc de texte centré, largeur limitée comme .gouvernance-intro */
+.historique-contenu {
+  max-width:  760px;
+  margin:     var(--space-lg) auto 0;
+  color:      var(--text-gray);
+  line-height: 1.7;
+}
+
+.historique-contenu p { margin-bottom: var(--space-md); }
+
+/* 2 cartes de répartition côte à côte (ancienne / nouvelle) */
+.historique-repartitions {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-xl);
+}
+
+.historique-repartition {
+  background:    var(--white);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-xl);
+  box-shadow:    var(--shadow-sm);
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .gouvernance-grille       { grid-template-columns: 1fr; }
+  .historique-repartitions  { grid-template-columns: 1fr; }
+}

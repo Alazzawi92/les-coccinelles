@@ -8,11 +8,16 @@ const { verifierRole }   = require('../middlewares/role.middleware');
 const { validerDonnees } = require('../middlewares/validate.middleware');
 const enfantController   = require('../controllers/enfantController');
 
+// Tous les champs sont obligatoires (aligné sur le formulaire parent)
 const reglesEnfant = [
   body('prenom').trim().isLength({ min: 2 }).withMessage('Prénom requis').escape(),
   body('nom').trim().isLength({ min: 2 }).withMessage('Nom requis').escape(),
   body('date_naissance').isDate().withMessage('Date de naissance invalide'),
-  body('sexe').isIn(['M', 'F']).withMessage('Sexe invalide')
+  body('sexe').isIn(['M', 'F']).withMessage('Sexe invalide'),
+  body('allergies').trim().notEmpty().withMessage('Allergies requises (indiquer « Aucune » si besoin)').escape(),
+  body('medicaments').trim().notEmpty().withMessage('Traitements requis (indiquer « Aucun » si besoin)').escape(),
+  body('medecin_nom').trim().notEmpty().withMessage('Nom du médecin requis').escape(),
+  body('medecin_tel').trim().notEmpty().withMessage('Téléphone du médecin requis').escape()
 ];
 
 // GET /api/enfants — Mes enfants (parent) ou tous (admin)

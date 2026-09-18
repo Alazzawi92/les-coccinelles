@@ -9,7 +9,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import api from '../../../services/api';
+import api, { BACKEND_URL } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './CMS.css';
@@ -66,7 +66,7 @@ const GestionnaireEquipe = () => {
     // Afficher la photo existante en aperçu
     try {
       const data = JSON.parse(m.photo);
-      setApercu(`http://localhost:3002${data.miniature}`);
+      setApercu(`${BACKEND_URL}${data.miniature}`);
     } catch { setApercu(null); }
     setPanneau(true);
   };
@@ -126,7 +126,7 @@ const GestionnaireEquipe = () => {
   const photoUrl = (membre) => {
     try {
       const data = JSON.parse(membre.photo);
-      return `http://localhost:3002${data.miniature}`;
+      return `${BACKEND_URL}${data.miniature}`;
     } catch { return null; }
   };
 

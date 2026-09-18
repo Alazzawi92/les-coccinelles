@@ -28,35 +28,42 @@
 :root {
 
   /* ── 1. COULEURS PRINCIPALES ──────────────────────────── */
+  /* Palette recalée sur le logo "Crèche Les Coccinelles" (fleur
+     orange/jaune + coccinelles rouges) : orange des pétales en
+     couleur principale, jaune des pétales en secondaire, rouge des
+     coccinelles en accent. Le vert "nature" a été retiré, absent du
+     logo. */
 
-  /* Orange vif — couleur de la marque "Les Coccinelles".
+  /* Orange des pétales du logo — couleur de la marque.
      Utilisé pour les boutons primaires, liens actifs, accents. */
-  --primary:       #FF9800;
+  --primary:       #FF7A45;
 
-  /* Orange foncé — utilisé pour les états hover et focus
-     sur les éléments orange (boutons, liens...) */
-  --primary-dark:  #E65100;
+  /* Orange plus foncé — états hover et focus des éléments orange */
+  --primary-dark:  #E85A22;
 
   /* Orange très clair — fond doux pour les cartes, badges,
      zones de mise en valeur sans être trop agressif. */
-  --primary-light: #FFF3E0;
+  --primary-light: #FFEDE1;
 
-  /* Vert nature — couleur secondaire pour les statuts positifs
-     et les éléments liés à la nature / l'éveil. */
-  --secondary:     #66BB6A;
+  /* Jaune des pétales du logo — couleur secondaire (remplace le
+     vert "nature" d'origine, absent du logo). */
+  --secondary:     #FFB020;
 
-  /* Vert foncé — hover et états actifs des éléments verts */
-  --secondary-dark:#2E7D32;
+  /* Jaune plus foncé — hover et états actifs des éléments jaunes */
+  --secondary-dark:#D98E0A;
 
   /* ── 2. COULEURS ACCENT ───────────────────────────────── */
 
-  /* Bleu ciel — utilisé pour les badges "en cours", infos */
+  /* Bleu ciel — utilisé pour les badges "en cours", infos (couleur
+     sémantique, hors palette de marque) */
   --accent-1:   #4FC3F7;
 
-  /* Rose doux — utilisé pour les raccourcis, éléments féminins */
-  --accent-2:   #F06292;
+  /* Rouge des coccinelles/cercles du logo — remplace l'ancien rose,
+     utilisé pour les raccourcis et éléments à mettre en valeur */
+  --accent-2:   #FF2D55;
 
-  /* Violet tendre — badges "liste d'attente", super admin */
+  /* Violet tendre — badges "liste d'attente", super admin (couleur
+     sémantique de rôle, hors palette de marque) */
   --accent-3:   #BA68C8;
 
   /* Jaune soleil — raccourcis galerie, alertes douces */

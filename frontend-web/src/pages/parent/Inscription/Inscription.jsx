@@ -43,76 +43,98 @@ const employeurVide = () => ({ profession: '', nom_employeur: '' });
 // ── Composants définis HORS du composant principal ──────────
 // (sinon React les recrée à chaque frappe → perte de focus)
 
-const ChampParent = ({ cle, label, pi, majPI }) => (
+// ── Règles de validation réutilisables ─────────────────────
+const RE_TEL   = /^0[1-9]([ .-]?\d{2}){4}$/;
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// cls() : ajoute la classe d'erreur si le champ correspondant est en erreur
+const cls = (erreurs, champ) => `p-input ${erreurs?.[champ] ? 'p-input--erreur' : ''}`;
+
+// Petit message d'erreur sous un champ
+const Err = ({ msg }) => (msg ? <p className="p-erreur">{msg}</p> : null);
+
+const ChampParent = ({ cle, label, pi, majPI, erreurs = {} }) => (
   <div className="preinsc-section">
     <h3 className="preinsc-section__titre">👤 {label}</h3>
     <div className="preinsc-grille">
       <div className="p-form-groupe">
         <label className="p-label">Nom <span className="requis">*</span></label>
-        <input type="text" className="p-input" required value={pi[cle].nom}
+        <input type="text" className={cls(erreurs, 'nom')} value={pi[cle].nom}
           onChange={e => majPI(cle, 'nom', e.target.value)} placeholder="Nom de famille" />
+        <Err msg={erreurs.nom} />
       </div>
       <div className="p-form-groupe">
         <label className="p-label">Prénom <span className="requis">*</span></label>
-        <input type="text" className="p-input" required value={pi[cle].prenom}
+        <input type="text" className={cls(erreurs, 'prenom')} value={pi[cle].prenom}
           onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder="Prénom" />
+        <Err msg={erreurs.prenom} />
       </div>
       <div className="p-form-groupe">
         <label className="p-label">Numéro de téléphone <span className="requis">*</span></label>
-        <input type="tel" className="p-input" required value={pi[cle].telephone}
+        <input type="tel" className={cls(erreurs, 'telephone')} value={pi[cle].telephone}
           onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder="06 XX XX XX XX" />
+        <Err msg={erreurs.telephone} />
       </div>
       <div className="p-form-groupe">
         <label className="p-label">Adresse email <span className="requis">*</span></label>
-        <input type="email" className="p-input" required value={pi[cle].email}
+        <input type="email" className={cls(erreurs, 'email')} value={pi[cle].email}
           onChange={e => majPI(cle, 'email', e.target.value)} placeholder="email@exemple.fr" />
+        <Err msg={erreurs.email} />
       </div>
     </div>
     <div className="p-form-groupe">
       <label className="p-label">Adresse postale <span className="requis">*</span></label>
-      <input type="text" className="p-input" required value={pi[cle].adresse}
+      <input type="text" className={cls(erreurs, 'adresse')} value={pi[cle].adresse}
         onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder="Numéro, rue, code postal, ville" />
+      <Err msg={erreurs.adresse} />
     </div>
     <div className="p-form-groupe">
       <label className="p-label">Situation familiale <span className="requis">*</span></label>
-      <select className="p-input" required value={pi[cle].situation_familiale}
+      <select className={cls(erreurs, 'situation_familiale')} value={pi[cle].situation_familiale}
         onChange={e => majPI(cle, 'situation_familiale', e.target.value)}>
         <option value="">Choisir...</option>
         {SITUATIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
       </select>
+      <Err msg={erreurs.situation_familiale} />
     </div>
   </div>
 );
 
-const ChampContact = ({ cle, label, pi, majPI }) => (
+const ChampContact = ({ cle, label, pi, majPI, erreurs = {} }) => (
   <div className="preinsc-section preinsc-section--contact">
     <h3 className="preinsc-section__titre">🚨 {label}</h3>
+    <p className="preinsc-section__aide">Champs facultatifs — mais s'ils sont remplis, ils doivent être valides.</p>
     <div className="preinsc-grille">
       <div className="p-form-groupe">
-        <label className="p-label">Nom <span className="requis">*</span></label>
-        <input type="text" className="p-input" required value={pi[cle].nom}
+        <label className="p-label">Nom</label>
+        <input type="text" className={cls(erreurs, 'nom')} value={pi[cle].nom}
           onChange={e => majPI(cle, 'nom', e.target.value)} placeholder="Nom de famille" />
+        <Err msg={erreurs.nom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Prénom <span className="requis">*</span></label>
-        <input type="text" className="p-input" required value={pi[cle].prenom}
+        <label className="p-label">Prénom</label>
+        <input type="text" className={cls(erreurs, 'prenom')} value={pi[cle].prenom}
           onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder="Prénom" />
+        <Err msg={erreurs.prenom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Numéro de téléphone <span className="requis">*</span></label>
-        <input type="tel" className="p-input" required value={pi[cle].telephone}
+        <label className="p-label">Numéro de téléphone</label>
+        <input type="tel" className={cls(erreurs, 'telephone')} value={pi[cle].telephone}
           onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder="06 XX XX XX XX" />
+        <Err msg={erreurs.telephone} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Lien de parenté <span className="requis">*</span></label>
-        <input type="text" className="p-input" required value={pi[cle].parente}
+        <label className="p-label">Lien de parenté</label>
+        <input type="text" className={cls(erreurs, 'parente')} value={pi[cle].parente}
           onChange={e => majPI(cle, 'parente', e.target.value)} placeholder="Grand-parent, oncle, ami..." />
+        <Err msg={erreurs.parente} />
       </div>
     </div>
     <div className="p-form-groupe">
-      <label className="p-label">Adresse <span className="requis">*</span></label>
-      <input type="text" className="p-input" required value={pi[cle].adresse}
+      <label className="p-label">Adresse</label>
+      <input type="text" className={cls(erreurs, 'adresse')} value={pi[cle].adresse}
         onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder="Numéro, rue, code postal, ville" />
+      <Err msg={erreurs.adresse} />
     </div>
   </div>
 );
@@ -136,6 +158,9 @@ const Inscription = () => {
     contact1: contactVide(), contact2: contactVide(),
     employeur1: employeurVide(), employeur2: employeurVide(),
   });
+
+  // Erreurs de validation de l'étape 1 (par section)
+  const [erreurs, setErreurs] = useState({ parent1: {}, parent2: {}, contact1: {}, contact2: {}, place_fratrie: '' });
 
   const navigate = useNavigate();
 
@@ -170,6 +195,52 @@ const Inscription = () => {
       toast.error(err.response?.data?.message || 'Erreur lors de l\'envoi');
     }
     setEnvoi(false);
+  };
+
+  // ── Validation de l'étape 1 (pré-inscription) ────────────
+  // Parent 1 et Parent 2 : tous les champs obligatoires + formats.
+  // Personnes à contacter : facultatives, mais format vérifié si rempli.
+  const validerParent = (p) => {
+    const e = {};
+    if (!p.nom.trim())                       e.nom = 'Nom requis';
+    if (!p.prenom.trim())                    e.prenom = 'Prénom requis';
+    if (!p.telephone.trim())                 e.telephone = 'Téléphone requis';
+    else if (!RE_TEL.test(p.telephone.trim())) e.telephone = 'Numéro invalide (ex : 06 12 34 56 78)';
+    if (!p.email.trim())                     e.email = 'Email requis';
+    else if (!RE_EMAIL.test(p.email.trim())) e.email = 'Adresse email invalide';
+    if (!p.adresse.trim())                   e.adresse = 'Adresse requise';
+    if (!p.situation_familiale)              e.situation_familiale = 'Situation requise';
+    return e;
+  };
+
+  const validerContact = (c) => {
+    const e = {};
+    // Aucun champ obligatoire — on contrôle seulement les formats saisis
+    if (c.telephone.trim() && !RE_TEL.test(c.telephone.trim()))
+      e.telephone = 'Numéro invalide (ex : 06 12 34 56 78)';
+    return e;
+  };
+
+  const validerEtape0 = () => {
+    const ev = {
+      parent1: validerParent(pi.parent1),
+      parent2: validerParent(pi.parent2),
+      contact1: validerContact(pi.contact1),
+      contact2: validerContact(pi.contact2),
+      place_fratrie: pi.place_fratrie ? '' : 'Place dans la fratrie requise',
+    };
+    setErreurs(ev);
+    const ok = !Object.keys(ev.parent1).length && !Object.keys(ev.parent2).length
+      && !Object.keys(ev.contact1).length && !Object.keys(ev.contact2).length
+      && !ev.place_fratrie;
+    if (!ok) toast.error('Veuillez corriger les champs en rouge.');
+    return ok;
+  };
+
+  // Passage à l'étape suivante (avec validation selon l'étape courante)
+  const etapeSuivante = () => {
+    if (etape === 0 && !validerEtape0()) return;
+    setEtape(e => e + 1);
   };
 
   const enfantSelectionne = enfants.find(e => e.id === parseInt(form.enfant_id));
@@ -291,8 +362,8 @@ const Inscription = () => {
 
             <div className="preinsc-separateur"><span>Fiche de pré-inscription</span></div>
 
-            <ChampParent cle="parent1" label="Parent 1" pi={pi} majPI={majPI} />
-            <ChampParent cle="parent2" label="Parent 2" pi={pi} majPI={majPI} />
+            <ChampParent cle="parent1" label="Parent 1" pi={pi} majPI={majPI} erreurs={erreurs.parent1} />
+            <ChampParent cle="parent2" label="Parent 2" pi={pi} majPI={majPI} erreurs={erreurs.parent2} />
 
             {/* Autorisation RPE */}
             <label className="preinsc-autorisation">
@@ -309,23 +380,24 @@ const Inscription = () => {
               <h3 className="preinsc-section__titre">👨‍👩‍👧‍👦 Place dans la fratrie</h3>
               <div className="p-form-groupe">
                 <label className="p-label">L'enfant est le… <span className="requis">*</span></label>
-                <select className="p-input" required value={pi.place_fratrie}
+                <select className={`p-input ${erreurs.place_fratrie ? 'p-input--erreur' : ''}`} value={pi.place_fratrie}
                   onChange={e => majPITop('place_fratrie', e.target.value)}>
                   <option value="">Choisir...</option>
                   {FRATRIEOPT.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
+                <Err msg={erreurs.place_fratrie} />
               </div>
             </div>
 
             {/* Personnes à contacter */}
             <div className="preinsc-intro-contacts">
               <p>
-                Indiquez deux personnes autorisées à venir chercher l'enfant ou à être contactées
-                en cas d'urgence (en dehors des parents).
+                Vous pouvez indiquer deux personnes autorisées à venir chercher l'enfant ou à être
+                contactées en cas d'urgence (en dehors des parents). Ces informations sont facultatives.
               </p>
             </div>
-            <ChampContact cle="contact1" label="Personne à contacter n°1" pi={pi} majPI={majPI} />
-            <ChampContact cle="contact2" label="Personne à contacter n°2" pi={pi} majPI={majPI} />
+            <ChampContact cle="contact1" label="Personne à contacter n°1" pi={pi} majPI={majPI} erreurs={erreurs.contact1} />
+            <ChampContact cle="contact2" label="Personne à contacter n°2" pi={pi} majPI={majPI} erreurs={erreurs.contact2} />
           </div>
         )}
 
@@ -519,7 +591,7 @@ const Inscription = () => {
           {etape < ETAPES.length - 1 ? (
             <button
               className="btn btn--primary"
-              onClick={() => setEtape(e => e + 1)}
+              onClick={etapeSuivante}
               disabled={etape === 1 && !form.enfant_id}
             >
               Continuer →

@@ -198,19 +198,21 @@
   50%       { transform: translateX(-50%) rotate(var(--angle)) translateY(-14px); }
 }
 
-/* ── 2d. Grande coccinelle animée ───────────────────────── */
+/* ── 2d. Grand logo animé ───────────────────────────────── */
 
-/* La coccinelle 🐞 principale : taille fluide entre 8rem et 14rem.
-   drop-shadow donne un halo orange sous la coccinelle.
+/* Le logo principal (remplace l'ancienne coccinelle emoji) : largeur
+   fluide entre 8rem et 14rem, mêmes proportions que l'ancien emoji.
+   drop-shadow donne un halo orange sous le logo.
    animation pulse : grossit légèrement toutes les 3 secondes. */
-.hero__coccinelle-grande {
-  font-size:   clamp(8rem, 15vw, 14rem);
+.hero__logo-grand {
+  width:       clamp(9.5rem, 18vw, 17rem);
+  height:      auto;
   filter:      drop-shadow(0 20px 40px rgba(255,152,0,0.3));
   animation:   pulse-coccinelle 3s ease-in-out infinite;
-  line-height: 1;
+  display:     block;
 }
 
-/* Animation de pulsation : légère respiration de la coccinelle */
+/* Animation de pulsation : légère respiration du logo */
 @keyframes pulse-coccinelle {
   0%, 100% { transform: scale(1);    }
   50%       { transform: scale(1.05); }
@@ -549,12 +551,15 @@
    on resserre un peu les grilles avant de passer en mode tablette */
 @media (max-width: 1279px) {
   .hero__contenu { gap: var(--space-2xl); }
-  .hero__coccinelle-grande { font-size: clamp(7rem, 13vw, 11rem); }
+  .hero__logo-grand { width: clamp(8.5rem, 15vw, 13.5rem); }
+  .hero__fond { transform: scale(0.9); }             /* Réduit tout le nuage de bulles d'un coup */
+  .hero__arc-en-ciel--1 { width: clamp(420px, 60vw, 780px); }
   .accueil-equipe__grille { gap: var(--space-lg); }
 }
 
 /* Tablette (≤1023px) :
-   - Hero : texte + visuel empilés
+   - Hero : texte + visuel empilés, arcs-en-ciel et bulles réduits
+     pour ne pas dominer un layout devenu vertical
    - Valeurs : 4 → 2 colonnes
    - Menus : 5 → 3 colonnes
    - Actualités : 3 → 2 colonnes
@@ -562,10 +567,14 @@
 @media (max-width: 1023px) {
   .hero { min-height: auto; padding: var(--space-2xl) 0; }
   .hero__contenu  { flex-direction: column; text-align: center; }
-  .hero__visuel   { order: -1; }              /* Coccinelle en premier sur tablette */
+  .hero__visuel   { order: -1; margin-bottom: var(--space-lg); }  /* Logo en premier sur tablette */
   .hero__texte    { max-width: 100%; }
   .hero__description { max-width: 100%; margin-left: auto; margin-right: auto; }
   .hero__actions  { justify-content: center; }
+  .hero__logo-grand { width: clamp(7rem, 20vw, 10rem); }
+  .hero__fond { transform: scale(0.75); }
+  .hero__arc-en-ciel--1 { width: clamp(340px, 55vw, 600px); }
+  .hero__deco { font-size: 2rem; }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
   .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
@@ -575,7 +584,10 @@
 
 /* Mobile (≤767px) : tout en 1 ou 2 colonnes, hero réduit */
 @media (max-width: 767px) {
-  .hero__coccinelle-grande { font-size: 6rem; }
+  .hero__logo-grand { width: 7.5rem; }
+  .hero__fond { transform: scale(0.55); }
+  .hero__arc-en-ciel--1 { width: clamp(260px, 70vw, 460px); }
+  .hero__deco { font-size: 1.9rem; gap: var(--space-lg); }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: 1fr; }
   .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
@@ -593,7 +605,9 @@
   .hero__surtitle { font-size: 0.75rem; padding: var(--space-xs) var(--space-sm); }
   .hero__titre { font-size: clamp(1.8rem, 8vw, 2.2rem); }
   .hero__description { font-size: 1rem; }
-  .hero__coccinelle-grande { font-size: 4.5rem; }
+  .hero__logo-grand { width: 5.5rem; }
+  .hero__fond { transform: scale(0.4); }
+  .hero__arc-en-ciel--1 { width: clamp(200px, 75vw, 320px); }
   .hero__actions { flex-direction: column; align-items: stretch; }
   .hero__deco { font-size: 1.8rem; gap: var(--space-md); }
   .chiffres__grille  { grid-template-columns: 1fr; }
@@ -609,6 +623,8 @@
    agrandit légèrement les cartes pour éviter l'étirement infini */
 @media (min-width: 1440px) {
   .hero__contenu { max-width: 1600px; margin: 0 auto; }
+  .hero__logo-grand { width: clamp(10rem, 16vw, 18rem); }
+  .hero__fond { transform: scale(1.1); }
   .chiffres__grille,
   .valeurs__grille,
   .accueil-equipe__grille,
