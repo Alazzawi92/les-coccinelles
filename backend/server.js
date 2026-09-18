@@ -11,6 +11,21 @@ const routes    = require('./src/routes');           // Toutes les routes
 
 const app = express(); // Créer l'application Express
 
+// ── PRÉFIXE D'HÉBERGEMENT (AlwaysData) ──────────────────────────────
+// Sur AlwaysData, le site est joignable via un chemin (ex: /api-coccinelles)
+// plutôt qu'un sous-domaine dédié. AlwaysData transmet l'URL complète telle
+// quelle (sans retirer ce préfixe), donc on le retire nous-mêmes avant que
+// les routes ne voient la requête. MOUNT_PREFIX est vide en local/Docker.
+const MOUNT_PREFIX = process.env.MOUNT_PREFIX || '';
+if (MOUNT_PREFIX) {
+  app.use((req, res, next) => {
+    if (req.url.startsWith(MOUNT_PREFIX)) {
+      req.url = req.url.slice(MOUNT_PREFIX.length) || '/';
+    }
+    next();
+  });
+}
+
 // ── MIDDLEWARES GLOBAUX ─────────────────────────────────────────────
 
 // Sécurité des headers HTTP (corrections rapport ZAP) :
