@@ -52,8 +52,20 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// Origines autorisées : la config FRONTEND_URL habituelle + l'IP locale
+// du poste de dev (permet de tester l'app depuis un téléphone connecté
+// au même réseau Wi-Fi, ex: http://192.168.1.234:3003).
+const ORIGINES_AUTORISEES = [
+  process.env.FRONTEND_URL || 'http://localhost:3000',
+  'http://localhost:3003',
+  'http://192.168.1.234:3003'
+];
 app.use(cors({
-  origin:      process.env.FRONTEND_URL || 'http://localhost:3000', // Autoriser le frontend
+  origin: (origin, callback) => {
+    // origin est undefined pour les requêtes sans navigateur (ex: Postman, curl)
+    if (!origin || ORIGINES_AUTORISEES.includes(origin)) return callback(null, true);
+    callback(new Error('Origine non autorisée par CORS'));
+  },
   credentials: true                   // Autoriser les cookies et headers d'auth
 }));
 app.use(express.json());              // Parser le corps des requêtes JSON
@@ -78,19 +90,23 @@ app.get('/health', (req, res) => {
 });
 
 // ── DÉMARRAGE DU SERVEUR ─────────────────────────────────────────────
-const PORT = process.env.PORT || 3001 ;
+const PORT = process.env.PORT || 3001;
+// Hébergeurs mutualisés type AlwaysData imposent d'écouter sur une IP
+// précise (fournie via la variable IP, en IPv6) plutôt que sur toutes
+// les interfaces. En local, IP n'existe pas : on écoute alors partout.
+const IP = process.env.IP;
 
 sequelize.authenticate() // Vérifier la connexion à la BDD
   .then(() => {
     console.log('✅ Base de données connectée');
-    app.listen(PORT, () => {
+    app.listen(PORT, IP, () => {
       console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
     });
   })
   .catch(err => {
     console.error('❌ Erreur connexion BDD :', err.message);
     console.log('⚠️  Démarrage sans BDD (mode dégradé)');
-    app.listen(PORT, () => {
+    app.listen(PORT, IP, () => {
       console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
     });
   });
