@@ -183,14 +183,17 @@ const Familles = () => {
                       >
                         {u.actif ? 'Désactiver' : 'Activer'}
                       </button>
-                      {/* Bouton supprimer : visible uniquement si l'admin a le droit */}
+                      {/* Bouton supprimer : visible uniquement si l'admin a le droit.
+                          Icône seule (avec title en info-bulle) pour que la ligne
+                          d'actions tienne sans provoquer de scroll horizontal. */}
                       {peutSupprimer(u) && (
                         <button
                           className="btn btn--sm btn-supprimer"
                           onClick={() => setUserASupprimer(u)}
                           title="Supprimer ce compte"
+                          aria-label="Supprimer ce compte"
                         >
-                          🗑️ Supprimer
+                          🗑️
                         </button>
                       )}
                     </div>

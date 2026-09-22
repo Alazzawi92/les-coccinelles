@@ -133,9 +133,9 @@
 /* Restaure le padding uniquement sur la 1ère et dernière colonne
    pour que le contenu ne colle pas aux bords de la carte */
 .a-card:has(.a-table) .a-table th:first-child,
-.a-card:has(.a-table) .a-table td:first-child { padding-left:  var(--space-xl); }
+.a-card:has(.a-table) .a-table td:first-child { padding-left:  var(--space-lg); }
 .a-card:has(.a-table) .a-table th:last-child,
-.a-card:has(.a-table) .a-table td:last-child  { padding-right: var(--space-xl); }
+.a-card:has(.a-table) .a-table td:last-child  { padding-right: var(--space-lg); }
 
 /* Quand la carte a un titre ET un tableau : garde le padding du titre */
 .a-card:has(.a-card__titre):has(.a-table) {
@@ -146,14 +146,17 @@
   padding-right: var(--space-xl);
 }
 
-/* En-tête du tableau : fond gris clair, texte en majuscules et petit */
-.a-table th { background: #F8F9FA; padding: var(--space-md) var(--space-lg); text-align: left; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+/* En-tête du tableau : fond gris clair, texte en majuscules et petit.
+   padding horizontal resserré (space-md au lieu de space-lg) pour que
+   les colonnes tiennent sans scroll horizontal sur un écran standard. */
+.a-table th { background: #F8F9FA; padding: var(--space-md); text-align: left; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
 
-/* Cellules de données : espacement, séparateur bas, texte standard.
+/* Cellules de données : espacement resserré, séparateur bas, texte standard.
    white-space:nowrap évite qu'un numéro de téléphone ou une date ne
    repasse à la ligne et n'allonge la hauteur de la ligne — le tableau
-   défile déjà horizontalement (min-width sur .a-table) si trop étroit. */
-.a-table td { padding: var(--space-md) var(--space-lg); border-bottom: 1px solid #F0F0F0; font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; white-space: nowrap; }
+   défile encore horizontalement (min-width sur .a-table) en dernier
+   recours sur les très petits écrans. */
+.a-table td { padding: var(--space-md); border-bottom: 1px solid #F0F0F0; font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; white-space: nowrap; }
 
 /* Ligne survolée : fond gris très clair pour feedback */
 .a-table tbody tr:hover td { background: #FAFAFA; }
