@@ -230,24 +230,32 @@
 
 /* ── 10. PIÈCES JOINTES — DANS LES BULLES ───────────────── */
 
-/* Conteneur de la PJ dans une bulle */
+/* Conteneur de la PJ dans une bulle. max-width limité à 220px SEULEMENT
+   pour les images (miniature) — le lien document (.pj-bulle--doc) l'annule
+   juste en dessous pour laisser respirer le nom du fichier. */
 .pj-bulle     { display: block; margin-top: var(--space-sm); border-radius: var(--radius-md); overflow: hidden; max-width: 220px; }
 
 /* Image reçue dans la bulle : pleine largeur, max 200px de haut */
 .pj-bulle__img { width: 100%; max-height: 200px; object-fit: cover; display: block; border-radius: var(--radius-md); }
 
-/* Document PDF/autre dans la bulle : pilule semi-transparente */
+/* Document PDF/autre dans la bulle : pilule semi-transparente.
+   max-width plus généreux + le nom passe à la ligne au lieu d'être tronqué. */
 .pj-bulle--doc {
   display:         inline-flex;
-  align-items:     center;
+  align-items:     flex-start;
   gap:             6px;
+  max-width:       100%;
+  width:           fit-content;
   background:      rgba(255,255,255,0.2);   /* Semi-transparent sur fond orange */
-  padding:         6px var(--space-md);
-  border-radius:   var(--radius-pill);
+  padding:         var(--space-sm) var(--space-md);
+  border-radius:   var(--radius-lg);
   font-size:       0.85rem;
   color:           inherit;
   text-decoration: none;
 }
+
+/* Nom du fichier : passe à la ligne si besoin, ne se tronque plus */
+.pj-bulle--doc span { white-space: normal; word-break: break-word; }
 
 /* Sur fond gris (bulle de l'autre) : fond gris légèrement foncé */
 .message-bulle--autre .pj-bulle--doc { background: rgba(0,0,0,0.07); color: var(--text-dark); }
