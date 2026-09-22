@@ -65,29 +65,18 @@ const ListeActualites = () => {
           /* ── Liste + pagination ──────────────────────────── */
           ) : (
             <>
-              <div className="actualites-liste-grille">
+              <div className="actualites-liste-pile">
                 {actualites.map((actu) => (
-                  <article key={actu.id} className="actu-carte-grande">
-                    {/* Image de couverture (si renseignée) */}
-                    {actu.image && (
-                      <div className="actu-carte-grande__image">
-                        <img src={actu.image} alt={actu.titre} />
-                      </div>
-                    )}
-                    <div className="actu-carte-grande__corps">
-                      {/* Date formatée en français */}
-                      <p className="actu-date">
-                        {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
-                          day: 'numeric', month: 'long', year: 'numeric'
-                        })}
-                      </p>
-                      <h2 className="actu-titre-liste">{actu.titre}</h2>
-                      <p className="actu-extrait">{actu.extrait}</p>
-                      <Link to={`/actualites/${actu.id}`} className="btn btn--outline btn--sm">
-                        Lire la suite →
-                      </Link>
-                    </div>
-                  </article>
+                  <Link key={actu.id} to={`/actualites/${actu.id}`} className="actu-carte-simple">
+                    {/* Date formatée en français */}
+                    <p className="actu-date">
+                      {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
+                        day: 'numeric', month: 'long', year: 'numeric'
+                      })}
+                    </p>
+                    <h2 className="actu-titre-liste">{actu.titre}</h2>
+                    <p className="actu-extrait">{actu.extrait}</p>
+                  </Link>
                 ))}
               </div>
 
