@@ -11,10 +11,30 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import api from '../../../services/api';
+import api, { BACKEND_URL as BACKEND } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Messagerie.css';
+
+// ── Sous-composant : affichage d'une pièce jointe ────────────
+// Vérifie l'extension pour rendre une image inline ou un lien document
+const PieceJointe = ({ pj, nom }) => {
+  if (!pj) return null;
+  const url      = `${BACKEND}${pj}`;
+  const estImage = /\.(jpg|jpeg|png|webp)$/i.test(pj);
+  if (estImage) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle">
+        <img src={url} alt={nom || 'image'} className="pj-bulle__img" />
+      </a>
+    );
+  }
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle pj-bulle--doc">
+      📄 <span>{nom || 'Document'}</span>
+    </a>
+  );
+};
 
 const MessagerieAdmin = () => {
   // Utilisateur admin connecté (pour déterminer si on est expéditeur ou destinataire)
@@ -251,13 +271,16 @@ const MessagerieAdmin = () => {
               <div className="conv-messages-fil">
                 {/* Message original */}
                 <div className={`msg-bulle ${detail.expediteur_id === user.id ? 'msg-bulle--moi' : 'msg-bulle--autre'}`}>
-                  <p>{detail.contenu}</p>
+                  {/* Masque le contenu '📎' (placeholder pièce jointe seule) */}
+                  {detail.contenu !== '📎' && <p>{detail.contenu}</p>}
+                  <PieceJointe pj={detail.piece_jointe} nom={detail.piece_jointe_nom} />
                   <small>{formatDate(detail.created_at)}</small>
                 </div>
                 {/* Réponses associées */}
                 {detail.reponses?.map(r => (
                   <div key={r.id} className={`msg-bulle ${r.expediteur_id === user.id ? 'msg-bulle--moi' : 'msg-bulle--autre'}`}>
-                    <p>{r.contenu}</p>
+                    {r.contenu !== '📎' && <p>{r.contenu}</p>}
+                    <PieceJointe pj={r.piece_jointe} nom={r.piece_jointe_nom} />
                     <small>{formatDate(r.created_at)}</small>
                   </div>
                 ))}

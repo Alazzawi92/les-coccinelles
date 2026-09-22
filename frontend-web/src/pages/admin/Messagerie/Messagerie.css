@@ -111,6 +111,33 @@
 /* Horodatage sous le message : petit et discret */
 .msg-bulle small  { font-size: 0.7rem; opacity: 0.6; display: block; margin-top: 4px; }
 
+/* ── PIÈCES JOINTES — DANS LES BULLES ───────────────────── */
+
+/* Conteneur de la PJ dans une bulle */
+.pj-bulle     { display: block; margin-top: var(--space-sm); border-radius: var(--radius-md); overflow: hidden; max-width: 220px; }
+
+/* Image reçue dans la bulle : pleine largeur, max 200px de haut */
+.pj-bulle__img { width: 100%; max-height: 200px; object-fit: cover; display: block; border-radius: var(--radius-md); }
+
+/* Document PDF/autre dans la bulle : pilule semi-transparente */
+.pj-bulle--doc {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             6px;
+  background:      rgba(255,255,255,0.2);   /* Semi-transparent sur fond sombre (msg-bulle--moi) */
+  padding:         6px var(--space-md);
+  border-radius:   var(--radius-pill);
+  font-size:       0.85rem;
+  color:           inherit;
+  text-decoration: none;
+}
+
+/* Sur fond blanc (bulle de l'autre) : fond gris léger */
+.msg-bulle--autre .pj-bulle--doc { background: rgba(0,0,0,0.07); color: var(--text-dark); }
+
+/* Au survol : légère transparence */
+.pj-bulle--doc:hover { opacity: 0.85; }
+
 /* ── 8. ZONE DE RÉPONSE ─────────────────────────────────── */
 
 /* Barre de saisie en bas : textarea + bouton Envoyer côte à côte */
