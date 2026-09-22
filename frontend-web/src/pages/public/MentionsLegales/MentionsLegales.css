@@ -31,10 +31,42 @@
   gap:            var(--space-2xl);
 }
 
+/* ── SOMMAIRE ────────────────────────────────────────────── */
+
+/* Encart de navigation en haut de page : liste des 16 sections,
+   ancres internes pour sauter directement à une section. scroll-margin-top
+   sur les titres (plus bas) évite que la topbar ne masque le titre visé. */
+.mentions-sommaire {
+  background:    var(--bg-gray);
+  border-radius: var(--radius-xl);
+  padding:       var(--space-lg) var(--space-xl);
+}
+.mentions-sommaire__titre {
+  font-family:   var(--font-heading);
+  font-size:     1rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+.mentions-sommaire ol {
+  list-style:            none;
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   4px var(--space-lg);
+  counter-reset:         sommaire;
+}
+.mentions-sommaire li { counter-increment: sommaire; font-size: 0.85rem; }
+.mentions-sommaire li::before { content: counter(sommaire) '. '; color: var(--primary); font-weight: 700; }
+.mentions-sommaire a { color: var(--text-gray); text-decoration: none; }
+.mentions-sommaire a:hover { color: var(--primary); text-decoration: underline; }
+
 /* ── 3. SECTIONS DES MENTIONS ───────────────────────────── */
 
+/* Ancre de section : décale le point de scroll pour ne pas passer
+   sous la barre de navigation sticky lors d'un clic dans le sommaire */
+.mentions-section, .mentions-alerte { scroll-margin-top: var(--space-xl); }
+
 /* Titre de section : orange, avec ligne de séparation orange pâle */
-.mentions-section h2 {
+.mentions-section h2, .mentions-alerte h2 {
   font-family:    var(--font-heading);
   font-size:      1.4rem;
   color:          var(--primary);
@@ -42,6 +74,22 @@
   padding-bottom: var(--space-sm);
   border-bottom:  2px solid var(--primary-light);
 }
+
+/* Encart mis en avant (ex: données de santé) : fond orange très pâle
+   + bordure gauche marquée, pour signaler une section sensible */
+.mentions-alerte {
+  background:    var(--primary-light);
+  border-left:   4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding:       var(--space-lg) var(--space-xl);
+}
+.mentions-alerte p, .mentions-alerte li {
+  font-size:     0.95rem;
+  color:         var(--text-dark);
+  line-height:   1.8;
+  margin-bottom: var(--space-sm);
+}
+.mentions-alerte ul { list-style: disc; padding-left: var(--space-xl); }
 
 /* Paragraphes et éléments de liste : texte gris, grande hauteur de ligne */
 .mentions-section p, .mentions-section li {
@@ -134,9 +182,10 @@
 /* Mobile (480-767px) : un peu plus d'air que le petit mobile */
 @media (max-width: 767px) {
   .mentions-contenu    { gap: var(--space-xl); }
-  .mentions-section h2 { font-size: 1.2rem; }
-  .mentions-section p,
-  .mentions-section li { font-size: 0.9rem; }
+  .mentions-sommaire ol { grid-template-columns: 1fr; }
+  .mentions-section h2, .mentions-alerte h2 { font-size: 1.2rem; }
+  .mentions-section p, .mentions-alerte p,
+  .mentions-section li, .mentions-alerte li { font-size: 0.9rem; }
   .mentions-tableau th,
   .mentions-tableau td { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
   .mentions-date       { text-align: left; }
@@ -145,10 +194,11 @@
 /* Petit mobile (≤479px) : typo réduite, espacements resserrés */
 @media (max-width: 479px) {
   .mentions-contenu   { gap: var(--space-lg); }
-  .mentions-section h2 { font-size: 1.1rem; margin-bottom: var(--space-sm); padding-bottom: 4px; }
-  .mentions-section p,
-  .mentions-section li { font-size: 0.85rem; line-height: 1.6; }
-  .mentions-section ul { padding-left: var(--space-lg); }
+  .mentions-sommaire  { padding: var(--space-md) var(--space-lg); }
+  .mentions-section h2, .mentions-alerte h2 { font-size: 1.1rem; margin-bottom: var(--space-sm); padding-bottom: 4px; }
+  .mentions-section p, .mentions-alerte p,
+  .mentions-section li, .mentions-alerte li { font-size: 0.85rem; line-height: 1.6; }
+  .mentions-section ul, .mentions-alerte ul { padding-left: var(--space-lg); }
   .mentions-tableau th,
   .mentions-tableau td { padding: var(--space-sm) var(--space-md); font-size: 0.8rem; }
   .droits-grille      { gap: var(--space-sm); }
