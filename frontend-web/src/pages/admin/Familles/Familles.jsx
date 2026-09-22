@@ -173,12 +173,11 @@ const Familles = () => {
                   </td>
                   <td>
                     <div className="a-actions">
-                      <button className="btn btn--ghost btn--sm" onClick={() => setUserDetail(u)}>
+                      <button className="btn-voir" onClick={() => setUserDetail(u)}>
                         voir
                       </button>
                       <button
-                        className={`btn btn--sm ${u.actif ? 'btn--outline' : 'btn--primary'}`}
-                        style={u.actif ? { borderColor: 'var(--error)', color: 'var(--error)' } : {}}
+                        className={`btn-toggle ${u.actif ? 'btn-toggle--desactiver' : 'btn-toggle--activer'}`}
                         onClick={() => toggleActif(u)}
                       >
                         {u.actif ? 'Désactiver' : 'Activer'}
