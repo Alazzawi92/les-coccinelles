@@ -141,7 +141,7 @@ const Accueil = () => {
           {/* 4 indicateurs clés : places, horaires, jours, équipe */}
           {[
             { valeur: '30',   unite: 'places', label: 'enfants accueillis',   icone: '👶' },
-            { valeur: '8h30', unite: 'à 18h',  label: "horaires d'ouverture", icone: '🕐' },
+            { valeur: '7h30', unite: 'à 18h30', label: "horaires d'ouverture", icone: '🕐' },
             { valeur: '5',    unite: 'jours',  label: 'du lundi au vendredi', icone: '📅' },
             { valeur: '100%', unite: '',       label: 'équipe diplômée',       icone: '🎓' }
           ].map(({ valeur, unite, label, icone }) => (
