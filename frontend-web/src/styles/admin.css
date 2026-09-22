@@ -149,8 +149,11 @@
 /* En-tête du tableau : fond gris clair, texte en majuscules et petit */
 .a-table th { background: #F8F9FA; padding: var(--space-md) var(--space-lg); text-align: left; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
 
-/* Cellules de données : espacement, séparateur bas, texte standard */
-.a-table td { padding: var(--space-md) var(--space-lg); border-bottom: 1px solid #F0F0F0; font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; }
+/* Cellules de données : espacement, séparateur bas, texte standard.
+   white-space:nowrap évite qu'un numéro de téléphone ou une date ne
+   repasse à la ligne et n'allonge la hauteur de la ligne — le tableau
+   défile déjà horizontalement (min-width sur .a-table) si trop étroit. */
+.a-table td { padding: var(--space-md) var(--space-lg); border-bottom: 1px solid #F0F0F0; font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; white-space: nowrap; }
 
 /* Ligne survolée : fond gris très clair pour feedback */
 .a-table tbody tr:hover td { background: #FAFAFA; }
