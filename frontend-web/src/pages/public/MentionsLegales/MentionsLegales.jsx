@@ -265,10 +265,21 @@ const MentionsLegales = () => {
                 <div className="mentions-section" id="cookies">
                   <h2>14. Cookies et traceurs</h2>
                   <p>
-                    Ce site n'utilise <strong>aucun cookie</strong>, qu'il soit publicitaire, de mesure d'audience ou de
-                    traçage. L'authentification à votre espace personnel repose sur un jeton technique (JWT) conservé
-                    dans le stockage local de votre navigateur (<em>localStorage</em>), qui n'est ni transmis à des tiers,
-                    ni utilisé à des fins de suivi publicitaire, et qui est supprimé à la déconnexion.
+                    L'authentification à votre espace personnel repose sur un jeton technique (JWT) conservé dans le
+                    stockage local de votre navigateur (<em>localStorage</em>), et non sur un cookie : il n'est ni
+                    transmis à des tiers, ni utilisé à des fins de suivi publicitaire, et il est supprimé à la déconnexion.
+                  </p>
+                  <p>
+                    Le site dépose par ailleurs les cookies suivants, soumis à votre consentement lors de votre première
+                    visite (bannière en bas de page) :
+                  </p>
+                  <ul>
+                    <li><strong>Cookies essentiels</strong> (toujours actifs, pas de consentement requis) : mémorisation de votre choix de consentement lui-même. Durée de conservation : 6 mois.</li>
+                    <li><strong>Cookies de mesure d'audience</strong> (facultatifs, soumis à votre accord) : statistiques de fréquentation anonymisées, permettant d'améliorer le site. Durée de conservation : 13 mois.</li>
+                  </ul>
+                  <p>
+                    Vous pouvez modifier votre choix à tout moment en effaçant les données de navigation de ce site dans
+                    votre navigateur, ce qui réaffichera la bannière de consentement.
                   </p>
                 </div>
 

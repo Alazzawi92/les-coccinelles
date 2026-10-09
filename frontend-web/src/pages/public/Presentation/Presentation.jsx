@@ -36,14 +36,14 @@ const Presentation = () => {
               : <>
                   <p>La crèche Les Coccinelles est une structure d'accueil associative implantée à Puilboreau, en Charente-Maritime. Ouverte depuis plusieurs années, elle accueille les enfants de <strong>0 à 3 ans</strong> dans un cadre bienveillant et sécurisant.</p>
                   <p>Gérée par une association de parents, notre crèche fonctionne en étroite collaboration avec les familles. Nous croyons fermement que la confiance entre parents et professionnels est la clé d'un accueil réussi pour chaque enfant.</p>
-                  <p>Notre capacité d'accueil est de <strong>30 places</strong>, réparties entre temps plein, temps partiel et accueil occasionnel, afin de répondre aux besoins variés des familles.</p>
+                  <p>Notre capacité d'accueil est de <strong>28 places</strong>, réparties entre temps plein, temps partiel et accueil occasionnel, afin de répondre aux besoins variés des familles.</p>
                 </>
             }
           </div>
           <div className="contenu-visuel">
             <div className="visuel-emoji-grand">🏡</div>
             <div className="info-bulle">
-              <strong>30 places</strong>
+              <strong>28 places</strong>
               <span>enfants de 0 à 3 ans</span>
             </div>
           </div>

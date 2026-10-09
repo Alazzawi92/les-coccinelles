@@ -20,58 +20,126 @@
 @import '../../../styles/variables.css';
 @import '../../../styles/pages-publiques.css';
 
-/* ── 2. LISTE EMPILÉE ───────────────────────────────────── */
+/* ── 2. GRILLE DE CARTES ─────────────────────────────────── */
 
-/* Une seule colonne, cartes empilées les unes sous les autres */
-.actualites-liste-pile {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--space-lg);
-  margin-top:     var(--space-2xl);
+/* Grille responsive : autant de colonnes de 300px minimum que la
+   largeur le permet, une seule colonne sur mobile. */
+.actualites-grille {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
 }
 
-/* ── 3. CARTE D'ACTUALITÉ SIMPLE ─────────────────────────── */
+/* ── 3. CARTE D'ACTUALITÉ ────────────────────────────────── */
 
-/* Carte minimaliste : date + titre + résumé, toute la carte est
-   cliquable (c'est un <Link>) et mène au détail de l'actualité. */
-.actu-carte-simple {
-  display:         block;
+/* Carte illustrée : vignette (image ou dégradé+icône) + contenu.
+   Toute la carte est cliquable (c'est un <Link>). */
+.actu-carte {
+  display:         flex;
+  flex-direction:  column;
+  overflow:        hidden;
   background:      var(--white);
   border-radius:   var(--radius-xl);
   box-shadow:      var(--shadow-sm);
   border:          1px solid var(--bg-gray);
-  padding:         var(--space-xl);
   transition:      var(--transition);
   text-decoration: none;
   color:           inherit;
 }
 
-/* Au survol : légère élévation + bordure orange, pour indiquer que
-   la carte est cliquable */
-.actu-carte-simple:hover {
-  box-shadow:  var(--shadow-md);
-  border-color: var(--primary);
-  transform:   translateY(-2px);
+/* Au survol : élévation marquée + ombre colorée + légère mise à l'échelle
+   de la vignette, pour un effet vivant et bien visible */
+.actu-carte:hover {
+  box-shadow: var(--shadow-colored);
+  transform:  translateY(-4px);
 }
 
-/* Date de publication */
-.actu-date        { font-size: 0.8rem; color: var(--text-light); }
+.actu-carte:hover .actu-carte__vignette img { transform: scale(1.06); }
+.actu-carte:hover .actu-carte__lire span    { transform: translateX(4px); }
+
+/* Vignette : image en haut de carte, ou dégradé de marque + icône si
+   l'actualité n'a pas d'image associée */
+.actu-carte__vignette {
+  position:   relative;
+  height:     170px;
+  overflow:   hidden;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+}
+
+.actu-carte__vignette img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.actu-carte__icone { font-size: 3rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+
+/* Corps de la carte */
+.actu-carte__corps {
+  display:        flex;
+  flex-direction: column;
+  flex:           1;
+  padding:        var(--space-lg);
+}
+
+/* Date de publication, en badge discret */
+.actu-date {
+  align-self:    flex-start;
+  font-size:     0.75rem;
+  font-weight:   700;
+  color:         var(--primary-dark);
+  background:    var(--primary-light);
+  padding:       2px 10px;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-sm);
+}
 
 /* Titre de l'actualité : Fredoka, grand */
-.actu-titre-liste { font-family: var(--font-heading); font-size: 1.3rem; color: var(--text-dark); line-height: 1.3; margin: var(--space-xs) 0 var(--space-sm); }
+.actu-titre-liste { font-family: var(--font-heading); font-size: 1.25rem; color: var(--text-dark); line-height: 1.3; margin: 0 0 var(--space-sm); }
 
-/* Extrait / résumé */
-.actu-extrait     { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
+/* Extrait / résumé : limité à 3 lignes pour garder des cartes uniformes */
+.actu-extrait {
+  font-size:   0.9rem;
+  color:       var(--text-gray);
+  line-height: 1.6;
+  flex:        1;
+  display:            -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient:  vertical;
+  overflow:    hidden;
+}
+
+/* Appel à l'action "Lire la suite" : apparaît ancré en bas de carte */
+.actu-carte__lire {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           4px;
+  margin-top:    var(--space-md);
+  font-size:     0.85rem;
+  font-weight:   700;
+  color:         var(--primary);
+}
+.actu-carte__lire span { display: inline-block; transition: transform 0.2s ease; }
 
 /* ── 4. ÉTATS ───────────────────────────────────────────── */
 
-/* Pile skeleton pendant le chargement : même disposition empilée que la liste */
-.chargement-grille { display: flex; flex-direction: column; gap: var(--space-lg); margin-top: var(--space-2xl); }
+/* Grille skeleton pendant le chargement : même disposition que la grille de cartes */
+.chargement-grille {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap:                   var(--space-xl);
+  margin-top:            var(--space-2xl);
+}
 
 /* Carte skeleton : animation shimmer gauche→droite.
    Le dégradé animé simule un "chargement en cours". */
 .skeleton-card {
-  height:          140px;
+  height:          280px;
   background:      linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation:       shimmer 1.5s infinite;
@@ -142,9 +210,10 @@
   .detail-image { max-height: 350px; }
 }
 
-/* Mobile (≤767px) : cartes et détail resserrés */
+/* Mobile (≤767px) : grille sur une seule colonne, détail resserré */
 @media (max-width: 767px) {
-  .actu-carte-simple { padding: var(--space-lg); }
+  .actualites-grille, .chargement-grille { grid-template-columns: 1fr; }
+  .actu-carte__corps { padding: var(--space-lg); }
   .detail-article { padding: var(--space-xl); }
   .detail-titre { font-size: 1.6rem; }
   .pagination { gap: var(--space-md); flex-wrap: wrap; }
@@ -152,7 +221,8 @@
 
 /* Petit mobile (≤479px) : typo et espacements resserrés */
 @media (max-width: 479px) {
-  .actu-carte-simple { padding: var(--space-md); }
+  .actu-carte__vignette { height: 140px; }
+  .actu-carte__corps { padding: var(--space-md); }
   .actu-titre-liste { font-size: 1.1rem; }
   .detail-image { max-height: 220px; }
   .detail-article { padding: var(--space-lg); }
@@ -164,7 +234,7 @@
 
 /* Grand écran (≥1440px) : limite de largeur pour éviter l'étirement infini */
 @media (min-width: 1440px) {
-  .actualites-liste-pile,
-  .chargement-grille { max-width: 900px; margin-left: auto; margin-right: auto; }
+  .actualites-grille,
+  .chargement-grille { max-width: 1200px; margin-left: auto; margin-right: auto; }
   .detail-article { max-width: 1000px; margin-left: auto; margin-right: auto; }
 }

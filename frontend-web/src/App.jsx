@@ -8,6 +8,7 @@
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import AppRouter from './router';
+import CookieBanner from './components/ui/CookieBanner/CookieBanner';
 import './styles/global.css'; // Styles globaux (reset + variables)
 
 const App = () => {
@@ -34,6 +35,9 @@ const App = () => {
 
       {/* AppRouter gère toutes les routes de l'application */}
       <AppRouter />
+
+      {/* Bannière RGPD de consentement aux cookies */}
+      <CookieBanner />
 
     </AuthProvider>
   );

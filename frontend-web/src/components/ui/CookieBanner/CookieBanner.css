@@ -1,0 +1,71 @@
+/* ============================================================
+   FICHIER : CookieBanner.css
+   RÔLE    : Style de la bannière de consentement cookies,
+             fixée en bas de l'écran, au-dessus du contenu.
+   ============================================================ */
+
+.cookie-banniere {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-toast);
+  background: var(--white);
+  border-top: 2px solid var(--primary-light);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-lg);
+}
+
+.cookie-banniere__contenu {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.cookie-banniere__texte {
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cookie-banniere__texte a {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.cookie-banniere__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background: var(--bg-gray);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.cookie-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.cookie-banniere__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 767px) {
+  .cookie-banniere__actions {
+    justify-content: stretch;
+  }
+
+  .cookie-banniere__actions .btn {
+    flex: 1;
+  }
+}

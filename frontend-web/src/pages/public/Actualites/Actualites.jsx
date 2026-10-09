@@ -65,17 +65,27 @@ const ListeActualites = () => {
           /* ── Liste + pagination ──────────────────────────── */
           ) : (
             <>
-              <div className="actualites-liste-pile">
+              <div className="actualites-grille">
                 {actualites.map((actu) => (
-                  <Link key={actu.id} to={`/actualites/${actu.id}`} className="actu-carte-simple">
-                    {/* Date formatée en français */}
-                    <p className="actu-date">
-                      {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
-                        day: 'numeric', month: 'long', year: 'numeric'
-                      })}
-                    </p>
-                    <h2 className="actu-titre-liste">{actu.titre}</h2>
-                    <p className="actu-extrait">{actu.extrait}</p>
+                  <Link key={actu.id} to={`/actualites/${actu.id}`} className="actu-carte">
+                    {/* Vignette : image de l'actualité, sinon fond dégradé avec icône */}
+                    <div className="actu-carte__vignette">
+                      {actu.image
+                        ? <img src={actu.image} alt={actu.titre} />
+                        : <span className="actu-carte__icone">📰</span>}
+                    </div>
+
+                    <div className="actu-carte__corps">
+                      {/* Date formatée en français, en badge */}
+                      <span className="actu-date">
+                        {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
+                          day: 'numeric', month: 'long', year: 'numeric'
+                        })}
+                      </span>
+                      <h2 className="actu-titre-liste">{actu.titre}</h2>
+                      <p className="actu-extrait">{actu.extrait}</p>
+                      <span className="actu-carte__lire">Lire la suite <span>→</span></span>
+                    </div>
                   </Link>
                 ))}
               </div>
