@@ -7,6 +7,9 @@ export const register = (donnees) => api.post('/auth/register', donnees);
 // Se connecter
 export const login = (email, password) => api.post('/auth/login', { email, password });
 
+// Se connecter (ou créer un compte parent) avec le jeton d'identité Google
+export const googleLogin = (credential) => api.post('/auth/google', { credential });
+
 // Se déconnecter
 export const logout = () => api.post('/auth/logout');
 

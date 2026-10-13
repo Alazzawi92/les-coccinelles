@@ -56,6 +56,14 @@ router.post('/register', limiteAuth, reglesRegister, validerDonnees, authControl
 // POST /api/auth/login — Connexion
 router.post('/login', limiteAuth, reglesLogin, validerDonnees, authController.login);
 
+// POST /api/auth/google — Connexion / inscription avec Google (parents uniquement)
+router.post('/google',
+  limiteAuth,
+  body('credential').isString().notEmpty().withMessage('Jeton Google manquant'),
+  validerDonnees,
+  authController.googleLogin
+);
+
 // POST /api/auth/logout — Déconnexion (token requis)
 router.post('/logout', verifierToken, authController.logout);
 

@@ -127,7 +127,8 @@ const MentionsLegales = () => {
                           ['Documents', "Pièces d'identité, carnet de santé, justificatifs, attestations CAF", "Constitution et instruction du dossier d'inscription"],
                           ['Photographies', "Photos de l'enfant prises à la crèche", 'Partage avec la famille, sous réserve de consentement'],
                           ['Messagerie', 'Contenu des messages et pièces jointes échangés avec l’équipe', 'Communication entre les familles et la crèche'],
-                          ['Connexion', 'Identifiants de session (jeton JWT), journal technique de connexion', "Authentification et sécurité de l'accès à l'espace personnel"]
+                          ['Connexion', 'Identifiants de session (jeton JWT), journal technique de connexion', "Authentification et sécurité de l'accès à l'espace personnel"],
+                          ['Connexion avec Google (facultative)', 'Identifiant Google, nom, prénom et adresse email transmis par Google', "Création du compte et connexion sans mot de passe, uniquement si le parent choisit ce mode de connexion"]
                         ].map(([cat, don, fin]) => (
                           <tr key={cat}><td>{cat}</td><td>{don}</td><td>{fin}</td></tr>
                         ))}
@@ -169,6 +170,7 @@ const MentionsLegales = () => {
                     <li>À la direction et à l'équipe éducative de la crèche, dans la limite de leurs fonctions respectives ;</li>
                     <li>Aux membres du Conseil d'Administration et du bureau, pour les seules données nécessaires à la gestion administrative et financière ;</li>
                     <li>Aux prestataires techniques hébergeant la plateforme (Vercel Inc. et Alwaysdata SAS, cf. section « Hébergement »), en qualité de sous-traitants au sens de l'article 28 du RGPD ;</li>
+                    <li>À Google Ireland Limited, uniquement pour les parents qui choisissent « Se connecter avec Google » : Google vérifie l'identité du parent et transmet à la crèche ses nom, prénom et adresse email. Aucune donnée de la crèche (enfants, santé, messages) n'est transmise à Google. Ce mode de connexion est facultatif : la connexion par email et mot de passe reste toujours disponible ;</li>
                     <li>Aux organismes publics compétents (CAF, PMI, communes de Puilboreau, Saint-Xandre et Esnandes) lorsque la loi ou une convention de financement l'exige.</li>
                   </ul>
                   <p>Aucune donnée n'est cédée, vendue ou transmise à des fins commerciales ou publicitaires.</p>

@@ -11,7 +11,8 @@ USE coccinelles_db;
 CREATE TABLE IF NOT EXISTS users (
   id             INT AUTO_INCREMENT PRIMARY KEY,
   email          VARCHAR(255) NOT NULL UNIQUE,            -- Email de connexion (unique)
-  password       VARCHAR(255) NOT NULL,                   -- Mot de passe hashé (bcrypt)
+  password       VARCHAR(255) NULL,                       -- Mot de passe hashé (bcrypt), NULL si compte Google
+  google_id      VARCHAR(255) NULL UNIQUE,                -- Identifiant Google (connexion avec Google)
   role           ENUM('parent','admin','super_admin') DEFAULT 'parent', -- Rôle utilisateur
   prenom         VARCHAR(100) NOT NULL,                   -- Prénom
   nom            VARCHAR(100) NOT NULL,                   -- Nom de famille

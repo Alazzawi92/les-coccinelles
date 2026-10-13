@@ -1,0 +1,14 @@
+/* ============================================================
+   FICHIER : GoogleButton.css
+   RÔLE    : Mise en page du bouton "Se connecter avec Google".
+             Le bouton lui-même est dessiné par Google (iframe) :
+             on gère seulement son conteneur.
+   ============================================================ */
+
+/* Conteneur pleine largeur, bouton centré */
+.google-bouton {
+  display:         flex;
+  justify-content: center;
+  width:           100%;
+  min-height:      var(--space-xl); /* Réserve la place pendant le chargement du script */
+}

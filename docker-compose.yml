@@ -51,6 +51,7 @@ services:
       JWT_EXPIRES_IN:    15m
       JWT_REFRESH_SECRET: dev_refresh_secret_change_in_production_xxxxxxxxxx
       JWT_REFRESH_EXPIRES_IN: 7d
+      GOOGLE_CLIENT_ID:  ${GOOGLE_CLIENT_ID:-}  # Lu depuis le fichier .env à la racine (vide = Google désactivé)
     ports:
       - "3001:3001"
     volumes:
@@ -72,6 +73,7 @@ services:
     environment:
       REACT_APP_API_URL: http://localhost:3001/api
       REACT_APP_NAME:    Les Coccinelles
+      REACT_APP_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}  # Même Client ID que le backend
       CHOKIDAR_USEPOLLING: "true"              # Nécessaire pour le hot-reload sous Docker Desktop (Windows)
       WATCHPACK_POLLING:   "true"
     ports:

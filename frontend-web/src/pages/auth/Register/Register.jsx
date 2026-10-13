@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { register as registerService } from '../../../services/auth.service';
+import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import { useAuth } from '../../../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
@@ -194,6 +195,21 @@ const Register = () => {
             {envoi ? '⏳ Création...' : 'Créer mon compte'}
           </button>
         </form>
+
+        <div className="auth-divider">ou</div>
+
+        {/* Inscription avec Google : le compte est créé puis validé par un admin */}
+        <GoogleButton
+          texte="signup_with"
+          onConnexion={(data) => {
+            // Compte Google déjà existant et validé : connexion directe
+            connecter(data.user, data.accessToken, data.refreshToken);
+            toast.success(`Bienvenue, ${data.user.prenom} !`);
+            navigate('/parent/tableau-de-bord', { replace: true });
+          }}
+          onCompteCree={(message) => navigate('/connexion', { state: { message } })}
+          onErreur={setErreur}
+        />
 
         <p className="auth-pied">
           Déjà un compte ? <Link to="/connexion">Se connecter</Link>

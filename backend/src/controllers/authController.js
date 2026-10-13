@@ -5,6 +5,38 @@ const { User } = require('../models');
 const { genererAccessToken, genererRefreshToken, verifierRefreshToken } = require('../config/jwt');
 const { envoyerVerificationEmail, envoyerResetMotDePasse } = require('../services/mail.service');
 const { succes, erreur, cree } = require('../utils/response');
+const { OAuth2Client } = require('google-auth-library');
+
+// Client Google utilisé uniquement pour vérifier la signature des jetons
+// reçus du bouton "Se connecter avec Google" (aucun appel à l'API Google).
+const clientGoogle = new OAuth2Client();
+
+// ── RÉPONSE DE CONNEXION COMMUNE ────────────────────────────────────
+// Génère les tokens JWT et renvoie le profil, pour la connexion
+// classique (email + mot de passe) comme pour la connexion Google.
+const repondreConnexion = async (res, user) => {
+  // Générer les deux tokens JWT
+  const accessToken  = genererAccessToken(user.id, user.role);
+  const refreshToken = genererRefreshToken(user.id);
+
+  // Sauvegarder le refresh token en base (pour pouvoir le révoquer)
+  await user.update({ refresh_token: refreshToken });
+
+  // Retourner les tokens et les infos utilisateur (sans données sensibles)
+  return succes(res, {
+    accessToken,
+    refreshToken,
+    user: {
+      id:            user.id,
+      email:         user.email,
+      prenom:        user.prenom,
+      nom:           user.nom,
+      role:          user.role,
+      avatar:        user.avatar,
+      email_verifie: user.email_verifie
+    }
+  }, 'Connexion réussie');
+};
 
 // ── INSCRIPTION ─────────────────────────────────────────────────────
 // POST /api/auth/register
@@ -76,33 +108,18 @@ const login = async (req, res) => {
       return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
     }
 
+    // Compte créé via Google : pas de mot de passe local à comparer
+    if (!user.password) {
+      return erreur(res, 'Ce compte utilise la connexion Google. Cliquez sur « Se connecter avec Google » ou définissez un mot de passe via « Oublié ? ».', 401);
+    }
+
     // Vérifier le mot de passe avec bcrypt
     const motDePasseValide = await bcrypt.compare(password, user.password);
     if (!motDePasseValide) {
       return erreur(res, 'Email ou mot de passe incorrect', 401);
     }
 
-    // Générer les deux tokens JWT
-    const accessToken  = genererAccessToken(user.id, user.role);
-    const refreshToken = genererRefreshToken(user.id);
-
-    // Sauvegarder le refresh token en base (pour pouvoir le révoquer)
-    await user.update({ refresh_token: refreshToken });
-
-    // Retourner les tokens et les infos utilisateur (sans données sensibles)
-    return succes(res, {
-      accessToken,
-      refreshToken,
-      user: {
-        id:            user.id,
-        email:         user.email,
-        prenom:        user.prenom,
-        nom:           user.nom,
-        role:          user.role,
-        avatar:        user.avatar,
-        email_verifie: user.email_verifie
-      }
-    }, 'Connexion réussie');
+    return repondreConnexion(res, user);
 
   } catch (err) {
     console.error('Erreur login :', err);
@@ -111,6 +128,81 @@ const login = async (req, res) => {
 
 };
 
+
+// ── CONNEXION / INSCRIPTION AVEC GOOGLE ─────────────────────────────
+// POST /api/auth/google
+// Le frontend envoie le jeton d'identité (ID token) fourni par Google.
+// On vérifie nous-mêmes sa signature et son destinataire : on ne fait
+// jamais confiance aux infos envoyées directement par le navigateur.
+const googleLogin = async (req, res) => {
+  try {
+    // Fonctionnalité désactivée si aucun Client ID n'est configuré
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return erreur(res, "La connexion Google n'est pas activée", 503);
+    }
+
+    // Vérifier la signature du jeton et qu'il a bien été émis pour NOTRE application
+    let infos;
+    try {
+      const ticket = await clientGoogle.verifyIdToken({
+        idToken:  req.body.credential,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
+      infos = ticket.getPayload();
+    } catch {
+      return erreur(res, 'Jeton Google invalide ou expiré', 401);
+    }
+
+    // Refuser une adresse non vérifiée par Google : sinon quelqu'un pourrait
+    // se faire passer pour le propriétaire d'un compte existant
+    if (!infos.email || !infos.email_verified) {
+      return erreur(res, "Votre adresse Google n'est pas vérifiée", 401);
+    }
+
+    const email = infos.email.toLowerCase();
+
+    // Chercher le compte : d'abord par identifiant Google, sinon par email
+    let user = await User.findOne({ where: { google_id: infos.sub } })
+            || await User.findOne({ where: { email } });
+
+    // Les comptes administrateurs se connectent uniquement par mot de passe
+    if (user && user.role !== 'parent') {
+      return erreur(res, 'Les comptes administrateurs doivent se connecter avec leur mot de passe', 403);
+    }
+
+    if (!user) {
+      // Aucun compte : créer un compte parent sans mot de passe,
+      // bloqué jusqu'à validation par l'administrateur (comme /register)
+      user = await User.create({
+        email,
+        password:      null,
+        google_id:     infos.sub,
+        prenom:        infos.given_name  || email.split('@')[0],
+        nom:           infos.family_name || '-',
+        actif:         false,
+        email_verifie: true // Adresse déjà vérifiée par Google
+      });
+
+      return cree(res, null, 'Compte créé avec Google. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.');
+    }
+
+    // Compte existant pas encore relié à Google : on le relie
+    if (!user.google_id) {
+      await user.update({ google_id: infos.sub, email_verifie: true });
+    }
+
+    // Même règle que la connexion classique : compte validé obligatoire
+    if (!user.actif) {
+      return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
+    }
+
+    return repondreConnexion(res, user);
+
+  } catch (err) {
+    console.error('Erreur connexion Google :', err);
+    return erreur(res, 'Erreur lors de la connexion avec Google');
+  }
+};
 
 // ── DÉCONNEXION ─────────────────────────────────────────────────────
 // POST /api/auth/logout
@@ -255,6 +347,7 @@ const verifyEmail = async (req, res) => {
 module.exports = {
   register,
   login,
+  googleLogin,
   logout,
   refreshToken,
   forgotPassword,

@@ -16,7 +16,11 @@ const User = sequelize.define('User', {
   },
   password: {
     type:      DataTypes.STRING(255),
-    allowNull: false
+    allowNull: true // NULL pour un compte créé via Google (pas de mot de passe local)
+  },
+  google_id: {
+    type:   DataTypes.STRING(255),
+    unique: true // Identifiant Google ("sub") qui relie le compte à Google
   },
   role: {
     type:         DataTypes.ENUM('parent', 'admin', 'super_admin'),

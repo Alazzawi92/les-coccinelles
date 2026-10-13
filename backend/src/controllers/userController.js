@@ -32,6 +32,12 @@ const changerMotDePasse = async (req, res) => {
 
     // Récupérer le user avec le mot de passe (excluded par défaut)
     const userAvecPassword = await User.findByPk(req.user.id);
+
+    // Compte créé via Google : aucun ancien mot de passe à vérifier
+    if (!userAvecPassword.password) {
+      return erreur(res, 'Votre compte utilise la connexion Google. Utilisez « Mot de passe oublié » pour définir un mot de passe.', 400);
+    }
+
     const valide = await bcrypt.compare(ancienPassword, userAvecPassword.password);
 
     if (!valide) {

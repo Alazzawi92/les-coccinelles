@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
+import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Login.css';
@@ -22,6 +23,7 @@ const Login = () => {
   const [envoi,   setEnvoi]   = useState(false);  // Désactive le bouton pendant l'envoi
   const [erreur,  setErreur]  = useState('');      // Message d'erreur API
   const [voirMdp, setVoirMdp] = useState(false);  // Afficher/masquer le mot de passe
+  const [info,    setInfo]    = useState('');      // Message d'info (ex: compte Google créé)
 
   // ── Hooks de navigation ───────────────────────────────────
   const { connecter } = useAuth();
@@ -31,30 +33,46 @@ const Login = () => {
   // Destination après connexion : page demandée avant la redirection (ou dashboard)
   const destination = location.state?.from?.pathname || '/parent/tableau-de-bord';
 
+  // ── Après une connexion réussie (mot de passe ou Google) ──
+  const terminerConnexion = (data) => {
+    // Sauvegarde les tokens et l'utilisateur dans le contexte
+    connecter(data.user, data.accessToken, data.refreshToken);
+    toast.success(`Bienvenue, ${data.user.prenom} !`);
+
+    // Rediriger admin/super_admin vers leur page d'accueil dédiée.
+    // L'admin simple n'a pas accès au dashboard (réservé au super_admin,
+    // voir SuperAdminRoute) : il part directement sur l'émargement.
+    if (data.user.role === 'super_admin') {
+      navigate('/admin/tableau-de-bord', { replace: true });
+    } else if (data.user.role === 'admin') {
+      navigate('/admin/emargement', { replace: true });
+    } else {
+      navigate(destination, { replace: true }); // Retour à la page demandée
+    }
+  };
+
+  // ── Connexion Google : nouveau compte en attente de validation ──
+  const compteGoogleCree = (message) => {
+    setErreur('');
+    setInfo(message);
+  };
+
+  // ── Connexion Google : erreur (compte bloqué, admin, jeton invalide...) ──
+  const erreurGoogle = (message) => {
+    setInfo('');
+    setErreur(message);
+  };
+
   // ── Soumission du formulaire ──────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();   // Évite le rechargement de page natif
     setErreur('');
+    setInfo('');
     setEnvoi(true);
 
     try {
-      const res  = await loginService(email, password);
-      const data = res.data.data;
-
-      // Sauvegarde les tokens et l'utilisateur dans le contexte
-      connecter(data.user, data.accessToken, data.refreshToken);
-      toast.success(`Bienvenue, ${data.user.prenom} !`);
-
-      // Rediriger admin/super_admin vers leur page d'accueil dédiée.
-      // L'admin simple n'a pas accès au dashboard (réservé au super_admin,
-      // voir SuperAdminRoute) : il part directement sur l'émargement.
-      if (data.user.role === 'super_admin') {
-        navigate('/admin/tableau-de-bord', { replace: true });
-      } else if (data.user.role === 'admin') {
-        navigate('/admin/emargement', { replace: true });
-      } else {
-        navigate(destination, { replace: true }); // Retour à la page demandée
-      }
+      const res = await loginService(email, password);
+      terminerConnexion(res.data.data);
     } catch (err) {
       // Affiche le message d'erreur de l'API (ex: "Identifiants invalides")
       const msg = err.response?.data?.message || 'Erreur de connexion';
@@ -78,10 +96,10 @@ const Login = () => {
         <p className="auth-sous-titre">Accédez à votre espace personnel</p>
 
         {/* Message d'info après inscription (redirigé depuis /creer-un-compte) */}
-        {location.state?.message && (
+        {(info || location.state?.message) && (
           <div className="auth-info" role="status">
             <span>ℹ️</span>
-            <span>{location.state.message}</span>
+            <span>{info || location.state.message}</span>
           </div>
         )}
 
@@ -155,6 +173,14 @@ const Login = () => {
         </form>
 
         <div className="auth-divider">ou</div>
+
+        {/* Connexion avec Google (parents uniquement) */}
+        <GoogleButton
+          texte="signin_with"
+          onConnexion={terminerConnexion}
+          onCompteCree={compteGoogleCree}
+          onErreur={erreurGoogle}
+        />
 
         {/* Lien vers la création de compte */}
         <p className="auth-pied">
