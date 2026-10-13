@@ -104,6 +104,17 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Serveur Les Coccinelles opérationnel' });
 });
 
+// ── GESTION DES ERREURS CORS ─────────────────────────────────────────
+// Une origine non autorisée déclenche une erreur dans le middleware cors.
+// Sans ce gestionnaire, Express renverrait une page HTML "500 Internal
+// Server Error" : on répond plutôt un 403 JSON propre, sans détail interne.
+app.use((err, req, res, next) => {
+  if (err.message === 'Origine non autorisée par CORS') {
+    return res.status(403).json({ success: false, message: 'Origine non autorisée' });
+  }
+  next(err);
+});
+
 // ── DÉMARRAGE DU SERVEUR ─────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
 // Hébergeurs mutualisés type AlwaysData imposent d'écouter sur une IP
