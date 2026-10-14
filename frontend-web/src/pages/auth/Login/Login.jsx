@@ -8,14 +8,18 @@
 
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
+import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Login.css';
 
 const Login = () => {
+
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // ── État du formulaire ────────────────────────────────────
   const [email,   setEmail]   = useState('');
@@ -37,7 +41,7 @@ const Login = () => {
   const terminerConnexion = (data) => {
     // Sauvegarde les tokens et l'utilisateur dans le contexte
     connecter(data.user, data.accessToken, data.refreshToken);
-    toast.success(`Bienvenue, ${data.user.prenom} !`);
+    toast.success(t('auth.bienvenue', { prenom: data.user.prenom }));
 
     // Rediriger admin/super_admin vers leur page d'accueil dédiée.
     // L'admin simple n'a pas accès au dashboard (réservé au super_admin,
@@ -75,7 +79,7 @@ const Login = () => {
       terminerConnexion(res.data.data);
     } catch (err) {
       // Affiche le message d'erreur de l'API (ex: "Identifiants invalides")
-      const msg = err.response?.data?.message || 'Erreur de connexion';
+      const msg = err.response?.data?.message || t('auth.login.erreur');
       setErreur(msg);
     }
 
@@ -86,20 +90,24 @@ const Login = () => {
     <div className="auth-page">
       <div className="auth-card">
 
+        {/* Sélecteur de langue (pas de layout sur les pages auth) */}
+        <LanguageSwitcher className="auth-langue" />
+
         {/* Logo + sous-titre */}
         <div className="auth-logo">
-          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
-          <span className="auth-logo__sous">Espace parents & administration</span>
+          <img src="/images/logo.png" alt={t('auth.logoAlt')} className="auth-logo__img" />
+          <span className="auth-logo__sous">{t('auth.login.logoSous')}</span>
         </div>
 
-        <h1 className="auth-titre">Connexion</h1>
-        <p className="auth-sous-titre">Accédez à votre espace personnel</p>
+        <h1 className="auth-titre">{t('auth.login.titre')}</h1>
+        <p className="auth-sous-titre">{t('auth.login.sousTitre')}</p>
 
-        {/* Message d'info après inscription (redirigé depuis /creer-un-compte) */}
-        {(info || location.state?.message) && (
+        {/* Message d'info après inscription (redirigé depuis /creer-un-compte).
+            messageCle = clé de traduction (suit la langue) ; message = texte de l'API */}
+        {(info || location.state?.messageCle || location.state?.message) && (
           <div className="auth-info" role="status">
             <span>ℹ️</span>
-            <span>{info || location.state.message}</span>
+            <span>{info || (location.state.messageCle ? t(location.state.messageCle) : location.state.message)}</span>
           </div>
         )}
 
@@ -117,13 +125,13 @@ const Login = () => {
           {/* Champ email */}
           <div className="form-groupe">
             <label htmlFor="email" className="form-label">
-              Adresse email <span className="requis">*</span>
+              {t('auth.email')} <span className="requis">*</span>
             </label>
             <input
               id="email"
               type="email"
               className="form-input"
-              placeholder="marie@exemple.fr"
+              placeholder={t('auth.emailPlaceholder')}
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -136,11 +144,11 @@ const Login = () => {
           <div className="form-groupe">
             <div className="form-label-row">
               <label htmlFor="password" className="form-label">
-                Mot de passe <span className="requis">*</span>
+                {t('auth.motDePasse')} <span className="requis">*</span>
               </label>
               {/* Lien "Oublié ?" à droite du label */}
               <Link to="/mot-de-passe-oublie" className="form-lien-oublie">
-                Oublié ?
+                {t('auth.login.oublie')}
               </Link>
             </div>
             <div className="password-wrapper">
@@ -159,20 +167,20 @@ const Login = () => {
                 type="button"
                 className="password-toggle"
                 onClick={() => setVoirMdp(v => !v)}
-                aria-label={voirMdp ? 'Masquer' : 'Afficher'}
+                aria-label={voirMdp ? t('auth.masquer') : t('auth.afficher')}
               >
-                {voirMdp ? 'Masquer' : 'Voir'}
+                {voirMdp ? t('auth.masquer') : t('auth.voir')}
               </button>
             </div>
           </div>
 
           {/* Bouton soumission : désactivé si champs vides ou en cours d'envoi */}
           <button type="submit" className="btn-auth" disabled={envoi || !email || !password}>
-            {envoi ? '⏳ Connexion...' : 'Se connecter'}
+            {envoi ? t('auth.login.connexion') : t('auth.login.seConnecter')}
           </button>
         </form>
 
-        <div className="auth-divider">ou</div>
+        <div className="auth-divider">{t('auth.ou')}</div>
 
         {/* Connexion avec Google (parents uniquement) */}
         <GoogleButton
@@ -184,13 +192,13 @@ const Login = () => {
 
         {/* Lien vers la création de compte */}
         <p className="auth-pied">
-          Pas encore de compte ?{' '}
-          <Link to="/creer-un-compte">Créer un compte parent</Link>
+          {t('auth.login.pasDeCompte')}{' '}
+          <Link to="/creer-un-compte">{t('auth.login.creerCompte')}</Link>
         </p>
 
         {/* Retour au site public */}
         <p className="auth-pied">
-          <Link to="/">← Retour au site</Link>
+          <Link to="/">{t('auth.retourSite')}</Link>
         </p>
 
       </div>

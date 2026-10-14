@@ -11,23 +11,21 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Absences.css';
 
 // Options de motif d'absence pour le formulaire
+// (libellé traduit via common.motifAbsence.<value>)
 const MOTIFS = [
-  { value: 'maladie',     label: '🤒 Maladie' },
-  { value: 'vacances',    label: '🏖️ Vacances' },
-  { value: 'rendez_vous', label: '🏥 RDV médical' },
-  { value: 'autre',       label: '📝 Autre' }
+  { value: 'maladie',     icone: '🤒' },
+  { value: 'vacances',    icone: '🏖️' },
+  { value: 'rendez_vous', icone: '🏥' },
+  { value: 'autre',       icone: '📝' }
 ];
-
-// En-têtes des colonnes du calendrier (lundi en premier)
-const JOURS_SEMAINE = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-// Noms des mois en français pour l'affichage
-const MOIS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
 
 // ── Construction du tableau de jours d'un mois ───────────────
 // Retourne un tableau avec null pour les cases vides du début
@@ -52,6 +50,13 @@ const dateEstAbsente = (date, absences) => {
 };
 
 const Absences = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Libellé traduit d'un motif (avec son icône), ou la valeur brute si inconnue
+  const libelleMotif = (valeur) => {
+    const m = MOTIFS.find(mo => mo.value === valeur);
+    return m ? `${m.icone} ${t(`common.motifAbsence.${m.value}`)}` : valeur;
+  };
   // Liste des absences de ce parent
   const [absences,    setAbsences]    = useState([]);
   // Liste des enfants pour le formulaire
@@ -95,19 +100,17 @@ const Absences = () => {
       setModeForm(false);
       // Réinitialise le formulaire
       setForm({ enfant_id:'', date_debut:'', date_fin:'', motif:'', description:'' });
-      toast.success('Absence déclarée !');
+      toast.success(t('parent.absences.toastDeclaree'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur lors de la déclaration');
+      toast.error(err.response?.data?.message || t('parent.absences.erreurDeclaration'));
     }
     setEnvoi(false);
   };
 
   // ── Libellé + classe CSS selon le statut ─────────────────
-  const statutInfo = (s) => ({
-    en_attente: { label:'En attente',  class:'en_attente' },
-    validee:    { label:'Validée',     class:'validee'    },
-    refusee:    { label:'Refusée',     class:'refusee'    }
-  }[s] || { label: s, class: 'en_attente' });
+  const statutInfo = (s) => (['en_attente', 'validee', 'refusee'].includes(s)
+    ? { label: t(`common.statutAbsence.${s}`), class: s }
+    : { label: s, class: 'en_attente' });
 
   // ── Couleur de fond pour le calendrier par statut ─────────
   const couleurAbsence = (statut) => ({
@@ -132,21 +135,21 @@ const Absences = () => {
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="absences-page">
 
       {/* ── EN-TÊTE AVEC BOUTONS VUE ──────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Mes <span>absences</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.absences.titre" components={{ s: <span /> }} /></h1>
         <div style={{ display:'flex', gap:'var(--space-sm)' }}>
           {/* Basculer entre vue liste et vue calendrier */}
-          <button className={`btn btn--sm ${vue === 'liste' ? 'btn--primary' : 'btn--ghost'}`} onClick={() => setVue('liste')}>☰ Liste</button>
-          <button className={`btn btn--sm ${vue === 'calendrier' ? 'btn--primary' : 'btn--ghost'}`} onClick={() => setVue('calendrier')}>📅 Calendrier</button>
+          <button className={`btn btn--sm ${vue === 'liste' ? 'btn--primary' : 'btn--ghost'}`} onClick={() => setVue('liste')}>{t('parent.absences.liste')}</button>
+          <button className={`btn btn--sm ${vue === 'calendrier' ? 'btn--primary' : 'btn--ghost'}`} onClick={() => setVue('calendrier')}>{t('parent.absences.calendrier')}</button>
           {/* Bouton "+ Déclarer" caché quand le formulaire est ouvert */}
           {!modeForm && (
-            <button className="btn btn--primary btn--sm" onClick={() => setModeForm(true)}>+ Déclarer</button>
+            <button className="btn btn--primary btn--sm" onClick={() => setModeForm(true)}>{t('parent.absences.declarer')}</button>
           )}
         </div>
       </div>
@@ -154,51 +157,51 @@ const Absences = () => {
       {/* ── FORMULAIRE DE DÉCLARATION ─────────────────────────── */}
       {modeForm && (
         <div className="p-card" style={{ marginBottom:'var(--space-xl)' }}>
-          <h2 className="p-card__titre">📅 Déclarer une absence</h2>
+          <h2 className="p-card__titre">📅 {t('parent.absences.formTitre')}</h2>
           <form className="p-form" onSubmit={handleSubmit}>
             <div className="p-form-groupe">
-              <label className="p-label">Enfant concerné <span className="requis">*</span></label>
+              <label className="p-label">{t('parent.absences.enfant')} <span className="requis">*</span></label>
               <select className="p-input" value={form.enfant_id} onChange={e => setForm(p=>({...p,enfant_id:e.target.value}))} required>
-                <option value="">Choisir...</option>
+                <option value="">{t('common.choisir')}</option>
                 {enfants.map(e => <option key={e.id} value={e.id}>{e.prenom} {e.nom}</option>)}
               </select>
             </div>
             {/* Plage de dates : min sur date_debut = aujourd'hui, min sur date_fin = date_debut */}
             <div className="p-form-row">
               <div className="p-form-groupe">
-                <label className="p-label">Du <span className="requis">*</span></label>
+                <label className="p-label">{t('parent.absences.du')} <span className="requis">*</span></label>
                 <input type="date" className="p-input" value={form.date_debut} min={today}
                   onChange={e => setForm(p=>({...p,date_debut:e.target.value}))} required />
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Au <span className="requis">*</span></label>
+                <label className="p-label">{t('parent.absences.au')} <span className="requis">*</span></label>
                 <input type="date" className="p-input" value={form.date_fin} min={form.date_debut || today}
                   onChange={e => setForm(p=>({...p,date_fin:e.target.value}))} required />
               </div>
             </div>
             {/* Motif : boutons radio en pills */}
             <div className="p-form-groupe">
-              <label className="p-label">Motif <span className="requis">*</span></label>
+              <label className="p-label">{t('parent.absences.motif')} <span className="requis">*</span></label>
               <div className="motifs-choix">
                 {MOTIFS.map(m => (
                   <label key={m.value} className={`motif-option ${form.motif === m.value ? 'motif-option--actif' : ''}`}>
                     <input type="radio" name="motif" value={m.value} checked={form.motif === m.value}
                       onChange={e => setForm(p=>({...p,motif:e.target.value}))} />
-                    {m.label}
+                    {libelleMotif(m.value)}
                   </label>
                 ))}
               </div>
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Précisions (optionnel)</label>
+              <label className="p-label">{t('parent.absences.precisions')}</label>
               <textarea className="p-input p-textarea" rows={2} value={form.description}
-                onChange={e => setForm(p=>({...p,description:e.target.value}))} placeholder="Informations complémentaires..." />
+                onChange={e => setForm(p=>({...p,description:e.target.value}))} placeholder={t('parent.absences.precisionsPlaceholder')} />
             </div>
             <div style={{ display:'flex', gap:'var(--space-md)', justifyContent:'flex-end' }}>
-              <button type="button" className="btn btn--ghost" onClick={() => setModeForm(false)}>Annuler</button>
+              <button type="button" className="btn btn--ghost" onClick={() => setModeForm(false)}>{t('common.annuler')}</button>
               {/* Désactivé si aucun motif sélectionné */}
               <button type="submit" className="btn btn--primary" disabled={envoi || !form.motif}>
-                {envoi ? 'Envoi...' : 'Déclarer l\'absence'}
+                {envoi ? t('common.envoi') : t('parent.absences.declarerBtn')}
               </button>
             </div>
           </form>
@@ -210,13 +213,13 @@ const Absences = () => {
         absences.length === 0 ? (
           <div className="p-vide">
             <span className="p-vide__icone">📅</span>
-            <p>Vous n'avez pas encore déclaré d'absence.</p>
+            <p>{t('parent.absences.aucune')}</p>
           </div>
         ) : (
           <div className="p-card">
             <table className="p-table">
               <thead>
-                <tr><th>Enfant</th><th>Période</th><th>Durée</th><th>Motif</th><th>Statut</th></tr>
+                <tr><th>{t('parent.absences.colEnfant')}</th><th>{t('parent.absences.colPeriode')}</th><th>{t('parent.absences.colDuree')}</th><th>{t('parent.absences.colMotif')}</th><th>{t('parent.absences.colStatut')}</th></tr>
               </thead>
               <tbody>
                 {absences.map(a => {
@@ -225,19 +228,18 @@ const Absences = () => {
                   // Durée en jours : +1 car la fin est inclusive
                   const duree = Math.ceil((fin - debut) / 86400000) + 1;
                   const s     = statutInfo(a.statut);
-                  const motif = MOTIFS.find(m => m.value === a.motif);
                   return (
                     <tr key={a.id}>
                       <td><strong>{a.enfant?.prenom || '—'}</strong></td>
                       <td>
-                        {debut.toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}
+                        {debut.toLocaleDateString(getLocale(),{day:'numeric',month:'short'})}
                         {' → '}
-                        {fin.toLocaleDateString('fr-FR',{day:'numeric',month:'short',year:'numeric'})}
+                        {fin.toLocaleDateString(getLocale(),{day:'numeric',month:'short',year:'numeric'})}
                       </td>
                       <td style={{ fontSize:'0.85rem', color:'var(--text-gray)' }}>
-                        {duree} jour{duree > 1 ? 's' : ''}
+                        {t('common.jours', { count: duree })}
                       </td>
-                      <td style={{ fontSize:'0.9rem' }}>{motif?.label || a.motif}</td>
+                      <td style={{ fontSize:'0.9rem' }}>{libelleMotif(a.motif)}</td>
                       <td>
                         <span className={`statut-badge statut-badge--${s.class}`}>{s.label}</span>
                       </td>
@@ -254,17 +256,17 @@ const Absences = () => {
       {vue === 'calendrier' && (
         <div className="p-card calendrier-wrapper">
 
-          {/* Navigation mois : ← {Mois Année} → */}
+          {/* Navigation mois : ← {Mois Année} → (nom du mois dans la langue active) */}
           <div className="calendrier-nav">
             <button className="btn btn--ghost btn--sm" onClick={() => naviguerMois(-1)}>←</button>
-            <h2 className="calendrier-mois-titre">{MOIS_FR[moisCalend]} {anneeCalend}</h2>
+            <h2 className="calendrier-mois-titre">{new Date(anneeCalend, moisCalend, 1).toLocaleDateString(getLocale(), { month: 'long', year: 'numeric' })}</h2>
             <button className="btn btn--ghost btn--sm" onClick={() => naviguerMois(1)}>→</button>
           </div>
 
           {/* Grille 7 colonnes (Lun–Dim) */}
           <div className="calendrier-grille">
             {/* En-têtes des jours */}
-            {JOURS_SEMAINE.map(j => (
+            {t('common.joursCourts', { returnObjects: true }).map(j => (
               <div key={j} className="calendrier-jour-label">{j}</div>
             ))}
 
@@ -287,7 +289,7 @@ const Absences = () => {
                   `}
                   // Fond coloré en inline pour refléter le statut de l'absence
                   style={absenceJour ? { background: couleurAbsence(absenceJour.statut) } : {}}
-                  title={absenceJour ? `Absence : ${MOTIFS.find(m=>m.value===absenceJour.motif)?.label || absenceJour.motif}` : ''}
+                  title={absenceJour ? t('parent.absences.absenceTitre', { motif: libelleMotif(absenceJour.motif) }) : ''}
                 >
                   <span className="calendrier-numero">{date.getDate()}</span>
                   {/* Emoji statut sur les jours d'absence */}
@@ -303,9 +305,9 @@ const Absences = () => {
 
           {/* Légende des statuts */}
           <div className="calendrier-legende">
-            <span className="legende-item legende-item--attente">⏳ En attente</span>
-            <span className="legende-item legende-item--validee">✅ Validée</span>
-            <span className="legende-item legende-item--refusee">❌ Refusée</span>
+            <span className="legende-item legende-item--attente">⏳ {t('common.statutAbsence.en_attente')}</span>
+            <span className="legende-item legende-item--validee">✅ {t('common.statutAbsence.validee')}</span>
+            <span className="legende-item legende-item--refusee">❌ {t('common.statutAbsence.refusee')}</span>
           </div>
         </div>
       )}

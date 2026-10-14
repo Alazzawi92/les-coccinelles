@@ -18,7 +18,9 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './SuiviAdmin.css';
@@ -53,6 +55,7 @@ const getStatutPresence = (emargement) => {
 };
 
 const SuiviAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste des enfants inscrits chargée une seule fois au montage
   const [enfants,    setEnfants]    = useState([]);
   // Date sélectionnée pour le suivi (défaut = aujourd'hui)
@@ -190,24 +193,24 @@ const SuiviAdmin = () => {
         setSuivis(prev => ({ ...prev, [enfantId]: { ...res.data.data, siestes: res.data.data.siestes || [] } }));
       }
       const enfant = enfants.find(e => e.id === enfantId);
-      toast.success(`Suivi de ${enfant?.prenom} enregistré`);
+      toast.success(t('admin.suivi.toastEnregistre', { prenom: enfant?.prenom }));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur enregistrement');
+      toast.error(err.response?.data?.message || t('admin.suivi.erreurEnregistrement'));
     }
     setEnvoi(prev => ({ ...prev, [enfantId]: false }));
   };
 
   // Garde : spinner si chargement des enfants en cours
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
   // Garde : aucun enfant présent ce jour-là (voir /admin/emargement pour pointer les arrivées)
-  if (enfants.length === 0) return <div className="a-vide"><span className="a-vide__icone">👶</span><p>Aucun enfant présent pour le moment.</p></div>;
+  if (enfants.length === 0) return <div className="a-vide"><span className="a-vide__icone">👶</span><p>{t('admin.suivi.aucunPresent')}</p></div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE AVEC SÉLECTEUR DE DATE ───────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Suivi <span>quotidien</span></h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.suivi.titre" components={{ s: <span /> }} /></h1>
         {/* max=today empêche de saisir un suivi dans le futur */}
         <input
           type="date"
@@ -220,7 +223,7 @@ const SuiviAdmin = () => {
       </div>
 
       <p style={{ color:'var(--text-gray)', fontSize:'0.9rem', marginBottom:'var(--space-xl)' }}>
-        Renseignez le suivi pour chaque enfant présent le {new Date(date).toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' })}.
+        {t('admin.suivi.intro', { date: new Date(date).toLocaleDateString(getLocale(), { weekday:'long', day:'numeric', month:'long' }) })}
       </p>
 
       {/* ── GRILLE DES CARTES ENFANT ──────────────────────────── */}
@@ -238,24 +241,24 @@ const SuiviAdmin = () => {
                 <span className="suivi-admin-avatar">{enfant.sexe === 'F' ? '👧' : '👦'}</span>
                 <h3>{enfant.prenom} {enfant.nom}</h3>
                 {/* Badge "Nouveau" si pas encore de suivi enregistré ce jour */}
-                {!s._nouveau && !s.id && <span className="suivi-nouveau-badge">Nouveau</span>}
+                {!s._nouveau && !s.id && <span className="suivi-nouveau-badge">{t('admin.suivi.nouveau')}</span>}
               </div>
 
               {/* ── REPAS ─────────────────────────────────────── */}
               {/* 3 selects côte à côte : matin, midi, gouter */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">🍽️ Repas</p>
+                <p className="suivi-admin-label">{t('admin.suivi.repas')}</p>
                 <div className="repas-row">
                   {['matin', 'midi', 'gouter'].map(r => (
                     <div key={r} className="repas-col">
-                      <p className="repas-mini-label">{r.charAt(0).toUpperCase() + r.slice(1)}</p>
+                      <p className="repas-mini-label">{t(`admin.suivi.moments.${r}`)}</p>
                       {/* Clé dynamique : repas_matin / repas_midi / repas_gouter */}
                       <select
                         className="repas-select"
                         value={s[`repas_${r}`]}
                         onChange={e => majSuivi(enfant.id, `repas_${r}`, e.target.value)}
                       >
-                        {REPAS_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                        {REPAS_OPTIONS.map(o => <option key={o} value={o}>{t(`common.repasValeur.${o}`)}</option>)}
                       </select>
                     </div>
                   ))}
@@ -265,7 +268,7 @@ const SuiviAdmin = () => {
               {/* ── BIBERON ───────────────────────────────────── */}
               {/* Compteur boutons - / + pour le nombre de biberons + champ ml optionnel */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">🍼 Biberon</p>
+                <p className="suivi-admin-label">{t('admin.suivi.biberon')}</p>
                 <div className="compteur-row">
                   {/* Bouton diminuer — ne descend pas en dessous de 0 */}
                   <button
@@ -282,7 +285,7 @@ const SuiviAdmin = () => {
                     className="compteur-btn"
                     onClick={() => incrementer(enfant.id, 'biberon_nb', 1)}
                   >+</button>
-                  <span className="compteur-unite">biberon{s.biberon_nb > 1 ? 's' : ''}</span>
+                  <span className="compteur-unite">{t('admin.suivi.biberons', { count: s.biberon_nb || 0 })}</span>
                 </div>
                 {/* Champ ml optionnel — s'affiche seulement si au moins 1 biberon */}
                 {s.biberon_nb > 0 && (
@@ -292,11 +295,11 @@ const SuiviAdmin = () => {
                       className="a-input biberon-ml-input"
                       value={s.biberon_ml || ''}
                       onChange={e => majSuivi(enfant.id, 'biberon_ml', e.target.value)}
-                      placeholder="ml par biberon"
+                      placeholder={t('admin.suivi.mlPlaceholder')}
                       min="0"
                       max="500"
                     />
-                    <span className="compteur-unite">ml / biberon</span>
+                    <span className="compteur-unite">{t('admin.suivi.mlUnite')}</span>
                   </div>
                 )}
               </div>
@@ -304,7 +307,7 @@ const SuiviAdmin = () => {
               {/* ── SIESTES MULTIPLES ─────────────────────────── */}
               {/* Liste de siestes avec début + fin + durée calculée automatiquement */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">😴 Siestes</p>
+                <p className="suivi-admin-label">{t('admin.suivi.siestes')}</p>
                 {/* Liste des siestes saisies */}
                 {(s.siestes || []).map((sv, idx) => {
                   const duree = calcDuree(sv.debut, sv.fin);
@@ -336,7 +339,7 @@ const SuiviAdmin = () => {
                         type="button"
                         className="sieste-supprimer"
                         onClick={() => supprimerSieste(enfant.id, idx)}
-                        title="Supprimer cette sieste"
+                        title={t('admin.suivi.supprimerSieste')}
                       >✕</button>
                     </div>
                   );
@@ -347,14 +350,14 @@ const SuiviAdmin = () => {
                   className="sieste-ajouter"
                   onClick={() => ajouterSieste(enfant.id)}
                 >
-                  + Ajouter une sieste
+                  {t('admin.suivi.ajouterSieste')}
                 </button>
               </div>
 
               {/* ── SELLES ────────────────────────────────────── */}
               {/* Bascule oui / non puis compteur + / - si oui */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">🚼 Selles</p>
+                <p className="suivi-admin-label">{t('admin.suivi.selles')}</p>
                 <div className="selles-row">
                   {/* Bouton Non */}
                   <button
@@ -364,13 +367,13 @@ const SuiviAdmin = () => {
                       majSuivi(enfant.id, 'selles', false);
                       majSuivi(enfant.id, 'selles_nb', 0);
                     }}
-                  >Non</button>
+                  >{t('admin.suivi.non')}</button>
                   {/* Bouton Oui */}
                   <button
                     type="button"
                     className={`selles-toggle ${s.selles ? 'selles-toggle--actif selles-toggle--oui' : ''}`}
                     onClick={() => majSuivi(enfant.id, 'selles', true)}
-                  >Oui</button>
+                  >{t('admin.suivi.oui')}</button>
                   {/* Compteur nombre de selles — visible uniquement si selles=oui */}
                   {s.selles && (
                     <div className="compteur-row compteur-row--inline">
@@ -386,7 +389,7 @@ const SuiviAdmin = () => {
                         className="compteur-btn"
                         onClick={() => incrementer(enfant.id, 'selles_nb', 1)}
                       >+</button>
-                      <span className="compteur-unite">fois</span>
+                      <span className="compteur-unite">{t('admin.suivi.fois')}</span>
                     </div>
                   )}
                 </div>
@@ -395,7 +398,7 @@ const SuiviAdmin = () => {
               {/* ── HUMEUR ────────────────────────────────────── */}
               {/* 5 boutons emoji cliquables, actif = fond coloré */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">😊 Humeur</p>
+                <p className="suivi-admin-label">{t('admin.suivi.humeur')}</p>
                 <div className="humeur-row">
                   {HUMEUR_OPTIONS.map(h => (
                     <button
@@ -403,6 +406,8 @@ const SuiviAdmin = () => {
                       type="button"
                       className={`humeur-btn ${s.humeur === h ? 'humeur-btn--actif' : ''}`}
                       onClick={() => majSuivi(enfant.id, 'humeur', h)}
+                      title={t(`common.humeur.${h}`)}
+                      aria-label={t(`common.humeur.${h}`)}
                     >
                       {/* Emoji correspondant à chaque valeur d'humeur */}
                       {{'joyeux':'😄','calme':'😊','fatigue':'😴','pleureur':'😢','autre':'😐'}[h]}
@@ -414,13 +419,13 @@ const SuiviAdmin = () => {
               {/* ── ACTIVITÉS & NOTE GÉNÉRALE ─────────────────── */}
               {/* Activités : visible par l'admin, note_generale : visible par le parent */}
               <div className="suivi-admin-section">
-                <p className="suivi-admin-label">🎨 Activités & note</p>
+                <p className="suivi-admin-label">{t('admin.suivi.activitesNote')}</p>
                 <textarea
                   className="a-input a-textarea"
                   rows={2}
                   value={s.activites || ''}
                   onChange={e => majSuivi(enfant.id, 'activites', e.target.value)}
-                  placeholder="Activités du jour..."
+                  placeholder={t('admin.suivi.activitesPlaceholder')}
                 />
                 {/* Note générale : message transmis aux parents dans leur espace */}
                 <textarea
@@ -428,7 +433,7 @@ const SuiviAdmin = () => {
                   rows={2}
                   value={s.note_generale || ''}
                   onChange={e => majSuivi(enfant.id, 'note_generale', e.target.value)}
-                  placeholder="Message pour les parents..."
+                  placeholder={t('admin.suivi.notePlaceholder')}
                   style={{ marginTop:'var(--space-sm)' }}
                 />
               </div>
@@ -440,7 +445,7 @@ const SuiviAdmin = () => {
                 onClick={() => sauvegarder(enfant.id)}
                 disabled={envoi[enfant.id]}
               >
-                {envoi[enfant.id] ? 'Enregistrement...' : '💾 Enregistrer'}
+                {envoi[enfant.id] ? t('common.enregistrement') : t('admin.suivi.enregistrer')}
               </button>
 
             </div>

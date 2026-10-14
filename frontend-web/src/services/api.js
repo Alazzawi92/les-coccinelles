@@ -1,5 +1,6 @@
 // Instance Axios configurée pour le projet Les Coccinelles
 import axios from 'axios';
+import i18n from '../i18n';
 
 // URL de base de l'API (ex: http://localhost:3002/api ou :3001 sous Docker)
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3002/api';
@@ -22,6 +23,8 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`; // Ajouter le token au header
   }
+  // Indiquer au backend la langue choisie par l'utilisateur (fr / en)
+  config.headers['Accept-Language'] = i18n.resolvedLanguage || 'fr';
   // Pour les FormData (uploads), supprimer le Content-Type JSON par défaut
   // afin qu'Axios le génère automatiquement avec le bon boundary multipart
   if (config.data instanceof FormData) {

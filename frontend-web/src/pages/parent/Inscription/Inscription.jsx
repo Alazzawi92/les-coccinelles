@@ -9,25 +9,32 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Inscription.css';
 
-const ETAPES = ['Pré-inscription', 'Enfant', 'Accueil', 'Documents', 'Commentaire', 'Récapitulatif'];
+// Préfixe des clés de traduction de la page
+const I = 'parent.inscription';
 
-const SITUATIONS = [
-  { value: 'marie',       label: 'Marié(e)' },
-  { value: 'pacse',       label: 'Pacsé(e)' },
-  { value: 'concubinage', label: 'En concubinage' },
-  { value: 'separe',      label: 'Séparé(e)' },
-  { value: 'divorce',     label: 'Divorcé(e)' },
-  { value: 'celibataire', label: 'Célibataire' },
-  { value: 'veuf',        label: 'Veuf / Veuve' },
-];
+// Nombre d'étapes (libellés traduits dans parent.inscription.etapes)
+const NB_ETAPES = 6;
 
+// Valeurs de situation familiale envoyées à l'API (libellés : parent.inscription.situations.*)
+const SITUATIONS = ['marie', 'pacse', 'concubinage', 'separe', 'divorce', 'celibataire', 'veuf'];
+
+// Valeurs enregistrées en base (gardées en français pour l'équipe) ;
+// le libellé affiché est traduit par position (parent.inscription.fratrie)
 const FRATRIEOPT = ['1er enfant', '2ème enfant', '3ème enfant', '4ème enfant ou plus'];
 
+// Jours enregistrés en base (gardés en français) ↔ clé de traduction common.jours.*
+const JOURS_ACCUEIL = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+
+// Pièces à fournir : le libellé "doc" (français) est envoyé à l'API avec le fichier
+// pour que l'équipe sache de quel document il s'agit ; l'affichage est traduit
+// par position (parent.inscription.pieces)
 const PIECES = [
   { icone: '🪪', doc: "Numéro d'assuré social dont dépend l'enfant + photocopie justificative" },
   { icone: '💳', doc: "Numéro d'Allocations Familiales (CAF PRO) + photocopie justificative" },
@@ -50,98 +57,108 @@ const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // cls() : ajoute la classe d'erreur si le champ correspondant est en erreur
 const cls = (erreurs, champ) => `p-input ${erreurs?.[champ] ? 'p-input--erreur' : ''}`;
 
-// Petit message d'erreur sous un champ
-const Err = ({ msg }) => (msg ? <p className="p-erreur">{msg}</p> : null);
+// Petit message d'erreur sous un champ (msg = clé de traduction de l'erreur)
+const Err = ({ msg }) => {
+  const { t } = useTranslation();
+  return msg ? <p className="p-erreur">{t(`${I}.erreurs.${msg}`)}</p> : null;
+};
 
-const ChampParent = ({ cle, label, pi, majPI, erreurs = {} }) => (
+const ChampParent = ({ cle, label, pi, majPI, erreurs = {} }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  return (
   <div className="preinsc-section">
     <h3 className="preinsc-section__titre">👤 {label}</h3>
     <div className="preinsc-grille">
       <div className="p-form-groupe">
-        <label className="p-label">Nom <span className="requis">*</span></label>
+        <label className="p-label">{t(`${I}.champs.nom`)} <span className="requis">*</span></label>
         <input type="text" className={cls(erreurs, 'nom')} value={pi[cle].nom}
-          onChange={e => majPI(cle, 'nom', e.target.value)} placeholder="Nom de famille" />
+          onChange={e => majPI(cle, 'nom', e.target.value)} placeholder={t(`${I}.champs.nomPlaceholder`)} />
         <Err msg={erreurs.nom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Prénom <span className="requis">*</span></label>
+        <label className="p-label">{t(`${I}.champs.prenom`)} <span className="requis">*</span></label>
         <input type="text" className={cls(erreurs, 'prenom')} value={pi[cle].prenom}
-          onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder="Prénom" />
+          onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder={t(`${I}.champs.prenomPlaceholder`)} />
         <Err msg={erreurs.prenom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Numéro de téléphone <span className="requis">*</span></label>
+        <label className="p-label">{t(`${I}.champs.telephone`)} <span className="requis">*</span></label>
         <input type="tel" className={cls(erreurs, 'telephone')} value={pi[cle].telephone}
-          onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder="06 XX XX XX XX" />
+          onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder={t(`${I}.champs.telephonePlaceholder`)} />
         <Err msg={erreurs.telephone} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Adresse email <span className="requis">*</span></label>
+        <label className="p-label">{t(`${I}.champs.email`)} <span className="requis">*</span></label>
         <input type="email" className={cls(erreurs, 'email')} value={pi[cle].email}
-          onChange={e => majPI(cle, 'email', e.target.value)} placeholder="email@exemple.fr" />
+          onChange={e => majPI(cle, 'email', e.target.value)} placeholder={t(`${I}.champs.emailPlaceholder`)} />
         <Err msg={erreurs.email} />
       </div>
     </div>
     <div className="p-form-groupe">
-      <label className="p-label">Adresse postale <span className="requis">*</span></label>
+      <label className="p-label">{t(`${I}.champs.adressePostale`)} <span className="requis">*</span></label>
       <input type="text" className={cls(erreurs, 'adresse')} value={pi[cle].adresse}
-        onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder="Numéro, rue, code postal, ville" />
+        onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder={t(`${I}.champs.adressePlaceholder`)} />
       <Err msg={erreurs.adresse} />
     </div>
     <div className="p-form-groupe">
-      <label className="p-label">Situation familiale <span className="requis">*</span></label>
+      <label className="p-label">{t(`${I}.champs.situation`)} <span className="requis">*</span></label>
       <select className={cls(erreurs, 'situation_familiale')} value={pi[cle].situation_familiale}
         onChange={e => majPI(cle, 'situation_familiale', e.target.value)}>
-        <option value="">Choisir...</option>
-        {SITUATIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+        <option value="">{t('common.choisir')}</option>
+        {SITUATIONS.map(s => <option key={s} value={s}>{t(`${I}.situations.${s}`)}</option>)}
       </select>
       <Err msg={erreurs.situation_familiale} />
     </div>
   </div>
-);
+  );
+};
 
-const ChampContact = ({ cle, label, pi, majPI, erreurs = {} }) => (
+const ChampContact = ({ cle, label, pi, majPI, erreurs = {} }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  return (
   <div className="preinsc-section preinsc-section--contact">
     <h3 className="preinsc-section__titre">🚨 {label}</h3>
-    <p className="preinsc-section__aide">Champs facultatifs — mais s'ils sont remplis, ils doivent être valides.</p>
+    <p className="preinsc-section__aide">{t(`${I}.contactAide`)}</p>
     <div className="preinsc-grille">
       <div className="p-form-groupe">
-        <label className="p-label">Nom</label>
+        <label className="p-label">{t(`${I}.champs.nom`)}</label>
         <input type="text" className={cls(erreurs, 'nom')} value={pi[cle].nom}
-          onChange={e => majPI(cle, 'nom', e.target.value)} placeholder="Nom de famille" />
+          onChange={e => majPI(cle, 'nom', e.target.value)} placeholder={t(`${I}.champs.nomPlaceholder`)} />
         <Err msg={erreurs.nom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Prénom</label>
+        <label className="p-label">{t(`${I}.champs.prenom`)}</label>
         <input type="text" className={cls(erreurs, 'prenom')} value={pi[cle].prenom}
-          onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder="Prénom" />
+          onChange={e => majPI(cle, 'prenom', e.target.value)} placeholder={t(`${I}.champs.prenomPlaceholder`)} />
         <Err msg={erreurs.prenom} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Numéro de téléphone</label>
+        <label className="p-label">{t(`${I}.champs.telephone`)}</label>
         <input type="tel" className={cls(erreurs, 'telephone')} value={pi[cle].telephone}
-          onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder="06 XX XX XX XX" />
+          onChange={e => majPI(cle, 'telephone', e.target.value)} placeholder={t(`${I}.champs.telephonePlaceholder`)} />
         <Err msg={erreurs.telephone} />
       </div>
       <div className="p-form-groupe">
-        <label className="p-label">Lien de parenté</label>
+        <label className="p-label">{t(`${I}.champs.parente`)}</label>
         <input type="text" className={cls(erreurs, 'parente')} value={pi[cle].parente}
-          onChange={e => majPI(cle, 'parente', e.target.value)} placeholder="Grand-parent, oncle, ami..." />
+          onChange={e => majPI(cle, 'parente', e.target.value)} placeholder={t(`${I}.champs.parentePlaceholder`)} />
         <Err msg={erreurs.parente} />
       </div>
     </div>
     <div className="p-form-groupe">
-      <label className="p-label">Adresse</label>
+      <label className="p-label">{t(`${I}.champs.adresse`)}</label>
       <input type="text" className={cls(erreurs, 'adresse')} value={pi[cle].adresse}
-        onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder="Numéro, rue, code postal, ville" />
+        onChange={e => majPI(cle, 'adresse', e.target.value)} placeholder={t(`${I}.champs.adressePlaceholder`)} />
       <Err msg={erreurs.adresse} />
     </div>
   </div>
-);
+  );
+};
 
 // ── Composant principal ──────────────────────────────────────
 
 const Inscription = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [etape,    setEtape]    = useState(0);
   const [enfants,  setEnfants]  = useState([]);
   const [envoi,    setEnvoi]    = useState(false);
@@ -189,10 +206,10 @@ const Inscription = () => {
         });
         await api.post(`/inscriptions/${inscriptionId}/documents`, fd);
       }
-      toast.success('Demande d\'inscription envoyée !');
+      toast.success(t(`${I}.toastEnvoyee`));
       navigate('/parent/mes-enfants');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur lors de l\'envoi');
+      toast.error(err.response?.data?.message || t(`${I}.erreurEnvoi`));
     }
     setEnvoi(false);
   };
@@ -202,14 +219,15 @@ const Inscription = () => {
   // Personnes à contacter : facultatives, mais format vérifié si rempli.
   const validerParent = (p) => {
     const e = {};
-    if (!p.nom.trim())                       e.nom = 'Nom requis';
-    if (!p.prenom.trim())                    e.prenom = 'Prénom requis';
-    if (!p.telephone.trim())                 e.telephone = 'Téléphone requis';
-    else if (!RE_TEL.test(p.telephone.trim())) e.telephone = 'Numéro invalide (ex : 06 12 34 56 78)';
-    if (!p.email.trim())                     e.email = 'Email requis';
-    else if (!RE_EMAIL.test(p.email.trim())) e.email = 'Adresse email invalide';
-    if (!p.adresse.trim())                   e.adresse = 'Adresse requise';
-    if (!p.situation_familiale)              e.situation_familiale = 'Situation requise';
+    // Valeurs = clés de traduction (parent.inscription.erreurs.*)
+    if (!p.nom.trim())                       e.nom = 'nomRequis';
+    if (!p.prenom.trim())                    e.prenom = 'prenomRequis';
+    if (!p.telephone.trim())                 e.telephone = 'telRequis';
+    else if (!RE_TEL.test(p.telephone.trim())) e.telephone = 'telInvalide';
+    if (!p.email.trim())                     e.email = 'emailRequis';
+    else if (!RE_EMAIL.test(p.email.trim())) e.email = 'emailInvalide';
+    if (!p.adresse.trim())                   e.adresse = 'adresseRequise';
+    if (!p.situation_familiale)              e.situation_familiale = 'situationRequise';
     return e;
   };
 
@@ -217,7 +235,7 @@ const Inscription = () => {
     const e = {};
     // Aucun champ obligatoire — on contrôle seulement les formats saisis
     if (c.telephone.trim() && !RE_TEL.test(c.telephone.trim()))
-      e.telephone = 'Numéro invalide (ex : 06 12 34 56 78)';
+      e.telephone = 'telInvalide';
     return e;
   };
 
@@ -227,13 +245,13 @@ const Inscription = () => {
       parent2: validerParent(pi.parent2),
       contact1: validerContact(pi.contact1),
       contact2: validerContact(pi.contact2),
-      place_fratrie: pi.place_fratrie ? '' : 'Place dans la fratrie requise',
+      place_fratrie: pi.place_fratrie ? '' : 'fratrieRequise',
     };
     setErreurs(ev);
     const ok = !Object.keys(ev.parent1).length && !Object.keys(ev.parent2).length
       && !Object.keys(ev.contact1).length && !Object.keys(ev.contact2).length
       && !ev.place_fratrie;
-    if (!ok) toast.error('Veuillez corriger les champs en rouge.');
+    if (!ok) toast.error(t(`${I}.corriger`));
     return ok;
   };
 
@@ -245,22 +263,26 @@ const Inscription = () => {
 
   const enfantSelectionne = enfants.find(e => e.id === parseInt(form.enfant_id));
 
+  // Libellé traduit d'une valeur stockée (place dans la fratrie, jour)
+  const libelleFratrie = (v) => { const i = FRATRIEOPT.indexOf(v); return i >= 0 ? t(`${I}.fratrie.${i}`) : v; };
+  const libelleJour    = (v) => JOURS_ACCUEIL.includes(v) ? t(`common.jours.${v.toLowerCase()}`) : v;
+
   return (
     <div className="inscription-page">
 
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Dossier <span>d'inscription</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.inscription.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── BARRE DE PROGRESSION ──────────────────────────────── */}
       <div className="etapes-barre">
-        {ETAPES.map((label, i) => (
+        {t(`${I}.etapes`, { returnObjects: true }).map((label, i) => (
           <div key={label} className={`etape-step ${i === etape ? 'etape-step--actif' : ''} ${i < etape ? 'etape-step--fait' : ''}`}>
             <div className="etape-step__cercle">{i < etape ? '✓' : i + 1}</div>
             <span className="etape-step__label">{label}</span>
           </div>
         ))}
-        <div className="etapes-barre__ligne" style={{ width: `${(etape / (ETAPES.length - 1)) * 100}%` }} />
+        <div className="etapes-barre__ligne" style={{ width: `${(etape / (NB_ETAPES - 1)) * 100}%` }} />
       </div>
 
       <div className="p-card inscription-contenu">
@@ -268,122 +290,114 @@ const Inscription = () => {
         {/* ── ÉTAPE 1 : PRÉ-INSCRIPTION ─────────────────────────── */}
         {etape === 0 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Conditions & fiche de pré-inscription</h2>
+            <h2 className="etape-titre">{t(`${I}.e1.titre`)}</h2>
             <p className="etape-intro">
-              Veuillez lire les conditions d'accueil puis compléter la fiche ci-dessous.
-              Les champs marqués <span className="requis">*</span> sont obligatoires.
+              <Trans i18nKey={`${I}.e1.intro`} components={{ requis: <span className="requis" /> }} />
             </p>
 
             {/* Conditions */}
             <div className="cond-paragraphes">
-              <p>Les enfants accueillis doivent habiter prioritairement les communes de Puilboreau, Saint-Xandre ou Esnandes.</p>
-              <p>Pour l'accueil régulier ou occasionnel, un dossier d'inscription complet est obligatoire. Les parents doivent respecter la date prévue d'entrée de l'enfant.</p>
-              <p>Le cas échéant, les jours d'absence seront facturés comme si l'enfant était présent dans la structure.</p>
-              <p>La place de l'enfant n'est réservée qu'après la signature du contrat et de l'inscription sur le site « Pirouette ».</p>
+              {t(`${I}.e1.conditions`, { returnObjects: true }).map(c => <p key={c}>{c}</p>)}
             </div>
 
             <div className="cond-pirouette">
               <a href="https://www.mon-enfant.fr" target="_blank" rel="noopener noreferrer" className="btn-pirouette">
-                Accéder à Pirouette
+                {t(`${I}.e1.pirouette`)}
               </a>
             </div>
 
             <div className="cond-handicap">
               <span className="cond-handicap__icone">♿</span>
               <div>
-                <h3 className="cond-handicap__titre">Accueil des enfants en situation de handicap</h3>
-                <p>L'établissement met en œuvre un projet autour de l'inclusion. Un projet spécifique sera réalisé avec la directrice, l'équipe éducative, le référent santé et les partenaires accompagnant l'enfant et sa famille. Les conditions d'inscription seront les mêmes.</p>
+                <h3 className="cond-handicap__titre">{t(`${I}.e1.handicapTitre`)}</h3>
+                <p>{t(`${I}.e1.handicapTexte`)}</p>
               </div>
             </div>
 
             {/* ── Tarifs ──────────────────────────────────────── */}
-            <div className="preinsc-separateur"><span>Les tarifs</span></div>
+            <div className="preinsc-separateur"><span>{t(`${I}.e1.tarifs`)}</span></div>
 
             {/* Adhésion annuelle */}
             <div className="tarif-bloc">
-              <h3 className="tarif-bloc__titre">🏷️ Adhésion annuelle</h3>
-              <p>Une adhésion annuelle à l'association Les Coccinelles est obligatoire, payable au premier jour de présence de l'enfant.</p>
+              <h3 className="tarif-bloc__titre">🏷️ {t(`${I}.e1.adhesionTitre`)}</h3>
+              <p>{t(`${I}.e1.adhesionTexte`)}</p>
               <div className="tarif-pills">
-                <span className="tarif-pill tarif-pill--regular">Accueil régulier — <strong>24 €</strong></span>
-                <span className="tarif-pill tarif-pill--occa">Accueil occasionnel — <strong>10 €</strong></span>
+                <span className="tarif-pill tarif-pill--regular"><Trans i18nKey={`${I}.e1.adhesionRegulier`} /></span>
+                <span className="tarif-pill tarif-pill--occa"><Trans i18nKey={`${I}.e1.adhesionOccasionnel`} /></span>
               </div>
-              <p className="tarif-note">La carte d'adhésion est renouvelée chaque année en janvier (valable du 1er janvier au 31 décembre). Une adhésion prise en cours d'année jusqu'au 1er novembre reste acquise pour l'année en cours.</p>
+              <p className="tarif-note">{t(`${I}.e1.adhesionNote`)}</p>
             </div>
 
             {/* Tarif horaire */}
             <div className="tarif-bloc">
-              <h3 className="tarif-bloc__titre">⏱️ Tarif horaire</h3>
+              <h3 className="tarif-bloc__titre">⏱️ {t(`${I}.e1.horaireTitre`)}</h3>
               <div className="tarif-formule">
                 <div className="tarif-formule__fraction">
-                  <span className="tarif-formule__num">Revenus des parents</span>
+                  <span className="tarif-formule__num">{t(`${I}.e1.revenus`)}</span>
                   <span className="tarif-formule__trait" />
                   <span className="tarif-formule__den">12</span>
                 </div>
                 <span className="tarif-formule__op">×</span>
-                <span className="tarif-formule__label">taux d'effort</span>
+                <span className="tarif-formule__label">{t(`${I}.e1.tauxEffort`)}</span>
               </div>
-              <p className="tarif-sous-titre">Le taux d'effort est de :</p>
+              <p className="tarif-sous-titre">{t(`${I}.e1.tauxTitre`)}</p>
               <ul className="tarif-taux">
-                <li><strong>0,0619 %</strong> pour 1 enfant à charge</li>
-                <li><strong>0,0516 %</strong> pour 2 enfants</li>
-                <li><strong>0,0413 %</strong> pour 3 enfants</li>
-                <li><strong>0,0310 %</strong> pour 4 enfants et plus</li>
+                {t(`${I}.e1.taux`, { returnObjects: true }).map((_, i) => (
+                  <li key={i}><Trans i18nKey={`${I}.e1.taux.${i}`} /></li>
+                ))}
               </ul>
               <div className="tarif-plancher">
                 <div className="tarif-plancher__item">
-                  <span className="tarif-plancher__lbl">Prix plancher (au 1er janv. 2025)</span>
-                  <span className="tarif-plancher__val">801 € → min <strong>0,49 €/h</strong></span>
+                  <span className="tarif-plancher__lbl">{t(`${I}.e1.plancherLbl`)}</span>
+                  <span className="tarif-plancher__val"><Trans i18nKey={`${I}.e1.plancherVal`} /></span>
                 </div>
                 <div className="tarif-plancher__item">
-                  <span className="tarif-plancher__lbl">Prix plafond (depuis 1er sept. 2024)</span>
-                  <span className="tarif-plancher__val">7 000 € → max <strong>4,33 €/h</strong></span>
+                  <span className="tarif-plancher__lbl">{t(`${I}.e1.plafondLbl`)}</span>
+                  <span className="tarif-plancher__val"><Trans i18nKey={`${I}.e1.plafondVal`} /></span>
                 </div>
               </div>
             </div>
 
             {/* Accueil régulier */}
             <div className="tarif-bloc">
-              <h3 className="tarif-bloc__titre">📅 Tarification pour l'accueil régulier</h3>
-              <p>Pour l'accueil régulier, la tarification s'établit sur un contrat forfaitaire en fonction des besoins.</p>
+              <h3 className="tarif-bloc__titre">📅 {t(`${I}.e1.regulierTitre`)}</h3>
+              <p>{t(`${I}.e1.regulierTexte`)}</p>
               <div className="tarif-calcul">
-                <span className="tarif-calcul__item">Tarif de la famille</span>
+                <span className="tarif-calcul__item">{t(`${I}.e1.calculTarif`)}</span>
                 <span className="tarif-calcul__op">×</span>
-                <span className="tarif-calcul__item">Nombre d'heures</span>
+                <span className="tarif-calcul__item">{t(`${I}.e1.calculHeures`)}</span>
                 <span className="tarif-calcul__op">×</span>
-                <span className="tarif-calcul__item">Nombre de jours de présence / mois</span>
+                <span className="tarif-calcul__item">{t(`${I}.e1.calculJours`)}</span>
               </div>
             </div>
 
             {/* Accueil occasionnel */}
             <div className="tarif-bloc">
-              <h3 className="tarif-bloc__titre">🔔 Tarification pour l'accueil occasionnel</h3>
-              <p>La tarification pour l'accueil occasionnel est la même que pour l'accueil régulier (accueil ponctuel sans contrat).</p>
+              <h3 className="tarif-bloc__titre">🔔 {t(`${I}.e1.occasionnelTitre`)}</h3>
+              <p>{t(`${I}.e1.occasionnelTexte`)}</p>
             </div>
 
-            <div className="preinsc-separateur"><span>Fiche de pré-inscription</span></div>
+            <div className="preinsc-separateur"><span>{t(`${I}.e1.fiche`)}</span></div>
 
-            <ChampParent cle="parent1" label="Parent 1" pi={pi} majPI={majPI} erreurs={erreurs.parent1} />
-            <ChampParent cle="parent2" label="Parent 2" pi={pi} majPI={majPI} erreurs={erreurs.parent2} />
+            <ChampParent cle="parent1" label={t(`${I}.e1.parent1`)} pi={pi} majPI={majPI} erreurs={erreurs.parent1} />
+            <ChampParent cle="parent2" label={t(`${I}.e1.parent2`)} pi={pi} majPI={majPI} erreurs={erreurs.parent2} />
 
             {/* Autorisation RPE */}
             <label className="preinsc-autorisation">
               <input type="checkbox" checked={pi.autorisation_rpe}
                 onChange={e => majPITop('autorisation_rpe', e.target.checked)} />
-              <span>
-                J'autorise la crèche à communiquer mon numéro de téléphone à la responsable du
-                Relais Petite Enfance (RPE).
-              </span>
+              <span>{t(`${I}.e1.rpe`)}</span>
             </label>
 
             {/* Place dans la fratrie */}
             <div className="preinsc-section">
-              <h3 className="preinsc-section__titre">👨‍👩‍👧‍👦 Place dans la fratrie</h3>
+              <h3 className="preinsc-section__titre">👨‍👩‍👧‍👦 {t(`${I}.e1.fratrieTitre`)}</h3>
               <div className="p-form-groupe">
-                <label className="p-label">L'enfant est le… <span className="requis">*</span></label>
+                <label className="p-label">{t(`${I}.e1.fratrieLabel`)} <span className="requis">*</span></label>
                 <select className={`p-input ${erreurs.place_fratrie ? 'p-input--erreur' : ''}`} value={pi.place_fratrie}
                   onChange={e => majPITop('place_fratrie', e.target.value)}>
-                  <option value="">Choisir...</option>
-                  {FRATRIEOPT.map(o => <option key={o} value={o}>{o}</option>)}
+                  <option value="">{t('common.choisir')}</option>
+                  {FRATRIEOPT.map(o => <option key={o} value={o}>{libelleFratrie(o)}</option>)}
                 </select>
                 <Err msg={erreurs.place_fratrie} />
               </div>
@@ -391,25 +405,22 @@ const Inscription = () => {
 
             {/* Personnes à contacter */}
             <div className="preinsc-intro-contacts">
-              <p>
-                Vous pouvez indiquer deux personnes autorisées à venir chercher l'enfant ou à être
-                contactées en cas d'urgence (en dehors des parents). Ces informations sont facultatives.
-              </p>
+              <p>{t(`${I}.e1.contactsIntro`)}</p>
             </div>
-            <ChampContact cle="contact1" label="Personne à contacter n°1" pi={pi} majPI={majPI} erreurs={erreurs.contact1} />
-            <ChampContact cle="contact2" label="Personne à contacter n°2" pi={pi} majPI={majPI} erreurs={erreurs.contact2} />
+            <ChampContact cle="contact1" label={t(`${I}.e1.contact1`)} pi={pi} majPI={majPI} erreurs={erreurs.contact1} />
+            <ChampContact cle="contact2" label={t(`${I}.e1.contact2`)} pi={pi} majPI={majPI} erreurs={erreurs.contact2} />
           </div>
         )}
 
         {/* ── ÉTAPE 2 : SÉLECTION DE L'ENFANT ──────────────────── */}
         {etape === 1 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Quel enfant souhaitez-vous inscrire ?</h2>
+            <h2 className="etape-titre">{t(`${I}.e2.titre`)}</h2>
             {enfants.length === 0 ? (
               <div className="p-vide">
                 <span className="p-vide__icone">👶</span>
-                <p>Vous devez d'abord ajouter un enfant.</p>
-                <button className="btn btn--primary btn--sm" onClick={() => navigate('/parent/mes-enfants')}>Ajouter un enfant</button>
+                <p>{t(`${I}.e2.dAbord`)}</p>
+                <button className="btn btn--primary btn--sm" onClick={() => navigate('/parent/mes-enfants')}>{t('parent.commun.ajouterEnfant')}</button>
               </div>
             ) : (
               <div className="enfants-choix">
@@ -430,27 +441,27 @@ const Inscription = () => {
         {/* ── ÉTAPE 3 : MODALITÉS D'ACCUEIL ────────────────────── */}
         {etape === 2 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Modalités d'accueil souhaitées</h2>
+            <h2 className="etape-titre">{t(`${I}.e3.titre`)}</h2>
             <div className="p-form">
               <div className="p-form-groupe">
-                <label className="p-label">Date de début souhaitée <span className="requis">*</span></label>
+                <label className="p-label">{t(`${I}.e3.dateDebut`)} <span className="requis">*</span></label>
                 <input type="date" className="p-input" value={form.date_debut_souhaitee}
                   onChange={e => majForm({ date_debut_souhaitee: e.target.value })} />
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Type d'accueil <span className="requis">*</span></label>
+                <label className="p-label">{t(`${I}.e3.type`)} <span className="requis">*</span></label>
                 <select className="p-input" value={form.temps_accueil}
                   onChange={e => majForm({ temps_accueil: e.target.value })}>
-                  <option value="">Choisir...</option>
-                  <option value="temps_plein">Temps plein (5 jours/semaine)</option>
-                  <option value="temps_partiel">Temps partiel (2–3 jours/semaine)</option>
-                  <option value="occasionnel">Occasionnel (selon disponibilités)</option>
+                  <option value="">{t('common.choisir')}</option>
+                  {['temps_plein', 'temps_partiel', 'occasionnel'].map(v => (
+                    <option key={v} value={v}>{t(`${I}.e3.types.${v}`)}</option>
+                  ))}
                 </select>
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Jours souhaités</label>
+                <label className="p-label">{t(`${I}.e3.jours`)}</label>
                 <div className="jours-checkboxes">
-                  {['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'].map(jour => {
+                  {JOURS_ACCUEIL.map(jour => {
                     const jours   = form.jours_souhaites ? form.jours_souhaites.split(',') : [];
                     const checked = jours.includes(jour);
                     return (
@@ -459,7 +470,7 @@ const Inscription = () => {
                           const newJours = checked ? jours.filter(j => j !== jour) : [...jours, jour];
                           majForm({ jours_souhaites: newJours.join(',') });
                         }} />
-                        {jour}
+                        {libelleJour(jour)}
                       </label>
                     );
                   })}
@@ -472,61 +483,61 @@ const Inscription = () => {
         {/* ── ÉTAPE 4 : PIÈCES À FOURNIR ───────────────────────── */}
         {etape === 3 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Documents & informations complémentaires</h2>
+            <h2 className="etape-titre">{t(`${I}.e4.titre`)}</h2>
 
             {/* Profession et employeur — Parent 1 */}
             <div className="docs-employeur">
-              <h3 className="docs-employeur__titre">💼 Profession et employeur — Parent 1</h3>
+              <h3 className="docs-employeur__titre">💼 {t(`${I}.e4.employeurTitre`, { parent: t(`${I}.e1.parent1`) })}</h3>
               <div className="preinsc-grille">
                 <div className="p-form-groupe">
-                  <label className="p-label">Profession <span className="requis">*</span></label>
+                  <label className="p-label">{t(`${I}.e4.profession`)} <span className="requis">*</span></label>
                   <input type="text" className="p-input" value={pi.employeur1.profession}
                     onChange={e => majPI('employeur1', 'profession', e.target.value)}
-                    placeholder="Ex : Infirmière, Enseignant..." />
+                    placeholder={t(`${I}.e4.profession1Placeholder`)} />
                 </div>
                 <div className="p-form-groupe">
-                  <label className="p-label">Nom de l'employeur <span className="requis">*</span></label>
+                  <label className="p-label">{t(`${I}.e4.employeur`)} <span className="requis">*</span></label>
                   <input type="text" className="p-input" value={pi.employeur1.nom_employeur}
                     onChange={e => majPI('employeur1', 'nom_employeur', e.target.value)}
-                    placeholder="Ex : CHU de La Rochelle, Mairie..." />
+                    placeholder={t(`${I}.e4.employeur1Placeholder`)} />
                 </div>
               </div>
             </div>
 
             {/* Profession et employeur — Parent 2 */}
             <div className="docs-employeur">
-              <h3 className="docs-employeur__titre">💼 Profession et employeur — Parent 2</h3>
+              <h3 className="docs-employeur__titre">💼 {t(`${I}.e4.employeurTitre`, { parent: t(`${I}.e1.parent2`) })}</h3>
               <div className="preinsc-grille">
                 <div className="p-form-groupe">
-                  <label className="p-label">Profession <span className="requis">*</span></label>
+                  <label className="p-label">{t(`${I}.e4.profession`)} <span className="requis">*</span></label>
                   <input type="text" className="p-input" value={pi.employeur2.profession}
                     onChange={e => majPI('employeur2', 'profession', e.target.value)}
-                    placeholder="Ex : Comptable, Commerçant..." />
+                    placeholder={t(`${I}.e4.profession2Placeholder`)} />
                 </div>
                 <div className="p-form-groupe">
-                  <label className="p-label">Nom de l'employeur <span className="requis">*</span></label>
+                  <label className="p-label">{t(`${I}.e4.employeur`)} <span className="requis">*</span></label>
                   <input type="text" className="p-input" value={pi.employeur2.nom_employeur}
                     onChange={e => majPI('employeur2', 'nom_employeur', e.target.value)}
-                    placeholder="Ex : Cabinet Martin, Auto-entrepreneur..." />
+                    placeholder={t(`${I}.e4.employeur2Placeholder`)} />
                 </div>
               </div>
             </div>
 
             {/* Documents à fournir */}
-            <h3 className="docs-titre-section">📎 Documents à fournir</h3>
+            <h3 className="docs-titre-section">📎 {t(`${I}.e4.docsTitre`)}</h3>
             <p className="etape-intro">
-              Déposez dès maintenant vos documents (PDF ou image). Vous pouvez aussi les apporter en mains propres — cette étape est facultative.
+              {t(`${I}.e4.docsIntro`)}
             </p>
             <div className="pieces-liste">
               {PIECES.map((p, i) => (
                 <div key={p.doc} className={`piece-item ${fichiers[i] ? 'piece-item--coche' : ''}`}>
                   <span className="piece-item__icone">{p.icone}</span>
                   <div className="piece-item__info">
-                    <span className="piece-item__doc">{p.doc}</span>
+                    <span className="piece-item__doc">{t(`${I}.pieces.${i}`)}</span>
                     {fichiers[i] && <span className="piece-item__fichier">📎 {fichiers[i].name}</span>}
                   </div>
                   <label className="piece-item__btn">
-                    {fichiers[i] ? '🔄 Changer' : '📤 Choisir'}
+                    {fichiers[i] ? t(`${I}.e4.changer`) : t(`${I}.e4.choisir`)}
                     <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }}
                       onChange={e => {
                         const f = e.target.files[0];
@@ -537,8 +548,8 @@ const Inscription = () => {
               ))}
             </div>
             <p className="pieces-info">
-              {fichiers.filter(f => f !== null).length} / {PIECES.length} document(s) ajouté(s)
-              {fichiers.every(f => f !== null) && ' — Dossier complet ✓'}
+              {t(`${I}.e4.compteur`, { n: fichiers.filter(f => f !== null).length, total: PIECES.length })}
+              {fichiers.every(f => f !== null) && t(`${I}.e4.complet`)}
             </p>
           </div>
         )}
@@ -546,12 +557,12 @@ const Inscription = () => {
         {/* ── ÉTAPE 5 : COMMENTAIRE ─────────────────────────────── */}
         {etape === 4 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Message à l'équipe (optionnel)</h2>
+            <h2 className="etape-titre">{t(`${I}.e5.titre`)}</h2>
             <div className="p-form-groupe">
-              <label className="p-label">Précisions, questions, situation particulière...</label>
+              <label className="p-label">{t(`${I}.e5.label`)}</label>
               <textarea className="p-input p-textarea" rows={6} value={form.commentaire_parent}
                 onChange={e => majForm({ commentaire_parent: e.target.value })}
-                placeholder="Parlez-nous de votre enfant, de vos contraintes, de vos attentes..." />
+                placeholder={t(`${I}.e5.placeholder`)} />
             </div>
           </div>
         )}
@@ -559,25 +570,25 @@ const Inscription = () => {
         {/* ── ÉTAPE 6 : RÉCAPITULATIF ───────────────────────────── */}
         {etape === 5 && (
           <div className="etape-section">
-            <h2 className="etape-titre">Récapitulatif de votre demande</h2>
+            <h2 className="etape-titre">{t(`${I}.e6.titre`)}</h2>
             <div className="recap-grille">
-              <div className="recap-item"><strong>Parent 1</strong><span>{pi.parent1.prenom} {pi.parent1.nom}</span></div>
-              <div className="recap-item"><strong>Parent 2</strong><span>{pi.parent2.prenom} {pi.parent2.nom}</span></div>
-              <div className="recap-item"><strong>Enfant</strong><span>{enfantSelectionne?.prenom} {enfantSelectionne?.nom}</span></div>
-              <div className="recap-item"><strong>Place dans la fratrie</strong><span>{pi.place_fratrie || '—'}</span></div>
-              <div className="recap-item"><strong>Date souhaitée</strong><span>{form.date_debut_souhaitee ? new Date(form.date_debut_souhaitee).toLocaleDateString('fr-FR') : '—'}</span></div>
-              <div className="recap-item"><strong>Type d'accueil</strong><span>{{ temps_plein: 'Temps plein', temps_partiel: 'Temps partiel', occasionnel: 'Occasionnel' }[form.temps_accueil] || '—'}</span></div>
-              <div className="recap-item"><strong>Jours souhaités</strong><span>{form.jours_souhaites || '—'}</span></div>
-              <div className="recap-item"><strong>Autorisation RPE</strong><span>{pi.autorisation_rpe ? 'Oui ✓' : 'Non'}</span></div>
-              <div className="recap-item"><strong>Contact urgence 1</strong><span>{pi.contact1.prenom} {pi.contact1.nom} — {pi.contact1.parente} — {pi.contact1.telephone}</span></div>
-              <div className="recap-item"><strong>Contact urgence 2</strong><span>{pi.contact2.prenom} {pi.contact2.nom} — {pi.contact2.parente} — {pi.contact2.telephone}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.parent1`)}</strong><span>{pi.parent1.prenom} {pi.parent1.nom}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.parent2`)}</strong><span>{pi.parent2.prenom} {pi.parent2.nom}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.enfant`)}</strong><span>{enfantSelectionne?.prenom} {enfantSelectionne?.nom}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.fratrie`)}</strong><span>{pi.place_fratrie ? libelleFratrie(pi.place_fratrie) : '—'}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.date`)}</strong><span>{form.date_debut_souhaitee ? new Date(form.date_debut_souhaitee).toLocaleDateString(getLocale()) : '—'}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.type`)}</strong><span>{form.temps_accueil ? t(`${I}.e6.types.${form.temps_accueil}`) : '—'}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.jours`)}</strong><span>{form.jours_souhaites ? form.jours_souhaites.split(',').map(libelleJour).join(', ') : '—'}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.rpe`)}</strong><span>{pi.autorisation_rpe ? t(`${I}.e6.oui`) : t(`${I}.e6.non`)}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.contact1`)}</strong><span>{pi.contact1.prenom} {pi.contact1.nom} — {pi.contact1.parente} — {pi.contact1.telephone}</span></div>
+              <div className="recap-item"><strong>{t(`${I}.e6.contact2`)}</strong><span>{pi.contact2.prenom} {pi.contact2.nom} — {pi.contact2.parente} — {pi.contact2.telephone}</span></div>
               {form.commentaire_parent && (
-                <div className="recap-item recap-item--full"><strong>Message</strong><span>{form.commentaire_parent}</span></div>
+                <div className="recap-item recap-item--full"><strong>{t(`${I}.e6.message`)}</strong><span>{form.commentaire_parent}</span></div>
               )}
             </div>
             <div className="recap-info">
               <span>ℹ️</span>
-              <p>Votre demande sera examinée par l'équipe dans les meilleurs délais. Vous recevrez une notification dès qu'une décision sera prise.</p>
+              <p>{t(`${I}.e6.info`)}</p>
             </div>
           </div>
         )}
@@ -585,20 +596,20 @@ const Inscription = () => {
         {/* ── NAVIGATION ENTRE ÉTAPES ───────────────────────────── */}
         <div className="etape-nav">
           {etape > 0 && (
-            <button className="btn btn--ghost" onClick={() => setEtape(e => e - 1)}>← Retour</button>
+            <button className="btn btn--ghost" onClick={() => setEtape(e => e - 1)}>{t(`${I}.retour`)}</button>
           )}
           <div style={{ flex: 1 }} />
-          {etape < ETAPES.length - 1 ? (
+          {etape < NB_ETAPES - 1 ? (
             <button
               className="btn btn--primary"
               onClick={etapeSuivante}
               disabled={etape === 1 && !form.enfant_id}
             >
-              Continuer →
+              {t(`${I}.continuer`)}
             </button>
           ) : (
             <button className="btn btn--primary" onClick={handleSubmit} disabled={envoi}>
-              {envoi ? 'Envoi...' : '✅ Envoyer la demande'}
+              {envoi ? t('common.envoi') : t(`${I}.envoyer`)}
             </button>
           )}
         </div>

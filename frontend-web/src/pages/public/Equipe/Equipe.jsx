@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL } from '../../../services/api';
 import './Equipe.css';
 
@@ -18,6 +19,7 @@ const photoUrl = (membre) => {
 };
 
 const Equipe = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [membres,    setMembres]    = useState([]);
   const [chargement, setChargement] = useState(true);
 
@@ -34,9 +36,9 @@ const Equipe = () => {
       {/* ── EN-TÊTE HERO ──────────────────────────────────────── */}
       <section className="page-hero page-hero--bleu">
         <div className="container">
-          <p className="page-hero__tag">👥 L'équipe</p>
-          <h1 className="page-hero__titre">Notre <span>équipe éducative</span></h1>
-          <p className="page-hero__sous">Des professionnelles qualifiées et passionnées à l'écoute de vos enfants</p>
+          <p className="page-hero__tag">👥 {t('public.equipe.tag')}</p>
+          <h1 className="page-hero__titre"><Trans i18nKey="public.equipe.titre" components={{ s: <span /> }} /></h1>
+          <p className="page-hero__sous">{t('public.equipe.sousTitre')}</p>
         </div>
       </section>
 
@@ -44,16 +46,16 @@ const Equipe = () => {
       <section className="section-blanche">
         <div className="container contenu-deux-colonnes">
           <div className="contenu-texte">
-            <h2 className="titre-section">Une équipe diplômée</h2>
-            <p>Notre équipe est composée de professionnelles de la petite enfance, toutes diplômées. Elles se forment régulièrement pour offrir les meilleures pratiques d'accueil.</p>
-            <p>La continuité des soins est une priorité : les mêmes professionnelles accompagnent votre enfant tout au long de son parcours à la crèche.</p>
+            <h2 className="titre-section">{t('public.equipe.introTitre')}</h2>
+            {t('public.equipe.intro', { returnObjects: true }).map((texte) => <p key={texte}>{texte}</p>)}
           </div>
           <div className="contenu-visuel">
             <div className="visuel-emoji-grand">👩‍👧‍👦</div>
             {membres.length > 0 && (
               <div className="info-bulle">
                 <strong>{membres.length}</strong>
-                <span>membre{membres.length > 1 ? 's' : ''} d'équipe</span>
+                {/* Pluriel géré par i18next (clés membres_one / membres_other) */}
+                <span>{t('public.equipe.membres', { count: membres.length })}</span>
               </div>
             )}
           </div>
@@ -63,16 +65,16 @@ const Equipe = () => {
       {/* ── GRILLE DES MEMBRES ───────────────────────────────── */}
       <section className="section-grise">
         <div className="container">
-          <h2 className="titre-section text-center">Les membres de l'équipe</h2>
+          <h2 className="titre-section text-center">{t('public.equipe.membresTitre')}</h2>
 
           {chargement ? (
             <div style={{ textAlign: 'center', padding: 'var(--space-3xl)', color: 'var(--text-gray)' }}>
-              Chargement...
+              {t('common.chargement')}
             </div>
           ) : membres.length === 0 ? (
             <div className="liste-vide">
               <span>👥</span>
-              <p>L'équipe sera présentée prochainement.</p>
+              <p>{t('public.equipe.bientot')}</p>
             </div>
           ) : (
             <div className="equipe-grille">
@@ -96,8 +98,8 @@ const Equipe = () => {
       {/* ── APPEL À L'ACTION ─────────────────────────────────── */}
       <section className="cta-bas">
         <div className="container cta-bas__contenu">
-          <p>Vous voulez rencontrer l'équipe ?</p>
-          <Link to="/contact" className="btn btn--primary btn--lg">Prendre contact</Link>
+          <p>{t('public.equipe.ctaTexte')}</p>
+          <Link to="/contact" className="btn btn--primary btn--lg">{t('public.equipe.ctaBouton')}</Link>
         </div>
       </section>
 

@@ -8,11 +8,14 @@
 // ============================================================
 
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import './Contact.css';
 
 const Contact = () => {
+
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // ── État du formulaire ────────────────────────────────────
   const [formData, setFormData] = useState({
@@ -20,18 +23,20 @@ const Contact = () => {
   });
   const [envoi,   setEnvoi]   = useState(false);  // Envoi en cours
   const [envoye,  setEnvoye]  = useState(false);  // Message envoyé avec succès
-  const [erreurs, setErreurs] = useState({});     // Erreurs de validation par champ
+  // Erreurs de validation par champ : on stocke la CLÉ de traduction (et non le
+  // texte) pour que le message suive la langue si l'utilisateur en change
+  const [erreurs, setErreurs] = useState({});
 
   // ── Validation côté client ────────────────────────────────
   const valider = () => {
     const e = {};
-    if (!formData.nom.trim())     e.nom     = 'Le nom est requis';
-    if (!formData.email.trim())   e.email   = "L'email est requis";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Email invalide';
-    if (!formData.sujet.trim())   e.sujet   = 'Le sujet est requis';
-    if (!formData.message.trim()) e.message = 'Le message est requis';
+    if (!formData.nom.trim())     e.nom     = 'nomRequis';
+    if (!formData.email.trim())   e.email   = 'emailRequis';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'emailInvalide';
+    if (!formData.sujet.trim())   e.sujet   = 'sujetRequis';
+    if (!formData.message.trim()) e.message = 'messageRequis';
     if (formData.message.trim().length < 20)
-      e.message = 'Le message doit faire au moins 20 caractères';
+      e.message = 'messageCourt';
     return e;
   };
 
@@ -55,9 +60,9 @@ const Contact = () => {
     try {
       await api.post('/contact', formData); // POST vers le backend
       setEnvoye(true);
-      toast.success('Message envoyé avec succès !');
+      toast.success(t('public.contact.toastSucces'));
     } catch {
-      toast.error("Erreur lors de l'envoi. Veuillez réessayer.");
+      toast.error(t('public.contact.toastErreur'));
     }
     setEnvoi(false);
   };
@@ -68,9 +73,9 @@ const Contact = () => {
       {/* ── EN-TÊTE HERO ──────────────────────────────────────── */}
       <section className="page-hero page-hero--bleu">
         <div className="container">
-          <p className="page-hero__tag">✉️ Contact</p>
-          <h1 className="page-hero__titre">Nous <span>contacter</span></h1>
-          <p className="page-hero__sous">Vous avez une question ? Nous sommes là pour vous répondre</p>
+          <p className="page-hero__tag">✉️ {t('public.contact.tag')}</p>
+          <h1 className="page-hero__titre"><Trans i18nKey="public.contact.titre" components={{ s: <span /> }} /></h1>
+          <p className="page-hero__sous">{t('public.contact.sousTitre')}</p>
         </div>
       </section>
 
@@ -80,20 +85,20 @@ const Contact = () => {
 
           {/* ── FORMULAIRE ──────────────────────────────────── */}
           <div className="contact-formulaire-wrapper">
-            <h2 className="titre-section">Envoyer un message</h2>
+            <h2 className="titre-section">{t('public.contact.formTitre')}</h2>
 
             {/* Après envoi réussi : écran de confirmation */}
             {envoye ? (
               <div className="envoi-succes">
                 <span>✅</span>
-                <h3>Message envoyé !</h3>
-                <p>Merci pour votre message. Nous vous répondrons dans les plus brefs délais (généralement sous 48h).</p>
+                <h3>{t('public.contact.envoyeTitre')}</h3>
+                <p>{t('public.contact.envoyeTexte')}</p>
                 {/* Réinitialise le formulaire pour un nouveau message */}
                 <button className="btn btn--outline btn--sm" onClick={() => {
                   setEnvoye(false);
                   setFormData({ nom: '', email: '', telephone: '', sujet: '', message: '' });
                 }}>
-                  Envoyer un nouveau message
+                  {t('public.contact.nouveau')}
                 </button>
               </div>
             ) : (
@@ -105,63 +110,63 @@ const Contact = () => {
                 <div className="form-row">
                   <div className="form-groupe">
                     <label htmlFor="nom" className="form-label">
-                      Nom complet <span className="requis">*</span>
+                      {t('public.contact.nom')} <span className="requis">*</span>
                     </label>
                     <input id="nom" name="nom" type="text"
                       className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
-                      placeholder="Marie Dupont" value={formData.nom} onChange={handleChange} />
-                    {erreurs.nom && <p className="form-erreur">{erreurs.nom}</p>}
+                      placeholder={t('public.contact.nomPlaceholder')} value={formData.nom} onChange={handleChange} />
+                    {erreurs.nom && <p className="form-erreur">{t(`public.contact.erreurs.${erreurs.nom}`)}</p>}
                   </div>
                   <div className="form-groupe">
                     <label htmlFor="email" className="form-label">
-                      Adresse email <span className="requis">*</span>
+                      {t('public.contact.email')} <span className="requis">*</span>
                     </label>
                     <input id="email" name="email" type="email"
                       className={`form-input ${erreurs.email ? 'form-input--erreur' : ''}`}
-                      placeholder="marie@exemple.fr" value={formData.email} onChange={handleChange} />
-                    {erreurs.email && <p className="form-erreur">{erreurs.email}</p>}
+                      placeholder={t('public.contact.emailPlaceholder')} value={formData.email} onChange={handleChange} />
+                    {erreurs.email && <p className="form-erreur">{t(`public.contact.erreurs.${erreurs.email}`)}</p>}
                   </div>
                 </div>
 
                 {/* Ligne Téléphone (optionnel) + Sujet (select) */}
                 <div className="form-row">
                   <div className="form-groupe">
-                    <label htmlFor="telephone" className="form-label">Téléphone</label>
+                    <label htmlFor="telephone" className="form-label">{t('public.contact.telephone')}</label>
                     <input id="telephone" name="telephone" type="tel" className="form-input"
-                      placeholder="06 XX XX XX XX" value={formData.telephone} onChange={handleChange} />
+                      placeholder={t('public.contact.telephonePlaceholder')} value={formData.telephone} onChange={handleChange} />
                   </div>
                   <div className="form-groupe">
                     <label htmlFor="sujet" className="form-label">
-                      Sujet <span className="requis">*</span>
+                      {t('public.contact.sujet')} <span className="requis">*</span>
                     </label>
                     <select id="sujet" name="sujet"
                       className={`form-input ${erreurs.sujet ? 'form-input--erreur' : ''}`}
                       value={formData.sujet} onChange={handleChange}>
-                      <option value="">Choisir un sujet...</option>
-                      <option value="inscription">Demande d'inscription</option>
-                      <option value="visite">Demande de visite</option>
-                      <option value="information">Demande d'information</option>
-                      <option value="autre">Autre</option>
+                      <option value="">{t('public.contact.sujetChoisir')}</option>
+                      {/* La valeur envoyée à l'API reste identique quelle que soit la langue */}
+                      {['inscription', 'visite', 'information', 'autre'].map(s => (
+                        <option key={s} value={s}>{t(`public.contact.sujets.${s}`)}</option>
+                      ))}
                     </select>
-                    {erreurs.sujet && <p className="form-erreur">{erreurs.sujet}</p>}
+                    {erreurs.sujet && <p className="form-erreur">{t(`public.contact.erreurs.${erreurs.sujet}`)}</p>}
                   </div>
                 </div>
 
                 {/* Textarea message + compteur de caractères */}
                 <div className="form-groupe">
                   <label htmlFor="message" className="form-label">
-                    Message <span className="requis">*</span>
+                    {t('public.contact.message')} <span className="requis">*</span>
                   </label>
                   <textarea id="message" name="message" rows={6}
                     className={`form-input form-textarea ${erreurs.message ? 'form-input--erreur' : ''}`}
-                    placeholder="Décrivez votre demande..." value={formData.message} onChange={handleChange} />
-                  {erreurs.message && <p className="form-erreur">{erreurs.message}</p>}
+                    placeholder={t('public.contact.messagePlaceholder')} value={formData.message} onChange={handleChange} />
+                  {erreurs.message && <p className="form-erreur">{t(`public.contact.erreurs.${erreurs.message}`)}</p>}
                   {/* Compteur : {nb}/500 caractères */}
-                  <p className="form-aide">{formData.message.length}/500 caractères</p>
+                  <p className="form-aide">{t('public.contact.caracteres', { n: formData.message.length })}</p>
                 </div>
 
                 <button type="submit" className="btn btn--primary btn--lg" disabled={envoi}>
-                  {envoi ? 'Envoi en cours...' : 'Envoyer le message'}
+                  {envoi ? t('public.contact.envoi') : t('public.contact.envoyer')}
                 </button>
               </form>
             )}
@@ -169,20 +174,21 @@ const Contact = () => {
 
           {/* ── INFOS DE CONTACT ────────────────────────────── */}
           <aside className="contact-infos">
-            <h2 className="titre-section">Retrouvez-nous</h2>
+            <h2 className="titre-section">{t('public.contact.retrouvez')}</h2>
             <div className="contact-infos__liste">
+              {/* cle : clé de traduction (public.contact.infos.*) */}
               {[
-                { icone: '📍', titre: 'Adresse',   contenu: '10 rue Saint Vincent\n17138 Puilboreau' },
-                { icone: '📞', titre: 'Téléphone', contenu: '05 46 69 68 25'    },
-                { icone: '✉️', titre: 'Email',     contenu: 'les.coccinelles17@orange.fr'              },
-                { icone: '🕐', titre: 'Horaires',  contenu: 'Lun–Ven : 7h30–18h30\nFermé jours fériés' },
-                { icone: '👶', titre: 'Communes accueillies', contenu: 'Puilboreau, Saint-Xandre, Esnandes' }
-              ].map(({ icone, titre, contenu }) => (
-                <div key={titre} className="contact-info-item">
+                { icone: '📍', cle: 'adresse' },
+                { icone: '📞', cle: 'telephone' },
+                { icone: '✉️', cle: 'email' },
+                { icone: '🕐', cle: 'horaires' },
+                { icone: '👶', cle: 'communes' }
+              ].map(({ icone, cle }) => (
+                <div key={cle} className="contact-info-item">
                   <span className="contact-info-icone">{icone}</span>
                   <div>
-                    <p className="contact-info-titre">{titre}</p>
-                    <p className="contact-info-contenu">{contenu}</p>
+                    <p className="contact-info-titre">{t(`public.contact.infos.${cle}.titre`)}</p>
+                    <p className="contact-info-contenu">{t(`public.contact.infos.${cle}.contenu`)}</p>
                   </div>
                 </div>
               ))}

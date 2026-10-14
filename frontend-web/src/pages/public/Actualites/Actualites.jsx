@@ -8,13 +8,16 @@
 
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import './Actualites.css';
 
 // ── Composant liste des actualités ────────────────────────────
 // Affiche une grille paginée (6 par page) avec squelette de chargement
 const ListeActualites = () => {
 
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [actualites, setActualites] = useState([]);
   const [chargement, setChargement] = useState(true);  // Affiche les skeletons
   const [page,       setPage]       = useState(1);      // Page courante (commence à 1)
@@ -40,9 +43,9 @@ const ListeActualites = () => {
       {/* Hero */}
       <section className="page-hero page-hero--orange">
         <div className="container">
-          <p className="page-hero__tag">📰 Actualités</p>
-          <h1 className="page-hero__titre">Nos <span>actualités</span></h1>
-          <p className="page-hero__sous">Les dernières nouvelles de la crèche Les Coccinelles</p>
+          <p className="page-hero__tag">📰 {t('public.actualites.tag')}</p>
+          <h1 className="page-hero__titre"><Trans i18nKey="public.actualites.titre" components={{ s: <span /> }} /></h1>
+          <p className="page-hero__sous">{t('public.actualites.sousTitre')}</p>
         </div>
       </section>
 
@@ -59,7 +62,7 @@ const ListeActualites = () => {
           ) : actualites.length === 0 ? (
             <div className="liste-vide">
               <span>📰</span>
-              <p>Aucune actualité publiée pour l'instant.</p>
+              <p>{t('public.actualites.aucune')}</p>
             </div>
 
           /* ── Liste + pagination ──────────────────────────── */
@@ -76,15 +79,15 @@ const ListeActualites = () => {
                     </div>
 
                     <div className="actu-carte__corps">
-                      {/* Date formatée en français, en badge */}
+                      {/* Date formatée dans la langue active, en badge */}
                       <span className="actu-date">
-                        {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
+                        {new Date(actu.date_publication).toLocaleDateString(getLocale(), {
                           day: 'numeric', month: 'long', year: 'numeric'
                         })}
                       </span>
                       <h2 className="actu-titre-liste">{actu.titre}</h2>
                       <p className="actu-extrait">{actu.extrait}</p>
-                      <span className="actu-carte__lire">Lire la suite <span>→</span></span>
+                      <span className="actu-carte__lire">{t('public.actualites.lireSuite')} <span>→</span></span>
                     </div>
                   </Link>
                 ))}
@@ -97,13 +100,13 @@ const ListeActualites = () => {
                     className="btn btn--ghost btn--sm"
                     onClick={() => setPage(p => Math.max(1, p - 1))}
                     disabled={page === 1}  // Désactivé sur la première page
-                  >← Précédent</button>
-                  <span className="pagination__info">Page {page} / {totalPages}</span>
+                  >{t('public.actualites.precedent')}</button>
+                  <span className="pagination__info">{t('public.actualites.page', { page, total: totalPages })}</span>
                   <button
                     className="btn btn--ghost btn--sm"
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}  // Désactivé sur la dernière page
-                  >Suivant →</button>
+                  >{t('public.actualites.suivant')}</button>
                 </div>
               )}
             </>
@@ -120,6 +123,7 @@ const DetailActualite = ({ id }) => {
   const [actu,       setActu]       = useState(null);
   const [chargement, setChargement] = useState(true);
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   useEffect(() => {
     const charger = async () => {
@@ -134,7 +138,7 @@ const DetailActualite = ({ id }) => {
     charger();
   }, [id, navigate]); // Se déclenche si l'id change dans l'URL
 
-  if (chargement) return <div className="page-loader">Chargement...</div>;
+  if (chargement) return <div className="page-loader">{t('common.chargement')}</div>;
   if (!actu)      return null; // Composant démonté après navigate()
 
   return (
@@ -142,15 +146,15 @@ const DetailActualite = ({ id }) => {
       <div className="container">
 
         {/* Fil d'Ariane : retour à la liste */}
-        <Link to="/actualites" className="retour-lien">← Toutes les actualités</Link>
+        <Link to="/actualites" className="retour-lien">{t('public.actualites.retour')}</Link>
 
         {/* Image principale de l'article */}
         {actu.image && <img src={actu.image} alt={actu.titre} className="detail-image" />}
 
         <article className="detail-article">
-          {/* Date longue : "mardi 15 janvier 2025" */}
+          {/* Date longue : "mardi 15 janvier 2025" / "Tuesday 15 January 2025" */}
           <p className="actu-date">
-            {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
+            {new Date(actu.date_publication).toLocaleDateString(getLocale(), {
               weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
             })}
           </p>
@@ -158,7 +162,7 @@ const DetailActualite = ({ id }) => {
 
           {/* Auteur (optionnel) */}
           {actu.auteur && (
-            <p className="detail-auteur">Par {actu.auteur.prenom} {actu.auteur.nom}</p>
+            <p className="detail-auteur">{t('public.actualites.par', { prenom: actu.auteur.prenom, nom: actu.auteur.nom })}</p>
           )}
 
           {/* Contenu HTML riche (wysiwyg ou markdown converti) */}

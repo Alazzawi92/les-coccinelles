@@ -11,12 +11,15 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Consentement.css';
 
 const Consentement = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste des enfants avec leur statut de consentement photo
   const [enfantsConsentements, setEnfantsConsentements] = useState([]);
   // Masque la liste pendant le chargement initial
@@ -44,46 +47,44 @@ const Consentement = () => {
           ? { ...e, consentement: { ...e.consentement, consenti: !actuel, date_consentement: new Date().toISOString() } }
           : e
       ));
-      toast.success(!actuel ? 'Consentement accordé' : 'Consentement retiré');
-    } catch { toast.error('Erreur lors de la mise à jour'); }
+      toast.success(!actuel ? t('parent.consentement.toastAccorde') : t('parent.consentement.toastRetire'));
+    } catch { toast.error(t('common.erreurMaj')); }
     setEnvoi(prev => ({ ...prev, [enfantId]: false }));
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="consentement-page">
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Consentement <span>RGPD</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.consentement.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── INFORMATIONS RGPD ─────────────────────────────────── */}
       <div className="p-card rgpd-info">
-        <h2 className="p-card__titre">📋 À propos du consentement photographique</h2>
-        <p>Conformément au RGPD, la publication de photos de votre enfant nécessite votre accord explicite.</p>
-        <p>En accordant votre consentement :</p>
+        <h2 className="p-card__titre">📋 {t('parent.consentement.aProposTitre')}</h2>
+        <p>{t('parent.consentement.intro')}</p>
+        <p>{t('parent.consentement.enAccordant')}</p>
         <ul>
-          <li>✅ Les photos de votre enfant seront visibles dans votre galerie privée</li>
-          <li>✅ Votre enfant pourra apparaître dans les albums partagés avec les familles</li>
+          {t('parent.consentement.accordePoints', { returnObjects: true }).map(p => <li key={p}>✅ {p}</li>)}
         </ul>
-        <p>En refusant ou retirant votre consentement :</p>
+        <p>{t('parent.consentement.enRefusant')}</p>
         <ul>
-          <li>❌ Aucune photo de votre enfant ne sera accessible</li>
           {/* Effet immédiat : masquage à la prochaine génération côté API */}
-          <li>❌ Les photos existantes seront masquées immédiatement</li>
+          {t('parent.consentement.refusePoints', { returnObjects: true }).map(p => <li key={p}>❌ {p}</li>)}
         </ul>
         {/* Traçabilité RGPD : date + IP enregistrées côté serveur */}
-        <p className="rgpd-note">Vous pouvez modifier votre consentement à tout moment. Votre décision est enregistrée avec la date et l'adresse IP pour assurer la traçabilité RGPD.</p>
+        <p className="rgpd-note">{t('parent.consentement.note')}</p>
       </div>
 
       {/* ── LISTE DES ENFANTS AVEC STATUT DE CONSENTEMENT ────── */}
       {enfantsConsentements.length === 0 ? (
         <div className="p-vide">
           <span className="p-vide__icone">👶</span>
-          <p>Aucun enfant enregistré. Ajoutez d'abord un enfant.</p>
+          <p>{t('parent.consentement.aucunEnfant')}</p>
         </div>
       ) : (
         <div className="consentements-liste">
@@ -104,7 +105,7 @@ const Consentement = () => {
                     {/* Date de la dernière décision (si existante) */}
                     {dateConsentement && (
                       <p className="consentement-date">
-                        Dernière décision le {new Date(dateConsentement).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        {t('parent.consentement.derniereDecision', { date: new Date(dateConsentement).toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) })}
                       </p>
                     )}
                   </div>
@@ -113,7 +114,7 @@ const Consentement = () => {
                 <div className="consentement-carte__statut">
                   {/* Badge statut : ✅ ou ❌ */}
                   <span className={`consentement-statut ${consenti ? 'consentement-statut--oui' : 'consentement-statut--non'}`}>
-                    {consenti ? '✅ Consentement accordé' : '❌ Consentement refusé'}
+                    {consenti ? t('parent.consentement.statutAccorde') : t('parent.consentement.statutRefuse')}
                   </span>
 
                   {/* Bouton toggle : rouge si consentement accordé (action de retrait), primaire sinon */}
@@ -123,7 +124,7 @@ const Consentement = () => {
                     onClick={() => toggleConsentement(enfant.id, consenti)}
                     disabled={enCours}
                   >
-                    {enCours ? 'Mise à jour...' : consenti ? 'Retirer le consentement' : 'Accorder le consentement'}
+                    {enCours ? t('common.miseAJour') : consenti ? t('parent.consentement.retirer') : t('parent.consentement.accorder')}
                   </button>
                 </div>
               </div>

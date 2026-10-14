@@ -44,12 +44,20 @@
    max-width:480px pour ne pas être trop large sur grand écran.
    box-shadow:lg pour l'effet "flottant" sur le fond coloré. */
 .auth-card {
+  position:      relative;           /* Repère pour le sélecteur de langue */
   background:    var(--white);
   border-radius: var(--radius-xl);
   box-shadow:    var(--shadow-lg);
   padding:       var(--space-3xl);   /* Grand padding interne */
   width:         100%;
   max-width:     480px;
+}
+
+/* Sélecteur de langue FR / EN en haut à droite de la carte */
+.auth-langue {
+  position: absolute;
+  top:      var(--space-md);
+  right:    var(--space-md);
 }
 
 /* ── 4. LOGO ET EN-TÊTE ─────────────────────────────────── */

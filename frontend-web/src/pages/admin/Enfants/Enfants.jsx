@@ -13,29 +13,36 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import i18n from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Enfants.css';
 
-// Jours de la semaine gérés (la crèche est fermée le week-end)
+// Jours de la semaine gérés (la crèche est fermée le week-end).
+// Le code est la valeur stockée en base ; l'initiale et le nom complet
+// sont traduits (common.joursInitiales.* / common.jours.*)
 const JOURS = [
-  { code: 'lundi',    label: 'L' },
-  { code: 'mardi',    label: 'M' },
-  { code: 'mercredi', label: 'M' },
-  { code: 'jeudi',    label: 'J' },
-  { code: 'vendredi', label: 'V' }
+  { code: 'lundi' },
+  { code: 'mardi' },
+  { code: 'mercredi' },
+  { code: 'jeudi' },
+  { code: 'vendredi' }
 ];
 
 // ── Calcul de l'âge d'un enfant ──────────────────────────────
-// Retourne "X mois" si < 24 mois, sinon "X ans"
+// Retourne "X mois" si < 24 mois, sinon "X ans" (traduit dans la langue active)
 // Division par 2 592 000 000 ms = 30 jours × 24h × 3600s × 1000ms
 const calcAge = (d) => {
   const m = (new Date() - new Date(d)) / 2592000000;
-  return m < 24 ? `${Math.floor(m)} mois` : `${Math.floor(m / 12)} ans`;
+  return m < 24
+    ? i18n.t('common.age.mois', { count: Math.floor(m) })
+    : i18n.t('common.age.ans', { count: Math.floor(m / 12) });
 };
 
 const EnfantsAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste complète des enfants chargés depuis l'API
   const [enfants,    setEnfants]    = useState([]);
   // Valeur du champ de recherche textuelle
@@ -73,10 +80,10 @@ const EnfantsAdmin = () => {
     try {
       const res = await api.patch(`/enfants/${enfantEdit.id}/jours-presence`, { jours_presence: joursForm });
       setEnfants(prev => prev.map(e => e.id === enfantEdit.id ? res.data.data : e));
-      toast.success('Jours habituels mis à jour');
+      toast.success(t('admin.enfants.toastMaj'));
       setEnfantEdit(null);
     } catch {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('common.erreurMaj'));
     }
     setEnvoi(false);
   };
@@ -87,40 +94,40 @@ const EnfantsAdmin = () => {
   );
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Gestion des <span>enfants</span></h1>
-        <span className="admin-compteur">{filtres.length} enfant(s)</span>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.enfants.titre" components={{ s: <span /> }} /></h1>
+        <span className="admin-compteur">{t('admin.enfants.compteur', { count: filtres.length })}</span>
       </div>
 
       {/* ── BARRE DE RECHERCHE ──────────────────────────────────── */}
       <div className="a-filtres">
         <div className="a-recherche">
           <span className="a-recherche__icone">🔍</span>
-          <input placeholder="Rechercher un enfant ou parent..." value={filtre} onChange={e => setFiltre(e.target.value)} />
+          <input placeholder={t('admin.enfants.recherche')} value={filtre} onChange={e => setFiltre(e.target.value)} />
         </div>
       </div>
 
       {/* ── TABLEAU DES ENFANTS ───────────────────────────────── */}
       <div className="a-card">
         {filtres.length === 0 ? (
-          <div className="a-vide"><span className="a-vide__icone">👶</span><p>Aucun enfant trouvé.</p></div>
+          <div className="a-vide"><span className="a-vide__icone">👶</span><p>{t('admin.enfants.aucun')}</p></div>
         ) : (
           <table className="a-table">
             <thead>
               <tr>
-                <th>Enfant</th>
-                <th>Âge</th>
-                <th>Groupe</th>
-                <th>Jours habituels</th>
-                <th>Parent</th>
-                <th>Allergies</th>
-                <th>Statut</th>
+                <th>{t('admin.commun.colEnfant')}</th>
+                <th>{t('admin.enfants.colAge')}</th>
+                <th>{t('admin.enfants.colGroupe')}</th>
+                <th>{t('admin.enfants.colJours')}</th>
+                <th>{t('admin.commun.colParent')}</th>
+                <th>{t('admin.enfants.colAllergies')}</th>
+                <th>{t('admin.commun.colStatut')}</th>
               </tr>
             </thead>
             <tbody>
@@ -139,9 +146,9 @@ const EnfantsAdmin = () => {
                   <td>{e.groupe || <span style={{ color:'var(--text-light)' }}>—</span>}</td>
                   {/* Jours de garde habituels (contrat) : cliquable pour modifier */}
                   <td>
-                    <button type="button" className="jours-btn" onClick={() => ouvrirEditionJours(e)} title="Modifier les jours habituels">
+                    <button type="button" className="jours-btn" onClick={() => ouvrirEditionJours(e)} title={t('admin.enfants.modifierJours')}>
                       {(e.jours_presence?.length > 0 ? JOURS.filter(j => e.jours_presence.includes(j.code)) : JOURS).map(j => (
-                        <span key={j.code} className={`jours-pastille ${e.jours_presence?.length > 0 ? 'jours-pastille--actif' : 'jours-pastille--tous'}`}>{j.label}</span>
+                        <span key={j.code} className={`jours-pastille ${e.jours_presence?.length > 0 ? 'jours-pastille--actif' : 'jours-pastille--tous'}`}>{t(`common.joursInitiales.${j.code}`)}</span>
                       ))}
                       <span className="jours-btn__icone">✏️</span>
                     </button>
@@ -161,7 +168,7 @@ const EnfantsAdmin = () => {
                   {/* Badge actif/inactif : vert si inscrit, rouge sinon */}
                   <td>
                     <span className={`s-badge ${e.actif ? 's-badge--accepte' : 's-badge--refuse'}`}>
-                      {e.actif ? 'Inscrit' : 'Inactif'}
+                      {e.actif ? t('admin.enfants.inscrit') : t('admin.enfants.inactif')}
                     </span>
                   </td>
                 </tr>
@@ -176,13 +183,12 @@ const EnfantsAdmin = () => {
         <div className="modal-overlay" onClick={() => !envoi && setEnfantEdit(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
-              <h2 className="modal__titre">📅 Jours habituels — {enfantEdit.prenom} {enfantEdit.nom}</h2>
-              <button className="modal__fermer" onClick={() => setEnfantEdit(null)}>✕</button>
+              <h2 className="modal__titre">📅 {t('admin.enfants.modalTitre', { nom: `${enfantEdit.prenom} ${enfantEdit.nom}` })}</h2>
+              <button className="modal__fermer" onClick={() => setEnfantEdit(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
 
             <p style={{ color: 'var(--text-gray)', fontSize: '0.9rem', marginBottom: 'var(--space-lg)' }}>
-              Sélectionnez les jours où cet enfant vient habituellement à la crèche.
-              Aucun jour coché = vient tous les jours ouvrés (par défaut).
+              {t('admin.enfants.modalAide')}
             </p>
 
             <div className="jours-choix">
@@ -193,15 +199,15 @@ const EnfantsAdmin = () => {
                   className={`jours-choix-btn ${joursForm.includes(j.code) ? 'jours-choix-btn--actif' : ''}`}
                   onClick={() => toggleJour(j.code)}
                 >
-                  {j.code.charAt(0).toUpperCase() + j.code.slice(1)}
+                  {t(`common.jours.${j.code}`)}
                 </button>
               ))}
             </div>
 
             <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end', marginTop: 'var(--space-xl)' }}>
-              <button type="button" className="btn btn--ghost" onClick={() => setEnfantEdit(null)} disabled={envoi}>Annuler</button>
+              <button type="button" className="btn btn--ghost" onClick={() => setEnfantEdit(null)} disabled={envoi}>{t('common.annuler')}</button>
               <button type="button" className="btn btn--primary" onClick={enregistrerJours} disabled={envoi}>
-                {envoi ? 'Enregistrement...' : 'Enregistrer'}
+                {envoi ? t('common.enregistrement') : t('common.enregistrer')}
               </button>
             </div>
           </div>

@@ -14,26 +14,22 @@
 // ============================================================
 
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Calendrier.css';
 
-// Noms des mois en français
-const MOIS_FR = [
-  'Janvier','Février','Mars','Avril','Mai','Juin',
-  'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
-];
+// Les noms des mois et des jours viennent de la langue active
+// (toLocaleDateString et common.joursCourts)
 
-// Noms courts des jours de la semaine (lundi en premier)
-const JOURS_SEMAINE = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-
-// Emoji et libellé pour chaque motif d'absence
+// Emoji de chaque motif d'absence (libellé traduit via common.motifAbsence.*)
 const MOTIFS = {
-  maladie:     '🤒 Maladie',
-  vacances:    '🏖️ Vacances',
-  rendez_vous: '🏥 RDV médical',
-  autre:       '📝 Autre'
+  maladie:     '🤒',
+  vacances:    '🏖️',
+  rendez_vous: '🏥',
+  autre:       '📝'
 };
 
 // Construire la grille du mois : tableau de 42 cases (6 semaines × 7 jours)
@@ -65,6 +61,7 @@ const toDateStr = (annee, mois, jour) => {
 };
 
 const CalendrierAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const now = new Date();
 
   // Mois/année actuellement affichés dans le calendrier
@@ -116,7 +113,7 @@ const CalendrierAdmin = () => {
       const r = await api.get(`/absences/presences/${dateStr}`);
       setPresences(r.data.data);
     } catch {
-      toast.error('Erreur lors du chargement des présences');
+      toast.error(t('admin.calendrier.erreurPresences'));
     }
     setChargement(false);
   }, [annee, mois]);
@@ -126,7 +123,7 @@ const CalendrierAdmin = () => {
 
   // Formater la date sélectionnée pour l'en-tête du panneau
   const labelJourSelec = jourSelec
-    ? new Date(jourSelec + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(jourSelec + 'T12:00:00').toLocaleDateString(getLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : null;
 
   return (
@@ -134,7 +131,7 @@ const CalendrierAdmin = () => {
 
       {/* ── EN-TÊTE ───────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Calendrier <span>des présences</span></h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.calendrier.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── ZONE PRINCIPALE : calendrier + panneau ────────── */}
@@ -146,7 +143,7 @@ const CalendrierAdmin = () => {
           {/* Navigation mois : < Juillet 2026 > */}
           <div className="cal-nav">
             <button className="cal-nav-btn" onClick={() => naviguer(-1)}>‹</button>
-            <h2 className="cal-nav-titre">{MOIS_FR[mois]} {annee}</h2>
+            <h2 className="cal-nav-titre">{new Date(annee, mois, 1).toLocaleDateString(getLocale(), { month: 'long', year: 'numeric' })}</h2>
             <button className="cal-nav-btn" onClick={() => naviguer(1)}>›</button>
           </div>
 
@@ -154,7 +151,7 @@ const CalendrierAdmin = () => {
           <div className="cal-grille">
 
             {/* En-têtes des jours de la semaine */}
-            {JOURS_SEMAINE.map(j => (
+            {t('common.joursCourts', { returnObjects: true }).map(j => (
               <div key={j} className="cal-entete-jour">{j}</div>
             ))}
 
@@ -185,7 +182,7 @@ const CalendrierAdmin = () => {
                     estWeekend  ? 'cal-case--weekend'    : '',
                   ].join(' ').trim()}
                   onClick={() => selectionnerJour(jour)}
-                  title={`Voir les présences du ${jour} ${MOIS_FR[mois]} ${annee}`}
+                  title={t('admin.calendrier.voirPresences', { date: new Date(annee, mois, jour).toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) })}
                 >
                   <span className="cal-case-jour">{jour}</span>
                   {/* Pas de badge le week-end (fermé) ni si les données ne sont pas encore chargées */}
@@ -199,9 +196,9 @@ const CalendrierAdmin = () => {
 
           {/* Légende */}
           <div className="cal-legende">
-            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--aujourd" />Aujourd'hui</span>
-            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--selec" />Jour sélectionné</span>
-            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--weekend" />Week-end</span>
+            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--aujourd" />{t('admin.calendrier.legendeAujourdhui')}</span>
+            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--selec" />{t('admin.calendrier.legendeSelec')}</span>
+            <span className="cal-legende-item"><span className="cal-legende-point cal-legende-point--weekend" />{t('admin.calendrier.legendeWeekend')}</span>
           </div>
         </div>
 
@@ -212,14 +209,14 @@ const CalendrierAdmin = () => {
           {!jourSelec && (
             <div className="cal-panneau-vide">
               <span className="cal-panneau-icone">📅</span>
-              <p>Cliquez sur un jour pour voir les présences</p>
+              <p>{t('admin.calendrier.cliquez')}</p>
             </div>
           )}
 
           {/* Chargement en cours */}
           {jourSelec && chargement && (
             <div className="cal-panneau-vide">
-              <p>Chargement...</p>
+              <p>{t('common.chargement')}</p>
             </div>
           )}
 
@@ -233,25 +230,25 @@ const CalendrierAdmin = () => {
               <div className="cal-resume cal-resume--3">
                 <div className="cal-resume-item cal-resume-item--present">
                   <span className="cal-resume-nb">{presences.presents.length}</span>
-                  <span className="cal-resume-label">Présent{presences.presents.length !== 1 ? 's' : ''}</span>
+                  <span className="cal-resume-label">{t('admin.calendrier.presents', { count: presences.presents.length })}</span>
                 </div>
                 <div className="cal-resume-item cal-resume-item--absent">
                   <span className="cal-resume-nb">{presences.absents.length}</span>
-                  <span className="cal-resume-label">Absent{presences.absents.length !== 1 ? 's' : ''}</span>
+                  <span className="cal-resume-label">{t('admin.calendrier.absents', { count: presences.absents.length })}</span>
                 </div>
                 <div className="cal-resume-item cal-resume-item--nonprevu">
                   <span className="cal-resume-nb">{presences.nonPrevus?.length || 0}</span>
-                  <span className="cal-resume-label">Pas prévu{(presences.nonPrevus?.length || 0) !== 1 ? 's' : ''}</span>
+                  <span className="cal-resume-label">{t('admin.calendrier.nonPrevus', { count: presences.nonPrevus?.length || 0 })}</span>
                 </div>
               </div>
 
               {/* ── LISTE DES PRÉSENTS ──────────────────────── */}
               <div className="cal-section">
                 <p className="cal-section-titre cal-section-titre--present">
-                  ✅ Présents ({presences.presents.length})
+                  {t('admin.calendrier.sectionPresents', { n: presences.presents.length })}
                 </p>
                 {presences.presents.length === 0 ? (
-                  <p className="cal-vide-msg">Aucun enfant présent ce jour</p>
+                  <p className="cal-vide-msg">{t('admin.calendrier.aucunPresent')}</p>
                 ) : (
                   <ul className="cal-liste">
                     {presences.presents.map(e => (
@@ -270,10 +267,10 @@ const CalendrierAdmin = () => {
               {/* ── LISTE DES ABSENTS ───────────────────────── */}
               <div className="cal-section">
                 <p className="cal-section-titre cal-section-titre--absent">
-                  ❌ Absents ({presences.absents.length})
+                  {t('admin.calendrier.sectionAbsents', { n: presences.absents.length })}
                 </p>
                 {presences.absents.length === 0 ? (
-                  <p className="cal-vide-msg">Aucune absence ce jour</p>
+                  <p className="cal-vide-msg">{t('admin.calendrier.aucuneAbsence')}</p>
                 ) : (
                   <ul className="cal-liste">
                     {presences.absents.map(e => (
@@ -282,11 +279,11 @@ const CalendrierAdmin = () => {
                         <div className="cal-enfant-info">
                           <span className="cal-enfant-nom">{e.prenom} {e.nom}</span>
                           <span className="cal-enfant-motif">
-                            {MOTIFS[e.absence?.motif] || e.absence?.motif}
+                            {MOTIFS[e.absence?.motif] ? `${MOTIFS[e.absence.motif]} ${t(`common.motifAbsence.${e.absence.motif}`)}` : e.absence?.motif}
                           </span>
                           {/* Statut en attente : badge orange */}
                           {e.absence?.statut === 'en_attente' && (
-                            <span className="cal-badge-attente">En attente</span>
+                            <span className="cal-badge-attente">{t('admin.calendrier.enAttente')}</span>
                           )}
                         </div>
                       </li>
@@ -301,7 +298,7 @@ const CalendrierAdmin = () => {
               {(presences.nonPrevus?.length || 0) > 0 && (
                 <div className="cal-section">
                   <p className="cal-section-titre cal-section-titre--nonprevu">
-                    ⏳ Pas prévu ce jour ({presences.nonPrevus.length})
+                    {t('admin.calendrier.sectionNonPrevus', { n: presences.nonPrevus.length })}
                   </p>
                   <ul className="cal-liste">
                     {presences.nonPrevus.map(e => (

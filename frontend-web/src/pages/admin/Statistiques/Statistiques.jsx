@@ -11,11 +11,13 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import '../../../styles/admin.css';
 import './Statistiques.css';
 
 const Statistiques = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Objet agrégé contenant toutes les statistiques calculées
   const [stats,      setStats]      = useState(null);
   // Masque le contenu pendant les appels API
@@ -51,9 +53,9 @@ const Statistiques = () => {
   }, []);
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
   // Garde : erreur de chargement (stats null après tentative)
-  if (!stats) return <div className="a-vide"><span className="a-vide__icone">📊</span><p>Impossible de charger les statistiques.</p></div>;
+  if (!stats) return <div className="a-vide"><span className="a-vide__icone">📊</span><p>{t('admin.statistiques.impossible')}</p></div>;
 
   // Taux d'acceptation : accepte / total (arrondi à l'entier)
   const tauxAcceptation = stats.inscriptions.total > 0
@@ -65,19 +67,19 @@ const Statistiques = () => {
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre"><span>Statistiques</span> de la crèche</h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.statistiques.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── GRILLE KPI 6 CARTES COLORÉES ─────────────────────── */}
       {/* Chaque carte : icône + valeur + libellé avec couleur thématique */}
       <div className="kpi-grille">
         {[
-          { icone:'📝', label:'Total inscriptions',     valeur: stats.inscriptions.total || 0,      couleur:'orange' },
-          { icone:'✅', label:'Inscriptions acceptées', valeur: stats.inscriptions.accepte || 0,    couleur:'vert'   },
-          { icone:'⏳', label:'En attente de décision', valeur: stats.inscriptions.en_attente || 0, couleur:'bleu'   },
-          { icone:'👨‍👩‍👧', label:'Comptes parents',       valeur: stats.parents,                      couleur:'violet' },
-          { icone:'📰', label:'Actualités publiées',    valeur: stats.actusPubliees,                couleur:'rose'   },
-          { icone:'🎯', label:'Taux d\'acceptation',    valeur: `${tauxAcceptation}%`,              couleur:'orange' }
+          { icone:'📝', label: t('admin.statistiques.kpi.total'),     valeur: stats.inscriptions.total || 0,      couleur:'orange' },
+          { icone:'✅', label: t('admin.statistiques.kpi.acceptees'), valeur: stats.inscriptions.accepte || 0,    couleur:'vert'   },
+          { icone:'⏳', label: t('admin.statistiques.kpi.attente'), valeur: stats.inscriptions.en_attente || 0, couleur:'bleu'   },
+          { icone:'👨‍👩‍👧', label: t('admin.statistiques.kpi.parents'),       valeur: stats.parents,                      couleur:'violet' },
+          { icone:'📰', label: t('admin.statistiques.kpi.actus'),    valeur: stats.actusPubliees,                couleur:'rose'   },
+          { icone:'🎯', label: t('admin.statistiques.kpi.taux'),    valeur: `${tauxAcceptation}%`,              couleur:'orange' }
         ].map(({ icone, label, valeur, couleur }) => (
           <div key={label} className={`stat-card stat-card--${couleur}`}>
             <span className="stat-card__icone">{icone}</span>
@@ -94,15 +96,15 @@ const Statistiques = () => {
 
         {/* ── BARRES DE RÉPARTITION DES INSCRIPTIONS ──────────── */}
         <div className="a-card">
-          <h2 className="a-card__titre">📝 Répartition des dossiers d'inscription</h2>
+          <h2 className="a-card__titre">📝 {t('admin.statistiques.repartitionDossiers')}</h2>
           <div className="stats-bars">
             {[
-              { label:'Acceptés',         val: stats.inscriptions.accepte       || 0, color:'var(--success)', total: stats.inscriptions.total },
-              { label:'En attente',       val: stats.inscriptions.en_attente    || 0, color:'var(--warning)', total: stats.inscriptions.total },
-              { label:'En cours',         val: stats.inscriptions.en_cours      || 0, color:'var(--info)',    total: stats.inscriptions.total },
-              { label:'Liste d\'attente', val: stats.inscriptions.liste_attente || 0, color:'var(--accent-3)',total: stats.inscriptions.total },
-              { label:'Incomplets',       val: stats.inscriptions.incomplet     || 0, color:'#ff9800',        total: stats.inscriptions.total },
-              { label:'Refusés',          val: stats.inscriptions.refuse        || 0, color:'var(--error)',   total: stats.inscriptions.total }
+              { label: t('admin.statistiques.statuts.accepte'), val: stats.inscriptions.accepte       || 0, color:'var(--success)', total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.en_attente'), val: stats.inscriptions.en_attente    || 0, color:'var(--warning)', total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.en_cours'), val: stats.inscriptions.en_cours      || 0, color:'var(--info)',    total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.liste_attente'), val: stats.inscriptions.liste_attente || 0, color:'var(--accent-3)',total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.incomplet'), val: stats.inscriptions.incomplet     || 0, color:'#ff9800',        total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.refuse'), val: stats.inscriptions.refuse        || 0, color:'var(--error)',   total: stats.inscriptions.total }
             ].map(({ label, val, color, total }) => {
               // Pourcentage arrondi pour la largeur de la barre
               const pct = total > 0 ? Math.round(val / total * 100) : 0;
@@ -123,12 +125,12 @@ const Statistiques = () => {
 
         {/* ── COMPTEURS DE COMPTES ET ACTUALITÉS ───────────────── */}
         <div className="a-card">
-          <h2 className="a-card__titre">👥 Répartition des comptes</h2>
+          <h2 className="a-card__titre">👥 {t('admin.statistiques.repartitionComptes')}</h2>
           <div className="comptes-stats">
             {[
-              { label:'Parents',       val: stats.parents, icone:'👨‍👩‍👧', color:'var(--primary)'   },
-              { label:'Admins',        val: stats.admins,  icone:'👩‍💼', color:'var(--text-dark)'  },
-              { label:'Total comptes', val: stats.comptes, icone:'👥',  color:'var(--secondary)' }
+              { label: t('admin.statistiques.parents'), val: stats.parents, icone:'👨‍👩‍👧', color:'var(--primary)'   },
+              { label: t('admin.statistiques.admins'), val: stats.admins,  icone:'👩‍💼', color:'var(--text-dark)'  },
+              { label: t('admin.statistiques.totalComptes'), val: stats.comptes, icone:'👥',  color:'var(--secondary)' }
             ].map(({ label, val, icone, color }) => (
               <div key={label} className="compte-item">
                 <span style={{ fontSize:'2.5rem' }}>{icone}</span>
@@ -142,14 +144,14 @@ const Statistiques = () => {
 
           {/* Sous-section actualités dans la même carte */}
           <div style={{ marginTop:'var(--space-xl)' }}>
-            <h3 className="a-card__titre" style={{ borderBottom:'none', marginBottom:'var(--space-md)' }}>📰 Actualités</h3>
+            <h3 className="a-card__titre" style={{ borderBottom:'none', marginBottom:'var(--space-md)' }}>📰 {t('admin.statistiques.actualites')}</h3>
             <div className="comptes-stats">
               {/* Publiées */}
               <div className="compte-item">
                 <span style={{ fontSize:'2.5rem' }}>🟢</span>
                 <div>
                   <p style={{ fontFamily:'var(--font-heading)', fontSize:'2rem', fontWeight:700, color:'var(--success)' }}>{stats.actusPubliees}</p>
-                  <p style={{ color:'var(--text-gray)', fontSize:'0.85rem' }}>Publiées</p>
+                  <p style={{ color:'var(--text-gray)', fontSize:'0.85rem' }}>{t('admin.statistiques.publiees')}</p>
                 </div>
               </div>
               {/* Brouillons */}
@@ -157,7 +159,7 @@ const Statistiques = () => {
                 <span style={{ fontSize:'2.5rem' }}>⚫</span>
                 <div>
                   <p style={{ fontFamily:'var(--font-heading)', fontSize:'2rem', fontWeight:700, color:'var(--text-gray)' }}>{stats.actusBrouillons}</p>
-                  <p style={{ color:'var(--text-gray)', fontSize:'0.85rem' }}>Brouillons</p>
+                  <p style={{ color:'var(--text-gray)', fontSize:'0.85rem' }}>{t('admin.statistiques.brouillons')}</p>
                 </div>
               </div>
             </div>

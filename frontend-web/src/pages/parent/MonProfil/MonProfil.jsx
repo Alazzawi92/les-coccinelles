@@ -9,6 +9,7 @@
 // ============================================================
 
 import { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
@@ -16,6 +17,7 @@ import '../../../styles/parent.css';
 import './MonProfil.css';
 
 const MonProfil = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Utilisateur connecté + fonction de mise à jour du contexte
   const { user, majUser } = useAuth();
 
@@ -43,9 +45,9 @@ const MonProfil = () => {
     try {
       const res = await api.put('/users/me', form);
       majUser(res.data.data); // Propagation au contexte pour mise à jour du header
-      toast.success('Profil mis à jour');
+      toast.success(t('parent.monProfil.toastProfil'));
     } catch {
-      toast.error('Erreur lors de la mise à jour');
+      toast.error(t('common.erreurMaj'));
     }
     setSauveProfil(false);
   };
@@ -56,19 +58,19 @@ const MonProfil = () => {
     e.preventDefault();
     setErreurMdp('');
     // Vérification correspondance des deux mots de passe
-    if (mdp.nouveauPassword !== mdp.confirmPassword) { setErreurMdp('Les mots de passe ne correspondent pas'); return; }
+    if (mdp.nouveauPassword !== mdp.confirmPassword) { setErreurMdp(t('parent.monProfil.mdpDifferents')); return; }
     // Longueur minimale requise
-    if (mdp.nouveauPassword.length < 8) { setErreurMdp('8 caractères minimum'); return; }
+    if (mdp.nouveauPassword.length < 8) { setErreurMdp(t('parent.monProfil.mdpCourt')); return; }
 
     setSauveMdp(true);
     try {
       await api.put('/users/me/password', { ancienPassword: mdp.ancienPassword, nouveauPassword: mdp.nouveauPassword });
-      toast.success('Mot de passe modifié');
+      toast.success(t('parent.monProfil.toastMdp'));
       // Réinitialise les champs après succès
       setMdp({ ancienPassword: '', nouveauPassword: '', confirmPassword: '' });
     } catch (err) {
       // L'API retourne un message d'erreur si l'ancien mdp est incorrect
-      setErreurMdp(err.response?.data?.message || 'Erreur lors du changement');
+      setErreurMdp(err.response?.data?.message || t('parent.monProfil.erreurMdp'));
     }
     setSauveMdp(false);
   };
@@ -78,7 +80,7 @@ const MonProfil = () => {
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Mon <span>profil</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.monProfil.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── CARTE IDENTITÉ ────────────────────────────────────── */}
@@ -86,7 +88,7 @@ const MonProfil = () => {
       <div className="profil-identite">
         <div className="profil-avatar">
           {user?.avatar
-            ? <img src={user.avatar} alt="Avatar" />
+            ? <img src={user.avatar} alt={t('parent.monProfil.avatar')} />
             : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
           }
         </div>
@@ -95,43 +97,43 @@ const MonProfil = () => {
           <p>{user?.email}</p>
           {/* Badge : vert si email vérifié, orange sinon */}
           <span className={`statut-badge statut-badge--${user?.email_verifie ? 'accepte' : 'en_attente'}`}>
-            {user?.email_verifie ? '✓ Email vérifié' : '⚠ Email non vérifié'}
+            {user?.email_verifie ? t('parent.monProfil.emailVerifie') : t('parent.monProfil.emailNonVerifie')}
           </span>
         </div>
       </div>
 
       {/* ── ONGLETS ───────────────────────────────────────────── */}
       <div className="profil-onglets">
-        <button className={`onglet ${onglet === 'infos'    ? 'onglet--actif' : ''}`} onClick={() => setOnglet('infos')}>👤 Informations</button>
-        <button className={`onglet ${onglet === 'password' ? 'onglet--actif' : ''}`} onClick={() => setOnglet('password')}>🔒 Mot de passe</button>
+        <button className={`onglet ${onglet === 'infos'    ? 'onglet--actif' : ''}`} onClick={() => setOnglet('infos')}>{t('parent.monProfil.ongletInfos')}</button>
+        <button className={`onglet ${onglet === 'password' ? 'onglet--actif' : ''}`} onClick={() => setOnglet('password')}>{t('parent.monProfil.ongletMdp')}</button>
       </div>
 
       {/* ── FORMULAIRE INFOS PERSONNELLES ─────────────────────── */}
       {onglet === 'infos' && (
         <div className="p-card">
-          <h2 className="p-card__titre">Informations personnelles</h2>
+          <h2 className="p-card__titre">{t('parent.monProfil.infosTitre')}</h2>
           <form className="p-form" onSubmit={handleProfilSubmit}>
             <div className="p-form-row">
               <div className="p-form-groupe">
-                <label className="p-label">Prénom</label>
+                <label className="p-label">{t('parent.monProfil.prenom')}</label>
                 <input className="p-input" value={form.prenom} onChange={e => setForm(p => ({...p, prenom: e.target.value}))} />
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Nom</label>
+                <label className="p-label">{t('parent.monProfil.nom')}</label>
                 <input className="p-input" value={form.nom} onChange={e => setForm(p => ({...p, nom: e.target.value}))} />
               </div>
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Téléphone</label>
-              <input className="p-input" type="tel" value={form.telephone} onChange={e => setForm(p => ({...p, telephone: e.target.value}))} placeholder="06 XX XX XX XX" />
+              <label className="p-label">{t('parent.monProfil.telephone')}</label>
+              <input className="p-input" type="tel" value={form.telephone} onChange={e => setForm(p => ({...p, telephone: e.target.value}))} placeholder={t('parent.monProfil.telephonePlaceholder')} />
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Adresse</label>
-              <textarea className="p-input p-textarea" value={form.adresse} onChange={e => setForm(p => ({...p, adresse: e.target.value}))} rows={3} placeholder="Votre adresse postale" />
+              <label className="p-label">{t('parent.monProfil.adresse')}</label>
+              <textarea className="p-input p-textarea" value={form.adresse} onChange={e => setForm(p => ({...p, adresse: e.target.value}))} rows={3} placeholder={t('parent.monProfil.adressePlaceholder')} />
             </div>
             <div>
               <button type="submit" className="btn btn--primary" disabled={sauveProfil}>
-                {sauveProfil ? 'Enregistrement...' : 'Enregistrer les modifications'}
+                {sauveProfil ? t('common.enregistrement') : t('parent.monProfil.enregistrer')}
               </button>
             </div>
           </form>
@@ -141,26 +143,26 @@ const MonProfil = () => {
       {/* ── FORMULAIRE MOT DE PASSE ───────────────────────────── */}
       {onglet === 'password' && (
         <div className="p-card">
-          <h2 className="p-card__titre">Changer le mot de passe</h2>
+          <h2 className="p-card__titre">{t('parent.monProfil.mdpTitre')}</h2>
           {/* Message d'erreur si validation locale ou réponse API */}
           {erreurMdp && <div className="auth-alerte" style={{ marginBottom: 'var(--space-md)', display:'flex', gap:'var(--space-sm)' }}><span>⚠️</span><span>{erreurMdp}</span></div>}
           <form className="p-form" onSubmit={handleMdpSubmit} style={{ maxWidth: '400px' }}>
             <div className="p-form-groupe">
-              <label className="p-label">Mot de passe actuel <span className="requis">*</span></label>
+              <label className="p-label">{t('parent.monProfil.mdpActuel')} <span className="requis">*</span></label>
               {/* autocomplete="current-password" pour les gestionnaires de mdp */}
               <input className="p-input" type="password" value={mdp.ancienPassword} onChange={e => setMdp(p => ({...p, ancienPassword: e.target.value}))} placeholder="••••••••" autoComplete="current-password" />
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Nouveau mot de passe <span className="requis">*</span></label>
+              <label className="p-label">{t('parent.monProfil.mdpNouveau')} <span className="requis">*</span></label>
               <input className="p-input" type="password" value={mdp.nouveauPassword} onChange={e => setMdp(p => ({...p, nouveauPassword: e.target.value}))} placeholder="••••••••" autoComplete="new-password" />
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Confirmer <span className="requis">*</span></label>
+              <label className="p-label">{t('parent.monProfil.confirmer')} <span className="requis">*</span></label>
               <input className="p-input" type="password" value={mdp.confirmPassword} onChange={e => setMdp(p => ({...p, confirmPassword: e.target.value}))} placeholder="••••••••" autoComplete="new-password" />
             </div>
             <div>
               <button type="submit" className="btn btn--primary" disabled={sauveMdp}>
-                {sauveMdp ? 'Mise à jour...' : 'Changer le mot de passe'}
+                {sauveMdp ? t('common.miseAJour') : t('parent.monProfil.changer')}
               </button>
             </div>
           </form>

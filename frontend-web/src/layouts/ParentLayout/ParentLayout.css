@@ -205,6 +205,13 @@
   color:       var(--text-gray);
 }
 
+/* Zone droite du topbar : sélecteur de langue + cloche de notifications */
+.layout-topbar__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+}
+
 /* ── 4b. Contenu principal ──────────────────────────────── */
 
 /* flex:1 + padding standard autour du contenu des pages */

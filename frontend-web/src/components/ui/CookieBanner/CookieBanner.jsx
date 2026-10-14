@@ -13,6 +13,7 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import './CookieBanner.css';
 
 const CLE_CONSENTEMENT = 'coccinelles_cookie_consent';
@@ -29,6 +30,7 @@ export const getCookieConsent = () => {
 };
 
 const CookieBanner = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // null = aucun choix fait → bannière visible
   const [consentement, setConsentement] = useState(() => getCookieConsent());
   // true = affiche le détail "Personnaliser" (case mesure d'audience)
@@ -52,20 +54,18 @@ const CookieBanner = () => {
   if (consentement) return null;
 
   return (
-    <div className="cookie-banniere" role="dialog" aria-label="Gestion des cookies">
+    <div className="cookie-banniere" role="dialog" aria-label={t('common.cookies.aria')}>
       <div className="cookie-banniere__contenu">
         <p className="cookie-banniere__texte">
-          🍪 Nous utilisons des cookies essentiels au fonctionnement du site, ainsi que
-          des cookies de mesure d'audience (facultatifs) pour améliorer votre expérience.
-          Vous pouvez accepter, refuser ou personnaliser votre choix à tout moment depuis
-          les <a href="/mentions-legales#cookies">mentions légales</a>.
+          {t('common.cookies.texteAvant')}{' '}
+          <a href="/mentions-legales#cookies">{t('common.cookies.lienMentions')}</a>.
         </p>
 
         {personnaliser && (
           <div className="cookie-banniere__options">
             <label className="cookie-option">
               <input type="checkbox" checked disabled />
-              Cookies essentiels (toujours actifs — connexion, sécurité)
+              {t('common.cookies.essentiels')}
             </label>
             <label className="cookie-option">
               <input
@@ -73,7 +73,7 @@ const CookieBanner = () => {
                 checked={mesureActive}
                 onChange={e => setMesureActive(e.target.checked)}
               />
-              Cookies de mesure d'audience
+              {t('common.cookies.mesure')}
             </label>
           </div>
         )}
@@ -82,18 +82,18 @@ const CookieBanner = () => {
           {!personnaliser ? (
             <>
               <button className="btn btn--outline" onClick={() => setPersonnaliser(true)}>
-                Personnaliser
+                {t('common.cookies.personnaliser')}
               </button>
               <button className="btn btn--outline" onClick={toutRefuser}>
-                Tout refuser
+                {t('common.cookies.toutRefuser')}
               </button>
               <button className="btn btn--primary" onClick={toutAccepter}>
-                Tout accepter
+                {t('common.cookies.toutAccepter')}
               </button>
             </>
           ) : (
             <button className="btn btn--primary" onClick={validerChoix}>
-              Valider mon choix
+              {t('common.cookies.valider')}
             </button>
           )}
         </div>

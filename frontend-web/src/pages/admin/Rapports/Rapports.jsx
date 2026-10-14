@@ -12,7 +12,9 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import i18n, { getLocale } from '../../../i18n';
 import '../../../styles/admin.css';
 import './Rapports.css';
 
@@ -35,13 +37,14 @@ const formatDuree = (minutes) => {
   return `${h}h${m.toString().padStart(2, '0')}`;
 };
 
-// Formater une date "YYYY-MM-DD" en "lun. 3 juil."
-const formatDateCourte = (d) => new Date(d).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+// Formater une date "YYYY-MM-DD" en "lun. 3 juil." / "Mon 3 Jul" selon la langue
+const formatDateCourte = (d) => new Date(d).toLocaleDateString(getLocale(), { weekday: 'short', day: 'numeric', month: 'short' });
 
-// Libellé lisible pour les valeurs de repas
-const LABEL_REPAS = { tout: '🟢 Bien mangé', peu: '🟡 Un peu', rien: '🔴 Rien', absent: '—' };
+// Libellé lisible (traduit) pour les valeurs de repas ; '—' si absent ou inconnu
+const labelRepas = (v) => (['tout', 'peu', 'rien'].includes(v) ? i18n.t(`admin.rapports.repas.${v}`) : '—');
 
 const Rapports = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Période sélectionnée (par défaut : depuis le 1er du mois jusqu'à aujourd'hui)
   const [debut,      setDebut]      = useState(premierJourMois());
   const [fin,        setFin]        = useState(today);
@@ -95,42 +98,42 @@ const Rapports = () => {
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Rapport <span>présence &amp; activités</span></h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.rapports.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── FILTRES ───────────────────────────────────────────── */}
       <div className="a-card rapport-filtres">
         <div className="rapport-filtre-champ">
-          <label className="form-label-admin">Du</label>
+          <label className="form-label-admin">{t('admin.rapports.du')}</label>
           <input type="date" className="a-input" value={debut} max={fin} onChange={e => setDebut(e.target.value)} />
         </div>
         <div className="rapport-filtre-champ">
-          <label className="form-label-admin">Au</label>
+          <label className="form-label-admin">{t('admin.rapports.au')}</label>
           <input type="date" className="a-input" value={fin} min={debut} max={today} onChange={e => setFin(e.target.value)} />
         </div>
         <div className="rapport-filtre-raccourcis">
-          <button type="button" className="btn btn--outline btn--sm" onClick={() => appliquerPeriode('semaine')}>Cette semaine</button>
-          <button type="button" className="btn btn--outline btn--sm" onClick={() => appliquerPeriode('mois')}>Ce mois</button>
+          <button type="button" className="btn btn--outline btn--sm" onClick={() => appliquerPeriode('semaine')}>{t('admin.rapports.semaine')}</button>
+          <button type="button" className="btn btn--outline btn--sm" onClick={() => appliquerPeriode('mois')}>{t('admin.rapports.mois')}</button>
         </div>
         <div className="rapport-filtre-champ">
-          <label className="form-label-admin">Groupe</label>
+          <label className="form-label-admin">{t('admin.rapports.groupe')}</label>
           <select className="a-input" value={groupe} onChange={e => { setGroupe(e.target.value); setDetailId(null); }}>
-            <option value="">Tous les groupes</option>
+            <option value="">{t('admin.rapports.tousGroupes')}</option>
             {groupes.map(g => <option key={g} value={g}>{g}</option>)}
           </select>
         </div>
       </div>
 
       {chargement ? (
-        <div className="a-chargement">Chargement...</div>
+        <div className="a-chargement">{t('common.chargement')}</div>
       ) : rapport.length === 0 ? (
-        <div className="a-vide"><span className="a-vide__icone">📊</span><p>Aucune donnée pour cette période.</p></div>
+        <div className="a-vide"><span className="a-vide__icone">📊</span><p>{t('admin.rapports.aucuneDonnee')}</p></div>
       ) : detail ? (
 
         /* ── VUE DÉTAIL : jour par jour pour un enfant ────────── */
         <div className="a-card">
           <div className="rapport-detail-entete">
-            <button type="button" className="btn btn--ghost btn--sm" onClick={() => setDetailId(null)}>← Retour au tableau</button>
+            <button type="button" className="btn btn--ghost btn--sm" onClick={() => setDetailId(null)}>{t('admin.rapports.retour')}</button>
             <h2 className="a-card__titre" style={{ border: 'none', margin: 0 }}>
               {detail.enfant.prenom} {detail.enfant.nom} {detail.enfant.groupe && <span className="rapport-badge-groupe">{detail.enfant.groupe}</span>}
             </h2>
@@ -138,10 +141,10 @@ const Rapports = () => {
 
           {/* KPIs de la période pour cet enfant */}
           <div className="rapport-kpis">
-            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{formatDuree(detail.presence.total_minutes)}</p><p className="rapport-kpi__label">Temps de présence (facturation)</p></div>
-            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.presence.nb_jours}</p><p className="rapport-kpi__label">Jours présents</p></div>
-            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.repas.complets}/{detail.repas.total_renseignes}</p><p className="rapport-kpi__label">Repas bien mangés</p></div>
-            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.sieste.nb_siestes}</p><p className="rapport-kpi__label">Siestes</p></div>
+            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{formatDuree(detail.presence.total_minutes)}</p><p className="rapport-kpi__label">{t('admin.rapports.kpiPresence')}</p></div>
+            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.presence.nb_jours}</p><p className="rapport-kpi__label">{t('admin.rapports.kpiJours')}</p></div>
+            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.repas.complets}/{detail.repas.total_renseignes}</p><p className="rapport-kpi__label">{t('admin.rapports.kpiRepas')}</p></div>
+            <div className="rapport-kpi"><p className="rapport-kpi__valeur">{detail.sieste.nb_siestes}</p><p className="rapport-kpi__label">{t('admin.rapports.kpiSiestes')}</p></div>
           </div>
 
           {/* Détail jour par jour : présence + repas/sieste/activités */}
@@ -149,13 +152,13 @@ const Rapports = () => {
             <table className="a-table">
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Arrivée</th>
-                  <th>Départ</th>
-                  <th>Durée</th>
-                  <th>Repas (M/J/G)</th>
-                  <th>Sieste</th>
-                  <th>Activités</th>
+                  <th>{t('admin.rapports.colDate')}</th>
+                  <th>{t('admin.rapports.colArrivee')}</th>
+                  <th>{t('admin.rapports.colDepart')}</th>
+                  <th>{t('admin.rapports.colDuree')}</th>
+                  <th>{t('admin.rapports.colRepas')}</th>
+                  <th>{t('admin.rapports.colSieste')}</th>
+                  <th>{t('admin.rapports.colActivites')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,7 +172,7 @@ const Rapports = () => {
                       <td>{formatDuree(jourPresence.duree_minutes)}</td>
                       <td>
                         {jourSuivi
-                          ? `${LABEL_REPAS[jourSuivi.repas_matin] || '—'} / ${LABEL_REPAS[jourSuivi.repas_midi] || '—'} / ${LABEL_REPAS[jourSuivi.repas_gouter] || '—'}`
+                          ? `${labelRepas(jourSuivi.repas_matin)} / ${labelRepas(jourSuivi.repas_midi)} / ${labelRepas(jourSuivi.repas_gouter)}`
                           : '—'}
                       </td>
                       <td>
@@ -196,12 +199,12 @@ const Rapports = () => {
             <table className="a-table">
               <thead>
                 <tr>
-                  <th>Enfant</th>
-                  <th>Groupe</th>
-                  <th>Jours présents</th>
-                  <th>Heures totales</th>
-                  <th>Repas bien mangés</th>
-                  <th>Siestes</th>
+                  <th>{t('admin.rapports.colEnfant')}</th>
+                  <th>{t('admin.rapports.colGroupe')}</th>
+                  <th>{t('admin.rapports.colJours')}</th>
+                  <th>{t('admin.rapports.colHeures')}</th>
+                  <th>{t('admin.rapports.colRepasBien')}</th>
+                  <th>{t('admin.rapports.colSiestes')}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -216,7 +219,7 @@ const Rapports = () => {
                     <td>{r.sieste.nb_siestes}</td>
                     <td>
                       <button type="button" className="btn btn--outline btn--sm" onClick={() => setDetailId(r.enfant.id)}>
-                        Voir le détail
+                        {t('admin.rapports.voirDetail')}
                       </button>
                     </td>
                   </tr>

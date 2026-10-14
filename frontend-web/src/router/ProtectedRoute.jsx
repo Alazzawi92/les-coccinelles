@@ -8,6 +8,7 @@
 // ============================================================
 
 import { Navigate, Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 
 // props.roles : tableau des rôles autorisés, ex: ['admin', 'super_admin']
@@ -15,11 +16,12 @@ const ProtectedRoute = ({ roles }) => {
 
   // Récupère l'utilisateur connecté et l'état de chargement initial
   const { user, loading } = useAuth();
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // Pendant la vérification du token au démarrage, afficher un loader.
   // Évite un flash de redirection avant que la session soit connue.
   if (loading) {
-    return <div className="page-loader">Chargement...</div>;
+    return <div className="page-loader">{t('common.chargement')}</div>;
   }
 
   // Pas de session active → rediriger vers la page de connexion

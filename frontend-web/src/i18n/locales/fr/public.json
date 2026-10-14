@@ -1,0 +1,751 @@
+{
+  "accueil": {
+    "surtitre": "Crèche associative à Puilboreau (17)",
+    "titre": "Un lieu de vie joyeux<br/>pour vos <s>tout-petits</s>",
+    "description": "Bienvenue aux Coccinelles ! Nous accueillons vos enfants de 0 à 3 ans dans un environnement chaleureux, sécurisé et stimulant, du lundi au vendredi.",
+    "inscrire": "Inscrire mon enfant",
+    "decouvrir": "Découvrir la crèche",
+    "logoAlt": "Crèche Les Coccinelles",
+    "chiffres": {
+      "placesUnite": "places",
+      "placesLabel": "enfants accueillis",
+      "horairesValeur": "7h30",
+      "horairesUnite": "à 18h30",
+      "horairesLabel": "horaires d'ouverture",
+      "joursUnite": "jours",
+      "joursLabel": "du lundi au vendredi",
+      "equipeLabel": "équipe diplômée"
+    },
+    "valeursTitre": "Pourquoi nous <s>faire confiance</s> ?",
+    "valeurs": {
+      "nature": {
+        "titre": "Projet nature",
+        "texte": "Activités en lien avec la nature et les saisons. Jardin pédagogique, sorties et éveil sensoriel en plein air."
+      },
+      "bienveillance": {
+        "titre": "Accueil bienveillant",
+        "texte": "Chaque enfant est unique. Notre équipe veille à respecter le rythme et les besoins de chacun au quotidien."
+      },
+      "creativite": {
+        "titre": "Éveil créatif",
+        "texte": "Ateliers artistiques, jeux d'éveil, activités sensorielles pour développer la curiosité et la créativité."
+      },
+      "familles": {
+        "titre": "Partenariat familles",
+        "texte": "Relation de confiance : compte rendu quotidien, réunions régulières, espace numérique dédié aux parents."
+      }
+    },
+    "equipeTitre": "Notre <s>équipe</s>",
+    "toutEquipe": "Toute l'équipe →",
+    "menuTitre": "Menu de <s>la semaine</s>",
+    "tousMenus": "Voir tous les menus →",
+    "menuIndispo": "Le menu de la semaine n'est pas encore disponible.",
+    "voirMenus": "Voir les menus",
+    "actusTitre": "Nos <s>actualités</s>",
+    "toutesActus": "Toutes les actualités →",
+    "lireSuite": "Lire la suite →",
+    "ctaTitre": "Vous souhaitez inscrire votre enfant ?",
+    "ctaTexte": "Consultez nos conditions d'inscription et contactez-nous pour vérifier les disponibilités.",
+    "voirConditions": "Voir les conditions",
+    "nousContacter": "Nous contacter"
+  },
+  "presentation": {
+    "tag": "Notre crèche",
+    "titre": "Présentation de <s>la crèche</s>",
+    "sousTitre": "Découvrez les Coccinelles, une crèche associative au cœur de Puilboreau",
+    "quiTitre": "Qui sommes-nous ?",
+    "quiParagraphes": [
+      "La crèche Les Coccinelles est une structure d'accueil associative implantée à Puilboreau, en Charente-Maritime. Ouverte depuis plusieurs années, elle accueille les enfants de <strong>0 à 3 ans</strong> dans un cadre bienveillant et sécurisant.",
+      "Gérée par une association de parents, notre crèche fonctionne en étroite collaboration avec les familles. Nous croyons fermement que la confiance entre parents et professionnels est la clé d'un accueil réussi pour chaque enfant.",
+      "Notre capacité d'accueil est de <strong>28 places</strong>, réparties entre temps plein, temps partiel et accueil occasionnel, afin de répondre aux besoins variés des familles."
+    ],
+    "bullePlaces": "28 places",
+    "bulleAges": "enfants de 0 à 3 ans",
+    "historiqueTitre": "Historique",
+    "historique": [
+      "Le multi-accueil a ouvert ses portes le 2 février 2004 suite à un travail mené par un groupe de parents et des élus des quatre communes afin de répondre à un besoin de garde collective sur le territoire.",
+      "Au bout de six mois, il atteint sa capacité maximum d'utilisation avec des taux qui oscillent tous les ans autour de <strong>85 % de fréquentation</strong>.",
+      "Il répond à un besoin évident de garde collective puisque les listes d'attente sont longues.",
+      "Il fonctionne en système associatif avec délégation des communes pour sa gestion.",
+      "Sa capacité est passée au 1<sup>er</sup> septembre 2015 à <strong>28 enfants</strong> dans des locaux réaménagés et agrandis."
+    ],
+    "repartitionAvantTitre": "Participations par commune (jusqu'en 2022)",
+    "repartitionAvant": [
+      "39 demi-journées en accueil permanent pour Puilboreau",
+      "39 demi-journées en accueil permanent pour St Xandre",
+      "11 demi-journées en accueil permanent pour Marsilly",
+      "11 demi-journées en accueil permanent pour Esnandes"
+    ],
+    "repartitionApresTitre": "Depuis le 1<sup>er</sup> janvier 2023 (retrait de Marsilly)",
+    "repartitionApres": [
+      "44,5 demi-journées en accueil permanent pour Puilboreau",
+      "44,5 demi-journées en accueil permanent pour St Xandre",
+      "11 demi-journées en accueil permanent pour Esnandes"
+    ],
+    "espacesTitre": "Nos espaces",
+    "espaces": {
+      "bebes": {
+        "titre": "Section bébés",
+        "texte": "Espace dédié aux tout-petits (0-12 mois), avec zones de repos adaptées, tapis d'éveil et mobilier sécurisé."
+      },
+      "jeux": {
+        "titre": "Salle de jeux",
+        "texte": "Grande salle lumineuse avec coins jeux thématiques, bibliothèque, espace imitation et zone créative."
+      },
+      "jardin": {
+        "titre": "Jardin pédagogique",
+        "texte": "Espace extérieur aménagé pour les sorties quotidiennes, le jeu en plein air et les activités nature."
+      },
+      "repas": {
+        "titre": "Salle de repas",
+        "texte": "Espace convivial pour les repas, favorisant l'autonomie et la socialisation autour de la table."
+      },
+      "sieste": {
+        "titre": "Salles de sieste",
+        "texte": "Salles calmes et sécurisées avec lits adaptés à chaque tranche d'âge pour des siestes de qualité."
+      },
+      "changes": {
+        "titre": "Espace changes",
+        "texte": "Plan de change surélevé et sécurisé, avec tout le matériel nécessaire aux soins quotidiens."
+      }
+    },
+    "infosTitre": "Informations pratiques",
+    "adresse": "Adresse",
+    "horaires": "Horaires",
+    "horairesTexte": "Lundi au vendredi<br/>7h30 — 18h30",
+    "telephone": "Téléphone",
+    "email": "Email",
+    "gouvernanceTitre": "Notre fonctionnement associatif",
+    "gouvernanceIntro": "Le multi-accueil Les Coccinelles est une association Loi 1901, à but non lucratif. Il est géré par des parents bénévoles regroupés en Conseil d'Administration, dans lequel un bureau est constitué. Une Directrice gère l'établissement au quotidien, applique les décisions prises par le Conseil d'Administration et lui rend des comptes.",
+    "gouvernance": {
+      "ag": {
+        "titre": "L'assemblée générale",
+        "question": "Qu'est-ce qu'une assemblée générale ?",
+        "points": [
+          "Elle est informée de la gestion de l'association lors de sa réunion annuelle.",
+          "Elle examine en détail l'activité et le bilan de l'année écoulée.",
+          "Elle élit les membres du Conseil d'Administration."
+        ]
+      },
+      "ca": {
+        "titre": "Le Conseil d'Administration",
+        "question": "Qu'est-ce qu'un Conseil d'Administration ?",
+        "points": [
+          "C'est un groupe de 12 parents bénévoles, se portant volontaires lors de l'assemblée générale, élu pour un an (de mai à mai).",
+          "Il se réunit tous les 2 mois (de 20h30 à 22h30 environ), en présence de la Directrice du multi-accueil et des élus des 3 communes (Puilboreau, Saint-Xandre et Esnandes).",
+          "Il représente l'association dans les actes de la vie civile et assure les actes de la vie courante.",
+          "Il entérine, par son vote, les décisions prises par le bureau."
+        ]
+      },
+      "bureau": {
+        "titre": "Le bureau",
+        "question": "Qu'est-ce qu'un bureau ?",
+        "points": [
+          "C'est un groupe de 6 parents bénévoles, faisant partie du Conseil d'Administration, élu pour un an (de mai à mai), réparti selon les postes suivants : Président + vice-Président, Trésorier + vice-Trésorier, Secrétaire + vice-Secrétaire.",
+          "Il se réunit une fois par mois pendant 2 heures environ, en présence de la Directrice du multi-accueil.",
+          "Son but est d'aider la Directrice dans la gestion journalière du multi-accueil : personnel, budget, administratif…"
+        ]
+      }
+    },
+    "parentsTitre": "Travail mené avec les parents",
+    "parents": [
+      "Au quotidien, le temps de transmissions est un moment privilégié de dialogue entre les professionnelles et les parents.",
+      "Ainsi, s'instaure un climat de confiance, d'écoute des besoins et de partage des idées.",
+      "L'équipe donne une place importante aux parents qui le souhaitent, elle les sollicite lors des animations, des sorties ou des fêtes organisées.",
+      "Sans la participation des parents, les propositions seraient moins nombreuses. Il en est de même quant à l'investissement des familles au niveau de l'association."
+    ],
+    "parentsConclusion": "Grâce à vous, la crèche peut exister !",
+    "ensemble": "Ensemble",
+    "ensembleSous": "professionnelles & familles",
+    "ctaTexte": "Vous souhaitez visiter la crèche ou en savoir plus ?",
+    "ctaBouton": "Nous contacter"
+  },
+  "equipe": {
+    "tag": "L'équipe",
+    "titre": "Notre <s>équipe éducative</s>",
+    "sousTitre": "Des professionnelles qualifiées et passionnées à l'écoute de vos enfants",
+    "introTitre": "Une équipe diplômée",
+    "intro": [
+      "Notre équipe est composée de professionnelles de la petite enfance, toutes diplômées. Elles se forment régulièrement pour offrir les meilleures pratiques d'accueil.",
+      "La continuité des soins est une priorité : les mêmes professionnelles accompagnent votre enfant tout au long de son parcours à la crèche."
+    ],
+    "membres_one": "membre d'équipe",
+    "membres_other": "membres d'équipe",
+    "membresTitre": "Les membres de l'équipe",
+    "bientot": "L'équipe sera présentée prochainement.",
+    "ctaTexte": "Vous voulez rencontrer l'équipe ?",
+    "ctaBouton": "Prendre contact"
+  },
+  "projetPeda": {
+    "tag": "Pédagogie",
+    "titre": "Notre <s>projet pédagogique</s>",
+    "sousTitre": "Un projet centré sur le bien-être, l'éveil et le respect du rythme de chaque enfant",
+    "philoTitre": "Notre philosophie",
+    "philo": [
+      "Notre projet pédagogique est fondé sur le respect du rythme individuel de chaque enfant. Nous croyons que chaque tout-petit est un être unique, compétent et capable d'initiative.",
+      "Nous nous inspirons des approches de <strong>Maria Montessori</strong> et de <strong>Loris Malaguzzi</strong> (pédagogie Reggio Emilia), en plaçant l'enfant au centre de ses apprentissages.",
+      "L'espace est pensé comme un <em>troisième éducateur</em> : il invite à explorer, créer, expérimenter et socialiser dans un cadre sécurisant."
+    ],
+    "bulleAxes": "3 axes",
+    "bulleSous": "de notre projet",
+    "axesTitre": "Nos axes pédagogiques",
+    "axes": {
+      "nature": {
+        "titre": "Connexion à la nature",
+        "points": [
+          "Jardinage et potager",
+          "Sorties quotidiennes en extérieur",
+          "Observation des saisons",
+          "Matériaux naturels dans les jeux"
+        ]
+      },
+      "creativite": {
+        "titre": "Créativité libre",
+        "points": [
+          "Ateliers d'arts plastiques",
+          "Peinture, modelage, collage",
+          "Jeux symboliques et d'imitation",
+          "Musique et comptines"
+        ]
+      },
+      "collectivite": {
+        "titre": "Vie en collectivité",
+        "points": [
+          "Respect des autres et de l'espace",
+          "Apprentissage par le jeu",
+          "Moments de regroupement",
+          "Règles de vie simples"
+        ]
+      }
+    },
+    "journeeTitre": "La journée type",
+    "journee": [
+      {
+        "heure": "8h30 — 9h30",
+        "label": "Accueil des enfants"
+      },
+      {
+        "heure": "9h30 — 10h30",
+        "label": "Activités du matin"
+      },
+      {
+        "heure": "10h30 — 11h",
+        "label": "Soins et change"
+      },
+      {
+        "heure": "11h — 11h30",
+        "label": "Repas du midi"
+      },
+      {
+        "heure": "11h30 — 14h",
+        "label": "Sieste / repos"
+      },
+      {
+        "heure": "14h — 15h",
+        "label": "Réveil échelonné, goûter"
+      },
+      {
+        "heure": "15h — 17h",
+        "label": "Activités de l'après-midi"
+      },
+      {
+        "heure": "17h — 18h",
+        "label": "Retours progressifs"
+      }
+    ]
+  },
+  "horaires": {
+    "tag": "Horaires",
+    "titre": "Horaires <s>d'accueil</s>",
+    "sousTitre": "La crèche est ouverte du lundi au vendredi, hors jours fériés et congés annuels",
+    "ouvertureTitre": "Horaires d'ouverture",
+    "ouverture": "7h30",
+    "fermeture": "18h30",
+    "ferme": "Fermé",
+    "infoFeries": "La crèche est fermée les <strong>jours fériés</strong> et durant les périodes de congés annuels (en général 3 semaines en août et 1 semaine entre Noël et le Nouvel An).",
+    "infoAbsence": "En cas d'absence non prévue de votre enfant, merci de nous prévenir <strong>avant 9h00</strong> par téléphone.",
+    "typesTitre": "Types d'accueil",
+    "types": {
+      "plein": {
+        "titre": "Temps plein",
+        "texte": "Accueil régulier 5 jours/semaine, sur des plages horaires fixes définies avec la famille."
+      },
+      "partiel": {
+        "titre": "Temps partiel",
+        "texte": "Accueil régulier sur 2 ou 3 jours par semaine, idéal pour les parents travaillant à temps partiel."
+      },
+      "occasionnel": {
+        "titre": "Occasionnel",
+        "texte": "Accueil ponctuel selon les disponibilités de la structure, sous réserve de places disponibles."
+      }
+    }
+  },
+  "tarifs": {
+    "tag": "Tarifs",
+    "titre": "Grille <s>tarifaire</s>",
+    "sousTitre": "Des tarifs calculés selon votre quotient familial CAF, pour une crèche accessible à toutes les familles",
+    "calculTitre": "Comment sont calculés les tarifs ?",
+    "explications": {
+      "psu": {
+        "titre": "Tarif PSU",
+        "texte": "La crèche applique le <strong>tarif PSU (Prestation de Service Unique)</strong> fixé par la CAF. Ce tarif est le même dans toutes les crèches qui appliquent ce système."
+      },
+      "revenus": {
+        "titre": "Basé sur vos revenus",
+        "texte": "Votre participation est calculée sur la base de vos <strong>revenus imposables N-2</strong> et du nombre d'enfants à charge. Plus vos revenus sont faibles, moins vous payez."
+      },
+      "caf": {
+        "titre": "Complément CAF",
+        "texte": "La CAF prend en charge une grande partie du coût réel de la place. Votre participation représente généralement entre <strong>0,06% et 0,36%</strong> de votre revenu plancher mensuel."
+      }
+    },
+    "tableauTitre": "Exemples de tarifs horaires 2024",
+    "colRevenu": "Revenu mensuel net du foyer",
+    "col1": "Tarif horaire (1 enfant)",
+    "col2": "Tarif horaire (2 enfants)",
+    "col3": "Tarif horaire (3 enfants+)",
+    "note": "* Ces tarifs sont donnés à titre indicatif. Votre tarif exact sera calculé lors de l'admission en fonction de votre situation réelle.",
+    "inclusTitre": "Ce qui est inclus",
+    "inclus": {
+      "repas": {
+        "titre": "Repas et goûters",
+        "texte": "Les repas de midi et les goûters sont fournis par la crèche, préparés à partir de produits frais et équilibrés."
+      },
+      "soins": {
+        "titre": "Produits de soin",
+        "texte": "Couches, crème de soin, lingettes... Tous les produits d'hygiène sont fournis par la crèche."
+      },
+      "activites": {
+        "titre": "Activités",
+        "texte": "Toutes les activités d'éveil, sorties et ateliers sont inclus dans le tarif journalier."
+      }
+    }
+  },
+  "inscriptions": {
+    "tag": "Inscription",
+    "titre": "Conditions <s>d'inscription</s>",
+    "sousTitre": "Tout ce que vous devez savoir pour inscrire votre enfant à la crèche Les Coccinelles",
+    "conditionsTitre": "Les conditions d'inscription",
+    "conditions": [
+      "Les enfants accueillis doivent habiter prioritairement les communes de Puilboreau, Saint-Xandre ou Esnandes.",
+      "Afin de pré inscrire votre enfant à la crèche, veuillez nous envoyer la fiche de pré inscription ci-dessous.",
+      "Pour l'accueil régulier ou occasionnel, un dossier d'inscription complet est obligatoire. Les parents doivent respecter la date prévue d'entrée de l'enfant.",
+      "Le cas échéant, les jours d'absence seront facturés comme si l'enfant était présent dans la structure.",
+      "Pour ce faire, les familles souhaitant inscrire leur enfant au multi accueil doivent compléter la fiche de préinscription.",
+      "La place de l'enfant n'est réservée qu'après la signature du contrat et de l'inscription sur le site de la crèche « Pirouette »."
+    ],
+    "pirouette": "Cliquez ici pour accéder à Pirouette",
+    "handicapTitre": "Accueil des enfants en situation de handicap",
+    "handicapTexte": "L'établissement met en œuvre un projet autour de l'inclusion d'enfants en situation de handicap. Un projet spécifique sera réalisé avec la directrice, l'équipe éducative, le référent santé et les différents partenaires accompagnant l'enfant et sa famille.",
+    "handicapConditions": "Les conditions d'inscription seront les mêmes.",
+    "documentsTitre": "Documents nécessaires",
+    "documents": [
+      "Numéro d'assuré social dont dépend l'enfant + photocopie justificative",
+      "Profession et nom de l'employeur de chacun des parents",
+      "Numéro d'Allocations Familiales (CAF PRO) + photocopie justificative",
+      "Carnet de santé de l'enfant : vaccinations obligatoires et à jour",
+      "Nom et coordonnées du médecin traitant",
+      "Certificat d'aptitude à la vie en collectivité",
+      "Attestation de responsabilité civile à jour",
+      "Nom, prénom, adresse et téléphone des personnes susceptibles de reprendre l'enfant",
+      "Les différents protocoles à signer"
+    ],
+    "ficheTitre": "Fiche de pré-inscription",
+    "ficheIntro": "Téléchargez ci-dessous la fiche de pré-inscription et retournez-la complétée à la crèche.",
+    "ficheAlt": "Fiche de pré-inscription Les Coccinelles",
+    "ficheTelecharger": "Télécharger la fiche (PDF)",
+    "ficheHint": "Complétez la fiche et envoyez-la par email à <lien></lien> ou déposez-la directement à la crèche.",
+    "criteresTitre": "Critères d'admission",
+    "criteres": {
+      "age": {
+        "titre": "Âge",
+        "texte": "Enfants de 10 semaines à 3 ans (jusqu'à l'entrée en maternelle)."
+      },
+      "residence": {
+        "titre": "Résidence",
+        "texte": "Priorité aux habitants de Puilboreau, Saint-Xandre et Esnandes."
+      },
+      "priorites": {
+        "titre": "Priorités",
+        "texte": "Selon le règlement CAF : enfant en situation de handicap, parents en insertion professionnelle, fratrie."
+      }
+    },
+    "ctaTexte": "Prêt(e) à inscrire votre enfant ?",
+    "ctaCompte": "Créer un compte parent",
+    "ctaContact": "Nous contacter d'abord"
+  },
+  "actualites": {
+    "tag": "Actualités",
+    "titre": "Nos <s>actualités</s>",
+    "sousTitre": "Les dernières nouvelles de la crèche Les Coccinelles",
+    "aucune": "Aucune actualité publiée pour l'instant.",
+    "lireSuite": "Lire la suite",
+    "precedent": "← Précédent",
+    "suivant": "Suivant →",
+    "page": "Page {{page}} / {{total}}",
+    "retour": "← Toutes les actualités",
+    "par": "Par {{prenom}} {{nom}}"
+  },
+  "menus": {
+    "tag": "Menus",
+    "titre": "Menus de <s>la semaine</s>",
+    "sousTitre": "Des repas équilibrés et adaptés aux tout-petits, préparés avec des produits frais",
+    "precedente": "← Semaine précédente",
+    "suivante": "Semaine suivante →",
+    "semaineDu": "Semaine du {{periode}}",
+    "chargement": "Chargement du menu...",
+    "dejeuner": "Déjeuner",
+    "gouter": "Goûter",
+    "nonRenseigne": "Non renseigné",
+    "nonPublie": "Le menu pour cette semaine n'a pas encore été publié.",
+    "revenez": "Revenez bientôt ou consultez la semaine précédente.",
+    "nutritionTitre": "Notre engagement nutritionnel",
+    "nutritionTexte": "Nos repas sont élaborés par une diététicienne. Nous privilégions les produits locaux et biologiques, sans additifs. Les menus sont adaptés aux enfants allergiques sur présentation d'un PAI médical."
+  },
+  "contact": {
+    "tag": "Contact",
+    "titre": "Nous <s>contacter</s>",
+    "sousTitre": "Vous avez une question ? Nous sommes là pour vous répondre",
+    "formTitre": "Envoyer un message",
+    "envoyeTitre": "Message envoyé !",
+    "envoyeTexte": "Merci pour votre message. Nous vous répondrons dans les plus brefs délais (généralement sous 48h).",
+    "nouveau": "Envoyer un nouveau message",
+    "nom": "Nom complet",
+    "nomPlaceholder": "Marie Dupont",
+    "email": "Adresse email",
+    "emailPlaceholder": "marie@exemple.fr",
+    "telephone": "Téléphone",
+    "telephonePlaceholder": "06 XX XX XX XX",
+    "sujet": "Sujet",
+    "sujetChoisir": "Choisir un sujet...",
+    "sujets": {
+      "inscription": "Demande d'inscription",
+      "visite": "Demande de visite",
+      "information": "Demande d'information",
+      "autre": "Autre"
+    },
+    "message": "Message",
+    "messagePlaceholder": "Décrivez votre demande...",
+    "caracteres": "{{n}}/500 caractères",
+    "envoi": "Envoi en cours...",
+    "envoyer": "Envoyer le message",
+    "toastSucces": "Message envoyé avec succès !",
+    "toastErreur": "Erreur lors de l'envoi. Veuillez réessayer.",
+    "erreurs": {
+      "nomRequis": "Le nom est requis",
+      "emailRequis": "L'email est requis",
+      "emailInvalide": "Email invalide",
+      "sujetRequis": "Le sujet est requis",
+      "messageRequis": "Le message est requis",
+      "messageCourt": "Le message doit faire au moins 20 caractères"
+    },
+    "retrouvez": "Retrouvez-nous",
+    "infos": {
+      "adresse": {
+        "titre": "Adresse",
+        "contenu": "10 rue Saint Vincent\n17138 Puilboreau"
+      },
+      "telephone": {
+        "titre": "Téléphone",
+        "contenu": "05 46 69 68 25"
+      },
+      "email": {
+        "titre": "Email",
+        "contenu": "les.coccinelles17@orange.fr"
+      },
+      "horaires": {
+        "titre": "Horaires",
+        "contenu": "Lun–Ven : 7h30–18h30\nFermé jours fériés"
+      },
+      "communes": {
+        "titre": "Communes accueillies",
+        "contenu": "Puilboreau, Saint-Xandre, Esnandes"
+      }
+    }
+  },
+  "mentions": {
+    "tag": "Légal",
+    "titre": "Mentions <s>légales</s>",
+    "sousTitre": "Conformité RGPD et mentions légales obligatoires",
+    "sommaire": "Sommaire",
+    "miseAJour": "Dernière mise à jour : {{date}}",
+    "sections": {
+      "editeur": {
+        "titre": "Éditeur du site",
+        "avant": [
+          "Le présent site est édité par l'association <strong>Les Coccinelles</strong>, association loi 1901 à but non lucratif, gérant un multi-accueil (crèche associative) à Puilboreau (Charente-Maritime)."
+        ],
+        "liste": [
+          "<strong>Siège social :</strong> 10 rue Saint Vincent, 17138 Puilboreau",
+          "<strong>Téléphone :</strong> 05 46 69 68 25",
+          "<strong>Email :</strong> les.coccinelles17@orange.fr",
+          "<strong>SIRET :</strong> à compléter par l'association",
+          "<strong>Numéro RNA (Répertoire National des Associations) :</strong> à compléter par l'association"
+        ]
+      },
+      "publication": {
+        "titre": "Directeur de la publication",
+        "avant": [
+          "La directrice du multi-accueil Les Coccinelles est responsable de la publication du présent site, en sa qualité de représentante de l'association auprès du Conseil d'Administration."
+        ]
+      },
+      "hebergement": {
+        "titre": "Hébergement",
+        "avant": [
+          "Le site est hébergé sur deux infrastructures distinctes :"
+        ],
+        "liste": [
+          "<strong>Partie publique et espace parent/admin (frontend) :</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — <em>vercel.com</em>",
+          "<strong>API et base de données (backend) :</strong> Alwaysdata SAS, 91 rue du Faubourg Saint-Honoré, 75008 Paris, France — <em>alwaysdata.com</em>"
+        ],
+        "apres": [
+          "Les données personnelles des familles (comptes, enfants, documents) sont stockées exclusivement sur les serveurs de l'hébergeur français Alwaysdata. Certaines ressources statiques du site public (pages, images non confidentielles) peuvent transiter par le réseau de diffusion de contenu de Vercel, sans donnée personnelle associée."
+        ]
+      },
+      "propriete": {
+        "titre": "Propriété intellectuelle",
+        "avant": [
+          "L'ensemble des éléments composant ce site (textes, structure, identité visuelle, logo, illustrations, photographies libres de droits) est la propriété exclusive de l'association Les Coccinelles, sauf mention contraire. Toute reproduction, représentation, modification ou exploitation, totale ou partielle, sans autorisation écrite préalable, est interdite et pourrait constituer une contrefaçon sanctionnée par les articles L.335-2 et suivants du Code de la propriété intellectuelle."
+        ]
+      },
+      "donnees": {
+        "titre": "Données personnelles collectées",
+        "avant": [
+          "Conformément au Règlement (UE) 2016/679 du 27 avril 2016 (« RGPD ») et à la loi n°78-17 du 6 janvier 1978 modifiée relative à l'informatique, aux fichiers et aux libertés, l'association Les Coccinelles, en qualité de responsable de traitement, collecte et traite les catégories de données suivantes :"
+        ],
+        "tableau": {
+          "entetes": [
+            "Catégorie",
+            "Données concernées",
+            "Finalité"
+          ],
+          "lignes": [
+            [
+              "Identification du parent",
+              "Nom, prénom, email, téléphone, adresse postale, mot de passe (chiffré)",
+              "Création et gestion du compte utilisateur"
+            ],
+            [
+              "Dossier de l'enfant",
+              "Nom, prénom, date de naissance, sexe, groupe, médecin traitant, allergies, traitements",
+              "Suivi de l'inscription et de l'accueil quotidien"
+            ],
+            [
+              "Suivi quotidien",
+              "Repas, sieste, humeur, notes des éducatrices",
+              "Compte-rendu transmis aux parents"
+            ],
+            [
+              "Documents",
+              "Pièces d'identité, carnet de santé, justificatifs, attestations CAF",
+              "Constitution et instruction du dossier d'inscription"
+            ],
+            [
+              "Photographies",
+              "Photos de l'enfant prises à la crèche",
+              "Partage avec la famille, sous réserve de consentement"
+            ],
+            [
+              "Messagerie",
+              "Contenu des messages et pièces jointes échangés avec l’équipe",
+              "Communication entre les familles et la crèche"
+            ],
+            [
+              "Connexion",
+              "Identifiants de session (jeton JWT), journal technique de connexion",
+              "Authentification et sécurité de l'accès à l'espace personnel"
+            ],
+            [
+              "Connexion avec Google (facultative)",
+              "Identifiant Google, nom, prénom et adresse email transmis par Google",
+              "Création du compte et connexion sans mot de passe, uniquement si le parent choisit ce mode de connexion"
+            ]
+          ]
+        },
+        "apres": [
+          "Ces données sont strictement nécessaires au fonctionnement de la structure et ne sont jamais revendues, louées ou cédées à des fins commerciales."
+        ]
+      },
+      "baseLegale": {
+        "titre": "Base légale des traitements",
+        "liste": [
+          "<strong>Exécution du contrat</strong> (art. 6.1.b RGPD) : gestion de l'inscription et de l'accueil de l'enfant, une fois le contrat d'accueil signé avec l'association.",
+          "<strong>Consentement</strong> (art. 6.1.a et 9.2.a RGPD) : publication de photographies de l'enfant, communication de données de santé sensibles (allergies, traitements).",
+          "<strong>Obligation légale</strong> (art. 6.1.c RGPD) : conservation de certains documents administratifs et comptables imposée par la réglementation applicable aux établissements d'accueil du jeune enfant (EAJE).",
+          "<strong>Intérêt légitime</strong> (art. 6.1.f RGPD) : sécurisation de la plateforme et prévention des fraudes (journalisation technique des connexions)."
+        ]
+      },
+      "sante": {
+        "titre": "Données de santé des enfants",
+        "avant": [
+          "Les informations relatives à la santé des enfants (allergies, traitements médicaux, coordonnées du médecin traitant, observations du personnel encadrant) constituent des <strong>données sensibles</strong> au sens de l'article 9 du RGPD. Elles font l'objet d'un traitement renforcé :"
+        ],
+        "liste": [
+          "Collecte limitée aux strictes informations nécessaires à la sécurité et au bien-être de l'enfant ;",
+          "Accès restreint à la direction et à l'équipe éducative en charge de l'enfant concerné ;",
+          "Aucune transmission à un tiers en dehors des professionnels de santé intervenant sur demande de la famille ou en cas d'urgence médicale ;",
+          "Suppression des données de santé dans le mois suivant la fin de l'accueil de l'enfant, sauf obligation légale contraire."
+        ]
+      },
+      "destinataires": {
+        "titre": "Destinataires et sous-traitants",
+        "avant": [
+          "Les données personnelles sont destinées exclusivement :"
+        ],
+        "liste": [
+          "À la direction et à l'équipe éducative de la crèche, dans la limite de leurs fonctions respectives ;",
+          "Aux membres du Conseil d'Administration et du bureau, pour les seules données nécessaires à la gestion administrative et financière ;",
+          "Aux prestataires techniques hébergeant la plateforme (Vercel Inc. et Alwaysdata SAS, cf. section « Hébergement »), en qualité de sous-traitants au sens de l'article 28 du RGPD ;",
+          "À Google Ireland Limited, uniquement pour les parents qui choisissent « Se connecter avec Google » : Google vérifie l'identité du parent et transmet à la crèche ses nom, prénom et adresse email. Aucune donnée de la crèche (enfants, santé, messages) n'est transmise à Google. Ce mode de connexion est facultatif : la connexion par email et mot de passe reste toujours disponible ;",
+          "Aux organismes publics compétents (CAF, PMI, communes de Puilboreau, Saint-Xandre et Esnandes) lorsque la loi ou une convention de financement l'exige."
+        ],
+        "apres": [
+          "Aucune donnée n'est cédée, vendue ou transmise à des fins commerciales ou publicitaires."
+        ]
+      },
+      "conservation": {
+        "titre": "Durée de conservation des données",
+        "titreCourt": "Durée de conservation",
+        "tableau": {
+          "entetes": [
+            "Type de donnée",
+            "Durée de conservation"
+          ],
+          "lignes": [
+            [
+              "Compte parent (identité, contact)",
+              "Durée de l'inscription + 1 an"
+            ],
+            [
+              "Dossier de l'enfant (hors santé)",
+              "Durée de l'inscription + 1 an"
+            ],
+            [
+              "Données de santé de l'enfant",
+              "1 mois après la fin de l'accueil"
+            ],
+            [
+              "Photos de l'enfant",
+              "Jusqu'au retrait du consentement, 1 an maximum après la fin de l'accueil"
+            ],
+            [
+              "Messagerie",
+              "2 ans après le dernier échange"
+            ],
+            [
+              "Documents administratifs et comptables",
+              "Durée légale de 5 à 10 ans selon la nature du document"
+            ],
+            [
+              "Journal de connexion (sécurité)",
+              "1 an"
+            ]
+          ]
+        }
+      },
+      "securite": {
+        "titre": "Sécurité des données",
+        "avant": [
+          "L'association Les Coccinelles met en œuvre les mesures techniques et organisationnelles suivantes pour protéger vos données :"
+        ],
+        "liste": [
+          "Chiffrement des mots de passe (algorithme bcrypt, non réversible) ;",
+          "Connexion sécurisée par jetons d'authentification à durée de vie limitée (JWT), sans cookie de suivi ;",
+          "Chiffrement des échanges entre votre navigateur et nos serveurs (HTTPS/TLS) ;",
+          "Contrôle d'accès par rôle : parent, éducatrice/admin, direction (super-admin), chacun n'accédant qu'aux données nécessaires à sa fonction ;",
+          "Sauvegardes régulières et hébergement sur des infrastructures professionnelles sécurisées."
+        ],
+        "apres": [
+          "En cas de violation de données susceptible d'engendrer un risque pour vos droits et libertés, l'association s'engage à en informer la CNIL et les personnes concernées dans les délais prévus par le RGPD (72 heures)."
+        ]
+      },
+      "droits": {
+        "titre": "Vos droits",
+        "avant": [
+          "Conformément aux articles 15 à 22 du RGPD, vous disposez des droits suivants sur vos données et celles de votre enfant :"
+        ],
+        "grille": [
+          {
+            "droit": "Droit d'accès",
+            "desc": "Consulter l'ensemble des données vous concernant"
+          },
+          {
+            "droit": "Droit de rectification",
+            "desc": "Corriger des données inexactes ou incomplètes"
+          },
+          {
+            "droit": "Droit à l'effacement",
+            "desc": "Demander la suppression de vos données, sauf obligation légale de conservation"
+          },
+          {
+            "droit": "Droit à la limitation",
+            "desc": "Demander la suspension temporaire d'un traitement contesté"
+          },
+          {
+            "droit": "Droit d'opposition",
+            "desc": "S'opposer à un traitement, notamment la publication de photos"
+          },
+          {
+            "droit": "Droit à la portabilité",
+            "desc": "Recevoir vos données dans un format structuré et réutilisable"
+          },
+          {
+            "droit": "Directives post-mortem",
+            "desc": "Organiser le sort de vos données après votre décès"
+          }
+        ],
+        "apres": [
+          "Pour exercer l'un de ces droits, contactez la direction de la crèche par email à <strong>les.coccinelles17@orange.fr</strong> ou par courrier à l'adresse du siège social (10 rue Saint Vincent, 17138 Puilboreau), en joignant un justificatif d'identité. Une réponse vous sera apportée dans un délai maximum d'un mois."
+        ]
+      },
+      "reclamation": {
+        "titre": "Réclamation auprès de la CNIL",
+        "avant": [
+          "Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de la Commission Nationale de l'Informatique et des Libertés (CNIL) :"
+        ],
+        "liste": [
+          "En ligne : <em>cnil.fr/fr/plaintes</em>",
+          "Par courrier : CNIL — 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07"
+        ]
+      },
+      "photos": {
+        "titre": "Consentement photographique",
+        "avant": [
+          "La prise et la publication de photographies de votre enfant (sur l'espace parent et, le cas échéant, sur les supports de communication de la crèche) nécessitent votre consentement explicite et préalable, recueilli lors de l'inscription. Ce consentement :"
+        ],
+        "liste": [
+          "est spécifique à chaque enfant et peut différer entre les deux parents ;",
+          "peut être retiré à tout moment, gratuitement, depuis votre espace parent ou par simple demande écrite ;",
+          "entraîne, en cas de retrait, le retrait et la non-publication de toute nouvelle photo de l'enfant."
+        ]
+      },
+      "cookies": {
+        "titre": "Cookies et traceurs",
+        "avant": [
+          "L'authentification à votre espace personnel repose sur un jeton technique (JWT) conservé dans le stockage local de votre navigateur (<em>localStorage</em>), et non sur un cookie : il n'est ni transmis à des tiers, ni utilisé à des fins de suivi publicitaire, et il est supprimé à la déconnexion.",
+          "Le site dépose par ailleurs les cookies suivants, soumis à votre consentement lors de votre première visite (bannière en bas de page) :"
+        ],
+        "liste": [
+          "<strong>Cookies essentiels</strong> (toujours actifs, pas de consentement requis) : mémorisation de votre choix de consentement lui-même. Durée de conservation : 6 mois.",
+          "<strong>Cookies de mesure d'audience</strong> (facultatifs, soumis à votre accord) : statistiques de fréquentation anonymisées, permettant d'améliorer le site. Durée de conservation : 13 mois."
+        ],
+        "apres": [
+          "Vous pouvez modifier votre choix à tout moment en effaçant les données de navigation de ce site dans votre navigateur, ce qui réaffichera la bannière de consentement."
+        ]
+      },
+      "mineurs": {
+        "titre": "Protection des données des mineurs",
+        "avant": [
+          "Les données relatives aux enfants accueillis sont traitées avec une vigilance particulière, conformément aux recommandations de la CNIL concernant les données des mineurs. Elles ne sont jamais utilisées à des fins de profilage, de prospection ou de décision automatisée, et leur accès est strictement limité aux personnes habilitées (parents, équipe éducative, direction)."
+        ]
+      },
+      "droitApplicable": {
+        "titre": "Droit applicable et litiges",
+        "titreCourt": "Droit applicable",
+        "avant": [
+          "Les présentes mentions légales sont soumises au droit français. En cas de litige et à défaut de résolution amiable, les tribunaux du ressort de La Rochelle seront seuls compétents, sous réserve des règles impératives de compétence applicables en matière de consommation."
+        ]
+      }
+    }
+  }
+}

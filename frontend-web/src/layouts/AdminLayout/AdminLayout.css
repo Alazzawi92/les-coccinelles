@@ -190,6 +190,13 @@
   border-bottom: 1px solid #e0e0e0;
 }
 
+/* Zone droite du topbar : sélecteur de langue + cloche de notifications */
+.layout-topbar__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-md);
+}
+
 /* Contenu principal : tout l'espace restant après le topbar */
 .layout-main {
   flex:    1;

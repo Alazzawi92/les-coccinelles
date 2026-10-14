@@ -9,7 +9,9 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL } from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Inscriptions.css';
@@ -17,17 +19,20 @@ import './Inscriptions.css';
 // Tous les statuts possibles pour le filtre dropdown
 const STATUTS = ['tous', 'en_attente', 'en_cours', 'incomplet', 'accepte', 'refuse', 'liste_attente'];
 
-// Labels lisibles en français pour chaque statut
-const STATUT_LABELS = {
-  en_attente:    'En attente',
-  en_cours:      'En cours',
-  incomplet:     'Incomplet',
-  accepte:       'Accepté',
-  refuse:        'Refusé',
-  liste_attente: 'Liste d\'attente'
-};
+// Valeurs stockées en base par la fiche de pré-inscription (en français) :
+// on retrouve leur position pour afficher le libellé traduit
+const FRATRIEOPT    = ['1er enfant', '2ème enfant', '3ème enfant', '4ème enfant ou plus'];
+const JOURS_ACCUEIL = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
 
 const Inscriptions = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Libellés traduits des valeurs stockées en base
+  const libelleStatut    = (s) => t(`common.statutInscription.${s}`, { defaultValue: s });
+  const libelleType      = (v) => (v ? t(`common.typeAccueil.${v}`, { defaultValue: v }) : '—');
+  const libelleFratrie   = (v) => { const i = FRATRIEOPT.indexOf(v); return i >= 0 ? t(`parent.inscription.fratrie.${i}`) : (v || '—'); };
+  const libelleSituation = (v) => (v ? t(`parent.inscription.situations.${v}`, { defaultValue: v }) : '—');
+  const libelleJours     = (v) => (v ? v.split(',').map(j => JOURS_ACCUEIL.includes(j) ? t(`common.jours.${j.toLowerCase()}`) : j).join(', ') : '—');
   // Liste complète des dossiers d'inscription chargés depuis l'API
   const [inscriptions,  setInscriptions]  = useState([]);
   // Recherche textuelle : filtre sur nom enfant, nom parent, email
@@ -52,7 +57,7 @@ const Inscriptions = () => {
   useEffect(() => {
     api.get('/inscriptions')
       .then(r => setInscriptions(r.data.data || []))
-      .catch(() => toast.error('Erreur chargement'))
+      .catch(() => toast.error(t('admin.inscriptions.erreurChargement')))
       .finally(() => setChargement(false));
   }, []);
 
@@ -87,8 +92,8 @@ const Inscriptions = () => {
           : i
       ));
       setSelected(null);
-      toast.success('Dossier mis à jour');
-    } catch { toast.error('Erreur mise à jour'); }
+      toast.success(t('admin.inscriptions.toastMaj'));
+    } catch { toast.error(t('admin.inscriptions.erreurMaj')); }
     setEnvoi(false);
   };
 
@@ -101,45 +106,45 @@ const Inscriptions = () => {
   );
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Gestion des <span>inscriptions</span></h1>
-        <span className="admin-compteur">{filtrees.length} dossier(s)</span>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.inscriptions.titre" components={{ s: <span /> }} /></h1>
+        <span className="admin-compteur">{t('admin.inscriptions.compteur', { count: filtrees.length })}</span>
       </div>
 
       {/* ── FILTRES : RECHERCHE + STATUT ──────────────────────── */}
       <div className="a-filtres">
         <div className="a-recherche">
           <span className="a-recherche__icone">🔍</span>
-          <input placeholder="Rechercher par enfant ou parent..." value={filtre} onChange={e => setFiltre(e.target.value)} />
+          <input placeholder={t('admin.inscriptions.recherche')} value={filtre} onChange={e => setFiltre(e.target.value)} />
         </div>
         <select className="a-select" value={statutFil} onChange={e => setStatutFil(e.target.value)}>
-          <option value="tous">Tous les statuts</option>
+          <option value="tous">{t('admin.inscriptions.tousStatuts')}</option>
           {/* Slice(1) pour exclure 'tous' de la liste d'options */}
-          {STATUTS.slice(1).map(s => <option key={s} value={s}>{STATUT_LABELS[s]}</option>)}
+          {STATUTS.slice(1).map(s => <option key={s} value={s}>{libelleStatut(s)}</option>)}
         </select>
       </div>
 
       {/* ── TABLEAU DES DOSSIERS ──────────────────────────────── */}
       <div className="a-card">
         {filtrees.length === 0 ? (
-          <div className="a-vide"><span className="a-vide__icone">📝</span><p>Aucun dossier trouvé.</p></div>
+          <div className="a-vide"><span className="a-vide__icone">📝</span><p>{t('admin.inscriptions.aucun')}</p></div>
         ) : (
           <table className="a-table">
             <thead>
               <tr>
-                <th>Enfant</th>
-                <th>Parent</th>
-                <th>Type</th>
-                <th>Date souhaitée</th>
-                <th>Statut</th>
-                <th>Soumis le</th>
-                <th>Actions</th>
+                <th>{t('admin.commun.colEnfant')}</th>
+                <th>{t('admin.commun.colParent')}</th>
+                <th>{t('admin.inscriptions.colType')}</th>
+                <th>{t('admin.inscriptions.colDate')}</th>
+                <th>{t('admin.commun.colStatut')}</th>
+                <th>{t('admin.inscriptions.colSoumis')}</th>
+                <th>{t('admin.commun.colActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -152,18 +157,18 @@ const Inscriptions = () => {
                   </td>
                   {/* Type d'accueil : traduit depuis la valeur en base */}
                   <td style={{ fontSize:'0.85rem' }}>
-                    {{ temps_plein:'Temps plein', temps_partiel:'Temps partiel', occasionnel:'Occasionnel' }[insc.temps_accueil] || '—'}
+                    {libelleType(insc.temps_accueil)}
                   </td>
                   <td style={{ fontSize:'0.85rem' }}>
-                    {insc.date_debut_souhaitee ? new Date(insc.date_debut_souhaitee).toLocaleDateString('fr-FR') : '—'}
+                    {insc.date_debut_souhaitee ? new Date(insc.date_debut_souhaitee).toLocaleDateString(getLocale()) : '—'}
                   </td>
                   {/* Badge statut : couleur définie par s-badge--{statut} dans admin.css */}
-                  <td><span className={`s-badge s-badge--${insc.statut}`}>{STATUT_LABELS[insc.statut]}</span></td>
+                  <td><span className={`s-badge s-badge--${insc.statut}`}>{libelleStatut(insc.statut)}</span></td>
                   <td style={{ fontSize:'0.8rem', color:'var(--text-gray)' }}>
-                    {new Date(insc.created_at).toLocaleDateString('fr-FR')}
+                    {new Date(insc.created_at).toLocaleDateString(getLocale())}
                   </td>
                   <td>
-                    <button className="btn btn--primary btn--sm" onClick={() => ouvrirDossier(insc)}>Traiter</button>
+                    <button className="btn btn--primary btn--sm" onClick={() => ouvrirDossier(insc)}>{t('admin.inscriptions.traiter')}</button>
                   </td>
                 </tr>
               ))}
@@ -178,20 +183,20 @@ const Inscriptions = () => {
         <div className="modal-overlay" onClick={() => setSelected(null)}>
           <div className="modal modal--lg" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
-              <h2 className="modal__titre">📝 Dossier de {selected.enfant?.prenom} {selected.enfant?.nom}</h2>
-              <button className="modal__fermer" onClick={() => setSelected(null)}>✕</button>
+              <h2 className="modal__titre">📝 {t('admin.inscriptions.modalTitre', { nom: `${selected.enfant?.prenom} ${selected.enfant?.nom}` })}</h2>
+              <button className="modal__fermer" onClick={() => setSelected(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
 
             {/* ── INFORMATIONS DEMANDE ─────────────────────────── */}
             <div className="dossier-section">
-              <h3 className="dossier-section__titre">📋 Demande d'accueil</h3>
+              <h3 className="dossier-section__titre">📋 {t('admin.inscriptions.demande')}</h3>
               <div className="dossier-grille">
-                <div className="detail-item"><span className="detail-label">Enfant</span><span className="detail-valeur">{selected.enfant?.prenom} {selected.enfant?.nom}</span></div>
-                <div className="detail-item"><span className="detail-label">Type d'accueil</span><span className="detail-valeur">{{ temps_plein:'Temps plein', temps_partiel:'Temps partiel', occasionnel:'Occasionnel' }[selected.temps_accueil] || '—'}</span></div>
-                <div className="detail-item"><span className="detail-label">Date souhaitée</span><span className="detail-valeur">{selected.date_debut_souhaitee ? new Date(selected.date_debut_souhaitee).toLocaleDateString('fr-FR') : '—'}</span></div>
-                <div className="detail-item"><span className="detail-label">Jours souhaités</span><span className="detail-valeur">{selected.jours_souhaites || '—'}</span></div>
+                <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.enfant')}</span><span className="detail-valeur">{selected.enfant?.prenom} {selected.enfant?.nom}</span></div>
+                <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.typeAccueil')}</span><span className="detail-valeur">{libelleType(selected.temps_accueil)}</span></div>
+                <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.dateSouhaitee')}</span><span className="detail-valeur">{selected.date_debut_souhaitee ? new Date(selected.date_debut_souhaitee).toLocaleDateString(getLocale()) : '—'}</span></div>
+                <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.joursSouhaites')}</span><span className="detail-valeur">{libelleJours(selected.jours_souhaites)}</span></div>
                 {selected.commentaire_parent && (
-                  <div className="detail-item detail-item--full"><span className="detail-label">Message du parent</span><span className="detail-valeur">{selected.commentaire_parent}</span></div>
+                  <div className="detail-item detail-item--full"><span className="detail-label">{t('admin.inscriptions.messageParent')}</span><span className="detail-valeur">{selected.commentaire_parent}</span></div>
                 )}
               </div>
             </div>
@@ -203,18 +208,18 @@ const Inscriptions = () => {
                 <>
                   {/* Parents */}
                   <div className="dossier-section">
-                    <h3 className="dossier-section__titre">👤 Parents</h3>
+                    <h3 className="dossier-section__titre">👤 {t('admin.inscriptions.parents')}</h3>
                     <div className="dossier-parents">
-                      {[['parent1', 'Parent 1'], ['parent2', 'Parent 2']].map(([cle, lbl]) => (
+                      {[['parent1', t('admin.inscriptions.parent1')], ['parent2', t('admin.inscriptions.parent2')]].map(([cle, lbl]) => (
                         pi[cle]?.nom ? (
                           <div key={cle} className="dossier-parent-bloc">
                             <p className="dossier-parent-bloc__titre">{lbl}</p>
                             <div className="dossier-grille dossier-grille--compact">
-                              <div className="detail-item"><span className="detail-label">Nom complet</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
-                              <div className="detail-item"><span className="detail-label">Téléphone</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
-                              <div className="detail-item"><span className="detail-label">Email</span><span className="detail-valeur">{pi[cle].email || '—'}</span></div>
-                              <div className="detail-item"><span className="detail-label">Situation familiale</span><span className="detail-valeur">{pi[cle].situation_familiale || '—'}</span></div>
-                              <div className="detail-item detail-item--full"><span className="detail-label">Adresse</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.nomComplet')}</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.telephone')}</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.email')}</span><span className="detail-valeur">{pi[cle].email || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.situation')}</span><span className="detail-valeur">{libelleSituation(pi[cle].situation_familiale)}</span></div>
+                              <div className="detail-item detail-item--full"><span className="detail-label">{t('admin.inscriptions.adresse')}</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
                             </div>
                           </div>
                         ) : null
@@ -225,15 +230,15 @@ const Inscriptions = () => {
                   {/* Employeurs */}
                   {(pi.employeur1?.profession || pi.employeur2?.profession) && (
                     <div className="dossier-section">
-                      <h3 className="dossier-section__titre">💼 Profession & employeur</h3>
+                      <h3 className="dossier-section__titre">💼 {t('admin.inscriptions.professionTitre')}</h3>
                       <div className="dossier-grille">
                         {pi.employeur1?.profession && <>
-                          <div className="detail-item"><span className="detail-label">Profession — Parent 1</span><span className="detail-valeur">{pi.employeur1.profession}</span></div>
-                          <div className="detail-item"><span className="detail-label">Employeur — Parent 1</span><span className="detail-valeur">{pi.employeur1.nom_employeur || '—'}</span></div>
+                          <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.professionParent', { parent: t('admin.inscriptions.parent1') })}</span><span className="detail-valeur">{pi.employeur1.profession}</span></div>
+                          <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.employeurParent', { parent: t('admin.inscriptions.parent1') })}</span><span className="detail-valeur">{pi.employeur1.nom_employeur || '—'}</span></div>
                         </>}
                         {pi.employeur2?.profession && <>
-                          <div className="detail-item"><span className="detail-label">Profession — Parent 2</span><span className="detail-valeur">{pi.employeur2.profession}</span></div>
-                          <div className="detail-item"><span className="detail-label">Employeur — Parent 2</span><span className="detail-valeur">{pi.employeur2.nom_employeur || '—'}</span></div>
+                          <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.professionParent', { parent: t('admin.inscriptions.parent2') })}</span><span className="detail-valeur">{pi.employeur2.profession}</span></div>
+                          <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.employeurParent', { parent: t('admin.inscriptions.parent2') })}</span><span className="detail-valeur">{pi.employeur2.nom_employeur || '—'}</span></div>
                         </>}
                       </div>
                     </div>
@@ -241,26 +246,26 @@ const Inscriptions = () => {
 
                   {/* Fratrie + RPE */}
                   <div className="dossier-section">
-                    <h3 className="dossier-section__titre">👨‍👩‍👧‍👦 Famille</h3>
+                    <h3 className="dossier-section__titre">👨‍👩‍👧‍👦 {t('admin.inscriptions.famille')}</h3>
                     <div className="dossier-grille">
-                      <div className="detail-item"><span className="detail-label">Place dans la fratrie</span><span className="detail-valeur">{pi.place_fratrie || '—'}</span></div>
-                      <div className="detail-item"><span className="detail-label">Autorisation RPE</span><span className="detail-valeur">{pi.autorisation_rpe ? '✅ Oui' : '❌ Non'}</span></div>
+                      <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.fratrie')}</span><span className="detail-valeur">{libelleFratrie(pi.place_fratrie)}</span></div>
+                      <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.rpe')}</span><span className="detail-valeur">{pi.autorisation_rpe ? t('admin.inscriptions.oui') : t('admin.inscriptions.non')}</span></div>
                     </div>
                   </div>
 
                   {/* Contacts d'urgence */}
                   <div className="dossier-section">
-                    <h3 className="dossier-section__titre">🚨 Personnes à contacter en cas d'urgence</h3>
+                    <h3 className="dossier-section__titre">🚨 {t('admin.inscriptions.urgence')}</h3>
                     <div className="dossier-parents">
-                      {[['contact1', 'Contact n°1'], ['contact2', 'Contact n°2']].map(([cle, lbl]) => (
+                      {[['contact1', t('admin.inscriptions.contact1')], ['contact2', t('admin.inscriptions.contact2')]].map(([cle, lbl]) => (
                         pi[cle]?.nom ? (
                           <div key={cle} className="dossier-parent-bloc dossier-parent-bloc--urgence">
                             <p className="dossier-parent-bloc__titre">{lbl}</p>
                             <div className="dossier-grille dossier-grille--compact">
-                              <div className="detail-item"><span className="detail-label">Nom complet</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
-                              <div className="detail-item"><span className="detail-label">Lien de parenté</span><span className="detail-valeur">{pi[cle].parente || '—'}</span></div>
-                              <div className="detail-item"><span className="detail-label">Téléphone</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
-                              <div className="detail-item detail-item--full"><span className="detail-label">Adresse</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.nomComplet')}</span><span className="detail-valeur">{pi[cle].prenom} {pi[cle].nom}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.parente')}</span><span className="detail-valeur">{pi[cle].parente || '—'}</span></div>
+                              <div className="detail-item"><span className="detail-label">{t('admin.inscriptions.telephone')}</span><span className="detail-valeur">{pi[cle].telephone || '—'}</span></div>
+                              <div className="detail-item detail-item--full"><span className="detail-label">{t('admin.inscriptions.adresse')}</span><span className="detail-valeur">{pi[cle].adresse || '—'}</span></div>
                             </div>
                           </div>
                         ) : null
@@ -273,11 +278,11 @@ const Inscriptions = () => {
 
             {/* ── DOCUMENTS JUSTIFICATIFS ───────────────────────── */}
             <div className="dossier-docs">
-              <h3 className="dossier-docs__titre">📎 Pièces justificatives</h3>
+              <h3 className="dossier-docs__titre">📎 {t('admin.inscriptions.pieces')}</h3>
               {chargeDocs ? (
-                <p className="dossier-docs__vide">Chargement...</p>
+                <p className="dossier-docs__vide">{t('common.chargement')}</p>
               ) : documents.length === 0 ? (
-                <p className="dossier-docs__vide">Aucun document déposé par le parent.</p>
+                <p className="dossier-docs__vide">{t('admin.inscriptions.aucunePiece')}</p>
               ) : (
                 <div className="dossier-docs__liste">
                   {documents.map(doc => {
@@ -306,20 +311,20 @@ const Inscriptions = () => {
             {/* Zone de décision : sélection du nouveau statut + commentaire */}
             <div className="dossier-actions">
               <div className="a-form-groupe">
-                <label className="a-label">Nouveau statut</label>
+                <label className="a-label">{t('admin.inscriptions.nouveauStatut')}</label>
                 <select className="a-input" value={nouveauStatut} onChange={e => setNouveauStatut(e.target.value)}>
-                  {STATUTS.slice(1).map(s => <option key={s} value={s}>{STATUT_LABELS[s]}</option>)}
+                  {STATUTS.slice(1).map(s => <option key={s} value={s}>{libelleStatut(s)}</option>)}
                 </select>
               </div>
               <div className="a-form-groupe">
-                <label className="a-label">Note interne (facultatif)</label>
+                <label className="a-label">{t('admin.inscriptions.note')}</label>
                 {/* Commentaire visible uniquement par l'équipe, jamais par le parent */}
-                <textarea className="a-input a-textarea" value={commentaire} onChange={e => setCommentaire(e.target.value)} placeholder="Commentaire visible uniquement par l'équipe..." />
+                <textarea className="a-input a-textarea" value={commentaire} onChange={e => setCommentaire(e.target.value)} placeholder={t('admin.inscriptions.notePlaceholder')} />
               </div>
               <div style={{ display:'flex', gap:'var(--space-md)', justifyContent:'flex-end' }}>
-                <button className="btn btn--ghost" onClick={() => setSelected(null)}>Annuler</button>
+                <button className="btn btn--ghost" onClick={() => setSelected(null)}>{t('common.annuler')}</button>
                 <button className="btn btn--primary" onClick={traiterDossier} disabled={envoi}>
-                  {envoi ? 'Mise à jour...' : '✅ Valider la décision'}
+                  {envoi ? t('common.miseAJour') : t('admin.inscriptions.valider')}
                 </button>
               </div>
             </div>

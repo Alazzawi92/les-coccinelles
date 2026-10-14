@@ -1,0 +1,46 @@
+/* ============================================================
+   FICHIER : LanguageSwitcher.css
+   RÔLE    : Styles du sélecteur de langue FR / EN
+             (deux boutons accolés en forme de pilule).
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Conteneur pilule : bordure commune aux deux boutons */
+.langue-switch {
+  display:       inline-flex;
+  border:        1px solid var(--bg-gray);
+  border-radius: var(--radius-pill);
+  overflow:      hidden;
+  flex-shrink:   0;
+}
+
+/* Bouton d'une langue : discret par défaut */
+.langue-switch__btn {
+  background:  none;
+  border:      none;
+  padding:     var(--space-xs) var(--space-sm);
+  font-family: var(--font-body);
+  font-size:   0.75rem;
+  font-weight: 700;
+  color:       var(--text-gray);
+  cursor:      pointer;
+  transition:  var(--transition);
+}
+
+.langue-switch__btn:hover {
+  color: var(--primary);
+}
+
+/* Langue active : fond orange de la marque */
+.langue-switch__btn--actif,
+.langue-switch__btn--actif:hover {
+  background: var(--primary);
+  color:      var(--white);
+}
+
+/* Focus clavier visible (accessibilité) */
+.langue-switch__btn:focus-visible {
+  outline:        2px solid var(--primary-dark);
+  outline-offset: -2px;
+}

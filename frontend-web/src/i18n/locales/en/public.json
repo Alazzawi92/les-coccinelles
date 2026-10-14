@@ -1,0 +1,751 @@
+{
+  "accueil": {
+    "surtitre": "Non-profit nursery in Puilboreau (17)",
+    "titre": "A joyful place to grow<br/>for your <s>little ones</s>",
+    "description": "Welcome to Les Coccinelles! We care for children aged 0 to 3 in a warm, safe and stimulating environment, Monday to Friday.",
+    "inscrire": "Enrol my child",
+    "decouvrir": "Discover the nursery",
+    "logoAlt": "Les Coccinelles Nursery",
+    "chiffres": {
+      "placesUnite": "places",
+      "placesLabel": "children cared for",
+      "horairesValeur": "7:30am",
+      "horairesUnite": "to 6:30pm",
+      "horairesLabel": "opening hours",
+      "joursUnite": "days",
+      "joursLabel": "Monday to Friday",
+      "equipeLabel": "qualified staff"
+    },
+    "valeursTitre": "Why <s>trust us</s>?",
+    "valeurs": {
+      "nature": {
+        "titre": "Nature project",
+        "texte": "Activities linked to nature and the seasons. Educational garden, outings and outdoor sensory discovery."
+      },
+      "bienveillance": {
+        "titre": "Caring welcome",
+        "texte": "Every child is unique. Our team makes sure to respect each child's rhythm and needs every day."
+      },
+      "creativite": {
+        "titre": "Creative development",
+        "texte": "Art workshops, discovery games and sensory activities to develop curiosity and creativity."
+      },
+      "familles": {
+        "titre": "Partnership with families",
+        "texte": "A relationship of trust: daily reports, regular meetings and an online area dedicated to parents."
+      }
+    },
+    "equipeTitre": "Our <s>team</s>",
+    "toutEquipe": "Meet the whole team →",
+    "menuTitre": "This <s>week's menu</s>",
+    "tousMenus": "See all menus →",
+    "menuIndispo": "This week's menu is not available yet.",
+    "voirMenus": "See the menus",
+    "actusTitre": "Our <s>news</s>",
+    "toutesActus": "All news →",
+    "lireSuite": "Read more →",
+    "ctaTitre": "Would you like to enrol your child?",
+    "ctaTexte": "Read our enrolment conditions and contact us to check availability.",
+    "voirConditions": "See the conditions",
+    "nousContacter": "Contact us"
+  },
+  "presentation": {
+    "tag": "Our nursery",
+    "titre": "About <s>the nursery</s>",
+    "sousTitre": "Discover Les Coccinelles, a non-profit nursery in the heart of Puilboreau",
+    "quiTitre": "Who are we?",
+    "quiParagraphes": [
+      "Les Coccinelles is a non-profit childcare facility located in Puilboreau, Charente-Maritime. Open for many years, it welcomes children aged <strong>0 to 3</strong> in a caring and reassuring setting.",
+      "Run by a parents' association, our nursery works hand in hand with families. We firmly believe that trust between parents and professionals is the key to a successful experience for every child.",
+      "We can welcome <strong>28 children</strong>, with full-time, part-time and occasional places to meet the varied needs of families."
+    ],
+    "bullePlaces": "28 places",
+    "bulleAges": "children aged 0 to 3",
+    "historiqueTitre": "Our history",
+    "historique": [
+      "The nursery opened its doors on 2 February 2004, following work carried out by a group of parents and elected officials from four towns to meet the need for group childcare in the area.",
+      "Within six months it reached full capacity, with attendance rates hovering around <strong>85%</strong> every year.",
+      "It clearly meets a real need for group childcare, as waiting lists are long.",
+      "It is run as an association, with management delegated by the towns.",
+      "On 1<sup>st</sup> September 2015 its capacity increased to <strong>28 children</strong> in refurbished and extended premises."
+    ],
+    "repartitionAvantTitre": "Places funded by each town (until 2022)",
+    "repartitionAvant": [
+      "39 permanent half-days for Puilboreau",
+      "39 permanent half-days for St Xandre",
+      "11 permanent half-days for Marsilly",
+      "11 permanent half-days for Esnandes"
+    ],
+    "repartitionApresTitre": "Since 1<sup>st</sup> January 2023 (Marsilly withdrew)",
+    "repartitionApres": [
+      "44.5 permanent half-days for Puilboreau",
+      "44.5 permanent half-days for St Xandre",
+      "11 permanent half-days for Esnandes"
+    ],
+    "espacesTitre": "Our spaces",
+    "espaces": {
+      "bebes": {
+        "titre": "Baby section",
+        "texte": "A space dedicated to the youngest (0-12 months), with suitable rest areas, play mats and safe furniture."
+      },
+      "jeux": {
+        "titre": "Playroom",
+        "texte": "A large, bright room with themed play corners, a library, a pretend-play area and a creative zone."
+      },
+      "jardin": {
+        "titre": "Educational garden",
+        "texte": "An outdoor area designed for daily outings, outdoor play and nature activities."
+      },
+      "repas": {
+        "titre": "Dining room",
+        "texte": "A friendly space for meals, encouraging independence and social skills around the table."
+      },
+      "sieste": {
+        "titre": "Nap rooms",
+        "texte": "Quiet, safe rooms with beds suited to each age group for good-quality naps."
+      },
+      "changes": {
+        "titre": "Changing area",
+        "texte": "A raised, secure changing table with everything needed for daily care."
+      }
+    },
+    "infosTitre": "Practical information",
+    "adresse": "Address",
+    "horaires": "Opening hours",
+    "horairesTexte": "Monday to Friday<br/>7:30am — 6:30pm",
+    "telephone": "Phone",
+    "email": "Email",
+    "gouvernanceTitre": "How our association works",
+    "gouvernanceIntro": "Les Coccinelles is a non-profit association governed by the French law of 1901. It is run by volunteer parents who form a Board of Directors, from which an executive committee is chosen. A Director manages the nursery day to day, applies the decisions taken by the Board and reports back to it.",
+    "gouvernance": {
+      "ag": {
+        "titre": "The general meeting",
+        "question": "What is a general meeting?",
+        "points": [
+          "It is informed of how the association is managed at its annual meeting.",
+          "It examines in detail the activity and the results of the past year.",
+          "It elects the members of the Board of Directors."
+        ]
+      },
+      "ca": {
+        "titre": "The Board of Directors",
+        "question": "What is a Board of Directors?",
+        "points": [
+          "It is a group of 12 volunteer parents who come forward at the general meeting and are elected for one year (May to May).",
+          "It meets every 2 months (roughly 8:30pm to 10:30pm), together with the nursery Director and elected officials from the 3 towns (Puilboreau, Saint-Xandre and Esnandes).",
+          "It represents the association in legal matters and handles its day-to-day business.",
+          "It ratifies, by vote, the decisions taken by the executive committee."
+        ]
+      },
+      "bureau": {
+        "titre": "The executive committee",
+        "question": "What is the executive committee?",
+        "points": [
+          "It is a group of 6 volunteer parents, members of the Board of Directors, elected for one year (May to May), holding the following roles: Chair + Vice-Chair, Treasurer + Vice-Treasurer, Secretary + Vice-Secretary.",
+          "It meets once a month for about 2 hours, together with the nursery Director.",
+          "Its aim is to help the Director with the day-to-day running of the nursery: staff, budget, administration…"
+        ]
+      }
+    },
+    "parentsTitre": "Working with parents",
+    "parents": [
+      "Every day, handover time is a special moment of dialogue between the staff and the parents.",
+      "This builds a climate of trust, of listening to needs and sharing ideas.",
+      "The team gives an important place to parents who wish to get involved, inviting them to activities, outings and celebrations.",
+      "Without parents' participation, there would be fewer activities on offer. The same goes for families' involvement in the association."
+    ],
+    "parentsConclusion": "Thanks to you, the nursery can exist!",
+    "ensemble": "Together",
+    "ensembleSous": "staff & families",
+    "ctaTexte": "Would you like to visit the nursery or find out more?",
+    "ctaBouton": "Contact us"
+  },
+  "equipe": {
+    "tag": "The team",
+    "titre": "Our <s>childcare team</s>",
+    "sousTitre": "Qualified and passionate professionals who listen to your children",
+    "introTitre": "A qualified team",
+    "intro": [
+      "Our team is made up of early-years professionals, all of them qualified. They train regularly to offer the best childcare practices.",
+      "Continuity of care is a priority: the same staff accompany your child throughout their time at the nursery."
+    ],
+    "membres_one": "team member",
+    "membres_other": "team members",
+    "membresTitre": "Meet the team",
+    "bientot": "The team will be introduced soon.",
+    "ctaTexte": "Would you like to meet the team?",
+    "ctaBouton": "Get in touch"
+  },
+  "projetPeda": {
+    "tag": "Our approach",
+    "titre": "Our <s>educational project</s>",
+    "sousTitre": "A project focused on well-being, discovery and respecting each child's rhythm",
+    "philoTitre": "Our philosophy",
+    "philo": [
+      "Our educational project is based on respecting each child's individual rhythm. We believe every little one is a unique, capable person who can take initiative.",
+      "We draw inspiration from the approaches of <strong>Maria Montessori</strong> and <strong>Loris Malaguzzi</strong> (Reggio Emilia), placing the child at the centre of their own learning.",
+      "The environment is designed as a <em>third teacher</em>: it invites children to explore, create, experiment and socialise in a safe setting."
+    ],
+    "bulleAxes": "3 pillars",
+    "bulleSous": "of our project",
+    "axesTitre": "Our educational pillars",
+    "axes": {
+      "nature": {
+        "titre": "Connecting with nature",
+        "points": [
+          "Gardening and vegetable patch",
+          "Daily outdoor outings",
+          "Observing the seasons",
+          "Natural materials in play"
+        ]
+      },
+      "creativite": {
+        "titre": "Free creativity",
+        "points": [
+          "Art workshops",
+          "Painting, modelling, collage",
+          "Symbolic and pretend play",
+          "Music and nursery rhymes"
+        ]
+      },
+      "collectivite": {
+        "titre": "Living together",
+        "points": [
+          "Respect for others and for the space",
+          "Learning through play",
+          "Group time",
+          "Simple rules of life"
+        ]
+      }
+    },
+    "journeeTitre": "A typical day",
+    "journee": [
+      {
+        "heure": "8:30 — 9:30am",
+        "label": "Children arrive"
+      },
+      {
+        "heure": "9:30 — 10:30am",
+        "label": "Morning activities"
+      },
+      {
+        "heure": "10:30 — 11am",
+        "label": "Care and changing"
+      },
+      {
+        "heure": "11 — 11:30am",
+        "label": "Lunch"
+      },
+      {
+        "heure": "11:30am — 2pm",
+        "label": "Nap / rest"
+      },
+      {
+        "heure": "2 — 3pm",
+        "label": "Gradual waking, snack"
+      },
+      {
+        "heure": "3 — 5pm",
+        "label": "Afternoon activities"
+      },
+      {
+        "heure": "5 — 6pm",
+        "label": "Gradual pick-ups"
+      }
+    ]
+  },
+  "horaires": {
+    "tag": "Opening hours",
+    "titre": "Opening <s>hours</s>",
+    "sousTitre": "The nursery is open Monday to Friday, except public holidays and annual closures",
+    "ouvertureTitre": "Opening times",
+    "ouverture": "7:30am",
+    "fermeture": "6:30pm",
+    "ferme": "Closed",
+    "infoFeries": "The nursery is closed on <strong>public holidays</strong> and during annual closures (usually 3 weeks in August and 1 week between Christmas and New Year).",
+    "infoAbsence": "If your child will be absent unexpectedly, please let us know by phone <strong>before 9am</strong>.",
+    "typesTitre": "Types of care",
+    "types": {
+      "plein": {
+        "titre": "Full-time",
+        "texte": "Regular care 5 days a week, on fixed time slots agreed with the family."
+      },
+      "partiel": {
+        "titre": "Part-time",
+        "texte": "Regular care 2 or 3 days a week, ideal for parents working part-time."
+      },
+      "occasionnel": {
+        "titre": "Occasional",
+        "texte": "Occasional care depending on the nursery's availability, subject to places being free."
+      }
+    }
+  },
+  "tarifs": {
+    "tag": "Fees",
+    "titre": "Fee <s>scale</s>",
+    "sousTitre": "Fees based on your CAF family quotient, so the nursery is affordable for every family",
+    "calculTitre": "How are fees calculated?",
+    "explications": {
+      "psu": {
+        "titre": "PSU rate",
+        "texte": "The nursery applies the <strong>PSU rate (Prestation de Service Unique)</strong> set by the CAF (French family allowance fund). This rate is the same in every nursery using this system."
+      },
+      "revenus": {
+        "titre": "Based on your income",
+        "texte": "Your contribution is calculated from your <strong>taxable income from two years ago</strong> and the number of dependent children. The lower your income, the less you pay."
+      },
+      "caf": {
+        "titre": "CAF contribution",
+        "texte": "The CAF covers a large part of the real cost of a place. Your contribution is usually between <strong>0.06% and 0.36%</strong> of your monthly base income."
+      }
+    },
+    "tableauTitre": "Example hourly rates 2024",
+    "colRevenu": "Household net monthly income",
+    "col1": "Hourly rate (1 child)",
+    "col2": "Hourly rate (2 children)",
+    "col3": "Hourly rate (3+ children)",
+    "note": "* These rates are given for guidance only. Your exact rate will be calculated at admission based on your actual situation.",
+    "inclusTitre": "What's included",
+    "inclus": {
+      "repas": {
+        "titre": "Meals and snacks",
+        "texte": "Lunches and snacks are provided by the nursery, prepared from fresh, balanced ingredients."
+      },
+      "soins": {
+        "titre": "Care products",
+        "texte": "Nappies, skin cream, wipes... All hygiene products are provided by the nursery."
+      },
+      "activites": {
+        "titre": "Activities",
+        "texte": "All discovery activities, outings and workshops are included in the daily rate."
+      }
+    }
+  },
+  "inscriptions": {
+    "tag": "Enrolment",
+    "titre": "Enrolment <s>conditions</s>",
+    "sousTitre": "Everything you need to know to enrol your child at Les Coccinelles nursery",
+    "conditionsTitre": "Enrolment conditions",
+    "conditions": [
+      "Priority is given to children living in Puilboreau, Saint-Xandre or Esnandes.",
+      "To pre-register your child at the nursery, please send us the pre-registration form below.",
+      "For regular or occasional care, a complete enrolment file is required. Parents must respect the child's planned start date.",
+      "Where applicable, days of absence will be charged as if the child were present at the nursery.",
+      "To do this, families wishing to enrol their child must complete the pre-registration form.",
+      "The child's place is only reserved once the contract has been signed and the child is registered on the nursery's “Pirouette” website."
+    ],
+    "pirouette": "Click here to go to Pirouette",
+    "handicapTitre": "Welcoming children with disabilities",
+    "handicapTexte": "The nursery runs a project for the inclusion of children with disabilities. A specific plan will be drawn up with the director, the childcare team, the health advisor and the various partners supporting the child and their family.",
+    "handicapConditions": "The enrolment conditions are the same.",
+    "documentsTitre": "Required documents",
+    "documents": [
+      "Social security number covering the child + supporting photocopy",
+      "Occupation and employer's name for each parent",
+      "Family allowance number (CAF PRO) + supporting photocopy",
+      "Child's health record: compulsory vaccinations up to date",
+      "Name and contact details of the family doctor",
+      "Certificate of fitness for group childcare",
+      "Up-to-date civil liability insurance certificate",
+      "Name, address and phone number of the people authorised to collect the child",
+      "The various protocols to be signed"
+    ],
+    "ficheTitre": "Pre-registration form",
+    "ficheIntro": "Download the pre-registration form below and return it completed to the nursery.",
+    "ficheAlt": "Les Coccinelles pre-registration form",
+    "ficheTelecharger": "Download the form (PDF)",
+    "ficheHint": "Fill in the form and send it by email to <lien></lien> or drop it off at the nursery.",
+    "criteresTitre": "Admission criteria",
+    "criteres": {
+      "age": {
+        "titre": "Age",
+        "texte": "Children from 10 weeks to 3 years old (until they start pre-school)."
+      },
+      "residence": {
+        "titre": "Residence",
+        "texte": "Priority for residents of Puilboreau, Saint-Xandre and Esnandes."
+      },
+      "priorites": {
+        "titre": "Priorities",
+        "texte": "According to CAF rules: children with disabilities, parents returning to work, siblings."
+      }
+    },
+    "ctaTexte": "Ready to enrol your child?",
+    "ctaCompte": "Create a parent account",
+    "ctaContact": "Contact us first"
+  },
+  "actualites": {
+    "tag": "News",
+    "titre": "Our <s>news</s>",
+    "sousTitre": "The latest news from Les Coccinelles nursery",
+    "aucune": "No news published yet.",
+    "lireSuite": "Read more",
+    "precedent": "← Previous",
+    "suivant": "Next →",
+    "page": "Page {{page}} / {{total}}",
+    "retour": "← All news",
+    "par": "By {{prenom}} {{nom}}"
+  },
+  "menus": {
+    "tag": "Menus",
+    "titre": "This <s>week's menus</s>",
+    "sousTitre": "Balanced meals suited to little ones, prepared with fresh ingredients",
+    "precedente": "← Previous week",
+    "suivante": "Next week →",
+    "semaineDu": "Week of {{periode}}",
+    "chargement": "Loading menu...",
+    "dejeuner": "Lunch",
+    "gouter": "Snack",
+    "nonRenseigne": "Not specified",
+    "nonPublie": "The menu for this week has not been published yet.",
+    "revenez": "Come back soon or check the previous week.",
+    "nutritionTitre": "Our nutrition commitment",
+    "nutritionTexte": "Our meals are designed by a dietitian. We favour local and organic produce, with no additives. Menus are adapted for children with allergies on presentation of a medical care plan (PAI)."
+  },
+  "contact": {
+    "tag": "Contact",
+    "titre": "Contact <s>us</s>",
+    "sousTitre": "Do you have a question? We're here to help",
+    "formTitre": "Send a message",
+    "envoyeTitre": "Message sent!",
+    "envoyeTexte": "Thank you for your message. We will reply as soon as possible (usually within 48 hours).",
+    "nouveau": "Send another message",
+    "nom": "Full name",
+    "nomPlaceholder": "Jane Smith",
+    "email": "Email address",
+    "emailPlaceholder": "jane@example.com",
+    "telephone": "Phone",
+    "telephonePlaceholder": "06 XX XX XX XX",
+    "sujet": "Subject",
+    "sujetChoisir": "Choose a subject...",
+    "sujets": {
+      "inscription": "Enrolment request",
+      "visite": "Visit request",
+      "information": "Information request",
+      "autre": "Other"
+    },
+    "message": "Message",
+    "messagePlaceholder": "Describe your request...",
+    "caracteres": "{{n}}/500 characters",
+    "envoi": "Sending...",
+    "envoyer": "Send message",
+    "toastSucces": "Message sent successfully!",
+    "toastErreur": "Error while sending. Please try again.",
+    "erreurs": {
+      "nomRequis": "Name is required",
+      "emailRequis": "Email is required",
+      "emailInvalide": "Invalid email",
+      "sujetRequis": "Subject is required",
+      "messageRequis": "Message is required",
+      "messageCourt": "The message must be at least 20 characters long"
+    },
+    "retrouvez": "Find us",
+    "infos": {
+      "adresse": {
+        "titre": "Address",
+        "contenu": "10 rue Saint Vincent\n17138 Puilboreau, France"
+      },
+      "telephone": {
+        "titre": "Phone",
+        "contenu": "+33 5 46 69 68 25"
+      },
+      "email": {
+        "titre": "Email",
+        "contenu": "les.coccinelles17@orange.fr"
+      },
+      "horaires": {
+        "titre": "Opening hours",
+        "contenu": "Mon–Fri: 7:30am–6:30pm\nClosed on public holidays"
+      },
+      "communes": {
+        "titre": "Towns served",
+        "contenu": "Puilboreau, Saint-Xandre, Esnandes"
+      }
+    }
+  },
+  "mentions": {
+    "tag": "Legal",
+    "titre": "Legal <s>notice</s>",
+    "sousTitre": "GDPR compliance and mandatory legal information",
+    "sommaire": "Contents",
+    "miseAJour": "Last updated: {{date}}",
+    "sections": {
+      "editeur": {
+        "titre": "Website publisher",
+        "avant": [
+          "This website is published by <strong>Les Coccinelles</strong>, a non-profit association governed by the French law of 1901, which runs a childcare centre (non-profit nursery) in Puilboreau (Charente-Maritime, France)."
+        ],
+        "liste": [
+          "<strong>Registered office:</strong> 10 rue Saint Vincent, 17138 Puilboreau, France",
+          "<strong>Phone:</strong> +33 5 46 69 68 25",
+          "<strong>Email:</strong> les.coccinelles17@orange.fr",
+          "<strong>SIRET:</strong> to be completed by the association",
+          "<strong>RNA number (French National Register of Associations):</strong> to be completed by the association"
+        ]
+      },
+      "publication": {
+        "titre": "Publication director",
+        "avant": [
+          "The director of Les Coccinelles nursery is responsible for publishing this website, as the association's representative to the Board of Directors."
+        ]
+      },
+      "hebergement": {
+        "titre": "Hosting",
+        "avant": [
+          "The website is hosted on two separate infrastructures:"
+        ],
+        "liste": [
+          "<strong>Public website and parent/admin areas (frontend):</strong> Vercel Inc., 440 N Barranca Ave #4133, Covina, CA 91723, United States — <em>vercel.com</em>",
+          "<strong>API and database (backend):</strong> Alwaysdata SAS, 91 rue du Faubourg Saint-Honoré, 75008 Paris, France — <em>alwaysdata.com</em>"
+        ],
+        "apres": [
+          "Families' personal data (accounts, children, documents) is stored exclusively on the servers of the French host Alwaysdata. Some static resources of the public website (pages, non-confidential images) may pass through Vercel's content delivery network, with no personal data attached."
+        ]
+      },
+      "propriete": {
+        "titre": "Intellectual property",
+        "avant": [
+          "All elements of this website (texts, structure, visual identity, logo, illustrations, royalty-free photographs) are the exclusive property of Les Coccinelles association, unless stated otherwise. Any reproduction, representation, modification or use, in whole or in part, without prior written permission is prohibited and may constitute an infringement punishable under articles L.335-2 et seq. of the French Intellectual Property Code."
+        ]
+      },
+      "donnees": {
+        "titre": "Personal data collected",
+        "avant": [
+          "In accordance with Regulation (EU) 2016/679 of 27 April 2016 (“GDPR”) and the amended French Data Protection Act no. 78-17 of 6 January 1978, Les Coccinelles association, as data controller, collects and processes the following categories of data:"
+        ],
+        "tableau": {
+          "entetes": [
+            "Category",
+            "Data concerned",
+            "Purpose"
+          ],
+          "lignes": [
+            [
+              "Parent identification",
+              "Last name, first name, email, phone, postal address, password (encrypted)",
+              "Creating and managing the user account"
+            ],
+            [
+              "Child's file",
+              "Last name, first name, date of birth, sex, group, family doctor, allergies, treatments",
+              "Managing enrolment and daily care"
+            ],
+            [
+              "Daily report",
+              "Meals, nap, mood, notes from the childcare staff",
+              "Report shared with the parents"
+            ],
+            [
+              "Documents",
+              "Identity documents, health record, proofs, CAF certificates",
+              "Building and processing the enrolment file"
+            ],
+            [
+              "Photographs",
+              "Photos of the child taken at the nursery",
+              "Sharing with the family, subject to consent"
+            ],
+            [
+              "Messages",
+              "Content of messages and attachments exchanged with the team",
+              "Communication between families and the nursery"
+            ],
+            [
+              "Login",
+              "Session identifiers (JWT token), technical login log",
+              "Authentication and security of access to the personal area"
+            ],
+            [
+              "Sign in with Google (optional)",
+              "Google ID, last name, first name and email address provided by Google",
+              "Account creation and password-free login, only if the parent chooses this login method"
+            ]
+          ]
+        },
+        "apres": [
+          "This data is strictly necessary for the running of the nursery and is never sold, rented or transferred for commercial purposes."
+        ]
+      },
+      "baseLegale": {
+        "titre": "Legal basis for processing",
+        "liste": [
+          "<strong>Performance of a contract</strong> (art. 6.1.b GDPR): managing the child's enrolment and care, once the care contract has been signed with the association.",
+          "<strong>Consent</strong> (art. 6.1.a and 9.2.a GDPR): publishing photographs of the child, sharing sensitive health data (allergies, treatments).",
+          "<strong>Legal obligation</strong> (art. 6.1.c GDPR): keeping certain administrative and accounting documents as required by the regulations applicable to early childhood care facilities (EAJE).",
+          "<strong>Legitimate interest</strong> (art. 6.1.f GDPR): securing the platform and preventing fraud (technical logging of logins)."
+        ]
+      },
+      "sante": {
+        "titre": "Children's health data",
+        "avant": [
+          "Information about children's health (allergies, medical treatments, family doctor's details, observations by the supervising staff) is <strong>sensitive data</strong> within the meaning of article 9 of the GDPR. It is subject to enhanced protection:"
+        ],
+        "liste": [
+          "Collection limited strictly to the information needed for the child's safety and well-being;",
+          "Access restricted to the management and the childcare team responsible for the child concerned;",
+          "No disclosure to third parties other than health professionals acting at the family's request or in a medical emergency;",
+          "Health data deleted within one month after the child leaves the nursery, unless the law requires otherwise."
+        ]
+      },
+      "destinataires": {
+        "titre": "Recipients and processors",
+        "avant": [
+          "Personal data is intended exclusively for:"
+        ],
+        "liste": [
+          "The nursery's management and childcare team, within the limits of their respective roles;",
+          "Members of the Board of Directors and the executive committee, only for the data needed for administrative and financial management;",
+          "The technical providers hosting the platform (Vercel Inc. and Alwaysdata SAS, see the “Hosting” section), as processors within the meaning of article 28 of the GDPR;",
+          "Google Ireland Limited, only for parents who choose “Sign in with Google”: Google verifies the parent's identity and sends the nursery their last name, first name and email address. No nursery data (children, health, messages) is sent to Google. This login method is optional: login by email and password always remains available;",
+          "The competent public bodies (CAF, PMI, the towns of Puilboreau, Saint-Xandre and Esnandes) when required by law or by a funding agreement."
+        ],
+        "apres": [
+          "No data is transferred, sold or shared for commercial or advertising purposes."
+        ]
+      },
+      "conservation": {
+        "titre": "Data retention periods",
+        "titreCourt": "Retention periods",
+        "tableau": {
+          "entetes": [
+            "Type of data",
+            "Retention period"
+          ],
+          "lignes": [
+            [
+              "Parent account (identity, contact)",
+              "Length of enrolment + 1 year"
+            ],
+            [
+              "Child's file (excluding health)",
+              "Length of enrolment + 1 year"
+            ],
+            [
+              "Child's health data",
+              "1 month after the child leaves"
+            ],
+            [
+              "Photos of the child",
+              "Until consent is withdrawn, at most 1 year after the child leaves"
+            ],
+            [
+              "Messages",
+              "2 years after the last exchange"
+            ],
+            [
+              "Administrative and accounting documents",
+              "Legal period of 5 to 10 years depending on the document"
+            ],
+            [
+              "Login log (security)",
+              "1 year"
+            ]
+          ]
+        }
+      },
+      "securite": {
+        "titre": "Data security",
+        "avant": [
+          "Les Coccinelles association implements the following technical and organisational measures to protect your data:"
+        ],
+        "liste": [
+          "Password encryption (bcrypt algorithm, irreversible);",
+          "Secure login using short-lived authentication tokens (JWT), with no tracking cookie;",
+          "Encryption of exchanges between your browser and our servers (HTTPS/TLS);",
+          "Role-based access control: parent, childcare staff/admin, management (super-admin), each accessing only the data needed for their role;",
+          "Regular backups and hosting on secure professional infrastructures."
+        ],
+        "apres": [
+          "In the event of a data breach likely to put your rights and freedoms at risk, the association undertakes to inform the CNIL and the people concerned within the time limits set by the GDPR (72 hours)."
+        ]
+      },
+      "droits": {
+        "titre": "Your rights",
+        "avant": [
+          "Under articles 15 to 22 of the GDPR, you have the following rights over your data and your child's data:"
+        ],
+        "grille": [
+          {
+            "droit": "Right of access",
+            "desc": "View all the data concerning you"
+          },
+          {
+            "droit": "Right to rectification",
+            "desc": "Correct inaccurate or incomplete data"
+          },
+          {
+            "droit": "Right to erasure",
+            "desc": "Ask for your data to be deleted, unless the law requires it to be kept"
+          },
+          {
+            "droit": "Right to restriction",
+            "desc": "Ask for a disputed processing to be temporarily suspended"
+          },
+          {
+            "droit": "Right to object",
+            "desc": "Object to a processing, in particular the publication of photos"
+          },
+          {
+            "droit": "Right to data portability",
+            "desc": "Receive your data in a structured, reusable format"
+          },
+          {
+            "droit": "Post-mortem instructions",
+            "desc": "Decide what happens to your data after your death"
+          }
+        ],
+        "apres": [
+          "To exercise any of these rights, contact the nursery management by email at <strong>les.coccinelles17@orange.fr</strong> or by post at the registered office (10 rue Saint Vincent, 17138 Puilboreau, France), enclosing proof of identity. You will receive a reply within one month at most."
+        ]
+      },
+      "reclamation": {
+        "titre": "Complaint to the CNIL",
+        "avant": [
+          "If, after contacting us, you believe your rights are not being respected, you can lodge a complaint with the CNIL (French data protection authority):"
+        ],
+        "liste": [
+          "Online: <em>cnil.fr/fr/plaintes</em>",
+          "By post: CNIL — 3 Place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France"
+        ]
+      },
+      "photos": {
+        "titre": "Photo consent",
+        "avant": [
+          "Taking and publishing photographs of your child (in the parent area and, where applicable, in the nursery's communication materials) requires your explicit prior consent, collected at enrolment. This consent:"
+        ],
+        "liste": [
+          "is specific to each child and may differ between the two parents;",
+          "can be withdrawn at any time, free of charge, from your parent area or by simple written request;",
+          "if withdrawn, means that existing photos of the child are removed and no new photo is published."
+        ]
+      },
+      "cookies": {
+        "titre": "Cookies and trackers",
+        "avant": [
+          "Authentication to your personal area relies on a technical token (JWT) kept in your browser's local storage (<em>localStorage</em>), not on a cookie: it is never shared with third parties or used for advertising tracking, and it is deleted when you log out.",
+          "The website also sets the following cookies, subject to your consent on your first visit (banner at the bottom of the page):"
+        ],
+        "liste": [
+          "<strong>Essential cookies</strong> (always active, no consent required): storing your consent choice itself. Retention period: 6 months.",
+          "<strong>Audience measurement cookies</strong> (optional, subject to your agreement): anonymised visitor statistics used to improve the website. Retention period: 13 months."
+        ],
+        "apres": [
+          "You can change your choice at any time by clearing this website's browsing data in your browser, which will display the consent banner again."
+        ]
+      },
+      "mineurs": {
+        "titre": "Protection of minors' data",
+        "avant": [
+          "Data about the children in our care is handled with particular care, in line with the CNIL's recommendations on minors' data. It is never used for profiling, marketing or automated decision-making, and access is strictly limited to authorised people (parents, childcare team, management)."
+        ]
+      },
+      "droitApplicable": {
+        "titre": "Applicable law and disputes",
+        "titreCourt": "Applicable law",
+        "avant": [
+          "This legal notice is governed by French law. In the event of a dispute that cannot be settled amicably, the courts of La Rochelle shall have sole jurisdiction, subject to the mandatory jurisdiction rules applicable to consumer matters."
+        ]
+      }
+    }
+  }
+}

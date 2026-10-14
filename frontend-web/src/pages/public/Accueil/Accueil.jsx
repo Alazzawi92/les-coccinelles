@@ -10,14 +10,18 @@
 
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL } from '../../../services/api';
 import usePageCMS from '../../../hooks/usePageCMS';
+import { getLocale } from '../../../i18n';
 import './Accueil.css';
 
 // Quill produit "<p><br></p>" pour un champ vide
 const quillVide = v => !v || v === '<p><br></p>';
 
 const Accueil = () => {
+
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // Dernières actualités (3 maximum pour la page d'accueil)
   const [actualites, setActualites] = useState([]);
@@ -71,20 +75,20 @@ const Accueil = () => {
         <div className="container hero__contenu">
           {/* Texte + boutons à gauche */}
           <div className="hero__texte">
-            <p className="hero__surtitle">Crèche associative à Puilboreau (17)</p>
+            <p className="hero__surtitle">{t('public.accueil.surtitre')}</p>
+            {/* Trans : traduction contenant des balises (<br/>, <s> → <span>) */}
             <h1 className="hero__titre">
-              Un lieu de vie joyeux<br />pour vos <span>tout-petits</span>
+              <Trans i18nKey="public.accueil.titre" components={{ s: <span /> }} />
             </h1>
             <p className="hero__description">
-              Bienvenue aux Coccinelles ! Nous accueillons vos enfants de 0 à 3 ans
-              dans un environnement chaleureux, sécurisé et stimulant, du lundi au vendredi.
+              {t('public.accueil.description')}
             </p>
             <div className="hero__actions">
               <Link to="/conditions-inscription" className="btn btn--primary btn--lg">
-                Inscrire mon enfant
+                {t('public.accueil.inscrire')}
               </Link>
               <Link to="/presentation" className="btn btn--outline btn--lg">
-                Découvrir la crèche
+                {t('public.accueil.decouvrir')}
               </Link>
             </div>
           </div>
@@ -118,7 +122,7 @@ const Accueil = () => {
               <path d="M 116 200 A 84 84 0 0 1 284 200"  stroke="#4FC3F7" strokeWidth="20" strokeLinecap="round" />
               <path d="M 140 200 A 60 60 0 0 1 260 200"  stroke="#BA68C8" strokeWidth="20" strokeLinecap="round" />
             </svg>
-            <img src="/images/logo.png" alt="Crèche Les Coccinelles" className="hero__logo-grand" />
+            <img src="/images/logo.png" alt={t('public.accueil.logoAlt')} className="hero__logo-grand" />
             <div className="hero__deco">
               <span>🌿</span><span>🌼</span><span>🍄</span>
             </div>
@@ -140,10 +144,10 @@ const Accueil = () => {
         <div className="container chiffres__grille">
           {/* 4 indicateurs clés : places, horaires, jours, équipe */}
           {[
-            { valeur: '28',   unite: 'places', label: 'enfants accueillis',   icone: '👶' },
-            { valeur: '7h30', unite: 'à 18h30', label: "horaires d'ouverture", icone: '🕐' },
-            { valeur: '5',    unite: 'jours',  label: 'du lundi au vendredi', icone: '📅' },
-            { valeur: '100%', unite: '',       label: 'équipe diplômée',       icone: '🎓' }
+            { valeur: '28',   unite: t('public.accueil.chiffres.placesUnite'),   label: t('public.accueil.chiffres.placesLabel'),   icone: '👶' },
+            { valeur: t('public.accueil.chiffres.horairesValeur'), unite: t('public.accueil.chiffres.horairesUnite'), label: t('public.accueil.chiffres.horairesLabel'), icone: '🕐' },
+            { valeur: '5',    unite: t('public.accueil.chiffres.joursUnite'),    label: t('public.accueil.chiffres.joursLabel'),    icone: '📅' },
+            { valeur: '100%', unite: '',                                         label: t('public.accueil.chiffres.equipeLabel'),   icone: '🎓' }
           ].map(({ valeur, unite, label, icone }) => (
             <div key={label} className="chiffre-carte">
               <span className="chiffre-carte__icone">{icone}</span>
@@ -161,20 +165,21 @@ const Accueil = () => {
       <section className="valeurs">
         <div className="container">
           <h2 className="section-titre text-center">
-            Pourquoi nous <span>faire confiance</span> ?
+            <Trans i18nKey="public.accueil.valeursTitre" components={{ s: <span /> }} />
           </h2>
           <div className="valeurs__grille">
-            {/* 4 cartes valeurs : Nature, Bienveillance, Créativité, Familles */}
+            {/* 4 cartes valeurs : Nature, Bienveillance, Créativité, Familles
+                cle : clé de traduction (public.accueil.valeurs.*) */}
             {[
-              { icone: '🌿', couleur: 'vert',   titre: 'Projet nature',        texte: 'Activités en lien avec la nature et les saisons. Jardin pédagogique, sorties et éveil sensoriel en plein air.' },
-              { icone: '❤️', couleur: 'rose',   titre: 'Accueil bienveillant', texte: 'Chaque enfant est unique. Notre équipe veille à respecter le rythme et les besoins de chacun au quotidien.' },
-              { icone: '🎨', couleur: 'orange', titre: 'Éveil créatif',        texte: "Ateliers artistiques, jeux d'éveil, activités sensorielles pour développer la curiosité et la créativité." },
-              { icone: '👨‍👩‍👧', couleur: 'violet', titre: 'Partenariat familles', texte: 'Relation de confiance : compte rendu quotidien, réunions régulières, espace numérique dédié aux parents.' }
-            ].map(({ icone, couleur, titre, texte }) => (
-              <div key={titre} className={`valeur-carte valeur-carte--${couleur}`}>
+              { icone: '🌿', couleur: 'vert',   cle: 'nature' },
+              { icone: '❤️', couleur: 'rose',   cle: 'bienveillance' },
+              { icone: '🎨', couleur: 'orange', cle: 'creativite' },
+              { icone: '👨‍👩‍👧', couleur: 'violet', cle: 'familles' }
+            ].map(({ icone, couleur, cle }) => (
+              <div key={cle} className={`valeur-carte valeur-carte--${couleur}`}>
                 <div className="valeur-carte__icone">{icone}</div>
-                <h3 className="valeur-carte__titre">{titre}</h3>
-                <p className="valeur-carte__texte">{texte}</p>
+                <h3 className="valeur-carte__titre">{t(`public.accueil.valeurs.${cle}.titre`)}</h3>
+                <p className="valeur-carte__texte">{t(`public.accueil.valeurs.${cle}.texte`)}</p>
               </div>
             ))}
           </div>
@@ -186,8 +191,8 @@ const Accueil = () => {
         <section className="accueil-equipe">
           <div className="container">
             <div className="accueil-equipe__entete">
-              <h2 className="section-titre">Notre <span>équipe</span></h2>
-              <Link to="/equipe" className="btn btn--ghost btn--sm">Toute l'équipe →</Link>
+              <h2 className="section-titre"><Trans i18nKey="public.accueil.equipeTitre" components={{ s: <span /> }} /></h2>
+              <Link to="/equipe" className="btn btn--ghost btn--sm">{t('public.accueil.toutEquipe')}</Link>
             </div>
             <div className="accueil-equipe__grille">
               {membres.map(m => {
@@ -215,8 +220,8 @@ const Accueil = () => {
       <section className="accueil-menus">
         <div className="container">
           <div className="accueil-menus__entete">
-            <h2 className="section-titre">Menu de <span>la semaine</span></h2>
-            <Link to="/menus" className="btn btn--ghost btn--sm">Voir tous les menus →</Link>
+            <h2 className="section-titre"><Trans i18nKey="public.accueil.menuTitre" components={{ s: <span /> }} /></h2>
+            <Link to="/menus" className="btn btn--ghost btn--sm">{t('public.accueil.tousMenus')}</Link>
           </div>
 
           {/* Affiché si le menu existe en base, sinon message d'indisponibilité */}
@@ -224,16 +229,16 @@ const Accueil = () => {
             <div className="menu-semaine">
               {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'].map((jour) => (
                 <div key={jour} className="menu-jour">
-                  <p className="menu-jour__nom">{jour.charAt(0).toUpperCase() + jour.slice(1)}</p>
+                  <p className="menu-jour__nom">{t(`common.jours.${jour}`)}</p>
                   <div className="menu-jour__repas">
-                    <span className="menu-jour__label">🍽️ Midi</span>
+                    <span className="menu-jour__label">🍽️ {t('common.repas.midi')}</span>
                     {quillVide(menu[`${jour}_midi`])
                       ? <span>—</span>
                       : <div className="menu-jour__html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_midi`] }} />
                     }
                   </div>
                   <div className="menu-jour__repas">
-                    <span className="menu-jour__label">🍪 Goûter</span>
+                    <span className="menu-jour__label">🍪 {t('common.repas.gouter')}</span>
                     {quillVide(menu[`${jour}_gouter`])
                       ? <span>—</span>
                       : <div className="menu-jour__html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_gouter`] }} />
@@ -244,8 +249,8 @@ const Accueil = () => {
             </div>
           ) : (
             <div className="menu-vide">
-              <p>Le menu de la semaine n'est pas encore disponible.</p>
-              <Link to="/menus" className="btn btn--outline btn--sm">Voir les menus</Link>
+              <p>{t('public.accueil.menuIndispo')}</p>
+              <Link to="/menus" className="btn btn--outline btn--sm">{t('public.accueil.voirMenus')}</Link>
             </div>
           )}
         </div>
@@ -257,8 +262,8 @@ const Accueil = () => {
         <section className="accueil-actualites">
           <div className="container">
             <div className="accueil-actualites__entete">
-              <h2 className="section-titre">Nos <span>actualités</span></h2>
-              <Link to="/actualites" className="btn btn--ghost btn--sm">Toutes les actualités →</Link>
+              <h2 className="section-titre"><Trans i18nKey="public.accueil.actusTitre" components={{ s: <span /> }} /></h2>
+              <Link to="/actualites" className="btn btn--ghost btn--sm">{t('public.accueil.toutesActus')}</Link>
             </div>
             <div className="actualites-grille">
               {actualites.map((actu) => (
@@ -270,16 +275,16 @@ const Accueil = () => {
                     </div>
                   )}
                   <div className="actu-carte__corps">
-                    {/* Date en format long français */}
+                    {/* Date en format long, dans la langue active */}
                     <p className="actu-carte__date">
-                      {new Date(actu.date_publication).toLocaleDateString('fr-FR', {
+                      {new Date(actu.date_publication).toLocaleDateString(getLocale(), {
                         day: 'numeric', month: 'long', year: 'numeric'
                       })}
                     </p>
                     <h3 className="actu-carte__titre">{actu.titre}</h3>
                     <p className="actu-carte__extrait">{actu.extrait}</p>
                     <Link to={`/actualites/${actu.id}`} className="actu-carte__lien">
-                      Lire la suite →
+                      {t('public.accueil.lireSuite')}
                     </Link>
                   </div>
                 </article>
@@ -292,16 +297,16 @@ const Accueil = () => {
       {/* ── APPEL À L'ACTION FINAL ──────────────────────────── */}
       <section className="cta">
         <div className="container cta__contenu">
-          <h2 className="cta__titre">Vous souhaitez inscrire votre enfant ?</h2>
+          <h2 className="cta__titre">{t('public.accueil.ctaTitre')}</h2>
           <p className="cta__texte">
-            Consultez nos conditions d'inscription et contactez-nous pour vérifier les disponibilités.
+            {t('public.accueil.ctaTexte')}
           </p>
           <div className="cta__actions">
             <Link to="/conditions-inscription" className="btn btn--primary btn--lg">
-              Voir les conditions
+              {t('public.accueil.voirConditions')}
             </Link>
             <Link to="/contact" className="cta__btn-contact">
-              Nous contacter
+              {t('public.accueil.nousContacter')}
             </Link>
           </div>
         </div>

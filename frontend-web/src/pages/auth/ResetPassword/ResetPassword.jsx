@@ -9,13 +9,16 @@
 
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { resetPassword } from '../../../services/auth.service';
+import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './ResetPassword.css';
 
 const ResetPassword = () => {
 
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [password,        setPassword]        = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [envoi,           setEnvoi]           = useState(false);  // En cours d'envoi
@@ -33,22 +36,22 @@ const ResetPassword = () => {
 
     // Validations locales avant appel API
     if (password !== confirmPassword) {
-      setErreur('Les mots de passe ne correspondent pas');
+      setErreur(t('auth.reset.mdpDifferents'));
       return;
     }
     if (password.length < 8) {
-      setErreur('Mot de passe trop court (8 caractères min)');
+      setErreur(t('auth.reset.mdpCourt'));
       return;
     }
 
     setEnvoi(true);
     try {
       await resetPassword(token, password);
-      toast.success('Mot de passe réinitialisé !');
+      toast.success(t('auth.reset.toastSucces'));
       navigate('/connexion'); // Redirection vers la connexion
     } catch (err) {
       // Lien expiré (>24h) ou déjà utilisé
-      setErreur(err.response?.data?.message || 'Lien invalide ou expiré');
+      setErreur(err.response?.data?.message || t('auth.reset.lienExpire'));
     }
     setEnvoi(false);
   };
@@ -60,10 +63,10 @@ const ResetPassword = () => {
       <div className="auth-card">
         <div className="auth-alerte">
           <span>⚠️</span>
-          <span>Lien invalide. Demandez un nouveau lien.</span>
+          <span>{t('auth.reset.lienInvalide')}</span>
         </div>
         <p className="auth-pied">
-          <Link to="/mot-de-passe-oublie">Demander un nouveau lien</Link>
+          <Link to="/mot-de-passe-oublie">{t('auth.reset.nouveauLien')}</Link>
         </p>
       </div>
     </div>
@@ -73,13 +76,16 @@ const ResetPassword = () => {
     <div className="auth-page">
       <div className="auth-card">
 
+        {/* Sélecteur de langue (pas de layout sur les pages auth) */}
+        <LanguageSwitcher className="auth-langue" />
+
         {/* Logo */}
         <div className="auth-logo">
-          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
+          <img src="/images/logo.png" alt={t('auth.logoAlt')} className="auth-logo__img" />
         </div>
 
-        <h1 className="auth-titre">Nouveau mot de passe</h1>
-        <p className="auth-sous-titre">Choisissez un mot de passe sécurisé pour votre compte.</p>
+        <h1 className="auth-titre">{t('auth.reset.titre')}</h1>
+        <p className="auth-sous-titre">{t('auth.reset.sousTitre')}</p>
 
         {/* Alerte d'erreur (token expiré, mots de passe non conformes...) */}
         {erreur && <div className="auth-alerte"><span>⚠️</span><span>{erreur}</span></div>}
@@ -89,7 +95,7 @@ const ResetPassword = () => {
           {/* Nouveau mot de passe */}
           <div className="form-groupe">
             <label htmlFor="password" className="form-label">
-              Nouveau mot de passe <span className="requis">*</span>
+              {t('auth.reset.nouveauMdp')} <span className="requis">*</span>
             </label>
             <input
               id="password"
@@ -106,7 +112,7 @@ const ResetPassword = () => {
           {/* Confirmation du nouveau mot de passe */}
           <div className="form-groupe">
             <label htmlFor="confirm" className="form-label">
-              Confirmer <span className="requis">*</span>
+              {t('auth.reset.confirmer')} <span className="requis">*</span>
             </label>
             <input
               id="confirm"
@@ -121,12 +127,12 @@ const ResetPassword = () => {
 
           {/* Désactivé pendant l'envoi ou si le champ est vide */}
           <button type="submit" className="btn-auth" disabled={envoi || !password}>
-            {envoi ? '⏳ Mise à jour...' : 'Changer le mot de passe'}
+            {envoi ? t('auth.reset.maj') : t('auth.reset.changer')}
           </button>
         </form>
 
         <p className="auth-pied">
-          <Link to="/connexion">← Retour à la connexion</Link>
+          <Link to="/connexion">{t('auth.retourConnexion')}</Link>
         </p>
       </div>
     </div>

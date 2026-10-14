@@ -12,12 +12,15 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './GaleriePrivee.css';
 
 const GaleriePrivee = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste de tous les albums visibles par ce parent
   const [albums,        setAlbums]        = useState([]);
   // Album actuellement ouvert (null = vue liste)
@@ -69,7 +72,7 @@ const GaleriePrivee = () => {
       Object.assign(document.createElement('a'), { href: url, download: `photo_coccinelles_${photo.id}.jpg` }).click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Impossible de télécharger cette photo');
+      toast.error(err.response?.data?.message || t('parent.galerie.erreurTelechargement'));
     }
   };
 
@@ -77,7 +80,7 @@ const GaleriePrivee = () => {
   const sanConsentement = consentements.filter(e => !e.consentement?.consenti).length;
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="galerie-privee">
@@ -89,12 +92,12 @@ const GaleriePrivee = () => {
         {albumOuvert ? (
           <div>
             <button className="retour-lien-parent" onClick={() => { setAlbumOuvert(null); setPhotos([]); }}>
-              ← Tous les albums
+              {t('parent.galerie.tousAlbums')}
             </button>
             <h1 className="parent-page-titre">{albumOuvert.titre}</h1>
           </div>
         ) : (
-          <h1 className="parent-page-titre">Galerie <span>photos</span></h1>
+          <h1 className="parent-page-titre"><Trans i18nKey="parent.galerie.titre" components={{ s: <span /> }} /></h1>
         )}
       </div>
 
@@ -104,12 +107,12 @@ const GaleriePrivee = () => {
         <div className="rgpd-alerte">
           <span>🔒</span>
           <div>
+            {/* Pluriel géré par i18next (alerte_one / alerte_other) */}
             <p>
-              <strong>{sanConsentement} enfant(s)</strong> n'ont pas de consentement photo.
-              Certaines photos seront floues.
+              <Trans i18nKey="parent.galerie.alerte" count={sanConsentement} />
             </p>
             <Link to="/parent/consentement" className="rgpd-alerte__lien">
-              Gérer le consentement →
+              {t('parent.galerie.gererConsentement')}
             </Link>
           </div>
         </div>
@@ -120,7 +123,7 @@ const GaleriePrivee = () => {
         albums.length === 0 ? (
           <div className="p-vide">
             <span className="p-vide__icone">🖼️</span>
-            <p>Aucun album disponible pour le moment.</p>
+            <p>{t('parent.galerie.aucunAlbum')}</p>
           </div>
         ) : (
           <div className="albums-grille-parent">
@@ -134,7 +137,7 @@ const GaleriePrivee = () => {
                   <h3>{album.titre}</h3>
                   {album.description && <p>{album.description}</p>}
                   <p className="album-date-parent">
-                    {new Date(album.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                    {new Date(album.created_at).toLocaleDateString(getLocale(), { month: 'long', year: 'numeric' })}
                   </p>
                 </div>
               </button>
@@ -147,15 +150,15 @@ const GaleriePrivee = () => {
       {albumOuvert && (
         <>
           {chargAlbum ? (
-            <div className="p-chargement">Chargement des photos...</div>
+            <div className="p-chargement">{t('parent.galerie.chargementPhotos')}</div>
           ) : photos.length === 0 ? (
             <div className="p-vide">
               <span className="p-vide__icone">📷</span>
-              <p>Cet album ne contient pas encore de photos.</p>
+              <p>{t('parent.galerie.albumVide')}</p>
             </div>
           ) : (
             <>
-              <p className="photos-compteur">{photos.length} photo(s)</p>
+              <p className="photos-compteur">{t('parent.galerie.photos', { count: photos.length })}</p>
               <div className="photos-grille-parent">
                 {photos.map(photo => (
                   // Classe --floue si photo.floue=true (enfant sans consentement)
@@ -165,14 +168,14 @@ const GaleriePrivee = () => {
                       // Clic désactivé sur les photos floutées
                       onClick={() => !photo.floue && setPhotoZoom(photo)}
                     >
-                      <img src={photo.chemin_miniature} alt={photo.legende || 'Photo'} loading="lazy" />
+                      <img src={photo.chemin_miniature} alt={photo.legende || t('parent.galerie.photo')} loading="lazy" />
                       {/* Overlay sur les photos floutées : lien vers la page de consentement */}
                       {photo.floue && (
                         <div className="photo-floue-overlay">
                           <span>🔒</span>
-                          <p>Consentement requis</p>
+                          <p>{t('parent.galerie.consentementRequis')}</p>
                           <Link to="/parent/consentement" className="btn btn--primary btn--sm" onClick={e => e.stopPropagation()}>
-                            Gérer
+                            {t('parent.galerie.gerer')}
                           </Link>
                         </div>
                       )}
@@ -181,8 +184,8 @@ const GaleriePrivee = () => {
                     {/* Boutons d'action : uniquement si photo non floutée */}
                     {!photo.floue && (
                       <div className="photo-actions">
-                        <button className="photo-action-btn" onClick={() => setPhotoZoom(photo)} title="Agrandir">🔍</button>
-                        <button className="photo-action-btn" onClick={() => telecharger(photo)} title="Télécharger">⬇️</button>
+                        <button className="photo-action-btn" onClick={() => setPhotoZoom(photo)} title={t('parent.galerie.agrandir')}>🔍</button>
+                        <button className="photo-action-btn" onClick={() => telecharger(photo)} title={t('common.telecharger')}>⬇️</button>
                       </div>
                     )}
 
@@ -205,10 +208,10 @@ const GaleriePrivee = () => {
           <div className="lightbox-parent__contenu" onClick={e => e.stopPropagation()}>
             <button className="lightbox-parent__fermer" onClick={() => setPhotoZoom(null)}>✕</button>
             {/* chemin_web = version 1200px compressée par Sharp */}
-            <img src={photoZoom.chemin_web} alt={photoZoom.legende || 'Photo'} />
+            <img src={photoZoom.chemin_web} alt={photoZoom.legende || t('parent.galerie.photo')} />
             {photoZoom.legende && <p className="lightbox-parent__legende">{photoZoom.legende}</p>}
             <button className="btn btn--primary btn--sm lightbox-parent__dl" onClick={() => telecharger(photoZoom)}>
-              ⬇️ Télécharger
+              {t('parent.galerie.telechargerBtn')}
             </button>
           </div>
         </div>

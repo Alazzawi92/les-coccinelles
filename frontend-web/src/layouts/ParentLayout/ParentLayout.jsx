@@ -13,26 +13,30 @@ import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
+import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import './ParentLayout.css';
 
 // ── Liens de la sidebar parent ────────────────────────────────
+// cle : clé de traduction du libellé (common.parentLayout.liens.*)
 const LIENS_PARENT = [
-  { to: '/parent/tableau-de-bord', label: 'Tableau de bord', icone: '🏠' },
-  { to: '/parent/mes-enfants',     label: 'Mes enfants',     icone: '👶' },
-  { to: '/parent/inscription',     label: 'Inscription',     icone: '📝' },
-  { to: '/parent/suivi',           label: 'Suivi quotidien', icone: '📊' },
-  { to: '/parent/absences',        label: 'Absences',        icone: '📅' },
-  { to: '/parent/documents',       label: 'Documents',       icone: '📄' },
-  { to: '/parent/messages',        label: 'Messages',        icone: '✉️' },
-  { to: '/parent/galerie',         label: 'Galerie photos',  icone: '🖼️' },
-  { to: '/parent/mon-profil',      label: 'Mon profil',      icone: '👤' }
+  { to: '/parent/tableau-de-bord', cle: 'tableauDeBord',   icone: '🏠' },
+  { to: '/parent/mes-enfants',     cle: 'mesEnfants',      icone: '👶' },
+  { to: '/parent/inscription',     cle: 'inscription',     icone: '📝' },
+  { to: '/parent/suivi',           cle: 'suivi',           icone: '📊' },
+  { to: '/parent/absences',        cle: 'absences',        icone: '📅' },
+  { to: '/parent/documents',       cle: 'documents',       icone: '📄' },
+  { to: '/parent/messages',        cle: 'messages',        icone: '✉️' },
+  { to: '/parent/galerie',         cle: 'galerie',         icone: '🖼️' },
+  { to: '/parent/mon-profil',      cle: 'monProfil',       icone: '👤' }
 ];
 
 const ParentLayout = () => {
 
   // Récupère les données du parent connecté et la fonction de déconnexion
   const { user, deconnecter } = useAuth();
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // Contrôle l'ouverture du menu burger (mobile uniquement)
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -40,7 +44,7 @@ const ParentLayout = () => {
   // Déconnecte le parent et affiche un toast de confirmation
   const handleDeconnexion = async () => {
     await deconnecter();
-    toast.success('Déconnexion réussie');
+    toast.success(t('common.deconnexionReussie'));
   };
 
   return (
@@ -61,20 +65,20 @@ const ParentLayout = () => {
         <div className="parent-sidebar__user">
           <div className="parent-sidebar__avatar">
             {user?.avatar
-              ? <img src={user.avatar} alt="Avatar" />
+              ? <img src={user.avatar} alt={t('common.parentLayout.avatar')} />
               : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
             }
           </div>
           <div>
             <p className="parent-sidebar__user-nom">{user?.prenom} {user?.nom}</p>
-            <p className="parent-sidebar__user-role">Espace parent</p>
+            <p className="parent-sidebar__user-role">{t('common.parentLayout.espaceParent')}</p>
           </div>
         </div>
 
         {/* Liens de navigation.
             isActive : React Router ajoute 'active' sur le lien de la page courante. */}
         <nav className="parent-sidebar__nav">
-          {LIENS_PARENT.map(({ to, label, icone }) => (
+          {LIENS_PARENT.map(({ to, cle, icone }) => (
             <NavLink
               key={to}
               to={to}
@@ -83,7 +87,7 @@ const ParentLayout = () => {
               }
             >
               <span>{icone}</span>
-              <span>{label}</span>
+              <span>{t(`common.parentLayout.liens.${cle}`)}</span>
             </NavLink>
           ))}
         </nav>
@@ -91,7 +95,7 @@ const ParentLayout = () => {
         {/* Bouton déconnexion en bas de la sidebar */}
         <button className="parent-sidebar__deconnexion" onClick={handleDeconnexion}>
           <span>🚪</span>
-          <span>Se déconnecter</span>
+          <span>{t('common.parentLayout.seDeconnecter')}</span>
         </button>
       </aside>
 
@@ -105,7 +109,7 @@ const ParentLayout = () => {
         <button
           className={`parent-mobile-burger ${menuOuvert ? 'parent-mobile-burger--actif' : ''}`}
           onClick={() => setMenuOuvert(!menuOuvert)}
-          aria-label="Menu"
+          aria-label={t('common.menu')}
           aria-expanded={menuOuvert}
         >
           {menuOuvert ? '✕' : '☰'}
@@ -119,18 +123,18 @@ const ParentLayout = () => {
           <div className="parent-mobile-menu__user">
             <div className="parent-sidebar__avatar">
               {user?.avatar
-                ? <img src={user.avatar} alt="Avatar" />
+                ? <img src={user.avatar} alt={t('common.parentLayout.avatar')} />
                 : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
               }
             </div>
             <div>
               <p className="parent-sidebar__user-nom">{user?.prenom} {user?.nom}</p>
-              <p className="parent-sidebar__user-role">Espace parent</p>
+              <p className="parent-sidebar__user-role">{t('common.parentLayout.espaceParent')}</p>
             </div>
           </div>
 
           <nav className="parent-mobile-menu__nav">
-            {LIENS_PARENT.map(({ to, label, icone }) => (
+            {LIENS_PARENT.map(({ to, cle, icone }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -140,14 +144,14 @@ const ParentLayout = () => {
                 }
               >
                 <span>{icone}</span>
-                <span>{label}</span>
+                <span>{t(`common.parentLayout.liens.${cle}`)}</span>
               </NavLink>
             ))}
           </nav>
 
           <button className="parent-sidebar__deconnexion parent-mobile-menu__deconnexion" onClick={handleDeconnexion}>
             <span>🚪</span>
-            <span>Se déconnecter</span>
+            <span>{t('common.parentLayout.seDeconnecter')}</span>
           </button>
         </div>
       )}
@@ -155,10 +159,13 @@ const ParentLayout = () => {
       {/* ── ZONE DE CONTENU ─────────────────────────────────── */}
       <div className="parent-content">
 
-        {/* Topbar : titre + cloche de notifications */}
+        {/* Topbar : titre + sélecteur de langue + cloche de notifications */}
         <header className="layout-topbar">
-          <span className="layout-topbar__titre">Espace parent</span>
-          <NotifCloche />
+          <span className="layout-topbar__titre">{t('common.parentLayout.espaceParent')}</span>
+          <div className="layout-topbar__actions">
+            <LanguageSwitcher />
+            <NotifCloche />
+          </div>
         </header>
 
         {/* Outlet : la page parent active s'affiche ici */}

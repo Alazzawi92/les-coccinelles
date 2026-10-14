@@ -10,18 +10,22 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import i18n from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MesEnfants.css';
 
 // ── Calcul de l'âge en mois ou en années ─────────────────────
-// Utilisé dans la fiche enfant
+// Utilisé dans la fiche enfant (traduit dans la langue active)
 const calculerAge = (dateNaissance) => {
   const naissance  = new Date(dateNaissance);
   const maintenant = new Date();
   const mois = (maintenant.getFullYear() - naissance.getFullYear()) * 12 + (maintenant.getMonth() - naissance.getMonth());
-  return mois < 24 ? `${mois} mois` : `${Math.floor(mois / 12)} ans`;
+  return mois < 24
+    ? i18n.t('common.age.mois', { count: mois })
+    : i18n.t('common.age.ans', { count: Math.floor(mois / 12) });
 };
 
 // ── Sous-composant formulaire enfant ─────────────────────────
@@ -29,13 +33,15 @@ const calculerAge = (dateNaissance) => {
 //         onSave (callback appelé avec les données du formulaire)
 //         onAnnuler (callback pour fermer le formulaire)
 const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Objet vide utilisé pour l'ajout d'un nouvel enfant
   const vide = { prenom: '', nom: '', date_naissance: '', sexe: '', allergies: '', medicaments: '', medecin_nom: '', medecin_tel: '' };
   // Initialisé avec les valeurs existantes ou vide
   const [form,    setForm]    = useState(initial || vide);
   // Indicateur d'envoi pendant l'appel onSave (POST ou PUT)
   const [envoi,   setEnvoi]   = useState(false);
-  // Erreurs de validation locale
+  // Erreurs de validation locale : { champ: true } — le message est traduit
+  // à l'affichage via parent.mesEnfants.erreurs.<champ>
   const [erreurs, setErreurs] = useState({});
 
   const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
@@ -43,14 +49,14 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
   // ── Validation locale : tous les champs sont obligatoires ─
   const valider = () => {
     const e = {};
-    if (!form.prenom.trim())            e.prenom         = 'Prénom requis';
-    if (!form.nom.trim())               e.nom            = 'Nom requis';
-    if (!form.date_naissance)           e.date_naissance = 'Date de naissance requise';
-    if (!form.sexe)                     e.sexe           = 'Sexe requis';
-    if (!form.allergies.trim())         e.allergies      = 'Champ requis (indiquer « Aucune » si besoin)';
-    if (!form.medicaments.trim())       e.medicaments    = 'Champ requis (indiquer « Aucun » si besoin)';
-    if (!form.medecin_nom.trim())       e.medecin_nom    = 'Nom du médecin requis';
-    if (!form.medecin_tel.trim())       e.medecin_tel    = 'Téléphone du médecin requis';
+    if (!form.prenom.trim())            e.prenom         = true;
+    if (!form.nom.trim())               e.nom            = true;
+    if (!form.date_naissance)           e.date_naissance = true;
+    if (!form.sexe)                     e.sexe           = true;
+    if (!form.allergies.trim())         e.allergies      = true;
+    if (!form.medicaments.trim())       e.medicaments    = true;
+    if (!form.medecin_nom.trim())       e.medecin_nom    = true;
+    if (!form.medecin_tel.trim())       e.medecin_tel    = true;
     return e;
   };
 
@@ -63,73 +69,76 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
     setEnvoi(false);
   };
 
+  // Message d'erreur traduit d'un champ (ou null s'il est valide)
+  const erreur = (champ) => erreurs[champ] && <p className="p-erreur">{t(`parent.mesEnfants.erreurs.${champ}`)}</p>;
+
   return (
     <form className="p-form enfant-form" onSubmit={handleSubmit}>
       {/* Ligne prénom + nom */}
       <div className="p-form-row">
         <div className="p-form-groupe">
-          <label className="p-label">Prénom <span className="requis">*</span></label>
-          <input name="prenom" className={`p-input ${erreurs.prenom ? 'p-input--erreur' : ''}`} value={form.prenom} onChange={handleChange} placeholder="Léa" />
-          {erreurs.prenom && <p className="p-erreur">{erreurs.prenom}</p>}
+          <label className="p-label">{t('parent.mesEnfants.form.prenom')} <span className="requis">*</span></label>
+          <input name="prenom" className={`p-input ${erreurs.prenom ? 'p-input--erreur' : ''}`} value={form.prenom} onChange={handleChange} placeholder={t('parent.mesEnfants.form.prenomPlaceholder')} />
+          {erreur('prenom')}
         </div>
         <div className="p-form-groupe">
-          <label className="p-label">Nom <span className="requis">*</span></label>
-          <input name="nom" className={`p-input ${erreurs.nom ? 'p-input--erreur' : ''}`} value={form.nom} onChange={handleChange} placeholder="Dupont" />
-          {erreurs.nom && <p className="p-erreur">{erreurs.nom}</p>}
+          <label className="p-label">{t('parent.mesEnfants.form.nom')} <span className="requis">*</span></label>
+          <input name="nom" className={`p-input ${erreurs.nom ? 'p-input--erreur' : ''}`} value={form.nom} onChange={handleChange} placeholder={t('parent.mesEnfants.form.nomPlaceholder')} />
+          {erreur('nom')}
         </div>
       </div>
 
       {/* Ligne date de naissance + sexe */}
       <div className="p-form-row">
         <div className="p-form-groupe">
-          <label className="p-label">Date de naissance <span className="requis">*</span></label>
+          <label className="p-label">{t('parent.mesEnfants.form.dateNaissance')} <span className="requis">*</span></label>
           <input name="date_naissance" type="date" className={`p-input ${erreurs.date_naissance ? 'p-input--erreur' : ''}`} value={form.date_naissance} onChange={handleChange} />
-          {erreurs.date_naissance && <p className="p-erreur">{erreurs.date_naissance}</p>}
+          {erreur('date_naissance')}
         </div>
         <div className="p-form-groupe">
-          <label className="p-label">Sexe <span className="requis">*</span></label>
+          <label className="p-label">{t('parent.mesEnfants.form.sexe')} <span className="requis">*</span></label>
           <select name="sexe" className={`p-input ${erreurs.sexe ? 'p-input--erreur' : ''}`} value={form.sexe} onChange={handleChange}>
-            <option value="">Choisir...</option>
-            <option value="F">Fille</option>
-            <option value="M">Garçon</option>
+            <option value="">{t('common.choisir')}</option>
+            <option value="F">{t('common.sexe.F')}</option>
+            <option value="M">{t('common.sexe.M')}</option>
           </select>
-          {erreurs.sexe && <p className="p-erreur">{erreurs.sexe}</p>}
+          {erreur('sexe')}
         </div>
       </div>
 
       {/* Santé : allergies */}
       <div className="p-form-groupe">
-        <label className="p-label">Allergies connues <span className="requis">*</span></label>
-        <textarea name="allergies" className={`p-input p-textarea ${erreurs.allergies ? 'p-input--erreur' : ''}`} rows={2} value={form.allergies} onChange={handleChange} placeholder="Ex : allergie aux arachides, intolérance au gluten... (ou « Aucune »)" />
-        {erreurs.allergies && <p className="p-erreur">{erreurs.allergies}</p>}
+        <label className="p-label">{t('parent.mesEnfants.form.allergies')} <span className="requis">*</span></label>
+        <textarea name="allergies" className={`p-input p-textarea ${erreurs.allergies ? 'p-input--erreur' : ''}`} rows={2} value={form.allergies} onChange={handleChange} placeholder={t('parent.mesEnfants.form.allergiesPlaceholder')} />
+        {erreur('allergies')}
       </div>
 
       {/* Santé : traitements en cours */}
       <div className="p-form-groupe">
-        <label className="p-label">Traitements médicaux en cours <span className="requis">*</span></label>
-        <textarea name="medicaments" className={`p-input p-textarea ${erreurs.medicaments ? 'p-input--erreur' : ''}`} rows={2} value={form.medicaments} onChange={handleChange} placeholder="Ex : Ventoline si besoin... (ou « Aucun »)" />
-        {erreurs.medicaments && <p className="p-erreur">{erreurs.medicaments}</p>}
+        <label className="p-label">{t('parent.mesEnfants.form.medicaments')} <span className="requis">*</span></label>
+        <textarea name="medicaments" className={`p-input p-textarea ${erreurs.medicaments ? 'p-input--erreur' : ''}`} rows={2} value={form.medicaments} onChange={handleChange} placeholder={t('parent.mesEnfants.form.medicamentsPlaceholder')} />
+        {erreur('medicaments')}
       </div>
 
       {/* Médecin traitant */}
       <div className="p-form-row">
         <div className="p-form-groupe">
-          <label className="p-label">Médecin traitant <span className="requis">*</span></label>
-          <input name="medecin_nom" className={`p-input ${erreurs.medecin_nom ? 'p-input--erreur' : ''}`} value={form.medecin_nom} onChange={handleChange} placeholder="Dr. Martin" />
-          {erreurs.medecin_nom && <p className="p-erreur">{erreurs.medecin_nom}</p>}
+          <label className="p-label">{t('parent.mesEnfants.form.medecin')} <span className="requis">*</span></label>
+          <input name="medecin_nom" className={`p-input ${erreurs.medecin_nom ? 'p-input--erreur' : ''}`} value={form.medecin_nom} onChange={handleChange} placeholder={t('parent.mesEnfants.form.medecinPlaceholder')} />
+          {erreur('medecin_nom')}
         </div>
         <div className="p-form-groupe">
-          <label className="p-label">Téléphone du médecin <span className="requis">*</span></label>
-          <input name="medecin_tel" type="tel" className={`p-input ${erreurs.medecin_tel ? 'p-input--erreur' : ''}`} value={form.medecin_tel} onChange={handleChange} placeholder="05 46 XX XX XX" />
-          {erreurs.medecin_tel && <p className="p-erreur">{erreurs.medecin_tel}</p>}
+          <label className="p-label">{t('parent.mesEnfants.form.medecinTel')} <span className="requis">*</span></label>
+          <input name="medecin_tel" type="tel" className={`p-input ${erreurs.medecin_tel ? 'p-input--erreur' : ''}`} value={form.medecin_tel} onChange={handleChange} placeholder={t('parent.mesEnfants.form.medecinTelPlaceholder')} />
+          {erreur('medecin_tel')}
         </div>
       </div>
 
       {/* Boutons annuler/sauvegarder */}
       <div className="enfant-form__actions">
-        <button type="button" className="btn btn--ghost" onClick={onAnnuler}>Annuler</button>
+        <button type="button" className="btn btn--ghost" onClick={onAnnuler}>{t('common.annuler')}</button>
         <button type="submit" className="btn btn--primary" disabled={envoi}>
-          {envoi ? 'Enregistrement...' : initial ? 'Modifier l\'enfant' : 'Ajouter l\'enfant'}
+          {envoi ? t('common.enregistrement') : initial ? t('parent.mesEnfants.form.modifier') : t('parent.mesEnfants.form.ajouter')}
         </button>
       </div>
     </form>
@@ -138,6 +147,7 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
 
 // ── Page principale ───────────────────────────────────────────
 const MesEnfants = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste des enfants du parent connecté
   const [enfants,    setEnfants]    = useState([]);
   // Masque la grille pendant le chargement initial
@@ -157,7 +167,7 @@ const MesEnfants = () => {
     try {
       const res = await api.get('/enfants');
       setEnfants(res.data.data || []);
-    } catch { toast.error('Erreur lors du chargement'); }
+    } catch { toast.error(t('common.erreurChargement')); }
     setChargement(false);
   };
 
@@ -168,9 +178,9 @@ const MesEnfants = () => {
       const res = await api.post('/enfants', form);
       setEnfants(prev => [...prev, res.data.data]);
       setModeAjout(false);
-      toast.success('Enfant ajouté !');
+      toast.success(t('parent.mesEnfants.toastAjoute'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur lors de l\'ajout');
+      toast.error(err.response?.data?.message || t('parent.mesEnfants.erreurAjout'));
     }
   };
 
@@ -181,25 +191,25 @@ const MesEnfants = () => {
       const res = await api.put(`/enfants/${enfantEdit.id}`, form);
       setEnfants(prev => prev.map(e => e.id === enfantEdit.id ? res.data.data : e));
       setEnfantEdit(null);
-      toast.success('Enfant mis à jour !');
+      toast.success(t('parent.mesEnfants.toastModifie'));
     } catch {
-      toast.error('Erreur lors de la modification');
+      toast.error(t('parent.mesEnfants.erreurModif'));
     }
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="mes-enfants">
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Mes <span>enfants</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.mesEnfants.titre" components={{ s: <span /> }} /></h1>
         {/* Bouton caché quand un formulaire est ouvert */}
         {!modeAjout && !enfantEdit && (
           <button className="btn btn--primary" onClick={() => setModeAjout(true)}>
-            + Ajouter un enfant
+            {t('parent.mesEnfants.ajouter')}
           </button>
         )}
       </div>
@@ -207,7 +217,7 @@ const MesEnfants = () => {
       {/* ── FORMULAIRE D'AJOUT ────────────────────────────────── */}
       {modeAjout && (
         <div className="p-card" style={{ marginBottom: 'var(--space-xl)' }}>
-          <h2 className="p-card__titre">👶 Ajouter un enfant</h2>
+          <h2 className="p-card__titre">👶 {t('parent.mesEnfants.ajouterTitre')}</h2>
           <FormulaireEnfant onSave={handleAjouter} onAnnuler={() => setModeAjout(false)} />
         </div>
       )}
@@ -216,8 +226,8 @@ const MesEnfants = () => {
       {enfants.length === 0 && !modeAjout ? (
         <div className="p-vide">
           <span className="p-vide__icone">👶</span>
-          <p>Vous n'avez pas encore d'enfant enregistré.</p>
-          <button className="btn btn--primary" onClick={() => setModeAjout(true)}>Ajouter mon premier enfant</button>
+          <p>{t('parent.commun.aucunEnfant')}</p>
+          <button className="btn btn--primary" onClick={() => setModeAjout(true)}>{t('parent.mesEnfants.premier')}</button>
         </div>
       ) : (
         <div className="enfants-grille">
@@ -226,7 +236,7 @@ const MesEnfants = () => {
               {/* Si cet enfant est en mode édition : affiche le formulaire */}
               {enfantEdit?.id === enfant.id ? (
                 <div className="p-card">
-                  <h2 className="p-card__titre">✏️ Modifier {enfant.prenom}</h2>
+                  <h2 className="p-card__titre">✏️ {t('parent.mesEnfants.modifierTitre', { prenom: enfant.prenom })}</h2>
                   {/* Pré-rempli avec les données actuelles de l'enfant */}
                   <FormulaireEnfant initial={{
                     prenom: enfant.prenom, nom: enfant.nom,
@@ -244,7 +254,7 @@ const MesEnfants = () => {
                     <div className="enfant-fiche__avatar">{enfant.sexe === 'F' ? '👧' : '👦'}</div>
                     <div className="enfant-fiche__identite">
                       <h3>{enfant.prenom} {enfant.nom}</h3>
-                      <p>{calculerAge(enfant.date_naissance)} · {enfant.sexe === 'F' ? 'Fille' : 'Garçon'}</p>
+                      <p>{calculerAge(enfant.date_naissance)} · {t(`common.sexe.${enfant.sexe === 'F' ? 'F' : 'M'}`)}</p>
                       {enfant.groupe && <span className="enfant-groupe">{enfant.groupe}</span>}
                     </div>
                   </div>
@@ -259,9 +269,9 @@ const MesEnfants = () => {
 
                   {/* Actions : Suivi | Inscription | Modifier */}
                   <div className="enfant-fiche__actions">
-                    <Link to={`/parent/suivi/${enfant.id}`} className="btn btn--ghost btn--sm">📊 Suivi</Link>
-                    <Link to="/parent/inscription" className="btn btn--ghost btn--sm">📝 Inscription</Link>
-                    <button className="btn btn--outline btn--sm" onClick={() => setEnfantEdit(enfant)}>✏️ Modifier</button>
+                    <Link to={`/parent/suivi/${enfant.id}`} className="btn btn--ghost btn--sm">{t('parent.mesEnfants.suivi')}</Link>
+                    <Link to="/parent/inscription" className="btn btn--ghost btn--sm">{t('parent.mesEnfants.inscription')}</Link>
+                    <button className="btn btn--outline btn--sm" onClick={() => setEnfantEdit(enfant)}>{t('parent.mesEnfants.modifier')}</button>
                   </div>
                 </div>
               )}

@@ -1,0 +1,213 @@
+{
+  "langue": {
+    "choisir": "Choose language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "chargement": "Loading...",
+  "menu": "Menu",
+  "fermer": "Close",
+  "supprimer": "Delete",
+  "deconnexionReussie": "Successfully logged out",
+  "nav": {
+    "accueil": "Home",
+    "laCreche": "The nursery",
+    "actualites": "News",
+    "menus": "Menus",
+    "contact": "Contact",
+    "seConnecter": "Log in",
+    "monEspace": "My account"
+  },
+  "footer": {
+    "logoAlt": "Les Coccinelles Nursery",
+    "description": "Non-profit nursery in Puilboreau (17)",
+    "ages": "Caring for children aged 0 to 3",
+    "communes": "Towns served: Puilboreau, Saint-Xandre, Esnandes",
+    "navigation": "Navigation",
+    "presentation": "About us",
+    "equipe": "Our team",
+    "horaires": "Opening hours",
+    "tarifs": "Fees",
+    "contact": "Contact",
+    "mentionsLegales": "Legal notice"
+  },
+  "parentLayout": {
+    "espaceParent": "Parent area",
+    "seDeconnecter": "Log out",
+    "avatar": "Avatar",
+    "liens": {
+      "tableauDeBord": "Dashboard",
+      "mesEnfants": "My children",
+      "inscription": "Enrolment",
+      "suivi": "Daily report",
+      "absences": "Absences",
+      "documents": "Documents",
+      "messages": "Messages",
+      "galerie": "Photo gallery",
+      "monProfil": "My profile"
+    }
+  },
+  "adminLayout": {
+    "administration": "Administration",
+    "superAdmin": "Super Admin",
+    "administrateur": "Administrator",
+    "deconnexion": "Log out",
+    "groupes": {
+      "tableauDeBord": "Dashboard",
+      "familles": "Families",
+      "quotidien": "Daily",
+      "sitePublic": "Public website",
+      "gestion": "Management"
+    },
+    "liens": {
+      "dashboard": "Dashboard",
+      "familles": "Families",
+      "inscriptions": "Enrolments",
+      "enfants": "Children",
+      "emargement": "Attendance",
+      "suivi": "Daily report",
+      "absences": "Absences",
+      "calendrier": "Calendar",
+      "messagerie": "Messages",
+      "actualites": "News",
+      "menus": "Menus",
+      "galerie": "Gallery",
+      "cms": "CMS Pages",
+      "documents": "Documents",
+      "statistiques": "Statistics",
+      "rapports": "Reports"
+    }
+  },
+  "notifs": {
+    "titre": "Notifications",
+    "toutLire": "Mark all as read",
+    "aucune": "No notifications",
+    "aLInstant": "Just now",
+    "ilYaMin": "{{n}} min ago",
+    "ilYaH": "{{n}}h ago"
+  },
+  "cookies": {
+    "aria": "Cookie settings",
+    "texteAvant": "🍪 We use cookies that are essential for the website to work, as well as optional audience measurement cookies to improve your experience. You can accept, refuse or customise your choice at any time from the",
+    "lienMentions": "legal notice",
+    "essentiels": "Essential cookies (always active — login, security)",
+    "mesure": "Audience measurement cookies",
+    "personnaliser": "Customise",
+    "toutRefuser": "Refuse all",
+    "toutAccepter": "Accept all",
+    "valider": "Confirm my choice"
+  },
+  "google": {
+    "erreurConnexion": "Error while signing in with Google",
+    "erreurChargement": "Unable to load Google sign-in"
+  },
+  "jours": {
+    "lundi": "Monday",
+    "mardi": "Tuesday",
+    "mercredi": "Wednesday",
+    "jeudi": "Thursday",
+    "vendredi": "Friday",
+    "samedi": "Saturday",
+    "dimanche": "Sunday"
+  },
+  "repas": {
+    "midi": "Lunch",
+    "gouter": "Snack"
+  },
+  "age": {
+    "mois_one": "{{count}} month",
+    "mois_other": "{{count}} months",
+    "ans_one": "{{count}} year",
+    "ans_other": "{{count}} years"
+  },
+  "humeur": {
+    "joyeux": "Happy",
+    "calme": "Calm",
+    "fatigue": "Tired",
+    "pleureur": "Tearful",
+    "autre": "Other"
+  },
+  "erreurMaj": "Error while updating",
+  "miseAJour": "Updating...",
+  "repasValeur": {
+    "tout": "Ate everything",
+    "peu": "A little",
+    "rien": "Ate nothing",
+    "absent": "Absent"
+  },
+  "enregistrement": "Saving...",
+  "annuler": "Cancel",
+  "choisir": "Choose...",
+  "envoi": "Sending...",
+  "erreurChargement": "Error while loading",
+  "joursCourts": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "sexe": {
+    "F": "Girl",
+    "M": "Boy"
+  },
+  "statutAbsence": {
+    "en_attente": "Pending",
+    "validee": "Approved",
+    "refusee": "Refused"
+  },
+  "motifAbsence": {
+    "maladie": "Illness",
+    "vacances": "Holiday",
+    "rendez_vous": "Medical appointment",
+    "autre": "Other"
+  },
+  "jours_one": "{{count}} day",
+  "jours_other": "{{count}} days",
+  "categorieDoc": {
+    "identite": "Identity",
+    "medical": "Medical",
+    "caf": "CAF",
+    "autre": "Other"
+  },
+  "taille": {
+    "mo": "{{n}} MB",
+    "ko": "{{n}} KB"
+  },
+  "erreurSuppression": "Error while deleting",
+  "erreurTelechargement": "Error while downloading",
+  "telecharger": "Download",
+  "erreur": "Error",
+  "voir": "View →",
+  "confirmerSuppression": "Confirm deletion?",
+  "enregistrer": "Save",
+  "joursInitiales": {
+    "lundi": "M",
+    "mardi": "T",
+    "mercredi": "W",
+    "jeudi": "T",
+    "vendredi": "F"
+  },
+  "roles": {
+    "parent": "Parent",
+    "admin": "Admin",
+    "super_admin": "Super Admin"
+  },
+  "oui": "Yes",
+  "non": "No",
+  "statutInscription": {
+    "en_attente": "Pending",
+    "en_cours": "In progress",
+    "incomplet": "Incomplete",
+    "accepte": "Accepted",
+    "refuse": "Refused",
+    "liste_attente": "Waiting list"
+  },
+  "typeAccueil": {
+    "temps_plein": "Full-time",
+    "temps_partiel": "Part-time",
+    "occasionnel": "Occasional"
+  }
+}

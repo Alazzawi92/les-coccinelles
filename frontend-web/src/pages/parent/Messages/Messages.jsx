@@ -11,7 +11,9 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
+import { getLocale } from '../../../i18n';
 import api, { BACKEND_URL as BACKEND } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
@@ -20,24 +22,26 @@ import './Messages.css';
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document
 const PieceJointe = ({ pj, nom }) => {
+  const { t } = useTranslation();
   if (!pj) return null;
   const url      = `${BACKEND}${pj}`;
   const estImage = /\.(jpg|jpeg|png|webp)$/i.test(pj);
   if (estImage) {
     return (
       <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle">
-        <img src={url} alt={nom || 'image'} className="pj-bulle__img" />
+        <img src={url} alt={nom || t('parent.messages.image')} className="pj-bulle__img" />
       </a>
     );
   }
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle pj-bulle--doc">
-      📄 <span>{nom || 'Document'}</span>
+      📄 <span>{nom || t('parent.messages.document')}</span>
     </a>
   );
 };
 
 const Messages = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const { user }              = useAuth();
   // Liste des fils de conversation du parent (triés par date desc)
   const [conversations, setConversations] = useState([]);
@@ -121,7 +125,7 @@ const Messages = () => {
   // POST /messages avec FormData multipart (fichier optionnel)
   const envoyerNouveauMessage = async (e) => {
     e.preventDefault();
-    if (!form.destinataire_id) { toast.error('Choisissez un destinataire'); return; }
+    if (!form.destinataire_id) { toast.error(t('parent.messages.choisirDestinataire')); return; }
     setEnvoi(true);
     try {
       const fd = new FormData();
@@ -131,10 +135,10 @@ const Messages = () => {
       if (fichier) fd.append('fichier', fichier);
       await api.post('/messages', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
       const admin = admins.find(a => a.id === Number(form.destinataire_id));
-      toast.success(`Message envoyé à ${admin?.prenom} ${admin?.nom}`);
+      toast.success(t('parent.messages.toastEnvoye', { nom: `${admin?.prenom} ${admin?.nom}` }));
       fermerModal();
       chargerConversations();
-    } catch { toast.error("Erreur lors de l'envoi"); }
+    } catch { toast.error(t('parent.messages.erreurEnvoi')); }
     setEnvoi(false);
   };
 
@@ -159,23 +163,23 @@ const Messages = () => {
       if (fileRepRef.current) fileRepRef.current.value = '';
       // Recharger le fil pour afficher la nouvelle réponse
       chargerDetail(detail.id);
-    } catch { toast.error("Erreur lors de l'envoi"); }
+    } catch { toast.error(t('parent.messages.erreurEnvoi')); }
     setEnvoi(false);
   };
 
-  // Formatage court : "1 janv. 14:30"
-  const formatDate = (d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  // Formatage court : "1 janv. 14:30" / "1 Jan, 14:30" selon la langue
+  const formatDate = (d) => new Date(d).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
   // Garde : spinner pendant le chargement initial
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="messages-page">
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Ma <span>messagerie</span></h1>
-        <button className="btn btn--primary btn--sm" onClick={() => setNouveauMsg(true)}>✉️ Nouveau message</button>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.messages.titre" components={{ s: <span /> }} /></h1>
+        <button className="btn btn--primary btn--sm" onClick={() => setNouveauMsg(true)}>{t('parent.messages.nouveau')}</button>
       </div>
 
       {/* ── MODAL NOUVEAU MESSAGE ─────────────────────────────── */}
@@ -184,38 +188,38 @@ const Messages = () => {
           {/* stopPropagation empêche la fermeture au clic sur le contenu */}
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
-              <h2>✉️ Nouveau message</h2>
-              <button className="modal__fermer" onClick={fermerModal}>✕</button>
+              <h2>{t('parent.messages.nouveau')}</h2>
+              <button className="modal__fermer" onClick={fermerModal} aria-label={t('common.fermer')}>✕</button>
             </div>
             <form className="p-form" onSubmit={envoyerNouveauMessage}>
               {/* Sélecteur destinataire parmi les membres de l'équipe */}
               <div className="p-form-groupe">
-                <label className="p-label">Destinataire <span className="requis">*</span></label>
+                <label className="p-label">{t('parent.messages.destinataire')} <span className="requis">*</span></label>
                 <select
                   className="p-input"
                   value={form.destinataire_id}
                   onChange={e => setForm(p => ({ ...p, destinataire_id: e.target.value }))}
                   required
                 >
-                  <option value="">— Choisir un membre de l'équipe —</option>
+                  <option value="">{t('parent.messages.choisirMembre')}</option>
                   {admins.map(a => (
                     <option key={a.id} value={a.id}>
-                      {a.prenom} {a.nom}{a.role === 'super_admin' ? ' (Directrice)' : ' (Éducatrice)'}
+                      {a.prenom} {a.nom}{a.role === 'super_admin' ? t('parent.messages.directrice') : t('parent.messages.educatrice')}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Sujet <span className="requis">*</span></label>
-                <input className="p-input" value={form.sujet} onChange={e => setForm(p => ({...p, sujet: e.target.value}))} placeholder="Objet de votre message..." required />
+                <label className="p-label">{t('parent.messages.sujet')} <span className="requis">*</span></label>
+                <input className="p-input" value={form.sujet} onChange={e => setForm(p => ({...p, sujet: e.target.value}))} placeholder={t('parent.messages.sujetPlaceholder')} required />
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">Message <span className="requis">*</span></label>
-                <textarea className="p-input p-textarea" rows={4} value={form.contenu} onChange={e => setForm(p => ({...p, contenu: e.target.value}))} placeholder="Écrivez votre message..." required />
+                <label className="p-label">{t('parent.messages.message')} <span className="requis">*</span></label>
+                <textarea className="p-input p-textarea" rows={4} value={form.contenu} onChange={e => setForm(p => ({...p, contenu: e.target.value}))} placeholder={t('parent.messages.messagePlaceholder')} required />
               </div>
               {/* Pièce jointe optionnelle : image ou PDF */}
               <div className="p-form-groupe">
-                <label className="p-label">Pièce jointe <span className="p-label--opt">(photo ou PDF, max 10 Mo)</span></label>
+                <label className="p-label">{t('parent.messages.pieceJointe')} <span className="p-label--opt">{t('parent.messages.pieceJointeAide')}</span></label>
                 <div className="pj-zone">
                   <input
                     ref={fileRef}
@@ -237,8 +241,8 @@ const Messages = () => {
                 </div>
               </div>
               <div style={{ display:'flex', gap:'var(--space-md)', justifyContent:'flex-end' }}>
-                <button type="button" className="btn btn--ghost" onClick={fermerModal}>Annuler</button>
-                <button type="submit" className="btn btn--primary" disabled={envoi}>{envoi ? 'Envoi...' : 'Envoyer'}</button>
+                <button type="button" className="btn btn--ghost" onClick={fermerModal}>{t('common.annuler')}</button>
+                <button type="submit" className="btn btn--primary" disabled={envoi}>{envoi ? t('common.envoi') : t('parent.messages.envoyer')}</button>
               </div>
             </form>
           </div>
@@ -253,7 +257,7 @@ const Messages = () => {
           {conversations.length === 0 ? (
             <div className="p-vide" style={{ padding: 'var(--space-xl)' }}>
               <span className="p-vide__icone">✉️</span>
-              <p style={{ fontSize: '0.9rem' }}>Aucun message</p>
+              <p style={{ fontSize: '0.9rem' }}>{t('parent.messages.aucun')}</p>
             </div>
           ) : conversations.map(conv => (
             <button
@@ -289,7 +293,7 @@ const Messages = () => {
             // État vide : aucune conversation sélectionnée
             <div className="detail-vide">
               <span>💬</span>
-              <p>Sélectionnez une conversation</p>
+              <p>{t('parent.messages.selectionnez')}</p>
             </div>
           ) : (
             <>
@@ -302,8 +306,8 @@ const Messages = () => {
                   <h2>{detail.sujet}</h2>
                   <p className="detail-interlocuteur">
                     {detail.expediteur_id === user.id
-                      ? `À : ${detail.destinataire?.prenom} ${detail.destinataire?.nom}`
-                      : `De : ${detail.expediteur?.prenom} ${detail.expediteur?.nom}`
+                      ? t('parent.messages.a', { nom: `${detail.destinataire?.prenom} ${detail.destinataire?.nom}` })
+                      : t('parent.messages.de', { nom: `${detail.expediteur?.prenom} ${detail.expediteur?.nom}` })
                     }
                   </p>
                 </div>
@@ -339,7 +343,7 @@ const Messages = () => {
                     rows={2}
                     value={reponse}
                     onChange={e => setReponse(e.target.value)}
-                    placeholder="Écrire une réponse..."
+                    placeholder={t('parent.messages.reponsePlaceholder')}
                   />
                   {/* Aperçu de la pièce jointe de réponse */}
                   {fichierRep && (
@@ -354,13 +358,13 @@ const Messages = () => {
                 </div>
                 <div className="reponse-actions">
                   {/* Bouton 📎 : label cliquable pour déclencher l'input file masqué */}
-                  <label className="btn btn--ghost btn--sm pj-btn" title="Joindre un fichier">
-                    📎 Joindre
+                  <label className="btn btn--ghost btn--sm pj-btn" title={t('parent.messages.joindreTitre')}>
+                    {t('parent.messages.joindre')}
                     <input ref={fileRepRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="pj-input--hidden" onChange={e => setFichierRep(e.target.files[0] || null)} />
                   </label>
                   {/* Désactivé si ni texte ni fichier */}
                   <button type="submit" className="btn btn--primary btn--sm" disabled={envoi || (!reponse.trim() && !fichierRep)}>
-                    Envoyer ↑
+                    {t('parent.messages.envoyerReponse')}
                   </button>
                 </div>
               </form>

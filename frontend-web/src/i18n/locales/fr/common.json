@@ -1,0 +1,213 @@
+{
+  "langue": {
+    "choisir": "Choisir la langue",
+    "fr": "Français",
+    "en": "English"
+  },
+  "chargement": "Chargement...",
+  "menu": "Menu",
+  "fermer": "Fermer",
+  "supprimer": "Supprimer",
+  "deconnexionReussie": "Déconnexion réussie",
+  "nav": {
+    "accueil": "Accueil",
+    "laCreche": "La crèche",
+    "actualites": "Actualités",
+    "menus": "Menus",
+    "contact": "Contact",
+    "seConnecter": "Se connecter",
+    "monEspace": "Mon espace"
+  },
+  "footer": {
+    "logoAlt": "Crèche Les Coccinelles",
+    "description": "Crèche associative à Puilboreau (17)",
+    "ages": "Accueil des enfants de 0 à 3 ans",
+    "communes": "Communes accueillies : Puilboreau, Saint-Xandre, Esnandes",
+    "navigation": "Navigation",
+    "presentation": "Présentation",
+    "equipe": "Notre équipe",
+    "horaires": "Horaires",
+    "tarifs": "Tarifs",
+    "contact": "Contact",
+    "mentionsLegales": "Mentions légales"
+  },
+  "parentLayout": {
+    "espaceParent": "Espace parent",
+    "seDeconnecter": "Se déconnecter",
+    "avatar": "Avatar",
+    "liens": {
+      "tableauDeBord": "Tableau de bord",
+      "mesEnfants": "Mes enfants",
+      "inscription": "Inscription",
+      "suivi": "Suivi quotidien",
+      "absences": "Absences",
+      "documents": "Documents",
+      "messages": "Messages",
+      "galerie": "Galerie photos",
+      "monProfil": "Mon profil"
+    }
+  },
+  "adminLayout": {
+    "administration": "Administration",
+    "superAdmin": "Super Admin",
+    "administrateur": "Administrateur",
+    "deconnexion": "Déconnexion",
+    "groupes": {
+      "tableauDeBord": "Tableau de bord",
+      "familles": "Familles",
+      "quotidien": "Quotidien",
+      "sitePublic": "Site public",
+      "gestion": "Gestion"
+    },
+    "liens": {
+      "dashboard": "Dashboard",
+      "familles": "Familles",
+      "inscriptions": "Inscriptions",
+      "enfants": "Enfants",
+      "emargement": "Émargement",
+      "suivi": "Suivi quotidien",
+      "absences": "Absences",
+      "calendrier": "Calendrier",
+      "messagerie": "Messagerie",
+      "actualites": "Actualités",
+      "menus": "Menus",
+      "galerie": "Galerie",
+      "cms": "CMS Pages",
+      "documents": "Documents",
+      "statistiques": "Statistiques",
+      "rapports": "Rapports"
+    }
+  },
+  "notifs": {
+    "titre": "Notifications",
+    "toutLire": "Tout marquer lu",
+    "aucune": "Aucune notification",
+    "aLInstant": "À l'instant",
+    "ilYaMin": "Il y a {{n}} min",
+    "ilYaH": "Il y a {{n}}h"
+  },
+  "cookies": {
+    "aria": "Gestion des cookies",
+    "texteAvant": "🍪 Nous utilisons des cookies essentiels au fonctionnement du site, ainsi que des cookies de mesure d'audience (facultatifs) pour améliorer votre expérience. Vous pouvez accepter, refuser ou personnaliser votre choix à tout moment depuis les",
+    "lienMentions": "mentions légales",
+    "essentiels": "Cookies essentiels (toujours actifs — connexion, sécurité)",
+    "mesure": "Cookies de mesure d'audience",
+    "personnaliser": "Personnaliser",
+    "toutRefuser": "Tout refuser",
+    "toutAccepter": "Tout accepter",
+    "valider": "Valider mon choix"
+  },
+  "google": {
+    "erreurConnexion": "Erreur lors de la connexion avec Google",
+    "erreurChargement": "Impossible de charger la connexion Google"
+  },
+  "jours": {
+    "lundi": "Lundi",
+    "mardi": "Mardi",
+    "mercredi": "Mercredi",
+    "jeudi": "Jeudi",
+    "vendredi": "Vendredi",
+    "samedi": "Samedi",
+    "dimanche": "Dimanche"
+  },
+  "repas": {
+    "midi": "Midi",
+    "gouter": "Goûter"
+  },
+  "age": {
+    "mois_one": "{{count}} mois",
+    "mois_other": "{{count}} mois",
+    "ans_one": "{{count}} an",
+    "ans_other": "{{count}} ans"
+  },
+  "humeur": {
+    "joyeux": "Joyeux",
+    "calme": "Calme",
+    "fatigue": "Fatigué",
+    "pleureur": "Pleureur",
+    "autre": "Autre"
+  },
+  "erreurMaj": "Erreur lors de la mise à jour",
+  "miseAJour": "Mise à jour...",
+  "repasValeur": {
+    "tout": "Tout mangé",
+    "peu": "Un peu",
+    "rien": "Rien mangé",
+    "absent": "Absent"
+  },
+  "enregistrement": "Enregistrement...",
+  "annuler": "Annuler",
+  "choisir": "Choisir...",
+  "envoi": "Envoi...",
+  "erreurChargement": "Erreur lors du chargement",
+  "joursCourts": [
+    "Lun",
+    "Mar",
+    "Mer",
+    "Jeu",
+    "Ven",
+    "Sam",
+    "Dim"
+  ],
+  "sexe": {
+    "F": "Fille",
+    "M": "Garçon"
+  },
+  "statutAbsence": {
+    "en_attente": "En attente",
+    "validee": "Validée",
+    "refusee": "Refusée"
+  },
+  "motifAbsence": {
+    "maladie": "Maladie",
+    "vacances": "Vacances",
+    "rendez_vous": "RDV médical",
+    "autre": "Autre"
+  },
+  "jours_one": "{{count}} jour",
+  "jours_other": "{{count}} jours",
+  "categorieDoc": {
+    "identite": "Identité",
+    "medical": "Médical",
+    "caf": "CAF",
+    "autre": "Autre"
+  },
+  "taille": {
+    "mo": "{{n}} Mo",
+    "ko": "{{n}} Ko"
+  },
+  "erreurSuppression": "Erreur lors de la suppression",
+  "erreurTelechargement": "Erreur lors du téléchargement",
+  "telecharger": "Télécharger",
+  "erreur": "Erreur",
+  "voir": "Voir →",
+  "confirmerSuppression": "Confirmer la suppression ?",
+  "enregistrer": "Enregistrer",
+  "joursInitiales": {
+    "lundi": "L",
+    "mardi": "M",
+    "mercredi": "M",
+    "jeudi": "J",
+    "vendredi": "V"
+  },
+  "roles": {
+    "parent": "Parent",
+    "admin": "Admin",
+    "super_admin": "Super Admin"
+  },
+  "oui": "Oui",
+  "non": "Non",
+  "statutInscription": {
+    "en_attente": "En attente",
+    "en_cours": "En cours",
+    "incomplet": "Incomplet",
+    "accepte": "Accepté",
+    "refuse": "Refusé",
+    "liste_attente": "Liste d'attente"
+  },
+  "typeAccueil": {
+    "temps_plein": "Temps plein",
+    "temps_partiel": "Temps partiel",
+    "occasionnel": "Occasionnel"
+  }
+}

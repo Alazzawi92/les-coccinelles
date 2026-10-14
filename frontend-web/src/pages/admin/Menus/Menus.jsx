@@ -11,7 +11,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Menus.css';
@@ -55,15 +57,17 @@ const extraireForm = (menu) => {
 const quillVide = (val) => !val || val === '<p><br></p>';
 
 // ── Formulaire 5 jours avec Quill ────────────────────────────
-const FormulaireMenu = ({ form, onChange }) => (
+const FormulaireMenu = ({ form, onChange }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  return (
   <div className="menus-admin-grille">
     {JOURS.map(jour => (
       <div key={jour} className="menu-admin-col">
-        <h3 className="menu-admin-jour">{jour.charAt(0).toUpperCase() + jour.slice(1)}</h3>
+        <h3 className="menu-admin-jour">{t(`common.jours.${jour}`)}</h3>
 
         {/* Déjeuner — Quill complet */}
         <div className="a-form-groupe">
-          <label className="a-label">🍽️ Déjeuner</label>
+          <label className="a-label">{t('admin.menus.dejeuner')}</label>
           <div className="menu-quill-wrapper">
             <ReactQuill
               theme="snow"
@@ -71,14 +75,14 @@ const FormulaireMenu = ({ form, onChange }) => (
               onChange={val => onChange(`${jour}_midi`, val)}
               modules={QUILL_MODULES_MENU}
               formats={QUILL_FORMATS_MENU}
-              placeholder="Ex : Carottes râpées, Poulet rôti, Purée..."
+              placeholder={t('admin.menus.dejeunerPlaceholder')}
             />
           </div>
         </div>
 
         {/* Goûter — Quill léger */}
         <div className="a-form-groupe">
-          <label className="a-label">🍪 Goûter</label>
+          <label className="a-label">{t('admin.menus.gouter')}</label>
           <div className="menu-quill-wrapper menu-quill-wrapper--petit">
             <ReactQuill
               theme="snow"
@@ -86,38 +90,43 @@ const FormulaireMenu = ({ form, onChange }) => (
               onChange={val => onChange(`${jour}_gouter`, val)}
               modules={QUILL_MODULES_MENU}
               formats={QUILL_FORMATS_MENU}
-              placeholder="Ex : Compote, Pain"
+              placeholder={t('admin.menus.gouterPlaceholder')}
             />
           </div>
         </div>
       </div>
     ))}
   </div>
-);
+  );
+};
 
 // ── Aperçu lecture seule (affiche le HTML Quill) ─────────────
-const ApercuMenu = ({ form }) => (
+const ApercuMenu = ({ form }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  return (
   <div className="menus-admin-grille">
     {JOURS.map(jour => (
       <div key={jour} className="menu-admin-col menu-admin-col--apercu">
-        <h3 className="menu-admin-jour">{jour.charAt(0).toUpperCase() + jour.slice(1)}</h3>
+        <h3 className="menu-admin-jour">{t(`common.jours.${jour}`)}</h3>
         <p className="apercu-label">🍽️</p>
         {quillVide(form[`${jour}_midi`])
-          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>Non renseigné</em>
+          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>{t('admin.menus.nonRenseigne')}</em>
           : <div className="menu-apercu-html" dangerouslySetInnerHTML={{ __html: form[`${jour}_midi`] }} />
         }
         <p className="apercu-label" style={{ marginTop: 'var(--space-sm)' }}>🍪</p>
         {quillVide(form[`${jour}_gouter`])
-          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>Non renseigné</em>
+          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>{t('admin.menus.nonRenseigne')}</em>
           : <div className="menu-apercu-html" dangerouslySetInnerHTML={{ __html: form[`${jour}_gouter`] }} />
         }
       </div>
     ))}
   </div>
-);
+  );
+};
 
 // ── Mode "Menu par défaut" ────────────────────────────────────
 const SectionMenuDefaut = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [menu,  setMenu]  = useState(null);
   const [form,  setForm]  = useState(FORM_VIDE());
   const [envoi, setEnvoi] = useState(false);
@@ -142,8 +151,8 @@ const SectionMenuDefaut = () => {
       const res = await api.post('/menus/defaut', form);
       setMenu(res.data.data);
       setModif(false);
-      toast.success('Menu par défaut sauvegardé');
-    } catch { toast.error('Erreur lors de la sauvegarde'); }
+      toast.success(t('admin.menus.toastDefaut'));
+    } catch { toast.error(t('admin.menus.erreurSauvegarde')); }
     setEnvoi(false);
   };
 
@@ -151,14 +160,14 @@ const SectionMenuDefaut = () => {
     <div className="a-card" style={{ marginBottom: 'var(--space-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
         <div>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>📋 Menu par défaut</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>📋 {t('admin.menus.defautTitre')}</h2>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', margin: '4px 0 0' }}>
-            Ce menu s'affiche automatiquement toutes les semaines si aucun menu spécifique n'est saisi.
+            {t('admin.menus.defautAide')}
           </p>
         </div>
         {!modif && (
           <button className="btn btn--primary btn--sm" onClick={() => setModif(true)}>
-            ✏️ {menu ? 'Modifier' : 'Créer le menu par défaut'}
+            ✏️ {menu ? t('admin.menus.modifier') : t('admin.menus.creerDefaut')}
           </button>
         )}
       </div>
@@ -168,10 +177,10 @@ const SectionMenuDefaut = () => {
           <FormulaireMenu form={form} onChange={handleChange} />
           <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end', marginTop: 'var(--space-xl)' }}>
             <button type="button" className="btn btn--ghost" onClick={() => { setModif(false); if (menu) setForm(extraireForm(menu)); }}>
-              Annuler
+              {t('common.annuler')}
             </button>
             <button type="submit" className="btn btn--primary" disabled={envoi}>
-              {envoi ? 'Enregistrement...' : '💾 Sauvegarder comme menu par défaut'}
+              {envoi ? t('common.enregistrement') : t('admin.menus.sauverDefaut')}
             </button>
           </div>
         </form>
@@ -180,7 +189,7 @@ const SectionMenuDefaut = () => {
       ) : (
         <div className="a-vide">
           <span className="a-vide__icone">📋</span>
-          <p>Aucun menu par défaut configuré. Cliquez sur "Créer le menu par défaut" pour commencer.</p>
+          <p>{t('admin.menus.aucunDefaut')}</p>
         </div>
       )}
     </div>
@@ -189,6 +198,7 @@ const SectionMenuDefaut = () => {
 
 // ── Mode "Menu par semaine" ───────────────────────────────────
 const SectionMenuSemaine = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [offset,    setOffset]    = useState(0);
   const [semaine,   setSemaine]   = useState(getLundiSemaine());
   const [menu,      setMenu]      = useState(null);
@@ -221,16 +231,16 @@ const SectionMenuSemaine = () => {
     try {
       if (menu && !estDefaut) {
         await api.put(`/menus/${menu.id}`, { ...form, publie: menu.publie });
-        toast.success('Menu mis à jour');
+        toast.success(t('admin.menus.toastMaj'));
         charger();
       } else {
         const res = await api.post('/menus', { ...form, semaine_debut: semaine, publie: false });
         setMenu(res.data.data);
         setEstDefaut(false);
         setModif(false);
-        toast.success('Menu personnalisé créé — pensez à le publier');
+        toast.success(t('admin.menus.toastCree'));
       }
-    } catch (err) { toast.error(err.response?.data?.message || 'Erreur'); }
+    } catch (err) { toast.error(err.response?.data?.message || t('common.erreur')); }
     setEnvoi(false);
   };
 
@@ -239,59 +249,59 @@ const SectionMenuSemaine = () => {
     try {
       await api.put(`/menus/${menu.id}`, { ...form, publie: !menu.publie });
       setMenu(prev => ({ ...prev, publie: !prev.publie }));
-      toast.success(menu.publie ? 'Menu dépublié' : 'Menu publié sur le site');
-    } catch { toast.error('Erreur'); }
+      toast.success(menu.publie ? t('admin.menus.toastDepublie') : t('admin.menus.toastPublie'));
+    } catch { toast.error(t('common.erreur')); }
   };
 
   const supprimerPerso = async () => {
     if (!menu || estDefaut) return;
-    if (!window.confirm('Supprimer la personnalisation de cette semaine ? Le menu par défaut sera affiché.')) return;
+    if (!window.confirm(t('admin.menus.confirmerSuppression'))) return;
     try {
       await api.delete(`/menus/${menu.id}`);
-      toast.success('Personnalisation supprimée — le menu par défaut est rétabli');
+      toast.success(t('admin.menus.toastSupprime'));
       charger();
-    } catch { toast.error('Erreur'); }
+    } catch { toast.error(t('common.erreur')); }
   };
 
   const formatSemaine = (d) => {
     const lundi    = new Date(d);
     const vendredi = new Date(d);
     vendredi.setDate(lundi.getDate() + 4);
-    return `${lundi.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    return `${lundi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' })}`;
   };
 
   return (
     <div className="a-card">
       {/* Navigation semaine */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
-        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o - 1)}>← Sem. préc.</button>
+        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o - 1)}>{t('admin.menus.precedente')}</button>
         <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>📅 {formatSemaine(semaine)}</span>
-        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o + 1)}>Sem. suiv. →</button>
+        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o + 1)}>{t('admin.menus.suivante')}</button>
       </div>
 
       {/* Bandeau statut */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', marginBottom: 'var(--space-lg)', flexWrap: 'wrap' }}>
         {estDefaut ? (
           <>
-            <span className="s-badge s-badge--en_attente">📋 Menu par défaut appliqué</span>
+            <span className="s-badge s-badge--en_attente">{t('admin.menus.defautApplique')}</span>
             <button className="btn btn--primary btn--sm" onClick={() => setModif(true)}>
-              ✏️ Personnaliser cette semaine
+              {t('admin.menus.personnaliser')}
             </button>
           </>
         ) : menu ? (
           <>
             <span className={`s-badge ${menu.publie ? 's-badge--accepte' : 's-badge--en_attente'}`}>
-              {menu.publie ? '🟢 Publié' : '⚫ Brouillon'}
+              {menu.publie ? t('admin.menus.publie') : t('admin.menus.brouillon')}
             </span>
             <button className={`btn btn--sm ${menu.publie ? 'btn--outline' : 'btn--primary'}`} onClick={togglePublier}>
-              {menu.publie ? 'Dépublier' : 'Publier sur le site'}
+              {menu.publie ? t('admin.menus.depublier') : t('admin.menus.publier')}
             </button>
             <button className="btn btn--sm btn--ghost" onClick={supprimerPerso} style={{ color: 'var(--error)' }}>
-              🗑️ Retour au menu par défaut
+              {t('admin.menus.retourDefaut')}
             </button>
           </>
         ) : (
-          <span className="s-badge s-badge--en_attente">Aucun menu</span>
+          <span className="s-badge s-badge--en_attente">{t('admin.menus.aucunMenu')}</span>
         )}
       </div>
 
@@ -301,10 +311,10 @@ const SectionMenuSemaine = () => {
           <FormulaireMenu form={form} onChange={handleChange} />
           <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end', marginTop: 'var(--space-xl)' }}>
             {modif && estDefaut && (
-              <button type="button" className="btn btn--ghost" onClick={() => setModif(false)}>Annuler</button>
+              <button type="button" className="btn btn--ghost" onClick={() => setModif(false)}>{t('common.annuler')}</button>
             )}
             <button type="submit" className="btn btn--primary" disabled={envoi}>
-              {envoi ? 'Enregistrement...' : menu && !estDefaut ? '💾 Mettre à jour' : '✅ Créer le menu personnalisé'}
+              {envoi ? t('common.enregistrement') : menu && !estDefaut ? t('admin.menus.mettreAJour') : t('admin.menus.creerPerso')}
             </button>
           </div>
         </form>
@@ -316,22 +326,25 @@ const SectionMenuSemaine = () => {
 };
 
 // ── Composant principal ───────────────────────────────────────
-const MenusAdmin = () => (
+const MenusAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  return (
   <div>
     <div className="admin-page-entete">
-      <h1 className="admin-page-titre">Gestion des <span>menus</span></h1>
+      <h1 className="admin-page-titre"><Trans i18nKey="admin.menus.titre" components={{ s: <span /> }} /></h1>
     </div>
     <SectionMenuDefaut />
     <div style={{ marginBottom: 'var(--space-md)' }}>
       <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 'var(--space-sm)' }}>
-        📅 Menu par semaine
+        📅 {t('admin.menus.semaineTitre')}
       </h2>
       <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>
-        Personnalisez une semaine spécifique si le menu change (sorties, fêtes, etc.).
+        {t('admin.menus.semaineAide')}
       </p>
     </div>
     <SectionMenuSemaine />
   </div>
-);
+  );
+};
 
 export default MenusAdmin;

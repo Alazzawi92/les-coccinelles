@@ -9,23 +9,32 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import i18n, { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Documents.css';
 
 // Métadonnées d'affichage pour chaque catégorie de document
+// (libellé traduit via common.categorieDoc.<clé>)
 const CATEGORIES = {
-  identite: { label: '🪪 Identité',  color: 'bleu'  },
-  medical:  { label: '🏥 Médical',   color: 'rouge' },
-  caf:      { label: '💳 CAF',       color: 'vert'  },
-  autre:    { label: '📄 Autre',     color: 'gris'  }
+  identite: { icone: '🪪', color: 'bleu'  },
+  medical:  { icone: '🏥', color: 'rouge' },
+  caf:      { icone: '💳', color: 'vert'  },
+  autre:    { icone: '📄', color: 'gris'  }
 };
 
-// Formatage de la taille : en Mo si > 1 Mo, sinon en Ko
-const formatTaille = (o) => o > 1048576 ? `${(o/1048576).toFixed(1)} Mo` : `${Math.round(o/1024)} Ko`;
+// Formatage de la taille : en Mo si > 1 Mo, sinon en Ko (unités traduites)
+const formatTaille = (o) => o > 1048576
+  ? i18n.t('common.taille.mo', { n: (o/1048576).toFixed(1) })
+  : i18n.t('common.taille.ko', { n: Math.round(o/1024) });
 
 const Documents = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Libellé traduit d'une catégorie, précédé de son icône
+  const libelleCategorie = (cle) => `${CATEGORIES[cle].icone} ${t(`common.categorieDoc.${cle}`)}`;
   // Liste des documents uploadés par ce parent
   const [documents,  setDocuments]  = useState([]);
   // Liste des enfants du parent (pour sélectionner l'enfant concerné)
@@ -58,7 +67,7 @@ const Documents = () => {
   // POST /documents avec FormData (multipart)
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!fichier) { toast.error('Sélectionnez un fichier'); return; }
+    if (!fichier) { toast.error(t('parent.documents.selectionnez')); return; }
 
     const formData = new FormData();
     formData.append('fichier', fichier);
@@ -75,9 +84,9 @@ const Documents = () => {
       setFichier(null);
       setFormUpload({ enfant_id: '', categorie: 'autre', description: '' });
       if (inputRef.current) inputRef.current.value = '';
-      toast.success('Document uploadé !');
+      toast.success(t('parent.documents.toastUpload'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur lors de l\'upload');
+      toast.error(err.response?.data?.message || t('parent.documents.erreurUpload'));
     }
     setUpload(false);
   };
@@ -91,33 +100,33 @@ const Documents = () => {
       const a   = Object.assign(document.createElement('a'), { href: url, download: doc.nom_fichier });
       a.click();
       URL.revokeObjectURL(url); // Libère la mémoire immédiatement
-    } catch { toast.error('Erreur lors du téléchargement'); }
+    } catch { toast.error(t('common.erreurTelechargement')); }
   };
 
   // ── Supprimer un document ─────────────────────────────────
   const handleSuppression = async (id) => {
-    if (!window.confirm('Supprimer ce document ?')) return;
+    if (!window.confirm(t('parent.documents.confirmerSuppression'))) return;
     try {
       await api.delete(`/documents/${id}`);
       setDocuments(prev => prev.filter(d => d.id !== id));
-      toast.success('Document supprimé');
-    } catch { toast.error('Erreur lors de la suppression'); }
+      toast.success(t('parent.documents.toastSupprime'));
+    } catch { toast.error(t('common.erreurSuppression')); }
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="documents-page">
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Mes <span>documents</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.documents.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {/* ── ZONE D'UPLOAD ─────────────────────────────────────── */}
       <div className="p-card upload-zone">
-        <h2 className="p-card__titre">📤 Envoyer un document</h2>
+        <h2 className="p-card__titre">📤 {t('parent.documents.envoyerTitre')}</h2>
         <form className="p-form upload-form" onSubmit={handleUpload}>
 
           {/* Drop-zone cliquable et glisser-déposer */}
@@ -140,8 +149,8 @@ const Documents = () => {
               // État vide : instructions
               <>
                 <span style={{ fontSize: '2.5rem' }}>📁</span>
-                <p>Glisser-déposer ou cliquer pour sélectionner</p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>PDF, JPG, PNG — max 5 Mo</p>
+                <p>{t('parent.documents.dropZone')}</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{t('parent.documents.formats')}</p>
               </>
             )}
           </div>
@@ -149,15 +158,15 @@ const Documents = () => {
           {/* Sélecteurs catégorie + enfant côte à côte */}
           <div className="p-form-row">
             <div className="p-form-groupe">
-              <label className="p-label">Catégorie</label>
+              <label className="p-label">{t('parent.documents.categorie')}</label>
               <select className="p-input" value={formUpload.categorie} onChange={e => setFormUpload(p => ({...p, categorie: e.target.value}))}>
-                {Object.entries(CATEGORIES).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                {Object.keys(CATEGORIES).map(k => <option key={k} value={k}>{libelleCategorie(k)}</option>)}
               </select>
             </div>
             <div className="p-form-groupe">
-              <label className="p-label">Enfant concerné</label>
+              <label className="p-label">{t('parent.documents.enfant')}</label>
               <select className="p-input" value={formUpload.enfant_id} onChange={e => setFormUpload(p => ({...p, enfant_id: e.target.value}))}>
-                <option value="">Non spécifié</option>
+                <option value="">{t('parent.documents.nonSpecifie')}</option>
                 {enfants.map(e => <option key={e.id} value={e.id}>{e.prenom}</option>)}
               </select>
             </div>
@@ -165,12 +174,12 @@ const Documents = () => {
 
           {/* Description facultative */}
           <div className="p-form-groupe">
-            <label className="p-label">Description (optionnel)</label>
-            <input className="p-input" value={formUpload.description} onChange={e => setFormUpload(p => ({...p, description: e.target.value}))} placeholder="Ex : Carnet de santé, certificat vaccinal..." />
+            <label className="p-label">{t('parent.documents.description')}</label>
+            <input className="p-input" value={formUpload.description} onChange={e => setFormUpload(p => ({...p, description: e.target.value}))} placeholder={t('parent.documents.descriptionPlaceholder')} />
           </div>
 
           <button type="submit" className="btn btn--primary" disabled={upload || !fichier}>
-            {upload ? 'Upload en cours...' : '📤 Envoyer'}
+            {upload ? t('parent.documents.upload') : t('parent.documents.envoyer')}
           </button>
         </form>
       </div>
@@ -179,15 +188,16 @@ const Documents = () => {
       {documents.length === 0 ? (
         <div className="p-vide">
           <span className="p-vide__icone">📂</span>
-          <p>Vous n'avez pas encore uploadé de document.</p>
+          <p>{t('parent.documents.aucun')}</p>
         </div>
       ) : (
         <div className="p-card">
-          <h2 className="p-card__titre">📂 Mes documents ({documents.length})</h2>
+          <h2 className="p-card__titre">📂 {t('parent.documents.mesDocuments', { n: documents.length })}</h2>
           <div className="documents-liste">
             {documents.map(doc => {
               // Fallback sur 'autre' si catégorie inconnue
-              const cat = CATEGORIES[doc.categorie] || CATEGORIES.autre;
+              const cleCat = CATEGORIES[doc.categorie] ? doc.categorie : 'autre';
+              const cat    = CATEGORIES[cleCat];
               return (
                 <div key={doc.id} className="document-ligne">
                   <span className="doc-icone">📄</span>
@@ -195,17 +205,17 @@ const Documents = () => {
                     <p className="doc-nom">{doc.nom_fichier}</p>
                     {/* Métadonnées : catégorie + description + taille + date */}
                     <div className="doc-meta">
-                      <span className={`doc-categorie doc-categorie--${cat.color}`}>{cat.label}</span>
+                      <span className={`doc-categorie doc-categorie--${cat.color}`}>{libelleCategorie(cleCat)}</span>
                       {doc.description && <span className="doc-description">{doc.description}</span>}
                       <span className="doc-taille">{formatTaille(doc.taille)}</span>
-                      <span className="doc-date">{new Date(doc.created_at).toLocaleDateString('fr-FR')}</span>
+                      <span className="doc-date">{new Date(doc.created_at).toLocaleDateString(getLocale())}</span>
                     </div>
                   </div>
                   <div className="doc-actions">
                     {/* Télécharger */}
-                    <button className="btn btn--ghost btn--sm" onClick={() => handleTelechargement(doc)}>⬇️</button>
+                    <button className="btn btn--ghost btn--sm" onClick={() => handleTelechargement(doc)} title={t('common.telecharger')} aria-label={t('common.telecharger')}>⬇️</button>
                     {/* Supprimer : bordure rouge pour marquer l'action destructive */}
-                    <button className="btn btn--outline btn--sm" onClick={() => handleSuppression(doc.id)} style={{ color:'var(--error)', borderColor:'var(--error)' }}>🗑️</button>
+                    <button className="btn btn--outline btn--sm" onClick={() => handleSuppression(doc.id)} style={{ color:'var(--error)', borderColor:'var(--error)' }} title={t('common.supprimer')} aria-label={t('common.supprimer')}>🗑️</button>
                   </div>
                 </div>
               );

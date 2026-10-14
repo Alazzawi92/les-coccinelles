@@ -12,12 +12,15 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Galerie.css';
 
 const GalerieAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste des albums chargée au montage
   const [albums,        setAlbums]        = useState([]);
   // Album actuellement ouvert (null = vue liste des albums)
@@ -74,8 +77,8 @@ const GalerieAdmin = () => {
       setModeAlbum(false);
       // Réinitialise le formulaire avec les valeurs par défaut
       setFormAlbum({ titre:'', description:'', visible_parents:true, visible_public:false });
-      toast.success('Album créé');
-    } catch { toast.error('Erreur création album'); }
+      toast.success(t('admin.galerie.toastAlbumCree'));
+    } catch { toast.error(t('admin.galerie.erreurAlbum')); }
     setEnvoi(false);
   };
 
@@ -102,8 +105,8 @@ const GalerieAdmin = () => {
       setFichiers([]);
       setEnfantsUpload([]);
       if (inputRef.current) inputRef.current.value = '';
-      toast.success(`${nouvelles.length} photo(s) ajoutée(s) + parents notifiés`);
-    } catch { toast.error('Erreur upload'); }
+      toast.success(t('admin.galerie.toastUpload', { count: nouvelles.length }));
+    } catch { toast.error(t('admin.galerie.erreurUpload')); }
     setEnvoi(false);
   };
 
@@ -115,44 +118,44 @@ const GalerieAdmin = () => {
       await api.put(`/galerie/photos/${photoTag.photo.id}/enfants`, {
         enfant_ids: photoTag.enfants
       });
-      toast.success('Tags mis à jour');
+      toast.success(t('admin.galerie.toastTags'));
       setPhotoTag(null);
-    } catch { toast.error('Erreur tagging'); }
+    } catch { toast.error(t('admin.galerie.erreurTags')); }
   };
 
   // ── Supprimer une photo ───────────────────────────────────
   const supprimerPhoto = async (photoId) => {
-    if (!window.confirm('Supprimer cette photo ?')) return;
+    if (!window.confirm(t('admin.galerie.confirmerPhoto'))) return;
     try {
       await api.delete(`/galerie/photos/${photoId}`);
       setPhotos(prev => prev.filter(p => p.id !== photoId));
-      toast.success('Photo supprimée');
-    } catch { toast.error('Erreur'); }
+      toast.success(t('admin.galerie.toastPhotoSupprimee'));
+    } catch { toast.error(t('common.erreur')); }
   };
 
   // ── Supprimer un album (et toutes ses photos) ────────────
   const supprimerAlbum = async (albumId) => {
-    if (!window.confirm('Supprimer cet album et toutes ses photos ?')) return;
+    if (!window.confirm(t('admin.galerie.confirmerAlbum'))) return;
     try {
       await api.delete(`/galerie/albums/${albumId}`);
       setAlbums(prev => prev.filter(a => a.id !== albumId));
-      toast.success('Album supprimé');
-    } catch { toast.error('Erreur'); }
+      toast.success(t('admin.galerie.toastAlbumSupprime'));
+    } catch { toast.error(t('common.erreur')); }
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Galerie <span>photos</span></h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.galerie.titre" components={{ s: <span /> }} /></h1>
         {/* Bouton contextuel : "Nouvel album" ou "← Albums" selon la vue */}
         {!albumOuvert
-          ? <button className="btn btn--primary" onClick={() => setModeAlbum(true)}>+ Nouvel album</button>
-          : <button className="btn btn--ghost" onClick={() => { setAlbumOuvert(null); setPhotos([]); }}>← Albums</button>
+          ? <button className="btn btn--primary" onClick={() => setModeAlbum(true)}>{t('admin.galerie.nouvelAlbum')}</button>
+          : <button className="btn btn--ghost" onClick={() => { setAlbumOuvert(null); setPhotos([]); }}>{t('admin.galerie.retourAlbums')}</button>
         }
       </div>
 
@@ -161,32 +164,32 @@ const GalerieAdmin = () => {
         <div className="modal-overlay" onClick={() => setModeAlbum(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
-              <h2 className="modal__titre">📁 Nouvel album</h2>
-              <button className="modal__fermer" onClick={() => setModeAlbum(false)}>✕</button>
+              <h2 className="modal__titre">{t('admin.galerie.modalAlbum')}</h2>
+              <button className="modal__fermer" onClick={() => setModeAlbum(false)} aria-label={t('common.fermer')}>✕</button>
             </div>
             <form className="a-form" onSubmit={creerAlbum}>
               <div className="a-form-groupe">
-                <label className="a-label">Titre <span className="requis">*</span></label>
+                <label className="a-label">{t('admin.galerie.champTitre')} <span className="requis">*</span></label>
                 <input className="a-input" value={formAlbum.titre} onChange={e => setFormAlbum(p=>({...p,titre:e.target.value}))} required />
               </div>
               <div className="a-form-groupe">
-                <label className="a-label">Description</label>
+                <label className="a-label">{t('admin.galerie.description')}</label>
                 <textarea className="a-input a-textarea" rows={2} value={formAlbum.description} onChange={e => setFormAlbum(p=>({...p,description:e.target.value}))} />
               </div>
               {/* Options de visibilité : parents et/ou public */}
               <div style={{display:'flex',gap:'var(--space-xl)'}}>
                 <label style={{display:'flex',gap:'var(--space-sm)',alignItems:'center',cursor:'pointer',fontWeight:600}}>
                   <input type="checkbox" checked={formAlbum.visible_parents} onChange={e => setFormAlbum(p=>({...p,visible_parents:e.target.checked}))} />
-                  Visible parents
+                  {t('admin.galerie.visibleParents')}
                 </label>
                 <label style={{display:'flex',gap:'var(--space-sm)',alignItems:'center',cursor:'pointer',fontWeight:600}}>
                   <input type="checkbox" checked={formAlbum.visible_public} onChange={e => setFormAlbum(p=>({...p,visible_public:e.target.checked}))} />
-                  Visible public
+                  {t('admin.galerie.visiblePublic')}
                 </label>
               </div>
               <div style={{display:'flex',justifyContent:'flex-end',gap:'var(--space-md)'}}>
-                <button type="button" className="btn btn--ghost" onClick={() => setModeAlbum(false)}>Annuler</button>
-                <button type="submit" className="btn btn--primary" disabled={envoi}>{envoi ? 'Création...' : 'Créer'}</button>
+                <button type="button" className="btn btn--ghost" onClick={() => setModeAlbum(false)}>{t('common.annuler')}</button>
+                <button type="submit" className="btn btn--primary" disabled={envoi}>{envoi ? t('admin.galerie.creation') : t('admin.galerie.creer')}</button>
               </div>
             </form>
           </div>
@@ -199,13 +202,13 @@ const GalerieAdmin = () => {
         <div className="modal-overlay" onClick={() => setPhotoTag(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
-              <h2 className="modal__titre">👶 Taguer des enfants sur cette photo</h2>
-              <button className="modal__fermer" onClick={() => setPhotoTag(null)}>✕</button>
+              <h2 className="modal__titre">{t('admin.galerie.modalTag')}</h2>
+              <button className="modal__fermer" onClick={() => setPhotoTag(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
             {/* Aperçu de la miniature de la photo à taguer */}
-            <img src={photoTag.photo.chemin_miniature} alt="Photo" style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
+            <img src={photoTag.photo.chemin_miniature} alt={t('admin.galerie.photo')} style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
             <p style={{fontSize:'0.85rem',color:'var(--text-gray)',marginBottom:'var(--space-md)'}}>
-              Sélectionnez les enfants présents sur cette photo. Seules les photos d'enfants avec consentement seront visibles.
+              {t('admin.galerie.tagAide')}
             </p>
             {/* Liste de cases à cocher pour chaque enfant */}
             <div className="tags-enfants-liste">
@@ -231,8 +234,8 @@ const GalerieAdmin = () => {
               })}
             </div>
             <div style={{display:'flex',justifyContent:'flex-end',gap:'var(--space-md)',marginTop:'var(--space-xl)'}}>
-              <button className="btn btn--ghost" onClick={() => setPhotoTag(null)}>Annuler</button>
-              <button className="btn btn--primary" onClick={sauvegarderTags}>💾 Sauvegarder les tags</button>
+              <button className="btn btn--ghost" onClick={() => setPhotoTag(null)}>{t('common.annuler')}</button>
+              <button className="btn btn--primary" onClick={sauvegarderTags}>{t('admin.galerie.sauverTags')}</button>
             </div>
           </div>
         </div>
@@ -241,7 +244,7 @@ const GalerieAdmin = () => {
       {/* ── VUE LISTE DES ALBUMS ──────────────────────────────── */}
       {!albumOuvert ? (
         albums.length === 0 ? (
-          <div className="a-vide"><span className="a-vide__icone">📷</span><p>Aucun album.</p></div>
+          <div className="a-vide"><span className="a-vide__icone">📷</span><p>{t('admin.galerie.aucunAlbum')}</p></div>
         ) : (
           <div className="albums-admin-grille">
             {albums.map(album => (
@@ -252,16 +255,16 @@ const GalerieAdmin = () => {
                 </div>
                 <div className="album-admin-infos">
                   <h3>{album.titre}</h3>
-                  <p>{new Date(album.created_at).toLocaleDateString('fr-FR',{month:'long',year:'numeric'})}</p>
+                  <p>{new Date(album.created_at).toLocaleDateString(getLocale(),{month:'long',year:'numeric'})}</p>
                   {/* Badges de visibilité */}
                   <div style={{display:'flex',gap:'var(--space-sm)',marginTop:4}}>
-                    {album.visible_parents && <span className="s-badge s-badge--accepte">Parents</span>}
-                    {album.visible_public  && <span className="s-badge s-badge--en_cours">Public</span>}
+                    {album.visible_parents && <span className="s-badge s-badge--accepte">{t('admin.galerie.badgeParents')}</span>}
+                    {album.visible_public  && <span className="s-badge s-badge--en_cours">{t('admin.galerie.badgePublic')}</span>}
                   </div>
                 </div>
                 <div className="album-admin-actions">
-                  <button className="btn btn--ghost btn--sm" onClick={() => ouvrirAlbum(album)}>📷 Ouvrir</button>
-                  <button className="btn btn--sm" style={{color:'var(--error)',background:'none',border:'none'}} onClick={() => supprimerAlbum(album.id)}>🗑️</button>
+                  <button className="btn btn--ghost btn--sm" onClick={() => ouvrirAlbum(album)}>{t('admin.galerie.ouvrir')}</button>
+                  <button className="btn btn--sm" style={{color:'var(--error)',background:'none',border:'none'}} onClick={() => supprimerAlbum(album.id)} title={t('common.supprimer')} aria-label={t('common.supprimer')}>🗑️</button>
                 </div>
               </div>
             ))}
@@ -273,7 +276,7 @@ const GalerieAdmin = () => {
 
           {/* Zone d'upload avec sélection et tagging global */}
           <div className="a-card upload-zone-admin">
-            <h2 className="a-card__titre">📤 Ajouter des photos à « {albumOuvert.titre} »</h2>
+            <h2 className="a-card__titre">{t('admin.galerie.ajouterPhotos', { titre: albumOuvert.titre })}</h2>
 
             <div className="upload-photos-actions">
               {/* Input file masqué — déclenché par le bouton "Sélectionner" */}
@@ -286,10 +289,10 @@ const GalerieAdmin = () => {
                 onChange={e => setFichiers(Array.from(e.target.files))}
               />
               <button className="btn btn--outline" onClick={() => inputRef.current?.click()}>
-                📁 Sélectionner ({fichiers.length} fichier(s))
+                {t('admin.galerie.selectionner', { count: fichiers.length })}
               </button>
               <button className="btn btn--primary" onClick={uploadPhotos} disabled={envoi || fichiers.length === 0}>
-                {envoi ? '⏳ Upload + compression...' : '📤 Envoyer (Sharp × 3 tailles)'}
+                {envoi ? t('admin.galerie.upload') : t('admin.galerie.envoyer')}
               </button>
             </div>
 
@@ -297,12 +300,12 @@ const GalerieAdmin = () => {
             {fichiers.length > 0 && (
               <div className="upload-preview">
                 <p style={{fontSize:'0.85rem',color:'var(--text-gray)',marginBottom:'var(--space-sm)'}}>
-                  Fichiers sélectionnés : {fichiers.map(f=>f.name).join(', ')}
+                  {t('admin.galerie.fichiersSelectionnes', { liste: fichiers.map(f=>f.name).join(', ') })}
                 </p>
                 {/* Tagging optionnel : s'applique à toutes les photos de cet upload */}
                 {enfants.length > 0 && (
                   <div>
-                    <p className="a-label" style={{marginBottom:'var(--space-sm)'}}>👶 Taguer des enfants sur ces photos (optionnel)</p>
+                    <p className="a-label" style={{marginBottom:'var(--space-sm)'}}>{t('admin.galerie.tagUpload')}</p>
                     <div className="tags-enfants-liste">
                       {enfants.map(e => {
                         const sel = enfantsUpload.includes(e.id);
@@ -324,32 +327,32 @@ const GalerieAdmin = () => {
 
             {/* Note RGPD : rappel du comportement de floutage */}
             <p className="upload-info-rgpd">
-              ℹ️ Les parents des enfants non consentis verront leurs photos <strong>floutées</strong>. Compression automatique en 3 tailles (original, web 1200px, miniature 300px).
+              <Trans i18nKey="admin.galerie.infoRgpd" />
             </p>
           </div>
 
           {/* Grille des photos existantes avec boutons tag et suppression */}
           {photos.length === 0 ? (
-            <div className="a-vide"><span className="a-vide__icone">🖼️</span><p>Aucune photo dans cet album.</p></div>
+            <div className="a-vide"><span className="a-vide__icone">🖼️</span><p>{t('admin.galerie.aucunePhoto')}</p></div>
           ) : (
             <div className="photos-admin-grille">
               {photos.map(photo => (
                 <div key={photo.id} className="photo-admin-item">
-                  <img src={photo.chemin_miniature} alt={photo.legende || 'Photo'} loading="lazy" />
+                  <img src={photo.chemin_miniature} alt={photo.legende || t('admin.galerie.photo')} loading="lazy" />
                   {/* Overlay avec boutons : taguer enfants | supprimer */}
                   <div className="photo-admin-overlay">
                     {/* Ouvre la modal de tagging pour cette photo spécifique */}
                     <button
                       className="photo-overlay-btn"
                       onClick={() => setPhotoTag({ photo, enfants: photo.enfants?.map(e=>e.id) || [] })}
-                      title="Taguer des enfants"
+                      title={t('admin.galerie.taguer')}
                     >
                       👶
                     </button>
                     <button
                       className="photo-overlay-btn photo-overlay-btn--suppr"
                       onClick={() => supprimerPhoto(photo.id)}
-                      title="Supprimer"
+                      title={t('common.supprimer')}
                     >
                       🗑️
                     </button>

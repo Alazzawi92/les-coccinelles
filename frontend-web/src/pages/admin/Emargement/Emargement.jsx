@@ -12,6 +12,7 @@
 // ============================================================
 
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -20,7 +21,8 @@ import './Emargement.css';
 // Date du jour au format YYYY-MM-DD
 const today = new Date().toISOString().split('T')[0];
 
-// Heure courante au format HH:MM
+// Heure courante au format HH:MM (24h) envoyée à l'API : 'fr-FR' est volontaire
+// ici, c'est un format de donnée et non un affichage traduit
 const heureActuelle = () =>
   new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
@@ -46,6 +48,7 @@ const getStatut = (emargement) => {
 };
 
 const EmargementAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Date sélectionnée pour le pointage
   const [date,       setDate]       = useState(today);
   // Liste { enfant, emargement|null } pour la date courante
@@ -63,9 +66,9 @@ const EmargementAdmin = () => {
     try {
       const r = await api.get(`/emargements/${d}`);
       setDonnees(r.data.data || []);
-    } catch { toast.error('Erreur chargement des pointages'); }
+    } catch { toast.error(t('admin.emargement.erreurChargement')); }
     setChargement(false);
-  }, []);
+  }, [t]);
 
   // Recharger quand la date change
   useEffect(() => { charger(date); }, [date, charger]);
@@ -100,9 +103,9 @@ const EmargementAdmin = () => {
         heure_arrivee: heureArrivee || heureActuelle()
       });
       majLocale(enfantId, r.data.data);
-      toast.success('Arrivée enregistrée');
+      toast.success(t('admin.emargement.toastArrivee'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur enregistrement arrivée');
+      toast.error(err.response?.data?.message || t('admin.emargement.erreurArrivee'));
     }
     setEnCours(prev => ({ ...prev, [enfantId]: false }));
   };
@@ -115,9 +118,9 @@ const EmargementAdmin = () => {
         heure_depart: heureDepart || heureActuelle()
       });
       majLocale(enfantId, r.data.data);
-      toast.success('Départ enregistré');
+      toast.success(t('admin.emargement.toastDepart'));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur enregistrement départ');
+      toast.error(err.response?.data?.message || t('admin.emargement.erreurDepart'));
     }
     setEnCours(prev => ({ ...prev, [enfantId]: false }));
   };
@@ -129,20 +132,20 @@ const EmargementAdmin = () => {
     try {
       const r = await api.patch(`/emargements/${emargementId}`, { [champ]: valeur });
       majLocale(enfantId, r.data.data);
-      toast.success('Heure corrigée');
-    } catch { toast.error('Erreur correction heure'); }
+      toast.success(t('admin.emargement.toastCorrigee'));
+    } catch { toast.error(t('admin.emargement.erreurCorrection')); }
     setEnCours(prev => ({ ...prev, [enfantId]: false }));
   };
 
   // ── Supprimer un pointage (correction d'erreur) ──────────
   const supprimerPointage = async (emargementId, enfantId) => {
-    if (!window.confirm('Supprimer ce pointage ?')) return;
+    if (!window.confirm(t('admin.emargement.confirmerSuppression'))) return;
     setEnCours(prev => ({ ...prev, [enfantId]: true }));
     try {
       await api.delete(`/emargements/${emargementId}`);
       majLocale(enfantId, null);
-      toast.success('Pointage supprimé');
-    } catch { toast.error('Erreur suppression'); }
+      toast.success(t('admin.emargement.toastSupprime'));
+    } catch { toast.error(t('admin.emargement.erreurSuppression')); }
     setEnCours(prev => ({ ...prev, [enfantId]: false }));
   };
 
@@ -151,14 +154,14 @@ const EmargementAdmin = () => {
   const nbPartis     = donnees.filter(d => getStatut(d.emargement) === 'parti').length;
   const nbNonArrive  = donnees.filter(d => getStatut(d.emargement) === 'non_arrive').length;
 
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE ───────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Émargement <span>journalier</span></h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.emargement.titre" components={{ s: <span /> }} /></h1>
         {/* Sélecteur de date — max = aujourd'hui */}
         <input
           type="date"
@@ -174,15 +177,15 @@ const EmargementAdmin = () => {
       <div className="ema-resume">
         <div className="ema-resume-tuile ema-resume-tuile--present">
           <span className="ema-resume-nb">{nbPresents}</span>
-          <span className="ema-resume-label">Présent{nbPresents !== 1 ? 's' : ''}</span>
+          <span className="ema-resume-label">{t('admin.emargement.presents', { count: nbPresents })}</span>
         </div>
         <div className="ema-resume-tuile ema-resume-tuile--parti">
           <span className="ema-resume-nb">{nbPartis}</span>
-          <span className="ema-resume-label">Reparti{nbPartis !== 1 ? 's' : ''}</span>
+          <span className="ema-resume-label">{t('admin.emargement.repartis', { count: nbPartis })}</span>
         </div>
         <div className="ema-resume-tuile ema-resume-tuile--attente">
           <span className="ema-resume-nb">{nbNonArrive}</span>
-          <span className="ema-resume-label">En attente</span>
+          <span className="ema-resume-label">{t('admin.emargement.enAttente')}</span>
         </div>
       </div>
 
@@ -191,18 +194,18 @@ const EmargementAdmin = () => {
         {donnees.length === 0 ? (
           <div className="a-vide">
             <span className="a-vide__icone">👶</span>
-            <p>Aucun enfant inscrit.</p>
+            <p>{t('admin.emargement.aucun')}</p>
           </div>
         ) : (
           <table className="a-table ema-table">
             <thead>
               <tr>
-                <th>Enfant</th>
-                <th>Arrivée</th>
-                <th>Départ</th>
-                <th>Durée</th>
-                <th>Statut</th>
-                <th>Actions</th>
+                <th>{t('admin.commun.colEnfant')}</th>
+                <th>{t('admin.emargement.colArrivee')}</th>
+                <th>{t('admin.emargement.colDepart')}</th>
+                <th>{t('admin.emargement.colDuree')}</th>
+                <th>{t('admin.commun.colStatut')}</th>
+                <th>{t('admin.commun.colActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -293,7 +296,7 @@ const EmargementAdmin = () => {
                     {/* Badge statut */}
                     <td>
                       <span className={`ema-badge ema-badge--${statut}`}>
-                        {{ non_arrive: 'En attente', present: 'Présent', parti: 'Reparti' }[statut]}
+                        {t(`admin.emargement.statuts.${statut}`)}
                       </span>
                     </td>
 
@@ -307,7 +310,7 @@ const EmargementAdmin = () => {
                             onClick={() => enregistrerArrivee(enfant.id)}
                             disabled={enAttente}
                           >
-                            ▶ Arrivée
+                            {t('admin.emargement.arrivee')}
                           </button>
                         )}
 
@@ -318,7 +321,7 @@ const EmargementAdmin = () => {
                             onClick={() => enregistrerDepart(emargement.id, enfant.id)}
                             disabled={enAttente}
                           >
-                            ⏹ Départ
+                            {t('admin.emargement.depart')}
                           </button>
                         )}
 
@@ -328,9 +331,9 @@ const EmargementAdmin = () => {
                             className="btn btn--sm ema-btn-annuler"
                             onClick={() => corrigerHeure(emargement.id, enfant.id, 'heure_depart', null)}
                             disabled={enAttente}
-                            title="Annuler le départ"
+                            title={t('admin.emargement.annulerDepartTitre')}
                           >
-                            ↩ Annuler départ
+                            {t('admin.emargement.annulerDepart')}
                           </button>
                         )}
 
@@ -340,7 +343,7 @@ const EmargementAdmin = () => {
                             className="btn btn--sm ema-btn-supprimer"
                             onClick={() => supprimerPointage(emargement.id, enfant.id)}
                             disabled={enAttente}
-                            title="Supprimer ce pointage"
+                            title={t('admin.emargement.supprimerTitre')}
                           >
                             🗑
                           </button>

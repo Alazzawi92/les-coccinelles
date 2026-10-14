@@ -10,7 +10,9 @@
 // ============================================================
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
+import { getLocale } from '../../../i18n';
 import api, { BACKEND_URL as BACKEND } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -19,24 +21,26 @@ import './Messagerie.css';
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document
 const PieceJointe = ({ pj, nom }) => {
+  const { t } = useTranslation();
   if (!pj) return null;
   const url      = `${BACKEND}${pj}`;
   const estImage = /\.(jpg|jpeg|png|webp)$/i.test(pj);
   if (estImage) {
     return (
       <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle">
-        <img src={url} alt={nom || 'image'} className="pj-bulle__img" />
+        <img src={url} alt={nom || t('admin.messagerie.image')} className="pj-bulle__img" />
       </a>
     );
   }
   return (
     <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle pj-bulle--doc">
-      📄 <span>{nom || 'Document'}</span>
+      📄 <span>{nom || t('admin.messagerie.document')}</span>
     </a>
   );
 };
 
 const MessagerieAdmin = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Utilisateur admin connecté (pour déterminer si on est expéditeur ou destinataire)
   const { user } = useAuth();
 
@@ -103,7 +107,7 @@ const MessagerieAdmin = () => {
       api.get('/users').then(r => {
         // Filtre : uniquement les parents actifs
         setParents((r.data.data || []).filter(u => u.role === 'parent' && u.actif));
-      }).catch(() => toast.error('Impossible de charger les parents'));
+      }).catch(() => toast.error(t('admin.messagerie.erreurParents')));
     }
     if (modalOuvert) setTimeout(() => rechercheRef.current?.focus(), 50);
   }, [modalOuvert]);
@@ -148,7 +152,7 @@ const MessagerieAdmin = () => {
       const r = await api.get(`/messages/${selectionne.id}`);
       setDetail(r.data.data);
       chargerConversations();
-    } catch { toast.error('Erreur envoi'); }
+    } catch { toast.error(t('admin.messagerie.erreurEnvoi')); }
     setEnvoi(false);
   };
 
@@ -157,7 +161,7 @@ const MessagerieAdmin = () => {
   const envoyerNouveauMessage = async (e) => {
     e.preventDefault();
     if (destinataires.length === 0 || !sujet.trim() || !contenu.trim()) {
-      toast.error('Remplissez tous les champs');
+      toast.error(t('admin.messagerie.remplir'));
       return;
     }
     setEnvoiNouveau(true);
@@ -168,10 +172,10 @@ const MessagerieAdmin = () => {
         )
       );
       const nb = destinataires.length;
-      toast.success(nb > 1 ? `Message envoyé à ${nb} parents` : 'Message envoyé');
+      toast.success(nb > 1 ? t('admin.messagerie.toastEnvoyeN', { count: nb }) : t('admin.messagerie.toastEnvoye'));
       fermerModal();
       chargerConversations().finally(() => setChargement(false));
-    } catch { toast.error("Erreur lors de l'envoi"); }
+    } catch { toast.error(t('admin.messagerie.erreurEnvoiNouveau')); }
     setEnvoiNouveau(false);
   };
 
@@ -186,12 +190,12 @@ const MessagerieAdmin = () => {
   };
 
   // ── Utilitaires ──────────────────────────────────────────
-  const formatDate = (d) => new Date(d).toLocaleDateString('fr-FR', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  const formatDate = (d) => new Date(d).toLocaleDateString(getLocale(), { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
   // Nombre de messages non lus adressés à cet admin
   const nonLus = conversations.filter(c => !c.lu && c.destinataire_id === user.id).length;
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
@@ -199,10 +203,10 @@ const MessagerieAdmin = () => {
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
         <h1 className="admin-page-titre">
-          Messagerie {nonLus > 0 && <span className="nonlus-badge">{nonLus} non lu(s)</span>}
+          {t('admin.messagerie.titre')} {nonLus > 0 && <span className="nonlus-badge">{t('admin.messagerie.nonLus', { count: nonLus })}</span>}
         </h1>
         <button className="btn btn--primary" onClick={() => setModalOuvert(true)}>
-          ✉️ Nouveau message
+          {t('admin.messagerie.nouveau')}
         </button>
       </div>
 
@@ -214,7 +218,7 @@ const MessagerieAdmin = () => {
           {conversations.length === 0 ? (
             <div className="conv-vide">
               <span>💬</span>
-              <p>Aucun message</p>
+              <p>{t('admin.messagerie.aucun')}</p>
             </div>
           ) : conversations.map(conv => (
             <button
@@ -247,9 +251,9 @@ const MessagerieAdmin = () => {
           {!detail ? (
             <div className="conv-vide conv-vide--centre">
               <span>💬</span>
-              <p>Sélectionnez une conversation</p>
+              <p>{t('admin.messagerie.selectionnez')}</p>
               <button className="btn btn--outline btn--sm" onClick={() => setModalOuvert(true)}>
-                Écrire un message
+                {t('admin.messagerie.ecrire')}
               </button>
             </div>
           ) : (
@@ -262,7 +266,7 @@ const MessagerieAdmin = () => {
                 <div className="conv-detail-textes">
                   <h2>{detail.sujet}</h2>
                   <p className="conv-detail-sous-titre">
-                    De : {detail.expediteur?.prenom} {detail.expediteur?.nom} · {formatDate(detail.created_at)}
+                    {t('admin.messagerie.de', { nom: `${detail.expediteur?.prenom} ${detail.expediteur?.nom}`, date: formatDate(detail.created_at) })}
                   </p>
                 </div>
               </div>
@@ -290,8 +294,8 @@ const MessagerieAdmin = () => {
 
               {/* Zone de saisie de la réponse */}
               <form className="conv-reponse" onSubmit={envoyerReponse}>
-                <textarea className="a-input" rows={3} value={reponse} onChange={e => setReponse(e.target.value)} placeholder="Écrire une réponse..." />
-                <button type="submit" className="btn btn--primary btn--sm" disabled={envoi || !reponse.trim()}>Envoyer ↑</button>
+                <textarea className="a-input" rows={3} value={reponse} onChange={e => setReponse(e.target.value)} placeholder={t('admin.messagerie.reponsePlaceholder')} />
+                <button type="submit" className="btn btn--primary btn--sm" disabled={envoi || !reponse.trim()}>{t('admin.messagerie.envoyerReponse')}</button>
               </form>
             </>
           )}
@@ -304,8 +308,8 @@ const MessagerieAdmin = () => {
         <div className="modal-overlay" onClick={fermerModal}>
           <div className="modal-boite modal-boite--lg" onClick={e => e.stopPropagation()}>
             <div className="modal-entete">
-              <h2 className="modal-titre">✉️ Nouveau message</h2>
-              <button className="modal-fermer" onClick={fermerModal}>×</button>
+              <h2 className="modal-titre">{t('admin.messagerie.nouveau')}</h2>
+              <button className="modal-fermer" onClick={fermerModal} aria-label={t('common.fermer')}>×</button>
             </div>
 
             <form onSubmit={envoyerNouveauMessage} className="modal-corps">
@@ -313,10 +317,10 @@ const MessagerieAdmin = () => {
               {/* ── ZONE DESTINATAIRES ──────────────────────── */}
               <div className="form-groupe">
                 <label className="form-label-admin">
-                  Destinataires <span className="requis">*</span>
+                  {t('admin.messagerie.destinataires')} <span className="requis">*</span>
                   {/* Compteur du nombre de parents sélectionnés */}
                   {destinataires.length > 0 && (
-                    <span className="dest-compteur">{destinataires.length} parent{destinataires.length > 1 ? 's' : ''}</span>
+                    <span className="dest-compteur">{t('admin.messagerie.compteur', { count: destinataires.length })}</span>
                   )}
                 </label>
 
@@ -343,7 +347,7 @@ const MessagerieAdmin = () => {
                     ref={rechercheRef}
                     type="text"
                     className="dest-input"
-                    placeholder={destinataires.length === 0 ? '🔍 Rechercher un parent...' : 'Ajouter...'}
+                    placeholder={destinataires.length === 0 ? t('admin.messagerie.rechercher') : t('admin.messagerie.ajouterPlaceholder')}
                     value={recherche}
                     onChange={e => { setRecherche(e.target.value); setDropdownVisible(true); }}
                     onFocus={() => setDropdownVisible(true)}
@@ -356,7 +360,7 @@ const MessagerieAdmin = () => {
                   <div className="parents-liste-dropdown">
                     {parentsFiltres.length === 0 ? (
                       <p className="dropdown-vide">
-                        {recherche ? `Aucun résultat pour « ${recherche} »` : 'Tous les parents sont sélectionnés'}
+                        {recherche ? t('admin.messagerie.aucunResultat', { q: recherche }) : t('admin.messagerie.tousSelectionnes')}
                       </p>
                     ) : parentsFiltres.slice(0, 8).map(p => (
                       <button
@@ -371,7 +375,7 @@ const MessagerieAdmin = () => {
                           <strong>{p.prenom} {p.nom}</strong>
                           <small>{p.email}</small>
                         </span>
-                        <span className="parent-option__ajouter">+ Ajouter</span>
+                        <span className="parent-option__ajouter">{t('admin.messagerie.ajouter')}</span>
                       </button>
                     ))}
                     {/* Bouton "Sélectionner tous les parents" en bas du dropdown */}
@@ -387,8 +391,8 @@ const MessagerieAdmin = () => {
                       >
                         <span style={{ fontSize:'1.1rem' }}>👨‍👩‍👧‍👦</span>
                         <span className="parent-option__infos">
-                          <strong>Sélectionner tous les parents</strong>
-                          <small>{parents.length} parents</small>
+                          <strong>{t('admin.messagerie.selectionnerTous')}</strong>
+                          <small>{t('admin.messagerie.compteur', { count: parents.length })}</small>
                         </span>
                       </button>
                     )}
@@ -398,11 +402,11 @@ const MessagerieAdmin = () => {
 
               {/* ── SUJET ───────────────────────────────────── */}
               <div className="form-groupe">
-                <label className="form-label-admin">Sujet <span className="requis">*</span></label>
+                <label className="form-label-admin">{t('admin.messagerie.sujet')} <span className="requis">*</span></label>
                 <input
                   type="text"
                   className="a-input"
-                  placeholder="Objet du message..."
+                  placeholder={t('admin.messagerie.sujetPlaceholder')}
                   value={sujet}
                   onChange={e => setSujet(e.target.value)}
                 />
@@ -410,11 +414,11 @@ const MessagerieAdmin = () => {
 
               {/* ── MESSAGE ─────────────────────────────────── */}
               <div className="form-groupe">
-                <label className="form-label-admin">Message <span className="requis">*</span></label>
+                <label className="form-label-admin">{t('admin.messagerie.message')} <span className="requis">*</span></label>
                 <textarea
                   className="a-input a-textarea"
                   rows={6}
-                  placeholder="Écrivez votre message..."
+                  placeholder={t('admin.messagerie.messagePlaceholder')}
                   value={contenu}
                   onChange={e => setContenu(e.target.value)}
                 />
@@ -422,17 +426,17 @@ const MessagerieAdmin = () => {
 
               {/* Actions : annuler | envoyer (bouton adapté selon nb destinataires) */}
               <div className="modal-actions">
-                <button type="button" className="btn btn--outline" onClick={fermerModal}>Annuler</button>
+                <button type="button" className="btn btn--outline" onClick={fermerModal}>{t('common.annuler')}</button>
                 <button
                   type="submit"
                   className="btn btn--primary"
                   disabled={envoiNouveau || destinataires.length === 0 || !sujet.trim() || !contenu.trim()}
                 >
                   {envoiNouveau
-                    ? 'Envoi en cours...'
+                    ? t('admin.messagerie.envoiEnCours')
                     : destinataires.length > 1
-                      ? `✉️ Envoyer à ${destinataires.length} parents`
-                      : '✉️ Envoyer'}
+                      ? t('admin.messagerie.envoyerN', { count: destinataires.length })
+                      : t('admin.messagerie.envoyer')}
                 </button>
               </div>
             </form>

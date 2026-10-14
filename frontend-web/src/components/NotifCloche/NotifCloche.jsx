@@ -14,10 +14,14 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
+import { getLocale } from '../../i18n';
 import './NotifCloche.css';
 
 const NotifCloche = () => {
+
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Liste de toutes les notifications de l'utilisateur connecté
   const [notifs,     setNotifs]     = useState([]);
   // true = panneau notifications ouvert
@@ -107,10 +111,10 @@ const NotifCloche = () => {
     const d         = new Date(date);
     const maintenant = new Date();
     const diff      = Math.floor((maintenant - d) / 60000); // en minutes
-    if (diff < 1)    return "À l'instant";
-    if (diff < 60)   return `Il y a ${diff} min`;
-    if (diff < 1440) return `Il y a ${Math.floor(diff / 60)}h`;
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    if (diff < 1)    return t('common.notifs.aLInstant');
+    if (diff < 60)   return t('common.notifs.ilYaMin', { n: diff });
+    if (diff < 1440) return t('common.notifs.ilYaH', { n: Math.floor(diff / 60) });
+    return d.toLocaleDateString(getLocale(), { day: 'numeric', month: 'short' });
   };
 
   // Emoji selon le type de notification
@@ -127,7 +131,7 @@ const NotifCloche = () => {
     <div className="notif-cloche" ref={ref}>
 
       {/* ── BOUTON CLOCHE ─────────────────────────────────────── */}
-      <button className="notif-cloche__btn" onClick={toggleOuvert} aria-label="Notifications">
+      <button className="notif-cloche__btn" onClick={toggleOuvert} aria-label={t('common.notifs.titre')}>
         <span className="notif-cloche__emoji">🔔</span>
         {/* Badge rouge plafonné à "99+" */}
         {nonLues > 0 && (
@@ -139,22 +143,22 @@ const NotifCloche = () => {
       {ouvert && (
         <div className="notif-panneau">
           <div className="notif-panneau__entete">
-            <h3 className="notif-panneau__titre">Notifications</h3>
+            <h3 className="notif-panneau__titre">{t('common.notifs.titre')}</h3>
             {/* Bouton "Tout marquer lu" visible uniquement s'il y a des non lues */}
             {nonLues > 0 && (
               <button className="notif-panneau__tout-lire" onClick={toutLire}>
-                Tout marquer lu
+                {t('common.notifs.toutLire')}
               </button>
             )}
           </div>
 
           {/* ── LISTE DES NOTIFICATIONS ─────────────────────── */}
           <div className="notif-panneau__liste">
-            {chargement && <p className="notif-vide">Chargement...</p>}
+            {chargement && <p className="notif-vide">{t('common.chargement')}</p>}
             {!chargement && notifs.length === 0 && (
               <div className="notif-vide">
                 <span>🔕</span>
-                <p>Aucune notification</p>
+                <p>{t('common.notifs.aucune')}</p>
               </div>
             )}
             {notifs.map(n => (
@@ -174,7 +178,7 @@ const NotifCloche = () => {
                   {/* Flèche de navigation si lien défini */}
                   {n.lien && <span className="notif-item__fleche">›</span>}
                   {/* Bouton suppression : stopPropagation pour éviter clicNotif */}
-                  <button className="notif-item__suppr" onClick={(e) => supprimer(e, n.id)} aria-label="Supprimer">×</button>
+                  <button className="notif-item__suppr" onClick={(e) => supprimer(e, n.id)} aria-label={t('common.supprimer')}>×</button>
                 </div>
               </div>
             ))}

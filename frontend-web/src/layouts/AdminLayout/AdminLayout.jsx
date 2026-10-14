@@ -14,49 +14,52 @@ import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
+import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import './AdminLayout.css';
 
 // ── Configuration de la navigation admin ──────────────────────
-// Regroupée par catégorie fonctionnelle pour la lisibilité
+// Regroupée par catégorie fonctionnelle pour la lisibilité.
+// groupe / cle : clés de traduction (common.adminLayout.groupes.* / .liens.*)
 const GROUPES_NAV = [
   {
-    titre: 'Tableau de bord',
-    liens: [{ to: '/admin/tableau-de-bord', label: 'Dashboard',    icone: '📊' }]
+    groupe: 'tableauDeBord',
+    liens: [{ to: '/admin/tableau-de-bord', cle: 'dashboard',      icone: '📊' }]
   },
   {
-    titre: 'Familles',
+    groupe: 'familles',
     liens: [
-      { to: '/admin/familles',     label: 'Familles',     icone: '👨‍👩‍👧' },
-      { to: '/admin/inscriptions', label: 'Inscriptions', icone: '📝' },
-      { to: '/admin/enfants',      label: 'Enfants',      icone: '👶' }
+      { to: '/admin/familles',     cle: 'familles',       icone: '👨‍👩‍👧' },
+      { to: '/admin/inscriptions', cle: 'inscriptions',   icone: '📝' },
+      { to: '/admin/enfants',      cle: 'enfants',        icone: '👶' }
     ]
   },
   {
-    titre: 'Quotidien',
+    groupe: 'quotidien',
     liens: [
-      { to: '/admin/emargement',  label: 'Émargement',      icone: '✍️' },
-      { to: '/admin/suivi',       label: 'Suivi quotidien', icone: '📋' },
-      { to: '/admin/absences',   label: 'Absences',        icone: '📅' },
-      { to: '/admin/calendrier', label: 'Calendrier',      icone: '🗓️' },
-      { to: '/admin/messagerie', label: 'Messagerie',      icone: '✉️' }
+      { to: '/admin/emargement',  cle: 'emargement',        icone: '✍️' },
+      { to: '/admin/suivi',       cle: 'suivi',             icone: '📋' },
+      { to: '/admin/absences',   cle: 'absences',          icone: '📅' },
+      { to: '/admin/calendrier', cle: 'calendrier',        icone: '🗓️' },
+      { to: '/admin/messagerie', cle: 'messagerie',        icone: '✉️' }
     ]
   },
   {
-    titre: 'Site public',
+    groupe: 'sitePublic',
     liens: [
-      { to: '/admin/actualites', label: 'Actualités', icone: '📰' },
-      { to: '/admin/menus',      label: 'Menus',      icone: '🍽️' },
-      { to: '/admin/galerie',    label: 'Galerie',    icone: '🖼️' },
-      { to: '/admin/cms',        label: 'CMS Pages',  icone: '🌐' }
+      { to: '/admin/actualites', cle: 'actualites',   icone: '📰' },
+      { to: '/admin/menus',      cle: 'menus',        icone: '🍽️' },
+      { to: '/admin/galerie',    cle: 'galerie',      icone: '🖼️' },
+      { to: '/admin/cms',        cle: 'cms',          icone: '🌐' }
     ]
   },
   {
-    titre: 'Gestion',
+    groupe: 'gestion',
     liens: [
-      { to: '/admin/documents',    label: 'Documents',    icone: '📄' },
-      { to: '/admin/statistiques', label: 'Statistiques', icone: '📈' },
-      { to: '/admin/rapports',     label: 'Rapports',     icone: '🧾' }
+      { to: '/admin/documents',    cle: 'documents',      icone: '📄' },
+      { to: '/admin/statistiques', cle: 'statistiques',   icone: '📈' },
+      { to: '/admin/rapports',     cle: 'rapports',       icone: '🧾' }
     ]
   }
 ];
@@ -65,6 +68,7 @@ const AdminLayout = () => {
 
   // Récupère le profil admin et la fonction de déconnexion
   const { user, deconnecter } = useAuth();
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // Contrôle l'ouverture du menu burger (mobile uniquement)
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -72,14 +76,14 @@ const AdminLayout = () => {
   // Déconnecte et affiche une notification de confirmation
   const handleDeconnexion = async () => {
     await deconnecter();
-    toast.success('Déconnexion réussie');
+    toast.success(t('common.deconnexionReussie'));
   };
 
   // Un admin simple ne voit que le groupe "Quotidien" (émargement, suivi,
   // absences, calendrier, messagerie) ; le super_admin voit tout.
   const groupesNav = user?.role === 'super_admin'
     ? GROUPES_NAV
-    : GROUPES_NAV.filter(g => g.titre === 'Quotidien');
+    : GROUPES_NAV.filter(g => g.groupe === 'quotidien');
 
   return (
     <div className="admin-layout">
@@ -92,16 +96,16 @@ const AdminLayout = () => {
           <Link to="/" className="admin-sidebar__logo-lien">
             <img src="/images/logo.png" alt="Les Coccinelles" className="admin-sidebar__logo-img" />
           </Link>
-          <p className="admin-sidebar__logo-sous">Administration</p>
+          <p className="admin-sidebar__logo-sous">{t('common.adminLayout.administration')}</p>
         </div>
 
         {/* Navigation groupée : titre de groupe + liens NavLink.
             isActive : React Router injecte la classe 'active' sur le lien courant. */}
         <nav className="admin-sidebar__nav">
-          {groupesNav.map(({ titre, liens }) => (
-            <div key={titre} className="admin-sidebar__groupe">
-              <p className="admin-sidebar__groupe-titre">{titre}</p>
-              {liens.map(({ to, label, icone }) => (
+          {groupesNav.map(({ groupe, liens }) => (
+            <div key={groupe} className="admin-sidebar__groupe">
+              <p className="admin-sidebar__groupe-titre">{t(`common.adminLayout.groupes.${groupe}`)}</p>
+              {liens.map(({ to, cle, icone }) => (
                 <NavLink
                   key={to}
                   to={to}
@@ -110,7 +114,7 @@ const AdminLayout = () => {
                   }
                 >
                   <span>{icone}</span>
-                  <span>{label}</span>
+                  <span>{t(`common.adminLayout.liens.${cle}`)}</span>
                 </NavLink>
               ))}
             </div>
@@ -121,10 +125,10 @@ const AdminLayout = () => {
         <div className="admin-sidebar__pied">
           <p className="admin-sidebar__user-nom">{user?.prenom} {user?.nom}</p>
           <p className="admin-sidebar__user-role">
-            {user?.role === 'super_admin' ? 'Super Admin' : 'Administrateur'}
+            {user?.role === 'super_admin' ? t('common.adminLayout.superAdmin') : t('common.adminLayout.administrateur')}
           </p>
           <button className="admin-sidebar__deconnexion" onClick={handleDeconnexion}>
-            🚪 Déconnexion
+            🚪 {t('common.adminLayout.deconnexion')}
           </button>
         </div>
       </aside>
@@ -139,7 +143,7 @@ const AdminLayout = () => {
         <button
           className={`admin-mobile-burger ${menuOuvert ? 'admin-mobile-burger--actif' : ''}`}
           onClick={() => setMenuOuvert(!menuOuvert)}
-          aria-label="Menu"
+          aria-label={t('common.menu')}
           aria-expanded={menuOuvert}
         >
           {menuOuvert ? '✕' : '☰'}
@@ -152,10 +156,10 @@ const AdminLayout = () => {
       {menuOuvert && (
         <div className="admin-mobile-menu">
           <nav className="admin-mobile-menu__nav">
-            {groupesNav.map(({ titre, liens }) => (
-              <div key={titre} className="admin-mobile-menu__groupe">
-                <p className="admin-mobile-menu__groupe-titre">{titre}</p>
-                {liens.map(({ to, label, icone }) => (
+            {groupesNav.map(({ groupe, liens }) => (
+              <div key={groupe} className="admin-mobile-menu__groupe">
+                <p className="admin-mobile-menu__groupe-titre">{t(`common.adminLayout.groupes.${groupe}`)}</p>
+                {liens.map(({ to, cle, icone }) => (
                   <NavLink
                     key={to}
                     to={to}
@@ -165,7 +169,7 @@ const AdminLayout = () => {
                     }
                   >
                     <span>{icone}</span>
-                    <span>{label}</span>
+                    <span>{t(`common.adminLayout.liens.${cle}`)}</span>
                   </NavLink>
                 ))}
               </div>
@@ -176,10 +180,10 @@ const AdminLayout = () => {
           <div className="admin-mobile-menu__pied">
             <p className="admin-mobile-menu__user-nom">{user?.prenom} {user?.nom}</p>
             <p className="admin-mobile-menu__user-role">
-              {user?.role === 'super_admin' ? 'Super Admin' : 'Administrateur'}
+              {user?.role === 'super_admin' ? t('common.adminLayout.superAdmin') : t('common.adminLayout.administrateur')}
             </p>
             <button className="admin-sidebar__deconnexion" onClick={handleDeconnexion}>
-              🚪 Déconnexion
+              🚪 {t('common.adminLayout.deconnexion')}
             </button>
           </div>
         </div>
@@ -188,10 +192,13 @@ const AdminLayout = () => {
       {/* ── ZONE DE CONTENU ─────────────────────────────────── */}
       <div className="admin-content">
 
-        {/* Topbar : titre de la section + cloche de notifications */}
+        {/* Topbar : titre de la section + sélecteur de langue + cloche de notifications */}
         <header className="layout-topbar layout-topbar--admin">
-          <span className="layout-topbar__titre">Administration</span>
-          <NotifCloche />
+          <span className="layout-topbar__titre">{t('common.adminLayout.administration')}</span>
+          <div className="layout-topbar__actions">
+            <LanguageSwitcher />
+            <NotifCloche />
+          </div>
         </header>
 
         {/* Outlet : la page admin active s'affiche ici */}

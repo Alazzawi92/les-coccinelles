@@ -10,6 +10,7 @@
 // ============================================================
 
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { googleLogin } from '../../../services/auth.service';
 import './GoogleButton.css';
 
@@ -54,13 +55,18 @@ const GoogleButton = ({
   onErreur     = () => {}
 }) => {
 
+  // Fonction de traduction + langue active (le bouton Google est redessiné
+  // dans la bonne langue quand l'utilisateur change de langue)
+  const { t, i18n } = useTranslation();
+  const langue = i18n.resolvedLanguage || 'fr';
+
   // Conteneur dans lequel Google dessine son bouton
   const conteneurRef = useRef(null);
 
   // Garde toujours les dernières fonctions reçues en props :
   // le callback Google est enregistré une seule fois au montage
-  const callbacksRef = useRef({ onConnexion, onCompteCree, onErreur });
-  callbacksRef.current = { onConnexion, onCompteCree, onErreur };
+  const callbacksRef = useRef({ onConnexion, onCompteCree, onErreur, t });
+  callbacksRef.current = { onConnexion, onCompteCree, onErreur, t };
 
   useEffect(() => {
     if (!CLIENT_ID) return; // Fonctionnalité désactivée
@@ -69,7 +75,7 @@ const GoogleButton = ({
 
     // Reçoit le jeton d'identité Google et l'envoie au backend
     const traiterReponseGoogle = async ({ credential }) => {
-      const { onConnexion, onCompteCree, onErreur } = callbacksRef.current;
+      const { onConnexion, onCompteCree, onErreur, t } = callbacksRef.current;
       try {
         const res = await googleLogin(credential);
         if (res.status === 201) {
@@ -78,7 +84,7 @@ const GoogleButton = ({
           onConnexion(res.data.data);     // Connexion réussie
         }
       } catch (err) {
-        onErreur(err.response?.data?.message || 'Erreur lors de la connexion avec Google');
+        onErreur(err.response?.data?.message || t('common.google.erreurConnexion'));
       }
     };
 
@@ -101,16 +107,16 @@ const GoogleButton = ({
           size:   'large',
           shape:  'pill',
           text:   texte,
-          locale: 'fr',
+          locale: langue,
           width:  largeur
         });
       })
       .catch(() => {
-        if (!annule) callbacksRef.current.onErreur('Impossible de charger la connexion Google');
+        if (!annule) callbacksRef.current.onErreur(callbacksRef.current.t('common.google.erreurChargement'));
       });
 
     return () => { annule = true; };
-  }, [texte]);
+  }, [texte, langue]);
 
   // Aucun Client ID configuré : on n'affiche rien
   if (!CLIENT_ID) return null;

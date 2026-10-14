@@ -9,8 +9,10 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { register as registerService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
+import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import { useAuth } from '../../../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
@@ -26,13 +28,15 @@ const verifierPassword = (pwd) => ({
 
 const Register = () => {
 
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+
   // ── État du formulaire ────────────────────────────────────
   const [form, setForm] = useState({
     prenom: '', nom: '', email: '', password: '', confirmPassword: '', telephone: ''
   });
   const [envoi,       setEnvoi]       = useState(false);  // En cours d'envoi
   const [erreur,      setErreur]      = useState('');      // Erreur globale (API)
-  const [erreurs,     setErreurs]     = useState({});      // Erreurs par champ
+  const [erreurs,     setErreurs]     = useState({});      // Erreurs par champ (clés de traduction)
   const [voirMdp,     setVoirMdp]     = useState(false);  // Afficher mot de passe
   const [voirConfirm, setVoirConfirm] = useState(false);  // Afficher confirmation
 
@@ -53,14 +57,15 @@ const Register = () => {
   // ── Validation côté client ────────────────────────────────
   const valider = () => {
     const e = {};
-    if (!form.prenom.trim())   e.prenom  = 'Prénom requis';
-    if (!form.nom.trim())      e.nom     = 'Nom requis';
+    // On stocke des clés de traduction : le message suit la langue choisie
+    if (!form.prenom.trim())   e.prenom  = 'prenomRequis';
+    if (!form.nom.trim())      e.nom     = 'nomRequis';
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = 'Email invalide';
+      e.email = 'emailInvalide';
     if (!criteres.longueur || !criteres.chiffre || !criteres.majuscule)
-      e.password = 'Le mot de passe ne respecte pas les critères';
+      e.password = 'mdpCriteres';
     if (form.password !== form.confirmPassword)
-      e.confirmPassword = 'Les mots de passe ne correspondent pas';
+      e.confirmPassword = 'mdpDifferents';
     return e;
   };
 
@@ -83,12 +88,12 @@ const Register = () => {
         telephone: form.telephone
       });
 
-      toast.success('Compte créé ! En attente de validation par l\'administrateur.');
+      toast.success(t('auth.register.toastCree'));
       navigate('/connexion', {
-        state: { message: 'Votre compte a été créé. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.' }
+        state: { messageCle: 'auth.register.compteCreeInfo' } // Clé traduite par la page de connexion
       });
     } catch (err) {
-      setErreur(err.response?.data?.message || 'Erreur lors de la création du compte');
+      setErreur(err.response?.data?.message || t('auth.register.erreur'));
     }
     setEnvoi(false);
   };
@@ -98,13 +103,16 @@ const Register = () => {
       {/* auth-card--large : formulaire plus large pour les 2 colonnes */}
       <div className="auth-card auth-card--large">
 
+        {/* Sélecteur de langue (pas de layout sur les pages auth) */}
+        <LanguageSwitcher className="auth-langue" />
+
         <div className="auth-logo">
-          <img src="/images/logo.png" alt="Les Coccinelles" className="auth-logo__img" />
-          <span className="auth-logo__sous">Création de votre espace parent</span>
+          <img src="/images/logo.png" alt={t('auth.logoAlt')} className="auth-logo__img" />
+          <span className="auth-logo__sous">{t('auth.register.logoSous')}</span>
         </div>
 
-        <h1 className="auth-titre">Créer un compte</h1>
-        <p className="auth-sous-titre">Remplissez ce formulaire pour accéder à l'espace parents</p>
+        <h1 className="auth-titre">{t('auth.register.titre')}</h1>
+        <p className="auth-sous-titre">{t('auth.register.sousTitre')}</p>
 
         {/* Erreur globale (email déjà utilisé, serveur indisponible...) */}
         {erreur && <div className="auth-alerte" role="alert"><span>⚠️</span><span>{erreur}</span></div>}
@@ -114,40 +122,40 @@ const Register = () => {
           {/* Ligne Prénom + Nom côte à côte */}
           <div className="form-row-double">
             <div className="form-groupe">
-              <label htmlFor="prenom" className="form-label">Prénom <span className="requis">*</span></label>
+              <label htmlFor="prenom" className="form-label">{t('auth.register.prenom')} <span className="requis">*</span></label>
               <input id="prenom" name="prenom" type="text"
                 className={`form-input ${erreurs.prenom ? 'form-input--erreur' : ''}`}
-                placeholder="Marie" value={form.prenom} onChange={handleChange} autoFocus />
-              {erreurs.prenom && <p className="form-erreur">{erreurs.prenom}</p>}
+                placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} autoFocus />
+              {erreurs.prenom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.prenom}`)}</p>}
             </div>
             <div className="form-groupe">
-              <label htmlFor="nom" className="form-label">Nom <span className="requis">*</span></label>
+              <label htmlFor="nom" className="form-label">{t('auth.register.nom')} <span className="requis">*</span></label>
               <input id="nom" name="nom" type="text"
                 className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
-                placeholder="Dupont" value={form.nom} onChange={handleChange} />
-              {erreurs.nom && <p className="form-erreur">{erreurs.nom}</p>}
+                placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} />
+              {erreurs.nom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.nom}`)}</p>}
             </div>
           </div>
 
           {/* Email */}
           <div className="form-groupe">
-            <label htmlFor="email" className="form-label">Email <span className="requis">*</span></label>
+            <label htmlFor="email" className="form-label">{t('auth.emailCourt')} <span className="requis">*</span></label>
             <input id="email" name="email" type="email"
               className={`form-input ${erreurs.email ? 'form-input--erreur' : ''}`}
-              placeholder="marie@exemple.fr" value={form.email} onChange={handleChange} />
-            {erreurs.email && <p className="form-erreur">{erreurs.email}</p>}
+              placeholder={t('auth.emailPlaceholder')} value={form.email} onChange={handleChange} />
+            {erreurs.email && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.email}`)}</p>}
           </div>
 
           {/* Téléphone : optionnel */}
           <div className="form-groupe">
-            <label htmlFor="telephone" className="form-label">Téléphone</label>
+            <label htmlFor="telephone" className="form-label">{t('auth.register.telephone')}</label>
             <input id="telephone" name="telephone" type="tel" className="form-input"
-              placeholder="06 XX XX XX XX" value={form.telephone} onChange={handleChange} />
+              placeholder={t('auth.register.telephonePlaceholder')} value={form.telephone} onChange={handleChange} />
           </div>
 
           {/* Mot de passe + indicateur de critères */}
           <div className="form-groupe">
-            <label htmlFor="password" className="form-label">Mot de passe <span className="requis">*</span></label>
+            <label htmlFor="password" className="form-label">{t('auth.motDePasse')} <span className="requis">*</span></label>
             <div className="password-wrapper">
               <input id="password" name="password" type={voirMdp ? 'text' : 'password'}
                 className={`form-input ${erreurs.password ? 'form-input--erreur' : ''}`}
@@ -155,26 +163,26 @@ const Register = () => {
                 autoComplete="new-password" />
               <button type="button" className="password-toggle"
                 onClick={() => setVoirMdp(v => !v)}
-                aria-label={voirMdp ? 'Masquer' : 'Afficher'}>
-                {voirMdp ? 'Masquer' : 'Voir'}
+                aria-label={voirMdp ? t('auth.masquer') : t('auth.afficher')}>
+                {voirMdp ? t('auth.masquer') : t('auth.voir')}
               </button>
             </div>
 
             {/* Indicateur de critères (visible dès qu'on tape) */}
             {form.password && (
               <div className="password-criteres">
-                <span className={`critere ${criteres.longueur  ? 'critere--ok' : ''}`}>{criteres.longueur  ? '✅' : '○'} 8 caractères minimum</span>
-                <span className={`critere ${criteres.chiffre   ? 'critere--ok' : ''}`}>{criteres.chiffre   ? '✅' : '○'} Au moins un chiffre</span>
-                <span className={`critere ${criteres.majuscule ? 'critere--ok' : ''}`}>{criteres.majuscule ? '✅' : '○'} Au moins une majuscule</span>
+                <span className={`critere ${criteres.longueur  ? 'critere--ok' : ''}`}>{criteres.longueur  ? '✅' : '○'} {t('auth.register.critereLongueur')}</span>
+                <span className={`critere ${criteres.chiffre   ? 'critere--ok' : ''}`}>{criteres.chiffre   ? '✅' : '○'} {t('auth.register.critereChiffre')}</span>
+                <span className={`critere ${criteres.majuscule ? 'critere--ok' : ''}`}>{criteres.majuscule ? '✅' : '○'} {t('auth.register.critereMajuscule')}</span>
               </div>
             )}
-            {erreurs.password && <p className="form-erreur">{erreurs.password}</p>}
+            {erreurs.password && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.password}`)}</p>}
           </div>
 
           {/* Confirmation du mot de passe */}
           <div className="form-groupe">
             <label htmlFor="confirmPassword" className="form-label">
-              Confirmer le mot de passe <span className="requis">*</span>
+              {t('auth.register.confirmer')} <span className="requis">*</span>
             </label>
             <div className="password-wrapper">
               <input id="confirmPassword" name="confirmPassword"
@@ -184,19 +192,19 @@ const Register = () => {
                 autoComplete="new-password" />
               <button type="button" className="password-toggle"
                 onClick={() => setVoirConfirm(v => !v)}
-                aria-label={voirConfirm ? 'Masquer' : 'Afficher'}>
-                {voirConfirm ? 'Masquer' : 'Voir'}
+                aria-label={voirConfirm ? t('auth.masquer') : t('auth.afficher')}>
+                {voirConfirm ? t('auth.masquer') : t('auth.voir')}
               </button>
             </div>
-            {erreurs.confirmPassword && <p className="form-erreur">{erreurs.confirmPassword}</p>}
+            {erreurs.confirmPassword && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.confirmPassword}`)}</p>}
           </div>
 
           <button type="submit" className="btn-auth" disabled={envoi}>
-            {envoi ? '⏳ Création...' : 'Créer mon compte'}
+            {envoi ? t('auth.register.creation') : t('auth.register.creer')}
           </button>
         </form>
 
-        <div className="auth-divider">ou</div>
+        <div className="auth-divider">{t('auth.ou')}</div>
 
         {/* Inscription avec Google : le compte est créé puis validé par un admin */}
         <GoogleButton
@@ -204,7 +212,7 @@ const Register = () => {
           onConnexion={(data) => {
             // Compte Google déjà existant et validé : connexion directe
             connecter(data.user, data.accessToken, data.refreshToken);
-            toast.success(`Bienvenue, ${data.user.prenom} !`);
+            toast.success(t('auth.bienvenue', { prenom: data.user.prenom }));
             navigate('/parent/tableau-de-bord', { replace: true });
           }}
           onCompteCree={(message) => navigate('/connexion', { state: { message } })}
@@ -212,9 +220,9 @@ const Register = () => {
         />
 
         <p className="auth-pied">
-          Déjà un compte ? <Link to="/connexion">Se connecter</Link>
+          {t('auth.register.dejaCompte')} <Link to="/connexion">{t('auth.register.seConnecter')}</Link>
         </p>
-        <p className="auth-pied"><Link to="/">← Retour au site</Link></p>
+        <p className="auth-pied"><Link to="/">{t('auth.retourSite')}</Link></p>
 
       </div>
     </div>

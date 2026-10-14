@@ -11,11 +11,13 @@
 
 import { useState, useEffect } from 'react';
 import { Navigate, Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import '../../../styles/parent.css';
 import './Suivi.css';
 
 const SuiviIndex = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [enfants,    setEnfants]    = useState(null); // null = pas encore chargé
   const [chargement, setChargement] = useState(true);
 
@@ -26,7 +28,7 @@ const SuiviIndex = () => {
       .finally(() => setChargement(false));
   }, []);
 
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   // Un seul enfant : on va directement à son suivi, pas besoin de choisir
   if (enfants.length === 1) return <Navigate to={`/parent/suivi/${enfants[0].id}`} replace />;
@@ -34,18 +36,18 @@ const SuiviIndex = () => {
   return (
     <div className="suivi-page">
       <div className="parent-page-header">
-        <h1 className="parent-page-titre">Suivi <span>quotidien</span></h1>
+        <h1 className="parent-page-titre"><Trans i18nKey="parent.suiviIndex.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       {enfants.length === 0 ? (
         <div className="p-vide">
           <span className="p-vide__icone">👶</span>
-          <p>Vous n'avez pas encore d'enfant enregistré.</p>
-          <Link to="/parent/mes-enfants" className="btn btn--primary">Ajouter un enfant</Link>
+          <p>{t('parent.commun.aucunEnfant')}</p>
+          <Link to="/parent/mes-enfants" className="btn btn--primary">{t('parent.commun.ajouterEnfant')}</Link>
         </div>
       ) : (
         <div className="suivi-selecteur">
-          <p style={{ color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>Choisissez un enfant pour voir son suivi :</p>
+          <p style={{ color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>{t('parent.suiviIndex.choisir')}</p>
           {enfants.map(e => (
             <Link key={e.id} to={`/parent/suivi/${e.id}`} className="suivi-jour-btn">
               <span className="suivi-jour-date">{e.prenom} {e.nom}</span>

@@ -11,22 +11,26 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import '../../../styles/parent.css';
 import './Suivi.css';
 
-// Mappage des valeurs de repas vers emoji + libellé + classe CSS de couleur
+// Mappage des valeurs de repas vers emoji + classe CSS de couleur
+// (le libellé est traduit via common.repasValeur.<valeur>)
 const EMOJI_REPAS  = {
-  tout:   { e: '😋', l: 'Tout mangé',  c: 'vert'   },
-  peu:    { e: '😐', l: 'Un peu',      c: 'orange' },
-  rien:   { e: '😕', l: 'Rien mangé',  c: 'rouge'  },
-  absent: { e: '—',  l: 'Absent',      c: 'gris'   }
+  tout:   { e: '😋', c: 'vert'   },
+  peu:    { e: '😐', c: 'orange' },
+  rien:   { e: '😕', c: 'rouge'  },
+  absent: { e: '—',  c: 'gris'   }
 };
 
 // Mappage des valeurs d'humeur vers emoji
 const EMOJI_HUMEUR = { joyeux: '😄', calme: '😊', fatigue: '😴', pleureur: '😢', autre: '😐' };
 
 const Suivi = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   // :id = identifiant de l'enfant passé dans l'URL
   const { id }               = useParams();
   // Liste de tous les suivis de cet enfant (triés par date desc côté API)
@@ -58,7 +62,7 @@ const Suivi = () => {
   }, [id]); // Se relance si l'id dans l'URL change
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">Chargement...</div>;
+  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
 
   return (
     <div className="suivi-page">
@@ -67,8 +71,8 @@ const Suivi = () => {
       <div className="parent-page-header">
         <div>
           {/* Lien retour vers la liste des enfants */}
-          <Link to="/parent/mes-enfants" className="retour-lien-parent">← Mes enfants</Link>
-          <h1 className="parent-page-titre">Suivi de <span>{enfant?.prenom}</span></h1>
+          <Link to="/parent/mes-enfants" className="retour-lien-parent">{t('parent.suivi.retour')}</Link>
+          <h1 className="parent-page-titre"><Trans i18nKey="parent.suivi.titre" values={{ prenom: enfant?.prenom }} components={{ s: <span /> }} /></h1>
         </div>
       </div>
 
@@ -76,15 +80,15 @@ const Suivi = () => {
         // État vide : l'équipe n'a pas encore saisi de suivi
         <div className="p-vide">
           <span className="p-vide__icone">📋</span>
-          <p>Pas encore de suivi disponible pour {enfant?.prenom}.</p>
-          <p style={{ fontSize: '0.85rem' }}>Les suivis sont renseignés par l'équipe de la crèche chaque jour.</p>
+          <p>{t('parent.suivi.pasEncore', { prenom: enfant?.prenom })}</p>
+          <p style={{ fontSize: '0.85rem' }}>{t('parent.suivi.renseigne')}</p>
         </div>
       ) : (
         <div className="suivi-layout">
 
           {/* ── LISTE DES JOURS (CALENDRIER) ──────────────────── */}
           <div className="suivi-calendrier">
-            <h2 className="suivi-calendrier__titre">Historique</h2>
+            <h2 className="suivi-calendrier__titre">{t('parent.suivi.historique')}</h2>
             {suivis.map(s => (
               <button
                 key={s.id}
@@ -93,7 +97,7 @@ const Suivi = () => {
               >
                 {/* Date courte : dim. 01 jan. */}
                 <span className="suivi-jour-date">
-                  {new Date(s.date_suivi).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  {new Date(s.date_suivi).toLocaleDateString(getLocale(), { weekday: 'short', day: 'numeric', month: 'short' })}
                 </span>
                 {/* Emoji humeur ou 😊 par défaut si non renseigné */}
                 <span className="suivi-jour-humeur">{EMOJI_HUMEUR[s.humeur] || '😊'}</span>
@@ -106,25 +110,26 @@ const Suivi = () => {
             <div className="suivi-detail">
               {/* Date complète du suivi sélectionné */}
               <h2 className="suivi-detail__date">
-                📅 {new Date(selectionne.date_suivi).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                📅 {new Date(selectionne.date_suivi).toLocaleDateString(getLocale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
               </h2>
 
               {/* ── REPAS ──────────────────────────────────────── */}
               <div className="p-card suivi-section">
-                <h3 className="suivi-section__titre">🍽️ Repas</h3>
+                <h3 className="suivi-section__titre">🍽️ {t('parent.suivi.repas')}</h3>
                 <div className="repas-grille">
                   {[
-                    { label: 'Matin',  valeur: selectionne.repas_matin   },
-                    { label: 'Midi',   valeur: selectionne.repas_midi    },
-                    { label: 'Goûter', valeur: selectionne.repas_gouter  }
-                  ].map(({ label, valeur }) => {
+                    { cle: 'matin',  valeur: selectionne.repas_matin   },
+                    { cle: 'midi',   valeur: selectionne.repas_midi    },
+                    { cle: 'gouter', valeur: selectionne.repas_gouter  }
+                  ].map(({ cle, valeur }) => {
                     // Fallback sur 'absent' si valeur inconnue
-                    const r = EMOJI_REPAS[valeur] || EMOJI_REPAS.absent;
+                    const v = EMOJI_REPAS[valeur] ? valeur : 'absent';
+                    const r = EMOJI_REPAS[v];
                     return (
-                      <div key={label} className={`repas-bloc repas-bloc--${r.c}`}>
+                      <div key={cle} className={`repas-bloc repas-bloc--${r.c}`}>
                         <span className="repas-emoji">{r.e}</span>
-                        <span className="repas-moment">{label}</span>
-                        <span className="repas-libelle">{r.l}</span>
+                        <span className="repas-moment">{t(`parent.suivi.moments.${cle}`)}</span>
+                        <span className="repas-libelle">{t(`common.repasValeur.${v}`)}</span>
                       </div>
                     );
                   })}
@@ -138,7 +143,7 @@ const Suivi = () => {
                   possibles) ; sieste_debut/sieste_fin sont d'anciens champs conservés
                   en repli si jamais renseignés directement. */}
               <div className="p-card suivi-section">
-                <h3 className="suivi-section__titre">😴 Sieste</h3>
+                <h3 className="suivi-section__titre">😴 {t('parent.suivi.sieste')}</h3>
                 {selectionne.siestes?.length > 0 ? (
                   <div className="sieste-info">
                     {selectionne.siestes.map((sv, idx) => (
@@ -153,28 +158,28 @@ const Suivi = () => {
                     {selectionne.sieste_note && <p className="suivi-note-texte">💬 {selectionne.sieste_note}</p>}
                   </div>
                 ) : (
-                  <p className="suivi-info-vide">Pas de sieste renseignée</p>
+                  <p className="suivi-info-vide">{t('parent.suivi.pasDeSieste')}</p>
                 )}
               </div>
 
               {/* ── JOURNÉE : humeur + activités + température ─── */}
               <div className="p-card suivi-section">
-                <h3 className="suivi-section__titre">🎨 Journée</h3>
+                <h3 className="suivi-section__titre">🎨 {t('parent.suivi.journee')}</h3>
                 {selectionne.humeur && (
                   <div className="humeur-bloc">
                     <span className="humeur-emoji">{EMOJI_HUMEUR[selectionne.humeur]}</span>
-                    <span className="humeur-label">{selectionne.humeur}</span>
+                    <span className="humeur-label">{t(`common.humeur.${selectionne.humeur}`, { defaultValue: selectionne.humeur })}</span>
                   </div>
                 )}
                 {selectionne.activites && (
                   <div className="activites-bloc">
-                    <p className="activites-titre">Activités du jour :</p>
+                    <p className="activites-titre">{t('parent.suivi.activites')}</p>
                     <p>{selectionne.activites}</p>
                   </div>
                 )}
                 {selectionne.temperature && (
                   <div className="temperature-bloc">
-                    🌡️ Température relevée : <strong>{selectionne.temperature}°C</strong>
+                    🌡️ {t('parent.suivi.temperature')} <strong>{selectionne.temperature}°C</strong>
                   </div>
                 )}
               </div>
@@ -183,7 +188,7 @@ const Suivi = () => {
               {/* Note générale : visible uniquement par le parent */}
               {selectionne.note_generale && (
                 <div className="suivi-message-equipe">
-                  <h3>💌 Message de l'équipe</h3>
+                  <h3>💌 {t('parent.suivi.messageEquipe')}</h3>
                   <p>{selectionne.note_generale}</p>
                 </div>
               )}

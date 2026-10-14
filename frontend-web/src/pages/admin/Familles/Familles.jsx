@@ -8,13 +8,16 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
+import { getLocale } from '../../../i18n';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Familles.css';
 
 const Familles = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const { user: moi } = useAuth();
 
   const [users,          setUsers]          = useState([]);
@@ -30,7 +33,7 @@ const Familles = () => {
   useEffect(() => {
     api.get('/users')
       .then(r => setUsers(r.data.data || []))
-      .catch(() => toast.error('Erreur chargement'))
+      .catch(() => toast.error(t('admin.familles.erreurChargement')))
       .finally(() => setChargement(false));
   }, []);
 
@@ -39,8 +42,8 @@ const Familles = () => {
     try {
       await api.put(`/users/${user.id}/activer`);
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, actif: !u.actif } : u));
-      toast.success(`Compte ${user.actif ? 'désactivé' : 'activé'}`);
-    } catch { toast.error('Erreur'); }
+      toast.success(user.actif ? t('admin.familles.toastDesactive') : t('admin.familles.toastActive'));
+    } catch { toast.error(t('common.erreur')); }
   };
 
   // ── Supprimer un compte ──────────────────────────────────
@@ -50,10 +53,10 @@ const Familles = () => {
     try {
       await api.delete(`/users/${userASupprimer.id}`);
       setUsers(prev => prev.filter(u => u.id !== userASupprimer.id));
-      toast.success(`Compte de ${userASupprimer.prenom} ${userASupprimer.nom} supprimé`);
+      toast.success(t('admin.familles.toastSupprime', { nom: `${userASupprimer.prenom} ${userASupprimer.nom}` }));
       setUserASupprimer(null);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur lors de la suppression');
+      toast.error(err.response?.data?.message || t('common.erreurSuppression'));
     }
     setSuppression(false);
   };
@@ -80,15 +83,15 @@ const Familles = () => {
     return u.role === roleFiltre && texte;
   });
 
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
 
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Gestion des <span>familles</span></h1>
-        <span className="admin-compteur">{filtres.length} résultat(s)</span>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.familles.titre" components={{ s: <span /> }} /></h1>
+        <span className="admin-compteur">{t('admin.familles.resultats', { count: filtres.length })}</span>
       </div>
 
       {/* ── ONGLETS ───────────────────────────────────────────── */}
@@ -97,7 +100,7 @@ const Familles = () => {
           className={`familles-onglet ${roleFiltre === 'attente' ? 'familles-onglet--actif' : ''}`}
           onClick={() => setRoleFiltre('attente')}
         >
-          ⏳ En attente
+          {t('admin.familles.onglets.attente')}
           {enAttente.length > 0 && (
             <span className="familles-badge-attente">{enAttente.length}</span>
           )}
@@ -106,19 +109,19 @@ const Familles = () => {
           className={`familles-onglet ${roleFiltre === 'parent' ? 'familles-onglet--actif' : ''}`}
           onClick={() => setRoleFiltre('parent')}
         >
-          👨‍👩‍👧 Parents actifs
+          {t('admin.familles.onglets.parent')}
         </button>
         <button
           className={`familles-onglet ${roleFiltre === 'admin' ? 'familles-onglet--actif' : ''}`}
           onClick={() => setRoleFiltre('admin')}
         >
-          🛡️ Admins
+          {t('admin.familles.onglets.admin')}
         </button>
         <button
           className={`familles-onglet ${roleFiltre === 'super_admin' ? 'familles-onglet--actif' : ''}`}
           onClick={() => setRoleFiltre('super_admin')}
         >
-          ⭐ Super Admins
+          {t('admin.familles.onglets.super_admin')}
         </button>
       </div>
 
@@ -127,7 +130,7 @@ const Familles = () => {
         <div className="a-recherche">
           <span className="a-recherche__icone">🔍</span>
           <input
-            placeholder="Rechercher par nom, prénom, email..."
+            placeholder={t('admin.familles.recherche')}
             value={filtre}
             onChange={e => setFiltre(e.target.value)}
           />
@@ -137,18 +140,18 @@ const Familles = () => {
       {/* ── TABLEAU ───────────────────────────────────────────── */}
       <div className="a-card">
         {filtres.length === 0 ? (
-          <div className="a-vide"><span className="a-vide__icone">👥</span><p>Aucun résultat.</p></div>
+          <div className="a-vide"><span className="a-vide__icone">👥</span><p>{t('admin.familles.aucun')}</p></div>
         ) : (
           <table className="a-table">
             <thead>
               <tr>
-                <th>Utilisateur</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Rôle</th>
-                <th>Statut</th>
-                <th>Inscrit le</th>
-                <th>Actions</th>
+                <th>{t('admin.familles.colUtilisateur')}</th>
+                <th>{t('admin.familles.colEmail')}</th>
+                <th>{t('admin.familles.colTelephone')}</th>
+                <th>{t('admin.familles.colRole')}</th>
+                <th>{t('admin.commun.colStatut')}</th>
+                <th>{t('admin.familles.colInscrit')}</th>
+                <th>{t('admin.commun.colActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -162,34 +165,34 @@ const Familles = () => {
                   </td>
                   <td>{u.email}</td>
                   <td>{u.telephone || '—'}</td>
-                  <td><span className={`s-badge s-badge--${u.role}`}>{u.role.replace('_', ' ')}</span></td>
+                  <td><span className={`s-badge s-badge--${u.role}`}>{t(`common.roles.${u.role}`, { defaultValue: u.role.replace('_', ' ') })}</span></td>
                   <td>
                     <span className={`s-badge ${u.actif ? 's-badge--accepte' : 's-badge--refuse'}`}>
-                      {u.actif ? '✓ Actif' : '✗ Inactif'}
+                      {u.actif ? t('admin.familles.actif') : t('admin.familles.inactif')}
                     </span>
                   </td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--text-gray)' }}>
-                    {new Date(u.created_at).toLocaleDateString('fr-FR')}
+                    {new Date(u.created_at).toLocaleDateString(getLocale())}
                   </td>
                   <td>
                     <div className="a-actions">
                       <button className="btn-voir" onClick={() => setUserDetail(u)}>
-                        voir
+                        {t('admin.familles.voir')}
                       </button>
                       <button
                         className={`btn-toggle ${u.actif ? 'btn-toggle--desactiver' : 'btn-toggle--activer'}`}
                         onClick={() => toggleActif(u)}
                       >
-                        {u.actif ? 'Désactiver' : 'Activer'}
+                        {u.actif ? t('admin.familles.desactiver') : t('admin.familles.activer')}
                       </button>
                       {/* Bouton supprimer : visible uniquement si l'admin a le droit */}
                       {peutSupprimer(u) && (
                         <button
                           className="btn btn--sm btn-supprimer"
                           onClick={() => setUserASupprimer(u)}
-                          title="Supprimer ce compte"
+                          title={t('admin.familles.supprimerTitre')}
                         >
-                          Supprimer
+                          {t('admin.familles.supprimer')}
                         </button>
                       )}
                     </div>
@@ -207,16 +210,16 @@ const Familles = () => {
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal__entete">
               <h2 className="modal__titre">👤 {userDetail.prenom} {userDetail.nom}</h2>
-              <button className="modal__fermer" onClick={() => setUserDetail(null)}>✕</button>
+              <button className="modal__fermer" onClick={() => setUserDetail(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
             <div className="user-detail-grille">
               {[
-                { label: 'Email',         valeur: userDetail.email },
-                { label: 'Téléphone',     valeur: userDetail.telephone || '—' },
-                { label: 'Rôle',          valeur: userDetail.role },
-                { label: 'Statut',        valeur: userDetail.actif ? 'Actif' : 'Inactif' },
-                { label: 'Email vérifié', valeur: userDetail.email_verifie ? 'Oui' : 'Non' },
-                { label: 'Inscrit le',    valeur: new Date(userDetail.created_at).toLocaleDateString('fr-FR') }
+                { label: t('admin.familles.detail.email'),        valeur: userDetail.email },
+                { label: t('admin.familles.detail.telephone'),    valeur: userDetail.telephone || '—' },
+                { label: t('admin.familles.detail.role'),         valeur: t(`common.roles.${userDetail.role}`, { defaultValue: userDetail.role }) },
+                { label: t('admin.familles.detail.statut'),       valeur: userDetail.actif ? t('admin.familles.statutActif') : t('admin.familles.statutInactif') },
+                { label: t('admin.familles.detail.emailVerifie'), valeur: userDetail.email_verifie ? t('common.oui') : t('common.non') },
+                { label: t('admin.familles.detail.inscrit'),      valeur: new Date(userDetail.created_at).toLocaleDateString(getLocale()) }
               ].map(({ label, valeur }) => (
                 <div key={label} className="detail-item">
                   <span className="detail-label">{label}</span>
@@ -225,7 +228,7 @@ const Familles = () => {
               ))}
               {userDetail.adresse && (
                 <div className="detail-item detail-item--full">
-                  <span className="detail-label">Adresse</span>
+                  <span className="detail-label">{t('admin.familles.detail.adresse')}</span>
                   <span className="detail-valeur">{userDetail.adresse}</span>
                 </div>
               )}
@@ -242,20 +245,22 @@ const Familles = () => {
             {/* Icône d'avertissement */}
             <div className="suppr-icone">⚠️</div>
 
-            <h2 className="suppr-titre">Attention — Action irréversible</h2>
+            <h2 className="suppr-titre">{t('admin.familles.suppr.titre')}</h2>
 
             <p className="suppr-message">
-              Vous êtes sur le point de supprimer définitivement le compte de{' '}
-              <strong>{userASupprimer.prenom} {userASupprimer.nom}</strong>{' '}
-              (<span className="suppr-email">{userASupprimer.email}</span>).
+              <Trans
+                i18nKey="admin.familles.suppr.message"
+                values={{ nom: `${userASupprimer.prenom} ${userASupprimer.nom}`, email: userASupprimer.email }}
+                components={{ email: <span className="suppr-email" /> }}
+              />
             </p>
 
             <div className="suppr-avertissements">
-              <p>Cette action va :</p>
+              <p>{t('admin.familles.suppr.vaFaire')}</p>
               <ul>
-                <li>Supprimer le compte et toutes ses données personnelles</li>
-                <li>Supprimer les enfants, inscriptions et documents associés</li>
-                <li>Cette suppression est <strong>définitive et irréversible</strong></li>
+                {t('admin.familles.suppr.points', { returnObjects: true }).map((_, i) => (
+                  <li key={i}><Trans i18nKey={`admin.familles.suppr.points.${i}`} /></li>
+                ))}
               </ul>
             </div>
 
@@ -265,14 +270,14 @@ const Familles = () => {
                 onClick={() => setUserASupprimer(null)}
                 disabled={suppression}
               >
-                Annuler
+                {t('common.annuler')}
               </button>
               <button
                 className="btn btn-supprimer-confirmer"
                 onClick={confirmerSuppression}
                 disabled={suppression}
               >
-                {suppression ? '⏳ Suppression...' : '🗑️ Oui, supprimer définitivement'}
+                {suppression ? t('admin.familles.suppr.enCours') : t('admin.familles.suppr.confirmer')}
               </button>
             </div>
 

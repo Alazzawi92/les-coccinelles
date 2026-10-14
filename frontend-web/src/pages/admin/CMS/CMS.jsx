@@ -9,6 +9,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -34,6 +35,7 @@ const QUILL_FORMATS = [
 
 // ── Gestionnaire de l'équipe (affiché quand slug === 'equipe') ────────
 const GestionnaireEquipe = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [membres,   setMembres]   = useState([]);
   const [form,      setForm]      = useState({ prenom: '', nom: '', titre: '', ordre: 0 });
   const [photo,     setPhoto]     = useState(null);     // fichier File
@@ -88,7 +90,7 @@ const GestionnaireEquipe = () => {
   const soumettre = async (e) => {
     e.preventDefault();
     if (!form.prenom || !form.nom || !form.titre)
-      return toast.error('Prénom, nom et titre sont requis');
+      return toast.error(t('admin.cms.equipe.requis'));
 
     setEnvoi(true);
     try {
@@ -101,26 +103,26 @@ const GestionnaireEquipe = () => {
 
       if (modifId) {
         await api.put(`/equipe/${modifId}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-        toast.success('Membre mis à jour');
+        toast.success(t('admin.cms.equipe.toastMaj'));
       } else {
         await api.post('/equipe', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-        toast.success('Membre ajouté');
+        toast.success(t('admin.cms.equipe.toastAjoute'));
       }
       charger();
       annuler();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Erreur');
+      toast.error(err.response?.data?.message || t('common.erreur'));
     }
     setEnvoi(false);
   };
 
   const supprimer = async (m) => {
-    if (!window.confirm(`Supprimer ${m.prenom} ${m.nom} ?`)) return;
+    if (!window.confirm(t('admin.cms.equipe.confirmerSuppression', { nom: `${m.prenom} ${m.nom}` }))) return;
     try {
       await api.delete(`/equipe/${m.id}`);
-      toast.success('Membre supprimé');
+      toast.success(t('admin.cms.equipe.toastSupprime'));
       charger();
-    } catch { toast.error('Erreur'); }
+    } catch { toast.error(t('common.erreur')); }
   };
 
   const photoUrl = (membre) => {
@@ -135,10 +137,10 @@ const GestionnaireEquipe = () => {
       {/* ── En-tête + bouton Ajouter ── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
         <p style={{ color: 'var(--text-gray)', fontSize: '0.9rem' }}>
-          {membres.length} membre{membres.length > 1 ? 's' : ''} dans l'équipe
+          {t('admin.cms.equipe.membres', { count: membres.length })}
         </p>
         <button className="btn btn--primary btn--sm" onClick={ouvrirAjout}>
-          + Ajouter un membre
+          {t('admin.cms.equipe.ajouter')}
         </button>
       </div>
 
@@ -146,7 +148,7 @@ const GestionnaireEquipe = () => {
       {panneauOuvert && (
         <div className="equipe-form-panneau">
           <h3 className="equipe-form-titre">
-            {modifId ? '✏️ Modifier le membre' : '➕ Nouveau membre'}
+            {modifId ? t('admin.cms.equipe.modifierTitre') : t('admin.cms.equipe.nouveauTitre')}
           </h3>
           <form onSubmit={soumettre} className="equipe-form">
 
@@ -157,7 +159,7 @@ const GestionnaireEquipe = () => {
                 onClick={() => inputFichier.current?.click()}
                 style={{ backgroundImage: apercu ? `url(${apercu})` : 'none' }}
               >
-                {!apercu && <span>📷<br/>Cliquer pour choisir</span>}
+                {!apercu && <span><Trans i18nKey="admin.cms.equipe.choisirPhoto" /></span>}
               </div>
               <input
                 ref={inputFichier}
@@ -166,40 +168,40 @@ const GestionnaireEquipe = () => {
                 style={{ display: 'none' }}
                 onChange={choisirFichier}
               />
-              <p className="equipe-form-hint">JPG / PNG / WebP — max 10 Mo</p>
+              <p className="equipe-form-hint">{t('admin.cms.equipe.formats')}</p>
             </div>
 
             {/* Champs texte */}
             <div className="equipe-form-champs">
               <div className="a-form-groupe">
-                <label className="a-label">Prénom *</label>
+                <label className="a-label">{t('admin.cms.equipe.prenom')}</label>
                 <input className="a-input" value={form.prenom}
                   onChange={e => setForm(p => ({ ...p, prenom: e.target.value }))}
-                  placeholder="Ex : Marie" />
+                  placeholder={t('admin.cms.equipe.prenomPlaceholder')} />
               </div>
               <div className="a-form-groupe">
-                <label className="a-label">Nom *</label>
+                <label className="a-label">{t('admin.cms.equipe.nom')}</label>
                 <input className="a-input" value={form.nom}
                   onChange={e => setForm(p => ({ ...p, nom: e.target.value }))}
-                  placeholder="Ex : Dupont" />
+                  placeholder={t('admin.cms.equipe.nomPlaceholder')} />
               </div>
               <div className="a-form-groupe" style={{ gridColumn: '1 / -1' }}>
-                <label className="a-label">Titre / poste *</label>
+                <label className="a-label">{t('admin.cms.equipe.poste')}</label>
                 <input className="a-input" value={form.titre}
                   onChange={e => setForm(p => ({ ...p, titre: e.target.value }))}
-                  placeholder="Ex : Éducatrice de jeunes enfants" />
+                  placeholder={t('admin.cms.equipe.postePlaceholder')} />
               </div>
               <div className="a-form-groupe">
-                <label className="a-label">Ordre d'affichage</label>
+                <label className="a-label">{t('admin.cms.equipe.ordre')}</label>
                 <input className="a-input" type="number" min="0" value={form.ordre}
                   onChange={e => setForm(p => ({ ...p, ordre: e.target.value }))} />
               </div>
             </div>
 
             <div className="equipe-form-actions">
-              <button type="button" className="btn btn--ghost" onClick={annuler}>Annuler</button>
+              <button type="button" className="btn btn--ghost" onClick={annuler}>{t('common.annuler')}</button>
               <button type="submit" className="btn btn--primary" disabled={envoi}>
-                {envoi ? 'Enregistrement...' : modifId ? '💾 Mettre à jour' : '✅ Ajouter'}
+                {envoi ? t('common.enregistrement') : modifId ? t('admin.cms.equipe.mettreAJour') : t('admin.cms.equipe.ajouterBtn')}
               </button>
             </div>
           </form>
@@ -210,7 +212,7 @@ const GestionnaireEquipe = () => {
       {membres.length === 0 ? (
         <div className="a-vide">
           <span className="a-vide__icone">👥</span>
-          <p>Aucun membre dans l'équipe. Ajoutez le premier membre !</p>
+          <p>{t('admin.cms.equipe.aucun')}</p>
         </div>
       ) : (
         <div className="equipe-admin-grille">
@@ -227,12 +229,12 @@ const GestionnaireEquipe = () => {
               <div className="equipe-admin-info">
                 <p className="equipe-admin-nom">{m.prenom} {m.nom}</p>
                 <p className="equipe-admin-titre">{m.titre}</p>
-                <p className="equipe-admin-ordre">Ordre : {m.ordre}</p>
+                <p className="equipe-admin-ordre">{t('admin.cms.equipe.ordreValeur', { n: m.ordre })}</p>
               </div>
               <div className="equipe-admin-actions">
-                <button className="btn btn--sm btn--ghost" onClick={() => ouvrirModif(m)}>✏️</button>
+                <button className="btn btn--sm btn--ghost" onClick={() => ouvrirModif(m)} title={t('admin.cms.equipe.modifierTitre')}>✏️</button>
                 <button className="btn btn--sm btn--ghost" style={{ color: 'var(--error)' }}
-                  onClick={() => supprimer(m)}>🗑️</button>
+                  onClick={() => supprimer(m)} title={t('common.supprimer')}>🗑️</button>
               </div>
             </div>
           ))}
@@ -244,6 +246,7 @@ const GestionnaireEquipe = () => {
 
 // ── Composant principal CMS ───────────────────────────────────────────
 const CMS = () => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [pages,      setPages]      = useState([]);
   const [editing,    setEditing]    = useState(null);
   const [form,       setForm]       = useState({ titre: '', contenu: '', meta_description: '' });
@@ -273,26 +276,26 @@ const CMS = () => {
       const res = await api.put(`/cms/pages/${editing.slug}`, form);
       setPages(prev => prev.map(p => p.slug === editing.slug ? res.data.data : p));
       setEditing(null);
-      toast.success('Page mise à jour');
-    } catch { toast.error('Erreur'); }
+      toast.success(t('admin.cms.toastPage'));
+    } catch { toast.error(t('common.erreur')); }
     setEnvoi(false);
   };
 
   const estEquipe = editing?.slug === 'equipe';
 
-  if (chargement) return <div className="a-chargement">Chargement...</div>;
+  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
 
   return (
     <div>
       <div className="admin-page-entete">
-        <h1 className="admin-page-titre">Gestion du <span>contenu</span> (CMS)</h1>
+        <h1 className="admin-page-titre"><Trans i18nKey="admin.cms.titre" components={{ s: <span /> }} /></h1>
       </div>
 
       <div className="cms-layout">
 
         {/* ── LISTE DES PAGES ─────────────────────────────────── */}
         <div className="cms-pages-liste">
-          <h2 className="a-card__titre" style={{ marginBottom: 'var(--space-md)' }}>Pages du site</h2>
+          <h2 className="a-card__titre" style={{ marginBottom: 'var(--space-md)' }}>{t('admin.cms.pagesSite')}</h2>
           {pages.map(page => (
             <button
               key={page.slug}
@@ -302,7 +305,7 @@ const CMS = () => {
               <p className="cms-page-slug">/{page.slug}</p>
               <p className="cms-page-titre-court">{page.titre}</p>
               {editing?.slug === page.slug && (
-                <span style={{ color: 'var(--primary)', fontSize: '0.75rem' }}>→ En édition</span>
+                <span style={{ color: 'var(--primary)', fontSize: '0.75rem' }}>{t('admin.cms.enEdition')}</span>
               )}
             </button>
           ))}
@@ -313,15 +316,15 @@ const CMS = () => {
           {!editing ? (
             <div className="a-vide">
               <span className="a-vide__icone">🌐</span>
-              <p>Sélectionnez une page à modifier</p>
+              <p>{t('admin.cms.selectionnez')}</p>
             </div>
 
           ) : estEquipe ? (
             /* Page Équipe : gestionnaire de cartes membres */
             <div className="a-card">
-              <h2 className="a-card__titre">👥 Gestion de l'équipe</h2>
+              <h2 className="a-card__titre">{t('admin.cms.equipeTitre')}</h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>
-                Ajoutez et gérez les membres de l'équipe. Ils s'afficheront sur la page publique et sur l'accueil.
+                {t('admin.cms.equipeAide')}
               </p>
               <GestionnaireEquipe />
             </div>
@@ -329,11 +332,13 @@ const CMS = () => {
           ) : (
             /* Toutes les autres pages : éditeur Quill */
             <div className="a-card">
-              <h2 className="a-card__titre">✏️ Édition : {editing.titre}</h2>
+              <h2 className="a-card__titre">{t('admin.cms.edition', { titre: editing.titre })}</h2>
+              {/* Le CMS n'est pas multilingue : on le signale à l'admin */}
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-gray)', marginBottom: 'var(--space-md)' }}>{t('admin.cms.noteLangue')}</p>
               <form className="a-form" onSubmit={sauvegarder}>
 
                 <div className="a-form-groupe">
-                  <label className="a-label">Titre de la page</label>
+                  <label className="a-label">{t('admin.cms.titrePage')}</label>
                   <input
                     className="a-input"
                     value={form.titre}
@@ -342,12 +347,12 @@ const CMS = () => {
                 </div>
 
                 <div className="a-form-groupe">
-                  <label className="a-label">Description SEO</label>
+                  <label className="a-label">{t('admin.cms.seo')}</label>
                   <input
                     className="a-input"
                     value={form.meta_description}
                     onChange={e => setForm(p => ({ ...p, meta_description: e.target.value }))}
-                    placeholder="Description pour les moteurs de recherche (160 car. max)"
+                    placeholder={t('admin.cms.seoPlaceholder')}
                     maxLength={160}
                   />
                   <small style={{ color: 'var(--text-light)', fontSize: '0.75rem' }}>
@@ -356,7 +361,7 @@ const CMS = () => {
                 </div>
 
                 <div className="a-form-groupe">
-                  <label className="a-label">Contenu</label>
+                  <label className="a-label">{t('admin.cms.contenu')}</label>
                   <div className="cms-quill-wrapper">
                     <ReactQuill
                       ref={quillRef}
@@ -365,17 +370,17 @@ const CMS = () => {
                       onChange={val => setForm(p => ({ ...p, contenu: val }))}
                       modules={QUILL_MODULES}
                       formats={QUILL_FORMATS}
-                      placeholder="Rédigez le contenu de la page..."
+                      placeholder={t('admin.cms.contenuPlaceholder')}
                     />
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end' }}>
                   <button type="button" className="btn btn--ghost" onClick={() => setEditing(null)}>
-                    Annuler
+                    {t('common.annuler')}
                   </button>
                   <button type="submit" className="btn btn--primary" disabled={envoi}>
-                    {envoi ? 'Enregistrement...' : '💾 Sauvegarder'}
+                    {envoi ? t('common.enregistrement') : t('admin.cms.sauvegarder')}
                   </button>
                 </div>
 

@@ -54,6 +54,7 @@
 
 /* Titre du mois : Fredoka, centré */
 .cal-nav-titre {
+  text-transform: capitalize; /* "octobre 2026" → "Octobre 2026" (nom généré par toLocaleDateString) */
   font-family: var(--font-heading);
   font-size:   1.25rem;
   color:       var(--text-dark);

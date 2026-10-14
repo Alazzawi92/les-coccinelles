@@ -68,10 +68,11 @@
 
 /* "Juin 2025" : police Fredoka, grand, centré */
 .calendrier-mois-titre {
-  font-family: var(--font-heading);
-  font-size:   1.3rem;
-  color:       var(--text-dark);
-  text-align:  center;
+  font-family:    var(--font-heading);
+  font-size:      1.3rem;
+  color:          var(--text-dark);
+  text-align:     center;
+  text-transform: capitalize; /* "octobre 2026" → "Octobre 2026" (nom généré par toLocaleDateString) */
 }
 
 /* ── 3b. Grille 7 jours ─────────────────────────────────── */

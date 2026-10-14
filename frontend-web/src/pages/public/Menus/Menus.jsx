@@ -7,7 +7,9 @@
 // ============================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import { getLocale } from '../../../i18n';
 import './Menus.css';
 
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
@@ -27,6 +29,7 @@ const getLundiSemaine = (date = new Date()) => {
 
 const Menus = () => {
 
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [menu,       setMenu]       = useState(null);             // Données du menu courant
   const [chargement, setChargement] = useState(true);            // Indicateur de chargement
   const [semaine,    setSemaine]    = useState(getLundiSemaine()); // Date du lundi courant
@@ -55,12 +58,12 @@ const Menus = () => {
   };
 
   // ── Formatage de la période de la semaine ─────────────────
-  // Ex: "2 juin — 6 juin 2025"
+  // Ex: "2 juin — 6 juin 2025" / "2 June — 6 June 2025" selon la langue
   const formaterSemaine = (dateStr) => {
     const lundi    = new Date(dateStr);
     const vendredi = new Date(dateStr);
     vendredi.setDate(lundi.getDate() + 4); // Vendredi = lundi + 4 jours
-    return `${lundi.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+    return `${lundi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' })}`;
   };
 
   return (
@@ -69,9 +72,9 @@ const Menus = () => {
       {/* ── EN-TÊTE ───────────────────────────────────────────── */}
       <section className="page-hero page-hero--vert">
         <div className="container">
-          <p className="page-hero__tag">🍽️ Menus</p>
-          <h1 className="page-hero__titre">Menus de <span>la semaine</span></h1>
-          <p className="page-hero__sous">Des repas équilibrés et adaptés aux tout-petits, préparés avec des produits frais</p>
+          <p className="page-hero__tag">🍽️ {t('public.menus.tag')}</p>
+          <h1 className="page-hero__titre"><Trans i18nKey="public.menus.titre" components={{ s: <span /> }} /></h1>
+          <p className="page-hero__sous">{t('public.menus.sousTitre')}</p>
         </div>
       </section>
 
@@ -81,19 +84,19 @@ const Menus = () => {
           {/* Navigation entre les semaines */}
           <div className="semaine-nav">
             <button className="btn btn--ghost btn--sm" onClick={() => changerSemaine(-1)}>
-              ← Semaine précédente
+              {t('public.menus.precedente')}
             </button>
             <h2 className="semaine-titre">
-              📅 Semaine du {formaterSemaine(semaine)}
+              📅 {t('public.menus.semaineDu', { periode: formaterSemaine(semaine) })}
             </h2>
             <button className="btn btn--ghost btn--sm" onClick={() => changerSemaine(1)}>
-              Semaine suivante →
+              {t('public.menus.suivante')}
             </button>
           </div>
 
           {/* ── État de chargement ────────────────────────────── */}
           {chargement ? (
-            <div className="menus-chargement">Chargement du menu...</div>
+            <div className="menus-chargement">{t('public.menus.chargement')}</div>
 
           /* ── Menu disponible : grille 5 jours ──────────────── */
           ) : menu ? (
@@ -102,23 +105,23 @@ const Menus = () => {
                 <div key={jour} className="menu-carte">
                   <div className="menu-carte__entete">
                     <span className="menu-carte__icone">🌟</span>
-                    {/* Première lettre en majuscule */}
+                    {/* Nom du jour traduit */}
                     <h3 className="menu-carte__jour">
-                      {jour.charAt(0).toUpperCase() + jour.slice(1)}
+                      {t(`common.jours.${jour}`)}
                     </h3>
                   </div>
                   <div className="menu-carte__repas">
                     <div className="repas-section repas-section--midi">
-                      <p className="repas-label">🍽️ Déjeuner</p>
+                      <p className="repas-label">🍽️ {t('public.menus.dejeuner')}</p>
                       {quillVide(menu[`${jour}_midi`])
-                        ? <p className="repas-contenu repas-vide">Non renseigné</p>
+                        ? <p className="repas-contenu repas-vide">{t('public.menus.nonRenseigne')}</p>
                         : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_midi`] }} />
                       }
                     </div>
                     <div className="repas-section repas-section--gouter">
-                      <p className="repas-label">🍪 Goûter</p>
+                      <p className="repas-label">🍪 {t('public.menus.gouter')}</p>
                       {quillVide(menu[`${jour}_gouter`])
-                        ? <p className="repas-contenu repas-vide">Non renseigné</p>
+                        ? <p className="repas-contenu repas-vide">{t('public.menus.nonRenseigne')}</p>
                         : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_gouter`] }} />
                       }
                     </div>
@@ -131,8 +134,8 @@ const Menus = () => {
           ) : (
             <div className="liste-vide">
               <span>🍽️</span>
-              <p>Le menu pour cette semaine n'a pas encore été publié.</p>
-              <p className="liste-vide__sous">Revenez bientôt ou consultez la semaine précédente.</p>
+              <p>{t('public.menus.nonPublie')}</p>
+              <p className="liste-vide__sous">{t('public.menus.revenez')}</p>
             </div>
           )}
 
@@ -140,8 +143,8 @@ const Menus = () => {
           <div className="nutrition-info">
             <span>🥦</span>
             <div>
-              <h3>Notre engagement nutritionnel</h3>
-              <p>Nos repas sont élaborés par une diététicienne. Nous privilégions les produits locaux et biologiques, sans additifs. Les menus sont adaptés aux enfants allergiques sur présentation d'un PAI médical.</p>
+              <h3>{t('public.menus.nutritionTitre')}</h3>
+              <p>{t('public.menus.nutritionTexte')}</p>
             </div>
           </div>
 

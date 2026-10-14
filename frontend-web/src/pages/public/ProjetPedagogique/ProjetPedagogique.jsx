@@ -3,13 +3,32 @@
 // ROUTE    : /projet-pedagogique
 // RÔLE     : Page du projet pédagogique de la crèche.
 //            Philosophie chargée depuis le CMS, axes et timeline statiques.
+//            Textes traduits via i18n (clés public.projetPeda.*).
 // ============================================================
 
+import { useTranslation, Trans } from 'react-i18next';
 import usePageCMS from '../../../hooks/usePageCMS';
 import './ProjetPedagogique.css';
 
+// Préfixe commun à toutes les clés de traduction de la page
+const P = 'public.projetPeda';
+
+// 3 axes pédagogiques : icône, couleur + clé de traduction (public.projetPeda.axes.*)
+const AXES = [
+  { icone: '🌱', couleur: 'vert',   cle: 'nature' },
+  { icone: '🎨', couleur: 'orange', cle: 'creativite' },
+  { icone: '🤝', couleur: 'violet', cle: 'collectivite' }
+];
+
+// Icônes de la journée type, dans l'ordre des étapes (public.projetPeda.journee)
+const ICONES_JOURNEE = ['👋', '🎨', '🧴', '🍽️', '😴', '🍪', '🌿', '🏠'];
+
 const ProjetPedagogique = () => {
   const { contenu } = usePageCMS('projet-pedagogique');
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Étapes de la journée type : tableau de { heure, label }
+  const journee = t(`${P}.journee`, { returnObjects: true });
 
   return (
     <div className="projet-peda">
@@ -17,9 +36,9 @@ const ProjetPedagogique = () => {
       {/* ── EN-TÊTE HERO ──────────────────────────────────────── */}
       <section className="page-hero page-hero--violet">
         <div className="container">
-          <p className="page-hero__tag">📚 Pédagogie</p>
-          <h1 className="page-hero__titre">Notre <span>projet pédagogique</span></h1>
-          <p className="page-hero__sous">Un projet centré sur le bien-être, l'éveil et le respect du rythme de chaque enfant</p>
+          <p className="page-hero__tag">📚 {t(`${P}.tag`)}</p>
+          <h1 className="page-hero__titre"><Trans i18nKey={`${P}.titre`} components={{ s: <span /> }} /></h1>
+          <p className="page-hero__sous">{t(`${P}.sousTitre`)}</p>
         </div>
       </section>
 
@@ -27,21 +46,18 @@ const ProjetPedagogique = () => {
       <section className="section-blanche">
         <div className="container contenu-deux-colonnes">
           <div className="contenu-texte">
-            <h2 className="titre-section">Notre philosophie</h2>
+            <h2 className="titre-section">{t(`${P}.philoTitre`)}</h2>
             {contenu
               ? <div className="cms-html" dangerouslySetInnerHTML={{ __html: contenu }} />
-              : (
-                <>
-                  <p>Notre projet pédagogique est fondé sur le respect du rythme individuel de chaque enfant. Nous croyons que chaque tout-petit est un être unique, compétent et capable d'initiative.</p>
-                  <p>Nous nous inspirons des approches de <strong>Maria Montessori</strong> et de <strong>Loris Malaguzzi</strong> (pédagogie Reggio Emilia), en plaçant l'enfant au centre de ses apprentissages.</p>
-                  <p>L'espace est pensé comme un <em>troisième éducateur</em> : il invite à explorer, créer, expérimenter et socialiser dans un cadre sécurisant.</p>
-                </>
-              )
+              : t(`${P}.philo`, { returnObjects: true }).map((_, i) => (
+                  // Trans conserve les balises <strong> et <em> de la traduction
+                  <p key={i}><Trans i18nKey={`${P}.philo.${i}`} components={{ em: <em /> }} /></p>
+                ))
             }
           </div>
           <div className="contenu-visuel">
             <div className="visuel-emoji-grand">📚</div>
-            <div className="info-bulle"><strong>3 axes</strong><span>de notre projet</span></div>
+            <div className="info-bulle"><strong>{t(`${P}.bulleAxes`)}</strong><span>{t(`${P}.bulleSous`)}</span></div>
           </div>
         </div>
       </section>
@@ -49,18 +65,14 @@ const ProjetPedagogique = () => {
       {/* ── 3 AXES PÉDAGOGIQUES ──────────────────────────────── */}
       <section className="section-grise">
         <div className="container">
-          <h2 className="titre-section text-center">Nos axes pédagogiques</h2>
+          <h2 className="titre-section text-center">{t(`${P}.axesTitre`)}</h2>
           <div className="axes-grille">
-            {[
-              { icone: '🌱', couleur: 'vert',   titre: 'Connexion à la nature', points: ['Jardinage et potager', 'Sorties quotidiennes en extérieur', 'Observation des saisons', 'Matériaux naturels dans les jeux'] },
-              { icone: '🎨', couleur: 'orange', titre: 'Créativité libre',      points: ["Ateliers d'arts plastiques", 'Peinture, modelage, collage', "Jeux symboliques et d'imitation", 'Musique et comptines'] },
-              { icone: '🤝', couleur: 'violet', titre: 'Vie en collectivité',   points: ["Respect des autres et de l'espace", 'Apprentissage par le jeu', 'Moments de regroupement', 'Règles de vie simples'] }
-            ].map(({ icone, couleur, titre, points }) => (
-              <div key={titre} className={`axe-carte axe-carte--${couleur}`}>
+            {AXES.map(({ icone, couleur, cle }) => (
+              <div key={cle} className={`axe-carte axe-carte--${couleur}`}>
                 <span className="axe-carte__icone">{icone}</span>
-                <h3 className="axe-carte__titre">{titre}</h3>
+                <h3 className="axe-carte__titre">{t(`${P}.axes.${cle}.titre`)}</h3>
                 <ul className="axe-carte__liste">
-                  {points.map(p => <li key={p}>✓ {p}</li>)}
+                  {t(`${P}.axes.${cle}.points`, { returnObjects: true }).map(p => <li key={p}>✓ {p}</li>)}
                 </ul>
               </div>
             ))}
@@ -71,21 +83,12 @@ const ProjetPedagogique = () => {
       {/* ── JOURNÉE TYPE ─────────────────────────────────────── */}
       <section className="section-blanche">
         <div className="container">
-          <h2 className="titre-section text-center">La journée type</h2>
+          <h2 className="titre-section text-center">{t(`${P}.journeeTitre`)}</h2>
           <div className="journee-timeline">
-            {[
-              { heure: '8h30 — 9h30',  label: 'Accueil des enfants',       icone: '👋' },
-              { heure: '9h30 — 10h30', label: 'Activités du matin',        icone: '🎨' },
-              { heure: '10h30 — 11h',  label: 'Soins et change',           icone: '🧴' },
-              { heure: '11h — 11h30',  label: 'Repas du midi',             icone: '🍽️' },
-              { heure: '11h30 — 14h',  label: 'Sieste / repos',            icone: '😴' },
-              { heure: '14h — 15h',    label: 'Réveil échelonné, goûter',  icone: '🍪' },
-              { heure: '15h — 17h',    label: "Activités de l'après-midi", icone: '🌿' },
-              { heure: '17h — 18h',    label: 'Retours progressifs',       icone: '🏠' }
-            ].map(({ heure, label, icone }) => (
+            {journee.map(({ heure, label }, i) => (
               <div key={heure} className="timeline-item">
                 <div className="timeline-heure">{heure}</div>
-                <div className="timeline-point">{icone}</div>
+                <div className="timeline-point">{ICONES_JOURNEE[i]}</div>
                 <div className="timeline-label">{label}</div>
               </div>
             ))}
