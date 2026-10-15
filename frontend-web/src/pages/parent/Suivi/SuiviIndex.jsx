@@ -15,6 +15,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import '../../../styles/parent.css';
 import './Suivi.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const SuiviIndex = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -28,7 +29,7 @@ const SuiviIndex = () => {
       .finally(() => setChargement(false));
   }, []);
 
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   // Un seul enfant : on va directement à son suivi, pas besoin de choisir
   if (enfants.length === 1) return <Navigate to={`/parent/suivi/${enfants[0].id}`} replace />;

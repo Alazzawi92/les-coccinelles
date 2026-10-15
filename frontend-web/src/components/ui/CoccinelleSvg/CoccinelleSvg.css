@@ -1,0 +1,80 @@
+/* ============================================================
+   FICHIER : CoccinelleSvg.css
+   RÔLE    : Couleurs et étapes (fermée / mi / ouverte) de la
+             coccinelle SVG. transform-box: fill-box = chaque
+             pièce pivote autour d'elle-même (et non du dessin entier).
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+.coccinelle-svg {
+  display:  block;
+  width:    100%;
+  height:   100%;
+  overflow: visible;   /* Les ailes déployées peuvent dépasser du cadre */
+}
+
+/* ── COULEURS (palette de l'illustration de la crèche) ── */
+.coccinelle-svg__rouge      { fill: var(--coccinelle-rouge); }
+.coccinelle-svg__brun       { fill: var(--coccinelle-brun); }
+.coccinelle-svg__brun-clair { fill: var(--coccinelle-brun-clair); }
+.coccinelle-svg__membrane   { fill: var(--coccinelle-aile); }
+
+.coccinelle-svg__trait,
+.coccinelle-svg__rayure,
+.coccinelle-svg__nervure {
+  fill:           none;
+  stroke-linecap: round;
+}
+.coccinelle-svg__trait   { stroke: var(--coccinelle-brun); stroke-width: 2.5; }
+.coccinelle-svg__rayure  { stroke: var(--coccinelle-brun); stroke-width: 2.4; }
+.coccinelle-svg__nervure { stroke: var(--coccinelle-nervure); stroke-width: 1.2; }
+
+/* ── PIÈCES MOBILES ─────────────────────────────────────── */
+
+/* Élytres : pivotent autour de leur charnière (en haut, au centre) */
+.coccinelle-svg__elytre {
+  transform-box: fill-box;
+  transition:    transform 0.2s ease;
+}
+.coccinelle-svg__elytre--g { transform-origin: 100% 0; }
+.coccinelle-svg__elytre--d { transform-origin: 0 0; }
+
+/* Ailes : se déplient depuis le corps */
+.coccinelle-svg__aile {
+  transform-box: fill-box;
+  transform:     scale(0);
+  opacity:       0;
+  transition:    transform 0.2s ease, opacity 0.2s ease;
+}
+.coccinelle-svg__aile--g { transform-origin: 100% 50%; }
+.coccinelle-svg__aile--d { transform-origin: 0 50%; }
+
+/* Ligne centrale de la carapace : disparaît dès qu'elle s'ouvre */
+.coccinelle-svg__couture { transition: opacity 0.15s ease; }
+
+/* ── ÉTAPE "MI" : carapace entrouverte, ailes à moitié ── */
+.coccinelle-svg--mi .coccinelle-svg__elytre--g { transform: translate(-2px, -3px) rotate(28deg); }
+.coccinelle-svg--mi .coccinelle-svg__elytre--d { transform: translate(2px, -3px) rotate(-28deg); }
+.coccinelle-svg--mi .coccinelle-svg__aile--g   { transform: scale(0.75) rotate(-25deg); opacity: 1; }
+.coccinelle-svg--mi .coccinelle-svg__aile--d   { transform: scale(0.75) rotate(25deg); opacity: 1; }
+
+/* ── ÉTAPE "OUVERTE" : carapace levée, ailes déployées ── */
+.coccinelle-svg--ouverte .coccinelle-svg__elytre--g { transform: translate(-6px, -9px) rotate(45deg); }
+.coccinelle-svg--ouverte .coccinelle-svg__elytre--d { transform: translate(6px, -9px) rotate(-45deg); }
+.coccinelle-svg--ouverte .coccinelle-svg__aile      { transform: scale(1); opacity: 1; }
+
+.coccinelle-svg--mi .coccinelle-svg__couture,
+.coccinelle-svg--ouverte .coccinelle-svg__couture { opacity: 0; }
+
+/* ── BATTEMENT : les ailes passent sans arrêt de "mi" à "ouverte" ── */
+.coccinelle-svg--battement .coccinelle-svg__elytre--g { animation: coccinelle-elytre-g 0.14s ease-in-out infinite alternate; }
+.coccinelle-svg--battement .coccinelle-svg__elytre--d { animation: coccinelle-elytre-d 0.14s ease-in-out infinite alternate; }
+.coccinelle-svg--battement .coccinelle-svg__aile--g   { opacity: 1; animation: coccinelle-aile-g 0.14s ease-in-out infinite alternate; }
+.coccinelle-svg--battement .coccinelle-svg__aile--d   { opacity: 1; animation: coccinelle-aile-d 0.14s ease-in-out infinite alternate; }
+.coccinelle-svg--battement .coccinelle-svg__couture   { opacity: 0; }
+
+@keyframes coccinelle-elytre-g { from { transform: translate(-2px, -3px) rotate(28deg); }  to { transform: translate(-6px, -9px) rotate(45deg); } }
+@keyframes coccinelle-elytre-d { from { transform: translate(2px, -3px) rotate(-28deg); }  to { transform: translate(6px, -9px) rotate(-45deg); } }
+@keyframes coccinelle-aile-g   { from { transform: scale(0.75) rotate(-25deg); }           to { transform: scale(1) rotate(0deg); } }
+@keyframes coccinelle-aile-d   { from { transform: scale(0.75) rotate(25deg); }            to { transform: scale(1) rotate(0deg); } }

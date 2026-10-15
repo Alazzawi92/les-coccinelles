@@ -15,6 +15,7 @@ import i18n, { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Documents.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Métadonnées d'affichage pour chaque catégorie de document
 // (libellé traduit via common.categorieDoc.<clé>)
@@ -114,7 +115,7 @@ const Documents = () => {
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="documents-page">

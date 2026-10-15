@@ -1,0 +1,53 @@
+/* ============================================================
+   FICHIER : Chargement.css
+   RÔLE    : Coccinelle qui tourne sur une piste ronde pendant
+             le chargement des données.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Conteneur : coccinelle au-dessus du texte, centrés */
+.chargement {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--space-md);
+}
+
+/* Piste : cercle en pointillés */
+.chargement__piste {
+  position:      relative;
+  width:         64px;
+  height:        64px;
+  border:        2px dashed var(--border-strong);
+  border-radius: 50%;
+}
+
+/* Calque qui tourne : entraîne la coccinelle autour de la piste */
+.chargement__tour {
+  position:  absolute;
+  inset:     0;
+  animation: chargement-tour 2.4s linear infinite;
+}
+
+/* Coccinelle posée en haut de la piste, tête tournée vers la droite
+   (sens de la marche quand le calque tourne dans le sens horaire) */
+.chargement__coccinelle {
+  position:  absolute;
+  top:       -12px;
+  left:      50%;
+  width:     24px;
+  height:    24px;
+  transform: translateX(-50%) rotate(90deg);
+}
+
+/* Texte "Chargement..." */
+.chargement__texte {
+  font-family: var(--font-heading);
+  color:       var(--text-gray);
+}
+
+@keyframes chargement-tour {
+  to { transform: rotate(360deg); }
+}

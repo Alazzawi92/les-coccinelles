@@ -17,6 +17,7 @@ import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import '../../../styles/admin.css';
 import './Dashboard.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const AdminDashboard = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
   }, [user.id]); // Se relance si l'admin change de session
 
   // Garde : affiche un spinner pendant le chargement
-  if (charge) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (charge) return <Chargement className="a-chargement" />;
 
   return (
     <div className="admin-dashboard">

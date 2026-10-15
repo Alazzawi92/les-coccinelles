@@ -17,6 +17,7 @@ import api from '../../../services/api';
 import i18n, { getLocale } from '../../../i18n';
 import '../../../styles/admin.css';
 import './Rapports.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Date du jour au format YYYY-MM-DD
 const today = new Date().toISOString().split('T')[0];
@@ -125,7 +126,7 @@ const Rapports = () => {
       </div>
 
       {chargement ? (
-        <div className="a-chargement">{t('common.chargement')}</div>
+        <Chargement className="a-chargement" />
       ) : rapport.length === 0 ? (
         <div className="a-vide"><span className="a-vide__icone">📊</span><p>{t('admin.rapports.aucuneDonnee')}</p></div>
       ) : detail ? (

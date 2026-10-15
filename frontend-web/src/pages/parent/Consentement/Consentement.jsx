@@ -17,6 +17,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Consentement.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const Consentement = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -53,7 +54,7 @@ const Consentement = () => {
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="consentement-page">

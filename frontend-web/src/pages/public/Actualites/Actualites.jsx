@@ -12,6 +12,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import './Actualites.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // ── Composant liste des actualités ────────────────────────────
 // Affiche une grille paginée (6 par page) avec squelette de chargement
@@ -138,7 +139,7 @@ const DetailActualite = ({ id }) => {
     charger();
   }, [id, navigate]); // Se déclenche si l'id change dans l'URL
 
-  if (chargement) return <div className="page-loader">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="page-loader" />;
   if (!actu)      return null; // Composant démonté après navigate()
 
   return (

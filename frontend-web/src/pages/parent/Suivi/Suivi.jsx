@@ -16,6 +16,7 @@ import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import '../../../styles/parent.css';
 import './Suivi.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Mappage des valeurs de repas vers emoji + classe CSS de couleur
 // (le libellé est traduit via common.repasValeur.<valeur>)
@@ -62,7 +63,7 @@ const Suivi = () => {
   }, [id]); // Se relance si l'id dans l'URL change
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="suivi-page">

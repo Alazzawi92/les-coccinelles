@@ -18,6 +18,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Actualites.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Barre d'outils Quill adaptée à un usage non-technique
 const QUILL_MODULES = {
@@ -111,7 +112,7 @@ const ActualitesAdmin = () => {
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

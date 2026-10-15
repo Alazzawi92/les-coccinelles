@@ -16,6 +16,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Absences.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Icônes des motifs d'absence (libellés traduits via common.motifAbsence.*)
 const MOTIFS = {
@@ -61,7 +62,7 @@ const AbsencesAdmin = () => {
   const filtrees = absences.filter(a => statutFil === 'tous' || a.statut === statutFil);
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

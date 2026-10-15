@@ -14,6 +14,7 @@ import api, { BACKEND_URL } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './CMS.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const QUILL_MODULES = {
   toolbar: [
@@ -283,7 +284,7 @@ const CMS = () => {
 
   const estEquipe = editing?.slug === 'equipe';
 
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

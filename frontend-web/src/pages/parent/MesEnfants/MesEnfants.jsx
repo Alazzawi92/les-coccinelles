@@ -16,6 +16,7 @@ import i18n from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MesEnfants.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // ── Calcul de l'âge en mois ou en années ─────────────────────
 // Utilisé dans la fiche enfant (traduit dans la langue active)
@@ -198,7 +199,7 @@ const MesEnfants = () => {
   };
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="mes-enfants">

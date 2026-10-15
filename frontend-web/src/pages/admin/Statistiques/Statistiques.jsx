@@ -15,6 +15,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import '../../../styles/admin.css';
 import './Statistiques.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const Statistiques = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -53,7 +54,7 @@ const Statistiques = () => {
   }, []);
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
   // Garde : erreur de chargement (stats null après tentative)
   if (!stats) return <div className="a-vide"><span className="a-vide__icone">📊</span><p>{t('admin.statistiques.impossible')}</p></div>;
 

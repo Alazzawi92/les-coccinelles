@@ -15,6 +15,7 @@ import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Familles.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const Familles = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -83,7 +84,7 @@ const Familles = () => {
     return u.role === roleFiltre && texte;
   });
 
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

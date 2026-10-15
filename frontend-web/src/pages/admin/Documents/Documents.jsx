@@ -14,6 +14,7 @@ import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const DocumentsAdmin = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -61,7 +62,7 @@ const DocumentsAdmin = () => {
   );
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

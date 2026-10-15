@@ -1,0 +1,67 @@
+/* ============================================================
+   FICHIER : CoccinelleDefilement.css
+   RÔLE    : Coccinelle "retour en haut" sur le bord droit.
+             Sa position verticale est calculée en JavaScript
+             (transform: translateY) selon le défilement.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Bouton fixé sur le bord droit (aucun style de bouton visible) */
+.coccinelle-defil {
+  position:       fixed;
+  top:            0;
+  right:          var(--space-xl);   /* Marge pour le zigzag (±18px) */
+  width:          80px;
+  height:         80px;
+  padding:        var(--space-xs);
+  background:     none;
+  border:         none;
+  border-radius:  50%;
+  cursor:         pointer;
+  z-index:        var(--z-deco);
+  opacity:        0;
+  visibility:     hidden; /* Cachée = hors de la navigation clavier */
+  will-change:    transform;
+  transition:     opacity 0.3s ease, visibility 0.3s;
+}
+
+/* Visible après un peu de défilement */
+.coccinelle-defil--visible {
+  opacity:    1;
+  visibility: visible;
+}
+
+/* Focus clavier bien visible (accessibilité) */
+.coccinelle-defil:focus-visible {
+  outline:        3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Corps : porte l'orientation (tête en haut par défaut) */
+.coccinelle-defil__corps {
+  display:    block;
+  width:      100%;
+  height:     100%;
+  transition: transform 0.3s ease;
+  filter:     drop-shadow(0 2px 3px var(--tint));
+}
+
+/* Au survol : petit agrandissement pour montrer qu'on peut cliquer */
+.coccinelle-defil:hover .coccinelle-defil__corps {
+  scale: 1.15;
+}
+
+/* On descend : la coccinelle se retourne, tête vers le bas */
+.coccinelle-defil--bas .coccinelle-defil__corps {
+  transform: rotate(180deg);
+}
+
+/* Petits écrans : un peu plus près du bord */
+@media (max-width: 767px) {
+  .coccinelle-defil {
+    right:  var(--space-md);         /* Zigzag réduit à ±10px sur mobile */
+    width:  64px;
+    height: 64px;
+  }
+}

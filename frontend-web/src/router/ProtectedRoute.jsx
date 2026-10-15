@@ -10,6 +10,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
+import Chargement from '../components/ui/Chargement/Chargement';
 
 // props.roles : tableau des rôles autorisés, ex: ['admin', 'super_admin']
 const ProtectedRoute = ({ roles }) => {
@@ -21,7 +22,7 @@ const ProtectedRoute = ({ roles }) => {
   // Pendant la vérification du token au démarrage, afficher un loader.
   // Évite un flash de redirection avant que la session soit connue.
   if (loading) {
-    return <div className="page-loader">{t('common.chargement')}</div>;
+    return <Chargement className="page-loader" />;
   }
 
   // Pas de session active → rediriger vers la page de connexion

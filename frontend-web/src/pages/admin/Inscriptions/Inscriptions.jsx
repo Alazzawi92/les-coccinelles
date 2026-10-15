@@ -15,6 +15,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Inscriptions.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Tous les statuts possibles pour le filtre dropdown
 const STATUTS = ['tous', 'en_attente', 'en_cours', 'incomplet', 'accepte', 'refuse', 'liste_attente'];
@@ -106,7 +107,7 @@ const Inscriptions = () => {
   );
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

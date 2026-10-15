@@ -115,3 +115,19 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;                 /* Hauteur de ligne réduite pour les titres
                                        (les titres courts n'ont pas besoin de 1.6) */
 }
+
+/* ── ACCESSIBILITÉ : RÉDUIRE LES ANIMATIONS ─────────────────
+   Si le visiteur a activé "Réduire les animations" sur son téléphone
+   ou son ordinateur (critère RGAA 13.8), toutes les animations et
+   transitions du site deviennent instantanées. Concerne aussi les
+   animations existantes (flottement de l'accueil, pulsation du logo). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto !important;
+  }
+}

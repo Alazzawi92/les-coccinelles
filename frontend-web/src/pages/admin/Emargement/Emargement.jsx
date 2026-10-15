@@ -17,6 +17,7 @@ import api from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Emargement.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Date du jour au format YYYY-MM-DD
 const today = new Date().toISOString().split('T')[0];
@@ -154,7 +155,7 @@ const EmargementAdmin = () => {
   const nbPartis     = donnees.filter(d => getStatut(d.emargement) === 'parti').length;
   const nbNonArrive  = donnees.filter(d => getStatut(d.emargement) === 'non_arrive').length;
 
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

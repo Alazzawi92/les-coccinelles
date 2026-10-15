@@ -24,6 +24,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './SuiviAdmin.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Date du jour au format YYYY-MM-DD (constante, ne change pas au rendu)
 const today = new Date().toISOString().split('T')[0];
@@ -201,7 +202,7 @@ const SuiviAdmin = () => {
   };
 
   // Garde : spinner si chargement des enfants en cours
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
   // Garde : aucun enfant présent ce jour-là (voir /admin/emargement pour pointer les arrivées)
   if (enfants.length === 0) return <div className="a-vide"><span className="a-vide__icone">👶</span><p>{t('admin.suivi.aucunPresent')}</p></div>;
 

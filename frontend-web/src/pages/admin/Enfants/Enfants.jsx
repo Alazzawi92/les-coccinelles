@@ -19,6 +19,7 @@ import i18n from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Enfants.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // Jours de la semaine gérés (la crèche est fermée le week-end).
 // Le code est la valeur stockée en base ; l'initiale et le nom complet
@@ -94,7 +95,7 @@ const EnfantsAdmin = () => {
   );
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="a-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>

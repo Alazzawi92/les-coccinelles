@@ -18,6 +18,7 @@ import api, { BACKEND_URL as BACKEND } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Messages.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document
@@ -171,7 +172,7 @@ const Messages = () => {
   const formatDate = (d) => new Date(d).toLocaleDateString(getLocale(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
   // Garde : spinner pendant le chargement initial
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="messages-page">

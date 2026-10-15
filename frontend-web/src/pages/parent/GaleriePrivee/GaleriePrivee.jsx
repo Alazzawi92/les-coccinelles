@@ -18,6 +18,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './GaleriePrivee.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const GaleriePrivee = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -80,7 +81,7 @@ const GaleriePrivee = () => {
   const sanConsentement = consentements.filter(e => !e.consentement?.consenti).length;
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="galerie-privee">

@@ -171,6 +171,7 @@
      plutôt que des valeurs arbitraires pour éviter les conflits. */
 
   --z-navbar:  100;  /* Barre de navigation publique — au-dessus du contenu */
+  --z-deco:    150;  /* Coccinelle "retour en haut" — au-dessus de la barre, sous les modales */
   --z-sidebar: 90;   /* Sidebar des espaces admin/parent */
   --z-modal:   200;  /* Modales — au-dessus de tout le reste de la page */
   --z-toast:   300;  /* Notifications toast — au-dessus même des modales */
@@ -221,6 +222,14 @@
   --ink:           #2D3436;
   --ink-soft:      #4A4F52;
   --ink-danger:    #EF9A9A;  /* Texte rouge clair lisible sur l'encre */
+
+  /* Coccinelle illustrée (bouton "retour en haut", chargement) :
+     couleurs de l'illustration, identiques dans les deux thèmes */
+  --coccinelle-rouge:      #F7163F;
+  --coccinelle-brun:       #5B2A1E;
+  --coccinelle-brun-clair: #74392A;
+  --coccinelle-aile:       #F99B57;
+  --coccinelle-nervure:    #EC7A3A;
 }
 
 /* ── 13. THÈME SOMBRE ───────────────────────────────────────

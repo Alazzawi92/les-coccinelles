@@ -7,17 +7,23 @@
 // ============================================================
 
 import { Outlet, NavLink, Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
+import CoccinelleDefilement from '../../components/ui/CoccinelleDefilement/CoccinelleDefilement';
+import { useApparitionAuDefilement } from '../../utils/apparition';
 import './PublicLayout.css';
 
 const PublicLayout = () => {
 
   const { user } = useAuth(); // Utilisateur connecté (ou null)
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Zone de contenu : ses sections apparaissent en douceur au défilement
+  const mainRef = useRef(null);
+  useApparitionAuDefilement(mainRef);
 
   // menuOuvert : contrôle l'affichage du menu hamburger sur mobile
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -87,9 +93,12 @@ const PublicLayout = () => {
 
       {/* ── CONTENU DE LA PAGE ──────────────────────────────── */}
       {/* Outlet : rendu de la page enfant selon la route active */}
-      <main className="public-main">
+      <main className="public-main" ref={mainRef}>
         <Outlet />
       </main>
+
+      {/* Coccinelle "retour en haut" qui avance avec le défilement */}
+      <CoccinelleDefilement />
 
       {/* ── FOOTER ──────────────────────────────────────────── */}
       <footer className="public-footer">

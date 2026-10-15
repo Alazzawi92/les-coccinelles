@@ -18,6 +18,7 @@ import api from '../../../services/api';
 import i18n, { getLocale } from '../../../i18n';
 import '../../../styles/parent.css';
 import './Dashboard.css';
+import Chargement from '../../../components/ui/Chargement/Chargement';
 
 const Dashboard = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -63,7 +64,7 @@ const Dashboard = () => {
   const salutation = t(`parent.dashboard.${heure < 12 ? 'bonjour' : heure < 18 ? 'apresMidi' : 'bonsoir'}`);
 
   // Garde : spinner pendant le chargement
-  if (chargement) return <div className="p-chargement">{t('common.chargement')}</div>;
+  if (chargement) return <Chargement className="p-chargement" />;
 
   return (
     <div className="dashboard">
