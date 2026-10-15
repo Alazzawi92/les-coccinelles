@@ -33,7 +33,7 @@
   display:       grid;
   grid-template-columns: 300px 1fr;
   gap:           0;
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   border:        1px solid var(--bg-gray);
   box-shadow:    var(--shadow-md);
@@ -116,7 +116,7 @@
 .detail-vide p { font-size: 1rem; color: var(--text-gray); }
 
 /* En-tête du détail : avatar + sujet + interlocuteur */
-.detail-entete               { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); background: var(--white); }
+.detail-entete               { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg) var(--space-xl); border-bottom: 1px solid var(--bg-gray); background: var(--surface); }
 .detail-avatar                { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
 .detail-entete-textes        { min-width: 0; }
 .detail-entete h2            { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -137,7 +137,7 @@
 
 /* Messages de l'autre : blanc, alignés à gauche.
    border-bottom-left-radius:4px = bulle "venant de l'autre" */
-.message-bulle--autre { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
+.message-bulle--autre { background: var(--surface); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
 
 /* Texte du message : white-space:pre-wrap pour garder les retours à la ligne */
 .message-contenu { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
@@ -149,7 +149,7 @@
 
 /* Barre de réponse en bas : textarea + bouton trombone + bouton envoyer.
    align-items:flex-end = les éléments s'alignent sur la ligne basse. */
-.reponse-zone    { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--bg-gray); background: var(--white); display: flex; gap: var(--space-md); align-items: flex-end; }
+.reponse-zone    { padding: var(--space-md) var(--space-xl); border-top: 1px solid var(--bg-gray); background: var(--surface); display: flex; gap: var(--space-md); align-items: flex-end; }
 
 /* Côté gauche : textarea + aperçu de la pièce jointe */
 .reponse-gauche  { flex: 1; display: flex; flex-direction: column; min-width: 0; }
@@ -167,7 +167,7 @@
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: var(--z-modal); display: flex; align-items: center; justify-content: center; padding: var(--space-xl); }
 
 /* Boîte blanche du modal : 560px max */
-.modal          { background: var(--white); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 560px; }
+.modal          { background: var(--surface); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 560px; }
 
 /* En-tête du modal : titre + bouton ✕ */
 .modal__entete  { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-xl); }
@@ -190,7 +190,7 @@
 /* Bouton "Choisir un fichier" natif : stylé en pilule gris */
 .pj-input::file-selector-button {
   background:    var(--bg-gray);
-  border:        1px solid #E0E0E0;
+  border:        1px solid var(--border);
   border-radius: var(--radius-pill);
   padding:       4px var(--space-md);
   font-size:     0.8rem;
@@ -200,7 +200,7 @@
 }
 
 /* Survol du bouton natif */
-.pj-input::file-selector-button:hover { background: #E0E0E0; }
+.pj-input::file-selector-button:hover { background: var(--border); }
 
 /* Aperçu du fichier sélectionné : miniature + nom + supprimer */
 .pj-apercu         { display: flex; align-items: center; gap: var(--space-sm); background: var(--bg-gray); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); }
@@ -258,7 +258,7 @@
 .pj-bulle--doc span { white-space: normal; word-break: break-word; }
 
 /* Sur fond gris (bulle de l'autre) : fond gris légèrement foncé */
-.message-bulle--autre .pj-bulle--doc { background: rgba(0,0,0,0.07); color: var(--text-dark); }
+.message-bulle--autre .pj-bulle--doc { background: var(--tint); color: var(--text-dark); }
 
 /* Au clic/survol : légère transparence */
 .pj-bulle--doc:hover { opacity: 0.85; }

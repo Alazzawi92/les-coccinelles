@@ -31,7 +31,7 @@
   align-items:   flex-start;
   gap:           var(--space-md);
   padding:       var(--space-md) var(--space-xl);
-  background:    #fff3e0;
+  background:    var(--warning-bg);
   border-radius: var(--radius-xl);
   border-left:   4px solid var(--warning);
   margin-bottom: var(--space-xl);
@@ -46,7 +46,7 @@
 
 /* Lien "Gérer mes consentements" dans l'alerte */
 .rgpd-alerte__lien     { color: var(--warning); font-weight: 700; display: inline-block; margin-top: 4px; }
-.rgpd-alerte__lien:hover { color: #e65100; }
+.rgpd-alerte__lien:hover { color: var(--warning-text); }
 
 /* ── 3. GRILLE DES ALBUMS ───────────────────────────────── */
 
@@ -62,7 +62,7 @@
 /* Carte album : cliquable, arrondie, ombre légère.
    button sans style natif car toute la carte est cliquable. */
 .album-carte-parent {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   overflow:      hidden;
   box-shadow:    var(--shadow-sm);

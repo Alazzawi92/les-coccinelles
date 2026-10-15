@@ -30,7 +30,7 @@
   display:    flex;
   min-height: 100vh;
   width:      100%;
-  background: #F0F2F5;
+  background: var(--bg-app);
 }
 
 /* ── 3. SIDEBAR SOMBRE ──────────────────────────────────── */
@@ -41,7 +41,7 @@
 .admin-sidebar {
   width:          280px;
   min-height:     100vh;
-  background:     var(--text-dark);    /* Fond sombre (#2D3436) */
+  background:     var(--ink);    /* Fond sombre (#2D3436) */
   display:        flex;
   flex-direction: column;
   position:       sticky;
@@ -71,7 +71,7 @@
 .admin-sidebar__logo-img {
   height:        48px;
   width:         auto;
-  background:    var(--white);
+  background:    var(--white);    /* Plaque blanche derrière le logo, dans les deux thèmes */
   border-radius: var(--radius-md);
   padding:       4px 10px;
 }
@@ -125,7 +125,7 @@
 .admin-sidebar__link:hover,
 .admin-sidebar__link.active {
   color:        var(--white);
-  background:   rgba(255,152,0,0.15);          /* Fond orange très doux */
+  background:   var(--focus-ring);          /* Fond orange très doux */
   border-right: 3px solid var(--primary);       /* Barre orange visible */
 }
 
@@ -162,7 +162,7 @@
 /* Au survol : fond rouge discret pour signaler l'action de déconnexion */
 .admin-sidebar__deconnexion:hover {
   background:   rgba(229,57,53,0.2);
-  color:        #ef9a9a;              /* Texte rouge clair */
+  color:        var(--ink-danger);              /* Texte rouge clair */
   border-color: rgba(229,57,53,0.4);
 }
 
@@ -186,8 +186,8 @@
 
 /* Topbar blanc de la zone contenu : chemin de navigation */
 .layout-topbar--admin {
-  background:    #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background:    var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 /* Zone droite du topbar : sélecteur de langue + cloche de notifications */
@@ -255,7 +255,7 @@
     align-items:     center;
     justify-content: space-between;
     padding:         var(--space-sm) var(--space-md);
-    background:      var(--text-dark);
+    background:      var(--ink);
     position:        sticky;
     top:             0;
     z-index:         var(--z-sidebar, 90);
@@ -284,7 +284,7 @@
     left:       0;
     right:      0;
     bottom:     0;
-    background: var(--text-dark);
+    background: var(--ink);
     z-index:    calc(var(--z-sidebar, 90) - 1);
     overflow-y: auto;
     padding:    var(--space-md) 0;
@@ -314,7 +314,7 @@
   }
   .admin-mobile-menu__link.active {
     color:       var(--white);
-    background:  rgba(255,152,0,0.15);
+    background:  var(--focus-ring);
     border-left: 3px solid var(--primary);
   }
 

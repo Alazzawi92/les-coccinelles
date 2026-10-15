@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { register as registerService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import { useAuth } from '../../../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
@@ -104,7 +105,10 @@ const Register = () => {
       <div className="auth-card auth-card--large">
 
         {/* Sélecteur de langue (pas de layout sur les pages auth) */}
-        <LanguageSwitcher className="auth-langue" />
+        <div className="auth-langue">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
 
         <div className="auth-logo">
           <img src="/images/logo.png" alt={t('auth.logoAlt')} className="auth-logo__img" />

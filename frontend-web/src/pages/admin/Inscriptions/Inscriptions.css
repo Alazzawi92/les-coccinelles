@@ -59,7 +59,7 @@
   border-left:   3px solid var(--primary);
 }
 /* Variante rouge pour les contacts d'urgence */
-.dossier-parent-bloc--urgence { border-left-color: #ef5350; }
+.dossier-parent-bloc--urgence { border-left-color: var(--error); }
 
 /* Titre du bloc (Parent 1, Contact n°1...) */
 .dossier-parent-bloc__titre {
@@ -98,7 +98,7 @@
   align-items:    center;
   gap:            var(--space-md);
   padding:        var(--space-sm) var(--space-md);
-  background:     var(--white);
+  background:     var(--surface);
   border:         1px solid var(--border);
   border-radius:  var(--radius-md);
   text-decoration: none;

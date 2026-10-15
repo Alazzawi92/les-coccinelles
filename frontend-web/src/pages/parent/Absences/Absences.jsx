@@ -114,10 +114,10 @@ const Absences = () => {
 
   // ── Couleur de fond pour le calendrier par statut ─────────
   const couleurAbsence = (statut) => ({
-    en_attente: '#fff3e0',
-    validee:    '#e8f5e9',
-    refusee:    '#ffebee'
-  }[statut] || '#f5f5f5');
+    en_attente: 'var(--warning-bg)',
+    validee:    'var(--success-bg)',
+    refusee:    'var(--error-bg)'
+  }[statut] || 'var(--bg-gray)'); // Variables CSS : s'adaptent au mode sombre
 
   // Tableau des jours du mois affiché dans le calendrier
   const joursCalendrier = construireCalendrier(anneeCalend, moisCalend);

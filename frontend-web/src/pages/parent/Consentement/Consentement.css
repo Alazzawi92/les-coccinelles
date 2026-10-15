@@ -30,7 +30,7 @@
 
 /* Note bleue : info sur le délai de traitement ou contact DPO.
    border-left:info = barre bleue à gauche. */
-.rgpd-note { background: #e3f2fd; border-radius: var(--radius-md); padding: var(--space-md); color: var(--info) !important; border-left: 4px solid var(--info); }
+.rgpd-note { background: var(--info-bg); border-radius: var(--radius-md); padding: var(--space-md); color: var(--info) !important; border-left: 4px solid var(--info); }
 
 /* ── 3. LISTE DES CONSENTEMENTS ─────────────────────────── */
 
@@ -42,7 +42,7 @@
 /* Carte de consentement : infos à gauche + bouton accordé/refusé à droite.
    border-left colorée selon le statut actuel du consentement. */
 .consentement-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);

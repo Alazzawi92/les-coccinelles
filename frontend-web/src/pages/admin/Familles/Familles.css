@@ -36,7 +36,7 @@
   padding:       var(--space-sm) var(--space-lg);
   border:        2px solid var(--border);
   border-radius: var(--radius-pill);
-  background:    var(--white);
+  background:    var(--surface);
   color:         var(--text-gray);
   font-weight:   600;
   font-size:     0.9rem;
@@ -57,7 +57,7 @@
 
 /* Badge rouge sur l'onglet "En attente" indiquant le nombre de comptes à valider */
 .familles-badge-attente {
-  background:    #e53935;
+  background:    var(--error);
   color:         var(--white);
   font-size:     0.75rem;
   font-weight:   700;
@@ -85,7 +85,7 @@
 }
 
 .btn-voir {
-  border: 1px solid #BDBDBD;
+  border: 1px solid var(--border-strong);
   color:  var(--text-dark);
 }
 .btn-voir:hover { background: var(--bg-gray); }
@@ -146,8 +146,8 @@
 
 /* Bloc liste des conséquences : fond orangé d'alerte */
 .suppr-avertissements {
-  background:    #fff3e0;
-  border:        1px solid #ff9800;
+  background:    var(--warning-bg);
+  border:        1px solid var(--warning);
   border-radius: var(--radius-md);
   padding:       var(--space-md) var(--space-lg);
   text-align:    left;
@@ -157,7 +157,7 @@
 .suppr-avertissements p {
   font-weight:   700;
   font-size:     0.85rem;
-  color:         #e65100;
+  color:         var(--warning-text);
   margin-bottom: var(--space-sm);
 }
 
@@ -194,7 +194,7 @@
 }
 
 .btn-supprimer-confirmer:hover:not(:disabled) {
-  background: #c62828;
+  background: var(--error-dark);
 }
 
 .btn-supprimer-confirmer:disabled {

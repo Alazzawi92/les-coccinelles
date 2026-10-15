@@ -49,7 +49,7 @@
 /* Conteneur blanc arrondi avec ombre légère.
    Utilisé pour encadrer chaque section de contenu dans l'espace parent. */
 .p-card {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);
@@ -84,14 +84,14 @@
 }
 
 /* Couleurs sémantiques par statut */
-.statut-badge--en_attente  { background: #fff3e0; color: var(--warning); }      /* Orange — en attente */
-.statut-badge--en_cours    { background: #e3f2fd; color: var(--info); }          /* Bleu — en cours */
-.statut-badge--accepte     { background: #e8f5e9; color: var(--success); }       /* Vert — accepté */
-.statut-badge--refuse      { background: #ffebee; color: var(--error); }         /* Rouge — refusé */
-.statut-badge--incomplet   { background: #fce4ec; color: #c2185b; }              /* Rose — incomplet */
-.statut-badge--liste_attente { background: #f3e5f5; color: var(--accent-3); }   /* Violet — liste d'attente */
-.statut-badge--validee     { background: #e8f5e9; color: var(--success); }       /* Vert — validée */
-.statut-badge--refusee     { background: #ffebee; color: var(--error); }         /* Rouge — refusée */
+.statut-badge--en_attente  { background: var(--warning-bg); color: var(--warning); }      /* Orange — en attente */
+.statut-badge--en_cours    { background: var(--info-bg); color: var(--info); }          /* Bleu — en cours */
+.statut-badge--accepte     { background: var(--success-bg); color: var(--success); }       /* Vert — accepté */
+.statut-badge--refuse      { background: var(--error-bg); color: var(--error); }         /* Rouge — refusé */
+.statut-badge--incomplet   { background: var(--rose-bg); color: var(--rose-text); }              /* Rose — incomplet */
+.statut-badge--liste_attente { background: var(--violet-bg); color: var(--accent-3); }   /* Violet — liste d'attente */
+.statut-badge--validee     { background: var(--success-bg); color: var(--success); }       /* Vert — validée */
+.statut-badge--refusee     { background: var(--error-bg); color: var(--error); }         /* Rouge — refusée */
 
 /* ── 5. ÉTATS ───────────────────────────────────────────── */
 
@@ -166,7 +166,7 @@
 /* Champ de saisie parent : légèrement plus grand que l'admin (font-size: 1rem) */
 .p-input {
   padding: var(--space-sm) var(--space-md);
-  border: 2px solid #E0E0E0;
+  border: 2px solid var(--border);
   border-radius: var(--radius-md);
   font-family: var(--font-body);
   font-size: 1rem;
@@ -176,7 +176,7 @@
 }
 
 /* Focus : bordure orange + halo pour l'accessibilité */
-.p-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+.p-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
 
 /* Variante erreur : bordure rouge */
 .p-input--erreur { border-color: var(--error); }

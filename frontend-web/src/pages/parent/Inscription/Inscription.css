@@ -168,12 +168,12 @@
   padding:     var(--space-md) var(--space-lg);
   border:      2px solid var(--border);
   border-radius: var(--radius-md);
-  background:  var(--white);
+  background:  var(--surface);
   transition:  var(--transition);
 }
 
 /* Pièce avec fichier ajouté : bordure verte */
-.piece-item--coche { border-color: var(--success); background: #f0faf4; }
+.piece-item--coche { border-color: var(--success); background: var(--success-bg); }
 
 .piece-item__icone { font-size: 1.4rem; flex-shrink: 0; }
 
@@ -241,7 +241,7 @@
   display:       flex;
   gap:           var(--space-md);
   padding:       var(--space-md);
-  background:    #e3f2fd;
+  background:    var(--info-bg);
   border-radius: var(--radius-md);
   border-left:   4px solid var(--info);
   font-size:     0.9rem;
@@ -273,7 +273,7 @@
 .cond-pirouette { margin-bottom: var(--space-xl); }
 .btn-pirouette {
   display:         inline-block;
-  background:      #26a69a;
+  background:      var(--teal);
   color:           var(--white);
   font-weight:     700;
   font-size:       0.9rem;
@@ -282,17 +282,17 @@
   text-decoration: none;
   transition:      var(--transition);
 }
-.btn-pirouette:hover { background: #00897b; transform: translateY(-2px); }
+.btn-pirouette:hover { background: var(--teal-dark); transform: translateY(-2px); }
 
 /* Bloc inclusion handicap */
 .cond-handicap {
   display:       flex;
   align-items:   flex-start;
   gap:           var(--space-lg);
-  background:    #f0fdfb;
+  background:    var(--teal-bg);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg);
-  border-left:   4px solid #26a69a;
+  border-left:   4px solid var(--teal);
   margin-bottom: var(--space-xl);
 }
 .cond-handicap__icone { font-size: 2rem; flex-shrink: 0; margin-top: 2px; }
@@ -308,7 +308,7 @@
 
 /* Carte blanche pour chaque bloc tarifaire */
 .tarif-bloc {
-  background:    var(--white);
+  background:    var(--surface);
   border:        1.5px solid var(--border);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg) var(--space-xl);
@@ -332,8 +332,8 @@
   border-radius: var(--radius-pill);
   font-size:     0.9rem;
 }
-.tarif-pill--regular { background: #fff3e0; color: #e65100; border: 1.5px solid #ffcc80; }
-.tarif-pill--occa    { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
+.tarif-pill--regular { background: var(--warning-bg); color: var(--warning-text); border: 1.5px solid var(--warning-border); }
+.tarif-pill--occa    { background: var(--success-bg); color: var(--success-text); border: 1.5px solid var(--success-border); }
 
 /* Note grise sous les pastilles */
 .tarif-note { font-size: 0.85rem !important; color: var(--text-gray) !important; }
@@ -343,7 +343,7 @@
   display:     flex;
   align-items: center;
   gap:         var(--space-lg);
-  background:  #f3f4f6;
+  background:  var(--bg-gray);
   border-radius: var(--radius-md);
   padding:     var(--space-md) var(--space-lg);
   margin:      var(--space-md) 0;
@@ -359,7 +359,7 @@
 .tarif-formule__trait {
   width:      100%;
   height:     2px;
-  background: var(--text-dark);
+  background: var(--ink);
   display:    block;
 }
 .tarif-formule__den  { font-size: 1rem; color: var(--text-dark); font-weight: 700; }
@@ -409,13 +409,13 @@
   align-items:   center;
   gap:           var(--space-sm);
   flex-wrap:     wrap;
-  background:    #f3f4f6;
+  background:    var(--bg-gray);
   border-radius: var(--radius-md);
   padding:       var(--space-md) var(--space-lg);
   margin-top:    var(--space-md);
 }
 .tarif-calcul__item {
-  background:    var(--white);
+  background:    var(--surface);
   border:        1.5px solid var(--border);
   border-radius: var(--radius-md);
   padding:       6px var(--space-md);
@@ -454,7 +454,7 @@
 
 /* Carte blanche pour chaque bloc (parent, contact...) */
 .preinsc-section {
-  background:    var(--white);
+  background:    var(--surface);
   border:        1.5px solid var(--border);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg) var(--space-xl);
@@ -462,7 +462,7 @@
 }
 
 /* Variante rouge/urgence pour les contacts */
-.preinsc-section--contact { border-color: #ffccbc; background: #fffaf8; }
+.preinsc-section--contact { border-color: var(--warning-border); background: var(--warning-bg); }
 
 /* Titre de section : petit, gras, avec icône */
 .preinsc-section__titre {
@@ -494,8 +494,8 @@
   display:       flex;
   align-items:   flex-start;
   gap:           var(--space-md);
-  background:    #fff8e1;
-  border:        1.5px solid #ffe082;
+  background:    var(--yellow-bg);
+  border:        1.5px solid var(--warning-border);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg);
   margin-bottom: var(--space-lg);
@@ -516,8 +516,8 @@
 /* ── INTRO PERSONNES À CONTACTER ────────────────────────── */
 
 .preinsc-intro-contacts {
-  background:    #fff3e0;
-  border-left:   4px solid #ff9800;
+  background:    var(--warning-bg);
+  border-left:   4px solid var(--warning);
   border-radius: var(--radius-md);
   padding:       var(--space-md) var(--space-lg);
   margin-bottom: var(--space-lg);
@@ -544,7 +544,7 @@
 
 /* Carte pour les champs profession/employeur */
 .docs-employeur {
-  background:    var(--white);
+  background:    var(--surface);
   border:        1.5px solid var(--border);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg) var(--space-xl);

@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
 import './AdminLayout.css';
 
 // ── Configuration de la navigation admin ──────────────────────
@@ -196,6 +197,7 @@ const AdminLayout = () => {
         <header className="layout-topbar layout-topbar--admin">
           <span className="layout-topbar__titre">{t('common.adminLayout.administration')}</span>
           <div className="layout-topbar__actions">
+            <ThemeToggle />
             <LanguageSwitcher />
             <NotifCloche />
           </div>

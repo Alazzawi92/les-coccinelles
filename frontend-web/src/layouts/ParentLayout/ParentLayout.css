@@ -43,7 +43,7 @@
 .parent-sidebar {
   width:          260px;
   min-height:     100vh;
-  background:     var(--white);
+  background:     var(--surface);
   box-shadow:     var(--shadow-md);
   display:        flex;
   flex-direction: column;
@@ -191,7 +191,7 @@
   align-items:     center;
   justify-content: space-between;
   padding:         var(--space-md) var(--space-xl);
-  background:      var(--white);
+  background:      var(--surface);
   border-bottom:   1px solid var(--bg-gray);
   position:        sticky;
   top:             0;
@@ -256,7 +256,7 @@
     align-items:     center;
     justify-content: space-between;
     padding:         var(--space-sm) var(--space-md);
-    background:      var(--white);
+    background:      var(--surface);
     box-shadow:      var(--shadow-sm);
     position:        sticky;
     top:             0;
@@ -286,7 +286,7 @@
     left:       0;
     right:      0;
     bottom:     0;
-    background: var(--white);
+    background: var(--surface);
     z-index:    calc(var(--z-sidebar) - 1);
     overflow-y: auto;
     padding:    var(--space-lg) 0;

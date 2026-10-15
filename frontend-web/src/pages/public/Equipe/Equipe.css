@@ -32,7 +32,7 @@
 /* Carte d'un membre de l'équipe : centrée, barre colorée en haut.
    La couleur de la barre identifie le rôle de la personne. */
 .membre-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   text-align:    center;

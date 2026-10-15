@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
 import './PublicLayout.css';
 
 const PublicLayout = () => {
@@ -45,7 +46,8 @@ const PublicLayout = () => {
         {/* Bouton connexion / espace parent + hamburger mobile */}
         <div className="public-navbar__actions">
 
-          {/* Sélecteur de langue FR / EN */}
+          {/* Bouton thème clair / sombre + sélecteur de langue FR / EN */}
+          <ThemeToggle />
           <LanguageSwitcher />
 
           {/* Si connecté : lien vers l'espace parent. Sinon : page connexion. */}

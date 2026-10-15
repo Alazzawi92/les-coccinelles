@@ -30,7 +30,7 @@
 /* Carte complète d'un enfant : blanche, arrondie.
    overflow:hidden pour rogner l'en-tête dans les coins. */
 .enfant-fiche {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   box-shadow:    var(--shadow-sm);
   overflow:      hidden;
@@ -50,7 +50,7 @@
   align-items: center;
   gap:         var(--space-lg);
   padding:     var(--space-xl);
-  background:  linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 100%);
+  background:  linear-gradient(135deg, var(--primary-light) 0%, var(--yellow-bg) 100%);
 }
 
 /* Avatar circulaire de l'enfant : fond blanc avec ombre.
@@ -59,7 +59,7 @@
   font-size:       3.5rem;
   width:           70px;
   height:          70px;
-  background:      var(--white);
+  background:      var(--surface);
   border-radius:   50%;
   display:         flex;
   align-items:     center;
@@ -99,10 +99,10 @@
 .sante-item { font-size: 0.85rem; padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm); }
 
 /* Allergie : fond orange clair */
-.sante-allergie   { background: #fff3e0; color: #e65100; }
+.sante-allergie   { background: var(--warning-bg); color: var(--warning-text); }
 
 /* Médicament en cours : fond bleu clair */
-.sante-medicament { background: #e3f2fd; color: #1565c0; }
+.sante-medicament { background: var(--info-bg); color: var(--info-text); }
 
 /* ── 6. ACTIONS ─────────────────────────────────────────── */
 

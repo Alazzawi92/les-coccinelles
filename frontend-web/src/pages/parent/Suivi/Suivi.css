@@ -47,7 +47,7 @@
   justify-content: space-between;
   width:           100%;
   padding:         var(--space-md);
-  background:      var(--white);
+  background:      var(--surface);
   border:          2px solid var(--bg-gray);
   border-radius:   var(--radius-md);
   cursor:          pointer;
@@ -102,9 +102,9 @@
 }
 
 /* Couleurs selon la quantité mangée */
-.repas-bloc--vert   { background: #e8f5e9; }   /* Tout mangé */
+.repas-bloc--vert   { background: var(--success-bg); }   /* Tout mangé */
 .repas-bloc--orange { background: var(--primary-light); }   /* Partiellement */
-.repas-bloc--rouge  { background: #ffebee; }   /* Peu mangé */
+.repas-bloc--rouge  { background: var(--error-bg); }   /* Peu mangé */
 .repas-bloc--gris   { background: var(--bg-gray); }   /* Absent / pas de données */
 
 /* Emoji du repas */
@@ -153,14 +153,14 @@
 /* ── 10. TEMPÉRATURE ─────────────────────────────────────── */
 
 /* Alerte température : fond rouge très clair */
-.temperature-bloc { margin-top: var(--space-md); padding: var(--space-sm) var(--space-md); background: #ffebee; border-radius: var(--radius-md); font-size: 0.9rem; color: var(--error); }
+.temperature-bloc { margin-top: var(--space-md); padding: var(--space-sm) var(--space-md); background: var(--error-bg); border-radius: var(--radius-md); font-size: 0.9rem; color: var(--error); }
 
 /* ── 11. MESSAGE DE L'ÉQUIPE ─────────────────────────────── */
 
 /* Encart orange clair avec barre orange : message personnalisé de l'éducatrice */
 .suivi-message-equipe {
   padding:       var(--space-xl);
-  background:    linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 100%);
+  background:    linear-gradient(135deg, var(--primary-light) 0%, var(--yellow-bg) 100%);
   border-radius: var(--radius-xl);
   border-left:   4px solid var(--primary);
 }

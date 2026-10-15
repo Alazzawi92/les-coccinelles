@@ -38,7 +38,7 @@
   align-items:     center;
   justify-content: space-between;
   padding:         var(--space-lg) var(--space-xl);
-  background:      var(--white);
+  background:      var(--surface);
   border-bottom:   1px solid var(--bg-gray);
   transition:      var(--transition);
 }
@@ -89,7 +89,7 @@
 .info-box--orange { background: var(--primary-light); border-color: var(--primary); }
 
 /* Fond bleu clair + barre bleue = information neutre */
-.info-box--bleu   { background: #e3f2fd; border-color: var(--info); }
+.info-box--bleu   { background: var(--info-bg); border-color: var(--info); }
 
 /* Texte de l'info : petit, gris, avec espacement entre les lignes */
 .info-box p    { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }

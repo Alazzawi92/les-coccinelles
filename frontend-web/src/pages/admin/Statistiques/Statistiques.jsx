@@ -103,7 +103,7 @@ const Statistiques = () => {
               { label: t('admin.statistiques.statuts.en_attente'), val: stats.inscriptions.en_attente    || 0, color:'var(--warning)', total: stats.inscriptions.total },
               { label: t('admin.statistiques.statuts.en_cours'), val: stats.inscriptions.en_cours      || 0, color:'var(--info)',    total: stats.inscriptions.total },
               { label: t('admin.statistiques.statuts.liste_attente'), val: stats.inscriptions.liste_attente || 0, color:'var(--accent-3)',total: stats.inscriptions.total },
-              { label: t('admin.statistiques.statuts.incomplet'), val: stats.inscriptions.incomplet     || 0, color:'#ff9800',        total: stats.inscriptions.total },
+              { label: t('admin.statistiques.statuts.incomplet'), val: stats.inscriptions.incomplet     || 0, color:'var(--warning-text)', total: stats.inscriptions.total },
               { label: t('admin.statistiques.statuts.refuse'), val: stats.inscriptions.refuse        || 0, color:'var(--error)',   total: stats.inscriptions.total }
             ].map(({ label, val, color, total }) => {
               // Pourcentage arrondi pour la largeur de la barre

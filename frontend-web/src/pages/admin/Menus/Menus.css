@@ -27,7 +27,7 @@
 
 /* Carte blanche pour chaque jour : fond blanc, ombre légère,
    flex vertical pour empiler les champs midi et goûter. */
-.menu-admin-col { background:var(--white); border-radius:var(--radius-xl); padding:var(--space-xl); box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:var(--space-md); }
+.menu-admin-col { background:var(--surface); border-radius:var(--radius-xl); padding:var(--space-xl); box-shadow:var(--shadow-sm); display:flex; flex-direction:column; gap:var(--space-md); }
 
 /* Titre du jour ("Lundi", "Mardi"...) : police de titre orange,
    bordure orange en bas pour séparer visuellement du contenu. */
@@ -37,7 +37,7 @@
 
 /* Colonne en mode aperçu (pas de champs, juste du texte) :
    fond légèrement grisé pour distinguer du mode édition. */
-.menu-admin-col--apercu { background:var(--bg-light, #f9f9f9); }
+.menu-admin-col--apercu { background:var(--bg-light); }
 
 /* Ligne de texte dans l'aperçu (midi ou goûter) */
 .apercu-label { font-size:0.88rem; color:var(--text-dark); margin:0 0 var(--space-sm); line-height:1.5; }
@@ -49,7 +49,7 @@
   border:        1px solid var(--border);
   border-radius: var(--radius-md);
   overflow:      hidden;
-  background:    var(--white);
+  background:    var(--surface);
 }
 
 /* Barre d'outils Quill : fond gris clair, séparateur bas */

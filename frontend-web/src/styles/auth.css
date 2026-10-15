@@ -31,7 +31,7 @@
    pour un effet doux et accueillant. */
 .auth-page {
   min-height: 100vh;    /* Toujours aussi haut que l'écran */
-  background: linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 40%, #f3e5f5 100%);
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--yellow-bg) 40%, var(--violet-bg) 100%);
   display: flex;
   align-items: center;      /* Centrage vertical */
   justify-content: center;  /* Centrage horizontal */
@@ -45,7 +45,7 @@
    box-shadow:lg pour l'effet "flottant" sur le fond coloré. */
 .auth-card {
   position:      relative;           /* Repère pour le sélecteur de langue */
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   box-shadow:    var(--shadow-lg);
   padding:       var(--space-3xl);   /* Grand padding interne */
@@ -55,9 +55,12 @@
 
 /* Sélecteur de langue FR / EN en haut à droite de la carte */
 .auth-langue {
-  position: absolute;
-  top:      var(--space-md);
-  right:    var(--space-md);
+  position:    absolute;
+  top:         var(--space-md);
+  right:       var(--space-md);
+  display:     flex;              /* Bouton thème et sélecteur de langue côte à côte */
+  align-items: center;
+  gap:         var(--space-sm);
 }
 
 /* ── 4. LOGO ET EN-TÊTE ─────────────────────────────────── */
@@ -119,24 +122,24 @@
 /* Champ de saisie standard auth */
 .form-input {
   padding:       var(--space-sm) var(--space-md);
-  border:        2px solid #E0E0E0;
+  border:        2px solid var(--border);
   border-radius: var(--radius-md);
   font-family:   var(--font-body);
   font-size:     1rem;
   color:         var(--text-dark);
-  background:    var(--white);
+  background:    var(--surface);
   transition:    var(--transition);
   outline:       none;
 }
 
 /* Focus : bordure orange + halo pour l'accessibilité */
-.form-input:focus         { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+.form-input:focus         { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
 
 /* Erreur de validation : bordure rouge */
 .form-input--erreur       { border-color: var(--error); }
 
 /* Focus sur un champ en erreur : halo rouge */
-.form-input--erreur:focus { box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
+.form-input--erreur:focus { box-shadow: 0 0 0 3px var(--focus-ring-error); }
 
 /* Message d'erreur sous le champ : rouge, petit */
 .form-erreur { color: var(--error); font-size: 0.8rem; }
@@ -195,10 +198,10 @@
   display:       flex;
   gap:           var(--space-sm);
   padding:       var(--space-md);
-  background:    #e3f2fd;
-  border:        1px solid #1976d2;
+  background:    var(--info-bg);
+  border:        1px solid var(--info);
   border-radius: var(--radius-md);
-  color:         #1565c0;
+  color:         var(--info-text);
   font-size:     0.9rem;
   align-items:   flex-start;
 }
@@ -208,7 +211,7 @@
   display:       flex;
   gap:           var(--space-sm);
   padding:       var(--space-md);
-  background:    #ffebee;             /* Fond rouge très clair */
+  background:    var(--error-bg);             /* Fond rouge très clair */
   border:        1px solid var(--error);
   border-radius: var(--radius-md);
   color:         var(--error);
@@ -218,7 +221,7 @@
 
 /* Variante succès : fond vert (ex : "Email envoyé, vérifiez votre boîte") */
 .auth-alerte--succes {
-  background: #e8f5e9;
+  background: var(--success-bg);
   border-color: var(--success);
   color:       var(--success);
 }

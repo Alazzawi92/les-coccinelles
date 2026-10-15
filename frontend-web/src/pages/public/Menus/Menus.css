@@ -59,7 +59,7 @@
 /* Carte de menu d'un jour : arrondie, ombre légère.
    overflow:hidden pour rogner l'en-tête coloré dans les coins. */
 .menu-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   overflow:      hidden;
   box-shadow:    var(--shadow-sm);
@@ -71,7 +71,7 @@
 
 /* En-tête de la carte : dégradé vert pour évoquer la nature et la santé */
 .menu-carte__entete {
-  background:  linear-gradient(135deg, var(--secondary) 0%, #4caf50 100%);
+  background:  linear-gradient(135deg, var(--secondary) 0%, var(--success) 100%);
   color:       var(--white);
   padding:     var(--space-md);
   text-align:  center;
@@ -99,7 +99,7 @@
 .repas-section--midi   { background: var(--primary-light); }
 
 /* Fond violet très clair pour le goûter */
-.repas-section--gouter { background: #f3e5f5; }
+.repas-section--gouter { background: var(--violet-bg); }
 
 /* Label du repas ("Déjeuner", "Goûter") : très petit, gris, gras */
 .repas-label   { font-size: 1rem; font-weight: 700; color: var(--text-gray); margin-bottom: 6px; }
@@ -137,7 +137,7 @@
   gap:           var(--space-lg);
   margin-top:    var(--space-2xl);
   padding:       var(--space-xl);
-  background:    #e8f5e9;
+  background:    var(--success-bg);
   border-radius: var(--radius-xl);
   border-left:   4px solid var(--secondary);
 }

@@ -45,7 +45,7 @@
   position:        sticky;
   top:             0;
   z-index:         var(--z-navbar);
-  background:      var(--white);
+  background:      var(--surface);
   box-shadow:      var(--shadow-sm);  /* Légère ombre pour la distinguer du contenu */
   padding:         var(--space-md) var(--space-xl);
   display:         flex;
@@ -128,7 +128,7 @@
 .public-navbar__mobile {
   display:        flex;
   flex-direction: column;
-  background:     var(--white);
+  background:     var(--surface);
   box-shadow:     var(--shadow-md);
   padding:        var(--space-md);
   border-top:     1px solid var(--bg-gray);
@@ -155,7 +155,7 @@
 /* Footer sombre : fond gris très foncé avec texte blanc semi-transparent.
    margin-top:auto (avec .public-layout en flex) colle le footer en bas. */
 .public-footer {
-  background: var(--text-dark);
+  background: var(--ink);
   color:      rgba(255,255,255,0.85);
   padding:    var(--space-3xl) var(--space-xl) var(--space-xl);
   margin-top: auto;

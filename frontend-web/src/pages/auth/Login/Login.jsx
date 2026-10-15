@@ -13,6 +13,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Login.css';
@@ -91,7 +92,10 @@ const Login = () => {
       <div className="auth-card">
 
         {/* Sélecteur de langue (pas de layout sur les pages auth) */}
-        <LanguageSwitcher className="auth-langue" />
+        <div className="auth-langue">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
 
         {/* Logo + sous-titre */}
         <div className="auth-logo">

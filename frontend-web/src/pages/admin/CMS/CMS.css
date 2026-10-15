@@ -29,7 +29,7 @@
 /* ── 3. LISTE DES PAGES ─────────────────────────────────── */
 
 /* Carte blanche de la colonne gauche contenant tous les items */
-.cms-pages-liste{background:var(--white);border-radius:var(--radius-xl);padding:var(--space-xl);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--space-sm);}
+.cms-pages-liste{background:var(--surface);border-radius:var(--radius-xl);padding:var(--space-xl);box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:var(--space-sm);}
 
 /* ── 4. ITEM DE PAGE ────────────────────────────────────── */
 
@@ -55,7 +55,7 @@
   border:        1px solid var(--border);
   border-radius: var(--radius-md);
   overflow:      hidden;
-  background:    var(--white);
+  background:    var(--surface);
 }
 
 /* Barre d'outils Quill : fond gris clair, bord bas séparateur */
@@ -177,7 +177,7 @@
 
 /* Carte d'un membre dans l'admin */
 .equipe-admin-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border:        1px solid var(--border);
   border-radius: var(--radius-xl);
   padding:       var(--space-lg);

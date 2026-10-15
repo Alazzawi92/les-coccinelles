@@ -31,7 +31,7 @@
    position:relative pour positionner les bulles décoratives en absolu. */
 .hero {
   position:    relative;
-  background:  linear-gradient(135deg, var(--primary-light) 0%, #fff8e1 50%, #f3e5f5 100%);
+  background:  linear-gradient(135deg, var(--primary-light) 0%, var(--yellow-bg) 50%, var(--violet-bg) 100%);
   overflow:    hidden;   /* Cache les bulles qui dépassent les bords */
   padding:     var(--space-3xl) 0;
   min-height:  85vh;
@@ -233,7 +233,7 @@
 /* Bande blanche avec 4 chiffres clés : années, enfants, taux, staff.
    box-shadow sous la bande pour la distinguer du hero et de la suite. */
 .chiffres {
-  background: var(--white);
+  background: var(--surface);
   padding:    var(--space-2xl) 0;
   box-shadow: var(--shadow-sm);
 }
@@ -298,7 +298,7 @@
 /* Carte de valeur : barre colorée en haut selon la valeur
    (vert = nature, rose = bienveillance, orange = créativité, violet = diversité) */
 .valeur-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-2xl) var(--space-xl);
   text-align:    center;
@@ -328,7 +328,7 @@
 /* ── 5. NOTRE ÉQUIPE (section accueil) ──────────────────── */
 
 .accueil-equipe {
-  background: var(--white);
+  background: var(--surface);
   padding:    var(--space-3xl) 0;
 }
 
@@ -389,7 +389,7 @@
 
 /* Section verte clair + jaune : fond évoquant la nature et la nutrition */
 .accueil-menus {
-  background: linear-gradient(135deg, #e8f5e9 0%, #fff9c4 100%);
+  background: linear-gradient(135deg, var(--success-bg) 0%, var(--yellow-bg) 100%);
   padding:    var(--space-3xl) 0;
 }
 
@@ -410,7 +410,7 @@
 
 /* Carte d'un jour de menu */
 .menu-jour {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-lg);
   padding:       var(--space-lg);
   box-shadow:    var(--shadow-sm);
@@ -450,7 +450,7 @@
 .menu-jour__html strong { font-weight: 700; }
 
 /* État vide : affiché si aucun menu n'est publié pour la semaine */
-.menu-vide { text-align: center; padding: var(--space-2xl); background: var(--white); border-radius: var(--radius-xl); color: var(--text-gray); }
+.menu-vide { text-align: center; padding: var(--space-2xl); background: var(--surface); border-radius: var(--radius-xl); color: var(--text-gray); }
 .menu-vide p { margin-bottom: var(--space-md); }
 
 /* ── 6. ACTUALITÉS ──────────────────────────────────────── */
@@ -458,7 +458,7 @@
 /* Section fond blanc avec 3 cartes d'actualités */
 .accueil-actualites {
   padding:    var(--space-3xl) 0;
-  background: var(--white);
+  background: var(--surface);
 }
 
 /* En-tête : titre + lien "voir toutes les actualités" */
@@ -478,7 +478,7 @@
 
 /* Carte d'une actualité : image + corps texte */
 .actu-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   overflow:      hidden;   /* Rogne l'image de couverture dans le coin arrondi */
   box-shadow:    var(--shadow-sm);

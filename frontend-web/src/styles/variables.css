@@ -20,6 +20,16 @@
      8. Ombres portées
      9. Transitions
     10. Z-index (ordre d'empilement)
+    12. Couleurs de surfaces, bordures et fonds teintés
+    13. Thème sombre (redéfinit uniquement les couleurs)
+
+   MODE SOMBRE :
+     Toutes les couleurs qui changent entre clair et sombre sont
+     des variables. Le thème sombre (section 13) les redéfinit
+     quand <html> porte l'attribut data-theme="dark" (posé par
+     public/theme-init.js puis par le bouton ThemeToggle).
+     RÈGLE : ne jamais écrire une couleur en dur dans un autre CSS,
+     sinon elle ne changera pas en mode sombre.
    ============================================================ */
 
 /* :root = pseudo-classe qui cible l'élément racine <html>.
@@ -78,7 +88,9 @@
      inputs désactivés, états hover discrets */
   --bg-gray:    #F5F5F5;
 
-  /* Blanc pur — cartes, modales, éléments sur fond coloré */
+  /* Blanc pur — texte et icônes posés sur un fond coloré (bouton orange,
+     barre latérale sombre...). Reste blanc dans les deux thèmes :
+     pour le fond d'une carte, utiliser --surface. */
   --white:      #FFFFFF;
 
   /* Texte principal — gris très foncé (pas noir pur pour moins fatiguer) */
@@ -162,6 +174,103 @@
   --z-sidebar: 90;   /* Sidebar des espaces admin/parent */
   --z-modal:   200;  /* Modales — au-dessus de tout le reste de la page */
   --z-toast:   300;  /* Notifications toast — au-dessus même des modales */
+
+  /* ── 12. SURFACES, BORDURES ET FONDS TEINTÉS ─────────── */
+
+  /* Indique au navigateur le thème actif : barres de défilement,
+     champs de formulaire et calendriers natifs suivent le thème */
+  color-scheme: light;
+
+  /* Fond des cartes, modales, barres du haut (blanc en mode clair) */
+  --surface:       #FFFFFF;
+
+  /* Fond de la zone de contenu des espaces admin (gris bleuté) */
+  --bg-app:        #F0F2F5;
+
+  /* Bordures : standard (champs, séparateurs) et plus marquée */
+  --border:        #E0E0E0;
+  --border-strong: #BDBDBD;
+
+  /* Voile très léger : survols discrets et bordures subtiles */
+  --tint:          rgba(0,0,0,0.06);
+
+  /* Halo autour d'un champ sélectionné au clavier (focus) */
+  --focus-ring:       rgba(255,122,69,0.2);
+  --focus-ring-error: rgba(229,57,53,0.15);
+
+  /* Rouge foncé — survol des boutons "Supprimer" (texte blanc dessus) */
+  --error-dark:    #C62828;
+
+  /* Fonds teintés des badges, alertes et encadrés, avec la couleur
+     de texte et de bordure assortie à chacun */
+  --success-bg:     #E8F5E9;  --success-text: #2E7D32;  --success-border: #A5D6A7;
+  --error-bg:       #FFEBEE;  --error-text:   #C62828;  --error-border:   #EF9A9A;
+  --warning-bg:     #FFF3E0;  --warning-text: #E65100;  --warning-border: #FFCC80;
+  --info-bg:        #E3F2FD;  --info-text:    #1565C0;
+  --violet-bg:      #F3E5F5;  --violet-text:  #6A1B9A;
+  --rose-bg:        #FCE4EC;  --rose-text:    #AD1457;
+  --yellow-bg:      #FFF8E1;
+
+  /* Turquoise — bouton et encadré du partenaire Pirouette (texte blanc dessus) */
+  --teal:           #26A69A;
+  --teal-dark:      #00897B;
+  --teal-bg:        #F0FDFB;
+
+  /* Encre — zones TOUJOURS sombres dans les deux thèmes (barre latérale
+     admin, pied de page, bulles "moi" de la messagerie), texte blanc dessus */
+  --ink:           #2D3436;
+  --ink-soft:      #4A4F52;
+  --ink-danger:    #EF9A9A;  /* Texte rouge clair lisible sur l'encre */
+}
+
+/* ── 13. THÈME SOMBRE ───────────────────────────────────────
+   Ne redéfinit QUE les couleurs. Fonds sombres non noirs (moins
+   fatigants), textes clairs non blancs, couleurs vives légèrement
+   éclaircies pour garder un bon contraste (accessibilité). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Fonds et textes */
+  --bg-light:      #16181B;  /* Fond global du site */
+  --bg-gray:       #24272C;  /* Zones alternées, en-têtes de tableau */
+  --bg-app:        #121417;  /* Contenu des espaces admin */
+  --surface:       #1E2125;  /* Cartes et modales, un peu plus claires que le fond */
+  --text-dark:     #ECEFF1;  /* Texte principal */
+  --text-gray:     #AAB4B9;  /* Texte secondaire */
+  --text-light:    #727E83;  /* Placeholders, texte désactivé */
+
+  /* Bordures et voiles */
+  --border:        #363B42;
+  --border-strong: #4C535C;
+  --tint:          rgba(255,255,255,0.08);
+
+  /* Marque : orange inchangé, fond orange clair transformé en orange sombre */
+  --primary-light: #3B2519;
+
+  /* États : un peu plus clairs pour rester lisibles sur fond sombre */
+  --error:         #EF5350;
+  --success:       #66BB6A;
+  --warning:       #FFA726;
+  --info:          #42A5F5;
+
+  /* Fonds teintés : versions sombres, textes clairs */
+  --success-bg:     #1B2E20;  --success-text: #81C784;  --success-border: #2E5A36;
+  --error-bg:       #3A1D20;  --error-text:   #EF9A9A;  --error-border:   #7A3034;
+  --warning-bg:     #3A2A15;  --warning-text: #FFB74D;  --warning-border: #7A5420;
+  --info-bg:        #15283A;  --info-text:    #90CAF9;
+  --violet-bg:      #2D1F33;  --violet-text:  #CE93D8;
+  --rose-bg:        #3A1C29;  --rose-text:    #F48FB1;
+  --yellow-bg:      #332C14;
+  --teal-bg:        #12302C;
+
+  /* Encre : plus foncée que le fond pour que la barre latérale se détache */
+  --ink:           #0E1012;
+  --ink-soft:      #2A2E33;
+
+  /* Ombres plus marquées (une ombre légère est invisible sur fond sombre) */
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md:     0 4px 12px rgba(0,0,0,0.5);
+  --shadow-lg:     0 8px 24px rgba(0,0,0,0.6);
 }
 
 /* ============================================================

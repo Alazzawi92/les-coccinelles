@@ -1,0 +1,36 @@
+/* ============================================================
+   FICHIER : ThemeToggle.css
+   RÔLE    : Bouton rond ☀️ / 🌙 du thème clair / sombre,
+             assorti au sélecteur de langue (même bordure).
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Bouton rond discret */
+.theme-toggle {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  width:           32px;
+  height:          32px;
+  flex-shrink:     0;
+  padding:         0;
+  background:      none;
+  border:          1px solid var(--bg-gray);
+  border-radius:   50%;
+  font-size:       1rem;
+  line-height:     1;
+  cursor:          pointer;
+  transition:      var(--transition);
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  background:   var(--tint);
+}
+
+/* Focus clavier visible (accessibilité) */
+.theme-toggle:focus-visible {
+  outline:        2px solid var(--primary-dark);
+  outline-offset: 2px;
+}

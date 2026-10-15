@@ -42,7 +42,7 @@
 }
 
 /* Au survol : fond gris très clair */
-.notif-cloche__btn:hover { background: rgba(0,0,0,0.06); }
+.notif-cloche__btn:hover { background: var(--tint); }
 
 /* L'emoji cloche : display:block pour éviter l'espace sous l'image */
 .notif-cloche__emoji { display: block; }
@@ -66,7 +66,7 @@
   justify-content: center;
   padding:         0 4px;
   line-height:     1;
-  border:          2px solid var(--white); /* Contour blanc pour détacher du fond */
+  border:          2px solid var(--surface); /* Contour blanc pour détacher du fond */
 }
 
 /* ── 3. PANNEAU DÉROULANT ───────────────────────────────── */
@@ -79,10 +79,10 @@
   top:           calc(100% + 8px);  /* 8px sous le bouton */
   right:         0;
   width:         340px;
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   box-shadow:    var(--shadow-lg);
-  border:        1px solid #eee;
+  border:        1px solid var(--border);
   z-index:       var(--z-modal);   /* Au-dessus de tout */
   overflow:      hidden;
   animation:     notifApparition 0.15s ease;
@@ -169,12 +169,12 @@
 
 /* Notification non lue : fond légèrement jaune + barre orange à gauche */
 .notif-item--nonlue {
-  background:  #fffbf0;
+  background:  var(--yellow-bg);
   border-left: 3px solid var(--primary);
 }
 
 /* Fond orange clair au survol d'une notif non lue */
-.notif-item--nonlue:hover { background: #fff3e0; }
+.notif-item--nonlue:hover { background: var(--warning-bg); }
 
 /* Icône de la notification : type (message, absence, document...) */
 .notif-item__icone { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
@@ -190,7 +190,7 @@
 
 /* Notifications cliquables avec lien */
 .notif-item--cliquable { cursor: pointer; }
-.notif-item--cliquable:hover { background: #fff3e0; }
+.notif-item--cliquable:hover { background: var(--warning-bg); }
 
 /* Titre de la notification (pour certains types) */
 .notif-item__titre { font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin: 0 0 2px; }

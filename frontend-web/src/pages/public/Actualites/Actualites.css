@@ -39,7 +39,7 @@
   display:         flex;
   flex-direction:  column;
   overflow:        hidden;
-  background:      var(--white);
+  background:      var(--surface);
   border-radius:   var(--radius-xl);
   box-shadow:      var(--shadow-sm);
   border:          1px solid var(--bg-gray);
@@ -140,7 +140,7 @@
    Le dégradé animé simule un "chargement en cours". */
 .skeleton-card {
   height:          280px;
-  background:      linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background:      linear-gradient(90deg, var(--bg-gray) 25%, var(--border) 50%, var(--bg-gray) 75%);
   background-size: 200% 100%;
   animation:       shimmer 1.5s infinite;
   border-radius:   var(--radius-xl);
@@ -189,7 +189,7 @@
 }
 
 /* Carte blanche contenant l'article : ombre légère */
-.detail-article { background: var(--white); border-radius: var(--radius-xl); padding: var(--space-2xl); box-shadow: var(--shadow-sm); }
+.detail-article { background: var(--surface); border-radius: var(--radius-xl); padding: var(--space-2xl); box-shadow: var(--shadow-sm); }
 
 /* Titre de l'article */
 .detail-titre  { font-family: var(--font-heading); font-size: 2rem; color: var(--text-dark); margin: var(--space-md) 0; line-height: 1.2; }

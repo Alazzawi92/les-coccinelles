@@ -26,10 +26,12 @@ const App = () => {
           style: {
             fontFamily: 'var(--font-body)',
             borderRadius: 'var(--radius-md)',
-            boxShadow: 'var(--shadow-md)'
+            boxShadow: 'var(--shadow-md)',
+            background: 'var(--surface)',   // Suit le thème clair / sombre
+            color: 'var(--text-dark)'
           },
-          success: { iconTheme: { primary: 'var(--success)', secondary: '#fff' } },
-          error:   { iconTheme: { primary: 'var(--error)',   secondary: '#fff' } }
+          success: { iconTheme: { primary: 'var(--success)', secondary: 'var(--white)' } },
+          error:   { iconTheme: { primary: 'var(--error)',   secondary: 'var(--white)' } }
         }}
       />
 

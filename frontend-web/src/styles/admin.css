@@ -53,11 +53,11 @@
 /* Conteneur blanc arrondi avec ombre légère.
    Utilisé pour encadrer chaque section de contenu d'une page admin. */
 .a-card {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);
-  border:        1px solid rgba(0,0,0,0.06); /* Bordure très subtile */
+  border:        1px solid var(--tint); /* Bordure très subtile */
 }
 
 /* Titre dans une carte : avec une ligne de séparation en bas.
@@ -79,7 +79,7 @@
 /* Carte avec une barre colorée à gauche : icône + chiffre + label.
    La barre de gauche (border-left) donne la "couleur" à la carte. */
 .stat-card {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);
@@ -149,17 +149,17 @@
 /* En-tête du tableau : fond gris clair, texte en majuscules et petit.
    padding horizontal resserré (space-md au lieu de space-lg) pour que
    les colonnes tiennent sans scroll horizontal sur un écran standard. */
-.a-table th { background: #F8F9FA; padding: var(--space-md); text-align: left; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.a-table th { background: var(--bg-gray); padding: var(--space-md); text-align: left; font-size: 0.8rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
 
 /* Cellules de données : espacement resserré, séparateur bas, texte standard.
    white-space:nowrap évite qu'un numéro de téléphone ou une date ne
    repasse à la ligne et n'allonge la hauteur de la ligne — le tableau
    défile encore horizontalement (min-width sur .a-table) en dernier
    recours sur les très petits écrans. */
-.a-table td { padding: var(--space-md); border-bottom: 1px solid #F0F0F0; font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; white-space: nowrap; }
+.a-table td { padding: var(--space-md); border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--text-dark); vertical-align: middle; white-space: nowrap; }
 
 /* Ligne survolée : fond gris très clair pour feedback */
-.a-table tbody tr:hover td { background: #FAFAFA; }
+.a-table tbody tr:hover td { background: var(--bg-gray); }
 
 /* Dernière ligne : pas de bordure en bas */
 .a-table tbody tr:last-child td { border-bottom: none; }
@@ -180,19 +180,19 @@
 }
 
 /* Statuts d'inscription et de dossier */
-.s-badge--en_attente   { background: #fff3e0; color: #e65100; }   /* Orange clair — en attente */
-.s-badge--en_cours     { background: #e3f2fd; color: #1565c0; }   /* Bleu clair — en cours */
-.s-badge--accepte      { background: #e8f5e9; color: #2e7d32; }   /* Vert clair — accepté */
-.s-badge--refuse       { background: #ffebee; color: #c62828; }   /* Rouge clair — refusé */
-.s-badge--incomplet    { background: #fce4ec; color: #880e4f; }   /* Rose — incomplet */
-.s-badge--liste_attente{ background: #f3e5f5; color: #6a1b9a; }   /* Violet — liste d'attente */
-.s-badge--validee      { background: #e8f5e9; color: #2e7d32; }   /* Vert — validée */
-.s-badge--refusee      { background: #ffebee; color: #c62828; }   /* Rouge — refusée */
+.s-badge--en_attente   { background: var(--warning-bg); color: var(--warning-text); }   /* Orange clair — en attente */
+.s-badge--en_cours     { background: var(--info-bg); color: var(--info-text); }   /* Bleu clair — en cours */
+.s-badge--accepte      { background: var(--success-bg); color: var(--success-text); }   /* Vert clair — accepté */
+.s-badge--refuse       { background: var(--error-bg); color: var(--error-text); }   /* Rouge clair — refusé */
+.s-badge--incomplet    { background: var(--rose-bg); color: var(--rose-text); }   /* Rose — incomplet */
+.s-badge--liste_attente{ background: var(--violet-bg); color: var(--violet-text); }   /* Violet — liste d'attente */
+.s-badge--validee      { background: var(--success-bg); color: var(--success-text); }   /* Vert — validée */
+.s-badge--refusee      { background: var(--error-bg); color: var(--error-text); }   /* Rouge — refusée */
 
 /* Rôles utilisateur */
-.s-badge--parent       { background: #e3f2fd; color: #1565c0; }   /* Bleu — rôle parent */
-.s-badge--admin        { background: #fff3e0; color: #e65100; }   /* Orange — rôle admin */
-.s-badge--super_admin  { background: #f3e5f5; color: #6a1b9a; }   /* Violet — super admin */
+.s-badge--parent       { background: var(--info-bg); color: var(--info-text); }   /* Bleu — rôle parent */
+.s-badge--admin        { background: var(--warning-bg); color: var(--warning-text); }   /* Orange — rôle admin */
+.s-badge--super_admin  { background: var(--violet-bg); color: var(--violet-text); }   /* Violet — super admin */
 
 /* ── 7. BARRE DE RECHERCHE ET FILTRES ───────────────────── */
 
@@ -212,8 +212,8 @@
   display:     flex;
   align-items: center;
   gap:         var(--space-sm);
-  background:  var(--white);
-  border:      2px solid #E0E0E0;
+  background:  var(--surface);
+  border:      2px solid var(--border);
   border-radius: var(--radius-pill);
   padding:     var(--space-sm) var(--space-md);
   flex:        1;
@@ -233,12 +233,12 @@
 /* Select de filtre (par statut, par rôle...) : même style que la recherche */
 .a-select {
   padding:       var(--space-sm) var(--space-md);
-  border:        2px solid #E0E0E0;
+  border:        2px solid var(--border);
   border-radius: var(--radius-pill);
   font-family:   var(--font-body);
   font-size:     0.9rem;
   color:         var(--text-dark);
-  background:    var(--white);
+  background:    var(--surface);
   outline:       none;
   cursor:        pointer;
   transition:    var(--transition);
@@ -268,18 +268,18 @@
    Au focus : bordure orange + halo orange pour l'accessibilité. */
 .a-input {
   padding:       var(--space-sm) var(--space-md);
-  border:        2px solid #E0E0E0;
+  border:        2px solid var(--border);
   border-radius: var(--radius-md);
   font-family:   var(--font-body);
   font-size:     0.95rem;
   color:         var(--text-dark);
   transition:    var(--transition);
   outline:       none;
-  background:    var(--white);
+  background:    var(--surface);
 }
 
 /* Focus : bordure orange + halo pour l'accessibilité clavier */
-.a-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+.a-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
 
 /* Textarea redimensionnable verticalement uniquement */
 .a-textarea    { resize: vertical; min-height: 100px; }
@@ -301,7 +301,7 @@
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: var(--space-xl); }
 
 /* Boîte blanche de la modale : max-height + overflow-y pour les formulaires longs */
-.modal { background: var(--white); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+.modal { background: var(--surface); border-radius: var(--radius-xl); padding: var(--space-2xl); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
 
 /* Variante grande modale (ex: aperçu document, formulaire long) */
 .modal--lg { max-width: 800px; }

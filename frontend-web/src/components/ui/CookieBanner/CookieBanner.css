@@ -10,7 +10,7 @@
   right: 0;
   bottom: 0;
   z-index: var(--z-toast);
-  background: var(--white);
+  background: var(--surface);
   border-top: 2px solid var(--primary-light);
   box-shadow: var(--shadow-lg);
   padding: var(--space-lg);

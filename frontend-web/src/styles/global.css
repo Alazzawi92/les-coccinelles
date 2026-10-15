@@ -69,13 +69,13 @@
 /* Bouton ghost : transparent avec bordure grise — action secondaire */
 .btn--ghost {
   background:   transparent;
-  border-color: #E0E0E0;
+  border-color: var(--border);
   color:        var(--text-dark);
 }
 /* Au survol : fond gris très clair */
 .btn--ghost:hover:not(:disabled) {
   background:   var(--bg-gray);
-  border-color: #BDBDBD;
+  border-color: var(--border-strong);
 }
 
 /* Bouton outline : transparent avec bordure orange — action tertiaire */
@@ -196,3 +196,20 @@
 
 /* Variante accueil : texte centré et plus grand */
 .accueil-cms            { text-align: center; font-size: 1.05rem; max-width: 700px; margin: 0 auto; }
+
+/* ── 7. LOGO EN MODE SOMBRE ─────────────────────────────── */
+
+/* Le texte du logo est noir : illisible sur fond sombre.
+   En thème sombre, on le pose sur une plaque blanche arrondie
+   (même principe que la barre latérale admin, déjà sombre). */
+:root[data-theme="dark"] img[src$="/images/logo.png"] {
+  background:    var(--white);
+  border-radius: var(--radius-md);
+  padding:       2px 6px;
+}
+
+/* Grand logo de l'accueil : plaque ronde, qui épouse sa forme */
+:root[data-theme="dark"] img.hero__logo-grand {
+  border-radius: 50%;
+  padding:       var(--space-sm);
+}

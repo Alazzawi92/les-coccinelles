@@ -39,7 +39,7 @@
   font-size:     0.9rem;
   font-weight:   600;
   transition:    var(--transition);
-  background:    var(--white);
+  background:    var(--surface);
 }
 
 /* Input radio caché : la carte est le contrôle visuel */
@@ -111,7 +111,7 @@
   font-size:       0.9rem;
   transition:      var(--transition);
   cursor:          default;
-  background:      var(--white);
+  background:      var(--surface);
   border:          1px solid transparent;
   position:        relative;
 }
@@ -127,7 +127,7 @@
 
 /* Jour avec absence : fond coloré selon le statut de l'absence.
    La couleur est définie en style inline dans le JSX. */
-.calendrier-case--absence     { font-weight: 700; border: 1px solid rgba(0,0,0,0.08); }
+.calendrier-case--absence     { font-weight: 700; border: 1px solid var(--tint); }
 
 /* Numéro du jour : taille standard */
 .calendrier-numero        { font-size: 0.9rem; line-height: 1; }
@@ -160,9 +160,9 @@
 }
 
 /* Couleurs des items de légende */
-.legende-item--attente { background: #fff3e0; color: #e65100; }   /* Orange = en attente */
-.legende-item--validee { background: #e8f5e9; color: #2e7d32; }   /* Vert = validée */
-.legende-item--refusee { background: #ffebee; color: #c62828; }   /* Rouge = refusée */
+.legende-item--attente { background: var(--warning-bg); color: var(--warning-text); }   /* Orange = en attente */
+.legende-item--validee { background: var(--success-bg); color: var(--success-text); }   /* Vert = validée */
+.legende-item--refusee { background: var(--error-bg); color: var(--error-text); }   /* Rouge = refusée */
 
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
 /* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /

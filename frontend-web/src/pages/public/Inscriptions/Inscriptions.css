@@ -32,7 +32,7 @@
 
 /* Carte : barre orange en haut, centrée, avec survol animé */
 .etape-carte {
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);
@@ -88,7 +88,7 @@
 .insc-pirouette { margin-top: var(--space-xl); }
 .btn-pirouette {
   display:         inline-block;
-  background:      #26a69a;
+  background:      var(--teal);
   color:           var(--white);
   font-weight:     700;
   font-size:       1rem;
@@ -97,7 +97,7 @@
   text-decoration: none;
   transition:      var(--transition);
 }
-.btn-pirouette:hover { background: #00897b; transform: translateY(-2px); }
+.btn-pirouette:hover { background: var(--teal-dark); transform: translateY(-2px); }
 
 /* ── BLOC INCLUSION HANDICAP ────────────────────────────── */
 
@@ -106,11 +106,11 @@
   display:       flex;
   align-items:   flex-start;
   gap:           var(--space-xl);
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-xl);
   padding:       var(--space-xl);
   box-shadow:    var(--shadow-sm);
-  border-left:   5px solid #26a69a;
+  border-left:   5px solid var(--teal);
   max-width:     800px;
 }
 .insc-handicap__icone {
@@ -143,7 +143,7 @@
   border-radius: var(--radius-xl);
   overflow:      hidden;
   box-shadow:    var(--shadow-md);
-  border:        1px solid rgba(0,0,0,0.08);
+  border:        1px solid var(--tint);
 }
 .insc-fiche__img { width: 100%; display: block; }
 
@@ -180,7 +180,7 @@
   align-items:   center;
   gap:           var(--space-md);
   padding:       var(--space-md) var(--space-lg);
-  background:    var(--white);
+  background:    var(--surface);
   border-radius: var(--radius-md);
   box-shadow:    var(--shadow-sm);
   font-size:     0.95rem;

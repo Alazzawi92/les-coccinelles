@@ -4,6 +4,10 @@
     "fr": "Français",
     "en": "English"
   },
+  "theme": {
+    "passerSombre": "Passer en mode sombre",
+    "passerClair": "Passer en mode clair"
+  },
   "chargement": "Chargement...",
   "menu": "Menu",
   "fermer": "Fermer",

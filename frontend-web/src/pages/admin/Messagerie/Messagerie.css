@@ -40,7 +40,7 @@
 /* 300px pour la liste des conversations, le reste pour le détail.
    overflow:hidden clip les coins arrondis sur les enfants.
    height:620px fixe une hauteur constante pour éviter le scroll global. */
-.messagerie-admin-layout { display: grid; grid-template-columns: 300px 1fr; background: var(--white); border: 1px solid var(--bg-gray); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 620px; }
+.messagerie-admin-layout { display: grid; grid-template-columns: 300px 1fr; background: var(--surface); border: 1px solid var(--bg-gray); border-radius: var(--radius-xl); box-shadow: var(--shadow-md); overflow: hidden; height: 620px; }
 
 /* ── 4. LISTE DES CONVERSATIONS ─────────────────────────── */
 
@@ -68,7 +68,7 @@
 .conv-admin-item--nonlu .conv-admin-sujet { font-weight: 700; color: var(--text-dark); }
 
 /* Cercle initial de l'expéditeur : dégradé sombre (côté admin) + ombre douce */
-.conv-admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.conv-admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--ink-soft), var(--ink)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
 
 /* Textes de la conversation */
 .conv-admin-nom    { font-weight: 700; font-size: 0.85rem; color: var(--text-dark); }
@@ -76,7 +76,7 @@
 .conv-admin-date   { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
 
 /* Point rouge en haut à droite de la conversation non lue, avec halo doux */
-.conv-point        { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--error); border-radius: 50%; box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
+.conv-point        { position: absolute; top: var(--space-md); right: var(--space-md); width: 8px; height: 8px; background: var(--error); border-radius: 50%; box-shadow: 0 0 0 3px var(--focus-ring-error); }
 
 /* ── 6. DÉTAIL DE CONVERSATION ──────────────────────────── */
 
@@ -84,8 +84,8 @@
 .conv-detail-admin   { display: flex; flex-direction: column; overflow: hidden; }
 
 /* En-tête du détail : avatar + sujet de la conversation + nom de l'interlocuteur */
-.conv-detail-entete    { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg); border-bottom: 1px solid var(--bg-gray); background: var(--white); }
-.conv-detail-avatar     { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+.conv-detail-entete    { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-lg); border-bottom: 1px solid var(--bg-gray); background: var(--surface); }
+.conv-detail-avatar     { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--ink-soft), var(--ink)); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; box-shadow: var(--shadow-sm); }
 .conv-detail-textes     { min-width: 0; }
 .conv-detail-entete h2  { font-family: var(--font-heading); font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .conv-detail-sous-titre { color: var(--text-gray); font-size: 0.85rem; margin-top: 2px; }
@@ -100,10 +100,10 @@
 .msg-bulle { max-width: 75%; padding: var(--space-md) var(--space-lg); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); }
 
 /* Bulle de l'admin (moi) : dégradé sombre, texte blanc, alignée à droite */
-.msg-bulle--moi   { background: linear-gradient(135deg, #4a4f52, var(--text-dark)); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
+.msg-bulle--moi   { background: linear-gradient(135deg, var(--ink-soft), var(--ink)); color: var(--white); align-self: flex-end; border-bottom-right-radius: 4px; }
 
 /* Bulle de l'autre (parent) : blanc bordé, texte sombre, alignée à gauche */
-.msg-bulle--autre { background: var(--white); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
+.msg-bulle--autre { background: var(--surface); color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--bg-gray); }
 
 /* Contenu texte de la bulle */
 .msg-bulle p      { font-size: 0.9rem; line-height: 1.5; }
@@ -141,7 +141,7 @@
 .pj-bulle--doc span { white-space: normal; word-break: break-word; }
 
 /* Sur fond blanc (bulle de l'autre) : fond gris léger */
-.msg-bulle--autre .pj-bulle--doc { background: rgba(0,0,0,0.07); color: var(--text-dark); }
+.msg-bulle--autre .pj-bulle--doc { background: var(--tint); color: var(--text-dark); }
 
 /* Au survol : légère transparence */
 .pj-bulle--doc:hover { opacity: 0.85; }
@@ -149,7 +149,7 @@
 /* ── 8. ZONE DE RÉPONSE ─────────────────────────────────── */
 
 /* Barre de saisie en bas : textarea + bouton Envoyer côte à côte */
-.conv-reponse { padding: var(--space-md); border-top: 1px solid var(--bg-gray); background: var(--white); display: flex; gap: var(--space-md); align-items: flex-end; }
+.conv-reponse { padding: var(--space-md); border-top: 1px solid var(--bg-gray); background: var(--surface); display: flex; gap: var(--space-md); align-items: flex-end; }
 
 /* Le textarea prend tout l'espace disponible, surlignage orange au focus */
 .conv-reponse .a-input { flex: 1; resize: none; transition: var(--transition); }
@@ -171,7 +171,7 @@
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; padding: var(--space-xl); }
 
 /* Boîte modale blanche centrée : flex vertical + hauteur max 90% */
-.modal-boite { background: var(--white); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); width: 100%; max-width: 540px; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden; }
+.modal-boite { background: var(--surface); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); width: 100%; max-width: 540px; display: flex; flex-direction: column; max-height: 90vh; overflow: hidden; }
 
 /* Variante grande pour les modales avec beaucoup de contenu */
 .modal-boite--lg { max-width: 600px; }
@@ -208,16 +208,16 @@
   align-items:  center;
   min-height:   44px;
   padding:      6px var(--space-md);
-  border:       2px solid #e0e0e0;
+  border:       2px solid var(--border);
   border-radius:var(--radius-md);
-  background:   var(--white);
+  background:   var(--surface);
   cursor:       text;
   transition:   var(--transition);
 }
 
 /* Focus : bordure orange + halo pour indiquer que la zone est active */
 .dest-zone--focus,
-.dest-zone:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(255,152,0,0.15); }
+.dest-zone:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px var(--focus-ring); }
 
 /* Chip d'un destinataire sélectionné : mini avatar + nom + bouton ✕ */
 .dest-chip {
@@ -268,8 +268,8 @@
 /* Liste déroulante de parents correspondant à la recherche.
    overflow-y:auto pour scroller si beaucoup de résultats. */
 .parents-liste-dropdown {
-  border: 1px solid #e0e0e0; border-radius: var(--radius-md); overflow: hidden;
-  box-shadow: var(--shadow-md); background: var(--white); margin-top: 2px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: var(--shadow-md); background: var(--surface); margin-top: 2px;
   max-height: 260px; overflow-y: auto;
 }
 
@@ -287,12 +287,12 @@
 .parent-option:hover { background: var(--primary-light); }
 
 /* Option spéciale "Envoyer à tous" : fond gris légèrement différent */
-.parent-option--tous { background: #f8f8f8; }
+.parent-option--tous { background: var(--bg-gray); }
 .parent-option--tous:hover { background: var(--primary-light); }
 
 /* Cercle avec initiale du parent */
 .parent-option__avatar {
-  width: 32px; height: 32px; border-radius: 50%; background: var(--text-dark); color: var(--white);
+  width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--white);
   font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 

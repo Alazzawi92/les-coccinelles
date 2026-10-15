@@ -33,7 +33,7 @@
 
 /* Carte blanche avec coins arrondis et ombre légère.
    overflow:hidden empêche la couverture de dépasser les bords. */
-.album-admin-carte { background: var(--white); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); }
+.album-admin-carte { background: var(--surface); border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-sm); transition: var(--transition); }
 
 /* Au survol : ombre plus forte et légère élévation */
 .album-admin-carte:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
@@ -69,7 +69,7 @@
 
 /* Avertissement RGPD : fond bleu clair + barre bleue à gauche.
    Rappelle à l'admin d'avoir le consentement des parents avant d'uploader. */
-.upload-info-rgpd { margin-top: var(--space-md); font-size: 0.82rem; color: var(--text-gray); background: #e3f2fd; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); border-left: 3px solid var(--info); }
+.upload-info-rgpd { margin-top: var(--space-md); font-size: 0.82rem; color: var(--text-gray); background: var(--info-bg); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); border-left: 3px solid var(--info); }
 
 /* ── 5. TAGS ENFANTS (sélection RGPD) ──────────────────────── */
 
@@ -89,7 +89,7 @@
   font-size:     0.85rem;
   font-weight:   600;
   transition:    var(--transition);
-  background:    var(--white);
+  background:    var(--surface);
 }
 
 /* La vraie checkbox est cachée (le style est géré par le label) */

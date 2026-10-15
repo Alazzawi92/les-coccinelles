@@ -44,10 +44,10 @@
 }
 
 /* Alerte absence : fond orange clair + barre orange */
-.alerte-item--absence { background: #fff3e0; border-left-color: var(--warning); color: #e65100; }
+.alerte-item--absence { background: var(--warning-bg); border-left-color: var(--warning); color: var(--warning-text); }
 
 /* Alerte message non lu : fond bleu clair + barre bleue */
-.alerte-item--message { background: #e3f2fd; border-left-color: var(--info);    color: #1565c0; }
+.alerte-item--message { background: var(--info-bg); border-left-color: var(--info);    color: var(--info-text); }
 
 /* Au survol : légère opacité pour indiquer l'interactivité */
 .alerte-item:hover    { opacity: 0.85; }
@@ -97,11 +97,11 @@
 
 /* Couleurs de fond des raccourcis selon la section */
 .raccourci-admin--orange { background: var(--primary-light); }  /* Inscriptions */
-.raccourci-admin--vert   { background: #e8f5e9; }               /* Enfants / présences */
-.raccourci-admin--bleu   { background: #e3f2fd; }               /* Messages */
-.raccourci-admin--violet { background: #f3e5f5; }               /* Documents */
-.raccourci-admin--rose   { background: #fce4ec; }               /* Galerie */
-.raccourci-admin--jaune  { background: #fffde7; }               /* Menus */
+.raccourci-admin--vert   { background: var(--success-bg); }               /* Enfants / présences */
+.raccourci-admin--bleu   { background: var(--info-bg); }               /* Messages */
+.raccourci-admin--violet { background: var(--violet-bg); }               /* Documents */
+.raccourci-admin--rose   { background: var(--rose-bg); }               /* Galerie */
+.raccourci-admin--jaune  { background: var(--yellow-bg); }               /* Menus */
 
 /* Icône du raccourci : grande, ne rétrécit pas */
 .raccourci-admin__icone { font-size: 1.8rem; flex-shrink: 0; }

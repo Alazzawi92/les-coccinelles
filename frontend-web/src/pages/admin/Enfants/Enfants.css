@@ -65,8 +65,8 @@
 .jours-choix-btn {
   padding:       var(--space-sm) var(--space-lg);
   border-radius: var(--radius-pill);
-  border:        2px solid #E0E0E0;
-  background:    var(--white);
+  border:        2px solid var(--border);
+  background:    var(--surface);
   color:         var(--text-dark);
   font-size:     0.85rem;
   font-weight:   600;

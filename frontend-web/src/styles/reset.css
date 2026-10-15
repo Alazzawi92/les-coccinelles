@@ -61,6 +61,8 @@ body {
                                        pour une meilleure lisibilité */
   -webkit-font-smoothing:  antialiased;  /* Rendu plus net des polices sur Mac/Chrome */
   -moz-osx-font-smoothing: grayscale;    /* Rendu plus net des polices sur Mac/Firefox */
+  /* Passage clair/sombre en douceur (fond et texte seulement) */
+  transition:  background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ── 4. LIENS <a> ───────────────────────────────────────────

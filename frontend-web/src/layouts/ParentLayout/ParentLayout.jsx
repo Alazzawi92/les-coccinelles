@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
 import './ParentLayout.css';
 
 // ── Liens de la sidebar parent ────────────────────────────────
@@ -163,6 +164,7 @@ const ParentLayout = () => {
         <header className="layout-topbar">
           <span className="layout-topbar__titre">{t('common.parentLayout.espaceParent')}</span>
           <div className="layout-topbar__actions">
+            <ThemeToggle />
             <LanguageSwitcher />
             <NotifCloche />
           </div>

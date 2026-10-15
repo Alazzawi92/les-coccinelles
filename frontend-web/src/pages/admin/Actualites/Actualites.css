@@ -23,10 +23,10 @@
 }
 .quill-wrapper .ql-toolbar {
   border-radius: var(--radius-md) var(--radius-md) 0 0;
-  background: var(--bg-light, #f8f8f8);
+  background: var(--bg-light);
 }
 .quill-wrapper .ql-editor { min-height: 180px; }
-.quill-wrapper .ql-editor.ql-blank::before { color: var(--text-gray, #999); font-style: normal; }
+.quill-wrapper .ql-editor.ql-blank::before { color: var(--text-gray); font-style: normal; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────
    6 paliers (desktop-first). Le tableau .a-table et la

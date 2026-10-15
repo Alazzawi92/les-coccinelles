@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { forgotPassword } from '../../../services/auth.service';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
+import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import '../../../styles/auth.css';
 import './ForgotPassword.css';
 
@@ -43,7 +44,10 @@ const ForgotPassword = () => {
       <div className="auth-card">
 
         {/* Sélecteur de langue (pas de layout sur les pages auth) */}
-        <LanguageSwitcher className="auth-langue" />
+        <div className="auth-langue">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
 
         {/* Logo */}
         <div className="auth-logo">
