@@ -57,22 +57,38 @@
 /* ── 4. CARTE D'UN JOUR ─────────────────────────────────── */
 
 /* Carte de menu d'un jour : arrondie, ombre légère.
-   overflow:hidden pour rogner l'en-tête coloré dans les coins. */
+   overflow:hidden pour rogner l'en-tête coloré dans les coins.
+   --jour / --jour-clair : couleur propre à chaque jour (voir plus bas),
+   réutilisée par l'en-tête, la bordure et les sections repas. */
 .menu-carte {
+  --jour:        var(--primary);
+  --jour-clair:  #FFB38A;
   background:    var(--surface);
   border-radius: var(--radius-xl);
   overflow:      hidden;
   box-shadow:    var(--shadow-sm);
+  border:        2px solid color-mix(in srgb, var(--jour) 25%, transparent);
   transition:    var(--transition);
 }
 
-/* Au survol : ombre + légère élévation */
-.menu-carte:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+/* Une couleur par jour, comme un arc-en-ciel sur la semaine */
+.menu-carte:nth-child(5n+1) { --jour: #FF7A45; --jour-clair: #FFB38A; }  /* Lundi : orange   */
+.menu-carte:nth-child(5n+2) { --jour: #EC407A; --jour-clair: #F48FB1; }  /* Mardi : rose     */
+.menu-carte:nth-child(5n+3) { --jour: #9C4DCC; --jour-clair: #CE93D8; }  /* Mercredi : violet */
+.menu-carte:nth-child(5n+4) { --jour: #1E88E5; --jour-clair: #4FC3F7; }  /* Jeudi : bleu     */
+.menu-carte:nth-child(5n+5) { --jour: #43A047; --jour-clair: #81C784; }  /* Vendredi : vert  */
 
-/* En-tête de la carte : dégradé vert pour évoquer la nature et la santé */
+/* Au survol : ombre teintée de la couleur du jour + légère élévation */
+.menu-carte:hover {
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--jour) 25%, transparent);
+  transform:  translateY(-2px);
+}
+
+/* En-tête de la carte : couleur unie du jour (pas de dégradé) */
 .menu-carte__entete {
-  background:  linear-gradient(135deg, var(--secondary) 0%, var(--success) 100%);
+  background:  var(--jour);
   color:       var(--white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);  /* Lisibilité du blanc sur les teintes claires */
   padding:     var(--space-md);
   text-align:  center;
   display:     flex;
@@ -92,17 +108,25 @@
 /* Zone des repas dans la carte : liste des sections midi et goûter */
 .menu-carte__repas { padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md); }
 
-/* Section d'un repas (midi ou goûter) : fond coloré */
-.repas-section { padding: var(--space-sm); border-radius: var(--radius-sm); }
+/* Section d'un repas (midi ou goûter) : fond teinté de la couleur du jour.
+   color-mix sur var(--surface) → reste doux en mode clair comme sombre. */
+.repas-section {
+  padding:       var(--space-sm);
+  border-radius: var(--radius-sm);
+  border-left:   4px solid var(--jour);
+}
 
-/* Fond orange très clair pour le déjeuner */
-.repas-section--midi   { background: var(--primary-light); }
+/* Déjeuner : teinte un peu plus marquée */
+.repas-section--midi   { background: color-mix(in srgb, var(--jour) 14%, var(--surface)); }
 
-/* Fond violet très clair pour le goûter */
-.repas-section--gouter { background: var(--violet-bg); }
+/* Goûter : teinte plus légère, bordure plus claire */
+.repas-section--gouter {
+  background:        color-mix(in srgb, var(--jour) 7%, var(--surface));
+  border-left-color: var(--jour-clair);
+}
 
-/* Label du repas ("Déjeuner", "Goûter") : très petit, gris, gras */
-.repas-label   { font-size: 1rem; font-weight: 700; color: var(--text-gray); margin-bottom: 6px; }
+/* Label du repas ("Déjeuner", "Goûter") : gras, couleur du jour */
+.repas-label   { font-size: 1rem; font-weight: 700; color: color-mix(in srgb, var(--jour) 75%, var(--text-dark)); margin-bottom: 6px; }
 
 /* Contenu du repas : texte vide ou HTML Quill */
 .repas-contenu { font-size: 0.85rem; color: var(--text-dark); line-height: 1.4; }

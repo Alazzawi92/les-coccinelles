@@ -110,40 +110,186 @@
 
 /* ── 3d. Bouton hamburger (mobile) ──────────────────────── */
 
-/* Bouton ☰ masqué sur desktop, affiché sur mobile (via responsive).
-   background:none pour enlever le style par défaut du bouton. */
+/* Bouton rond masqué sur desktop, affiché ≤1023px (via responsive).
+   Contient 3 barres dessinées en CSS (pas d'emoji ☰). */
 .public-navbar__hamburger {
-  display:    none;
-  background: none;
-  border:     none;
-  font-size:  1.5rem;
-  color:      var(--text-dark);
-  cursor:     pointer;
+  display:         none;
+  position:        relative;
+  width:           44px;
+  height:          44px;
+  flex-shrink:     0;
+  border:          none;
+  border-radius:   50%;
+  background:      var(--primary-light);
+  cursor:          pointer;
+  transition:      var(--transition);
 }
+
+.public-navbar__hamburger:hover { transform: scale(1.06); }
+.public-navbar__hamburger:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Menu ouvert : le rond devient orange plein */
+.public-navbar__hamburger--ouvert { background: var(--primary); }
+
+/* Les 3 barres : centrées, arrondies, de longueurs différentes
+   (celle du milieu plus courte) pour un rendu plus doux */
+.public-navbar__barre {
+  position:      absolute;
+  left:          50%;
+  top:           50%;
+  width:         20px;
+  height:        2.5px;
+  border-radius: var(--radius-pill);
+  background:    var(--primary);
+  transition:    transform 0.35s cubic-bezier(.68,-0.4,.32,1.4), opacity 0.2s, width 0.3s, background 0.3s;
+}
+
+.public-navbar__barre:nth-child(1) { transform: translate(-50%, -7px); }
+.public-navbar__barre:nth-child(2) { transform: translate(-50%, -50%); width: 14px; }
+.public-navbar__barre:nth-child(3) { transform: translate(-50%, 5px); }
+
+/* Ouvert : barres 1 et 3 se croisent en X, la barre 2 disparaît */
+.public-navbar__hamburger--ouvert .public-navbar__barre { background: var(--white); }
+.public-navbar__hamburger--ouvert .public-navbar__barre:nth-child(1) { transform: translate(-50%, -50%) rotate(45deg); }
+.public-navbar__hamburger--ouvert .public-navbar__barre:nth-child(2) { opacity: 0; width: 0; }
+.public-navbar__hamburger--ouvert .public-navbar__barre:nth-child(3) { transform: translate(-50%, -50%) rotate(-45deg); }
 
 /* ── 3e. Menu mobile déroulant ──────────────────────────── */
 
-/* Menu vertical qui apparaît sous la navbar sur mobile.
-   Affiche les liens en colonne avec séparateurs. */
+/* Carte arrondie qui descend sous la navbar (ancrée sur la navbar
+   sticky). Fermée : invisible, légèrement remontée et réduite. */
 .public-navbar__mobile {
+  display:        none;
+  position:       absolute;
+  top:            calc(100% + var(--space-sm));
+  left:           var(--space-md);
+  right:          var(--space-md);
+  flex-direction: column;
+  gap:            var(--space-md);
+  padding:        var(--space-md);
+  background:     var(--surface);
+  border-radius:  var(--radius-xl);
+  box-shadow:     var(--shadow-lg);
+  border-top:     4px solid var(--primary);
+  max-height:     calc(100vh - 110px);
+  overflow-y:     auto;
+  opacity:        0;
+  visibility:     hidden;
+  transform:      translateY(-12px) scale(0.97);
+  transform-origin: top center;
+  transition:     opacity 0.25s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.public-navbar__mobile--ouvert {
+  opacity:    1;
+  visibility: visible;
+  transform:  translateY(0) scale(1);
+}
+
+/* Liste des liens */
+.public-navbar__mobile-liste {
+  list-style:     none;
   display:        flex;
   flex-direction: column;
-  background:     var(--surface);
-  box-shadow:     var(--shadow-md);
-  padding:        var(--space-md);
-  border-top:     1px solid var(--bg-gray);
+  gap:            var(--space-xs);
 }
 
-/* Chaque lien du menu mobile : séparé par une ligne grise */
-.public-navbar__mobile a {
-  padding:       var(--space-md);
-  font-weight:   600;
+/* Apparition en cascade : chaque lien glisse depuis la gauche,
+   décalé de 50ms selon sa position (--i défini dans le JSX) */
+.public-navbar__mobile-liste li,
+.public-navbar__mobile-cta {
+  opacity:    0;
+  transform:  translateX(-12px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.public-navbar__mobile--ouvert .public-navbar__mobile-liste li,
+.public-navbar__mobile--ouvert .public-navbar__mobile-cta {
+  opacity:          1;
+  transform:        translateX(0);
+  transition-delay: calc(var(--i) * 50ms + 80ms);
+}
+
+/* Un lien : pastille icône + texte + flèche, en ligne */
+.public-navbar__mobile-lien {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-weight:   700;
   color:         var(--text-dark);
-  border-bottom: 1px solid var(--bg-gray);
+  transition:    var(--transition);
 }
 
-/* Au survol : orange */
-.public-navbar__mobile a:hover { color: var(--primary); }
+.public-navbar__mobile-lien:hover { background: var(--bg-light); }
+
+/* Page active : fond orange clair + texte orange */
+.public-navbar__mobile-lien.active {
+  background: var(--primary-light);
+  color:      var(--primary-dark);
+}
+
+/* Pastille ronde colorée contenant l'emoji */
+.public-navbar__mobile-icone {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           40px;
+  height:          40px;
+  flex-shrink:     0;
+  border-radius:   50%;
+  font-size:       1.2rem;
+  transition:      var(--transition);
+}
+
+.public-navbar__mobile-icone--orange { background: var(--primary-light); }
+.public-navbar__mobile-icone--rose   { background: var(--rose-bg); }
+.public-navbar__mobile-icone--violet { background: var(--violet-bg); }
+.public-navbar__mobile-icone--vert   { background: var(--success-bg); }
+.public-navbar__mobile-icone--jaune  { background: var(--yellow-bg); }
+
+/* Petit rebond de la pastille au survol / sur la page active */
+.public-navbar__mobile-lien:hover .public-navbar__mobile-icone,
+.public-navbar__mobile-lien.active .public-navbar__mobile-icone {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.public-navbar__mobile-lien.active .public-navbar__mobile-icone { background: var(--surface); }
+
+.public-navbar__mobile-texte { flex: 1; }
+
+/* Flèche à droite : discrète, avance au survol */
+.public-navbar__mobile-fleche {
+  font-size:  1.4rem;
+  color:      var(--text-light);
+  transition: var(--transition);
+}
+
+.public-navbar__mobile-lien:hover .public-navbar__mobile-fleche,
+.public-navbar__mobile-lien.active .public-navbar__mobile-fleche {
+  color:     var(--primary);
+  transform: translateX(3px);
+}
+
+/* Bouton connexion / espace parent : pleine largeur en bas */
+.public-navbar__mobile-cta { width: 100%; justify-content: center; }
+
+/* Voile semi-transparent et flouté derrière le menu ouvert.
+   Juste sous la navbar (z-index) pour la garder nette. */
+.public-navbar__voile {
+  display:         none;
+  position:        fixed;
+  inset:           0;
+  z-index:         calc(var(--z-navbar) - 1);
+  background:      rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(3px);
+  opacity:         0;
+  visibility:      hidden;
+  transition:      opacity 0.3s ease, visibility 0.3s;
+}
+
+.public-navbar__voile--visible { opacity: 1; visibility: visible; }
 
 /* ── 4. CONTENU PRINCIPAL ───────────────────────────────── */
 
@@ -210,6 +356,30 @@
   text-align:  center;
   font-size:   0.85rem;
   color:       rgba(255,255,255,0.5);
+  display:         flex;
+  flex-wrap:       wrap;
+  align-items:     center;
+  justify-content: center;
+  gap:             var(--space-md);
+}
+
+.public-footer__bas p { margin-bottom: 0; }
+
+/* Lien "Mentions légales" : pastille contour orange, bien visible */
+.public-footer .public-footer__lien-legal {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           var(--space-xs);
+  padding:       var(--space-xs) var(--space-md);
+  border:        1px solid var(--primary);
+  border-radius: var(--radius-pill);
+  color:         var(--white);
+  font-weight:   600;
+}
+
+.public-footer .public-footer__lien-legal:hover {
+  background: var(--primary);
+  color:      var(--white);
 }
 
 /* ── 6. RESPONSIVE ──────────────────────────────────────── */
@@ -245,6 +415,9 @@
 @media (max-width: 1023px) {
   .public-navbar__links     { display: none; }       /* Cache les liens */
   .public-navbar__hamburger { display: block; }      /* Affiche le hamburger */
+  .public-navbar__mobile    { display: flex; }       /* Menu mobile disponible */
+  .public-navbar__voile     { display: block; }
+  .public-navbar__mobile    { max-width: 420px; margin-left: auto; } /* Tablette : carte calée à droite */
   .public-navbar            { padding: var(--space-md) var(--space-lg); }
 
   .public-footer__grid {
@@ -271,7 +444,8 @@
 @media (max-width: 479px) {
   .public-navbar             { padding: var(--space-sm) var(--space-md); gap: var(--space-sm); }
   .public-navbar__logo-img   { height: 36px; }
-  .public-navbar__hamburger  { font-size: 1.3rem; }
+  .public-navbar__hamburger  { width: 40px; height: 40px; }
+  .public-navbar__mobile     { left: var(--space-sm); right: var(--space-sm); }
 
   .public-footer        { padding: var(--space-xl) var(--space-md) var(--space-md); }
   .public-footer__titre { font-size: 1.2rem; }
