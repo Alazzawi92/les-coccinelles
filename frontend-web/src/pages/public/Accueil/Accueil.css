@@ -210,6 +210,7 @@
   filter:      drop-shadow(0 20px 40px rgba(255,152,0,0.3));
   animation:   pulse-coccinelle 3s ease-in-out infinite;
   display:     block;
+  margin:      0 auto;   /* Centré dans .hero__visuel (plus large à cause de .hero__deco) */
 }
 
 /* Animation de pulsation : légère respiration du logo */
@@ -573,7 +574,12 @@
   .hero__actions  { justify-content: center; }
   .hero__logo-grand { width: clamp(7rem, 20vw, 10rem); }
   .hero__fond { transform: scale(0.75); }
-  .hero__arc-en-ciel--1 { width: clamp(340px, 55vw, 600px); }
+  /* Layout vertical : le grand arc est recentré au-dessus du logo,
+     les 2 petits arcs encadrent le logo de façon symétrique
+     (left:50% / 0% / 100% + translateX(-50%) des keyframes) */
+  .hero__arc-en-ciel--1 { width: clamp(340px, 55vw, 600px); top: -25%; left: 50%;  --angle: 0deg; }
+  .hero__arc-en-ciel--2 { width: 130px; top: 55%; left: -15%; --angle: -30deg; }
+  .hero__arc-en-ciel--3 { width: 130px; top: 55%; left: 115%; --angle: 30deg; }
   .hero__deco { font-size: 2rem; }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
@@ -608,6 +614,8 @@
   .hero__logo-grand { width: 5.5rem; }
   .hero__fond { transform: scale(0.4); }
   .hero__arc-en-ciel--1 { width: clamp(200px, 75vw, 320px); }
+  .hero__arc-en-ciel--2,
+  .hero__arc-en-ciel--3 { width: 90px; }
   .hero__actions { flex-direction: column; align-items: stretch; }
   .hero__deco { font-size: 1.8rem; gap: var(--space-md); }
   .chiffres__grille  { grid-template-columns: 1fr; }
