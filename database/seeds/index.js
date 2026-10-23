@@ -133,14 +133,9 @@ const CMS_PAGES = [
     contenu: '<p>Pour inscrire votre enfant, vous devez constituer un dossier comprenant : carnet de santé, certificat médical, jugement de garde si nécessaire, et justificatifs de revenus pour le calcul du tarif CAF. Contactez-nous pour vérifier les disponibilités.</p>',
     meta_description: 'Conditions d\'inscription à la crèche Les Coccinelles.',
     publie: true
-  },
-  {
-    slug: 'mentions-legales',
-    titre: 'Mentions légales & RGPD',
-    contenu: '<h2>Éditeur du site</h2><p>Association Les Coccinelles — Puilboreau (17138). Contact : contact@lescoccinelles.fr</p><h2>Données personnelles (RGPD)</h2><p>Les données collectées sont utilisées uniquement dans le cadre de la gestion de la crèche. Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données.</p>',
-    meta_description: 'Mentions légales et politique de confidentialité RGPD.',
-    publie: true
   }
+  // Pas de page CMS 'mentions-legales' : le texte légal complet est
+  // dans le front (MentionsLegales.jsx + traductions FR / EN).
 ];
 
 // ── SCRIPT PRINCIPAL ──────────────────────────────────────────────────

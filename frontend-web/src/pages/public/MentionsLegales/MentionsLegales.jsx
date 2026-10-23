@@ -10,7 +10,6 @@
 // ============================================================
 
 import { useTranslation, Trans } from 'react-i18next';
-import usePageCMS from '../../../hooks/usePageCMS';
 import { getLocale } from '../../../i18n';
 import './MentionsLegales.css';
 
@@ -119,7 +118,6 @@ const Section = ({ id, cle, numero, alerte = false }) => {
 };
 
 const MentionsLegales = () => {
-  const { contenu } = usePageCMS('mentions-legales');
   const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   return (
@@ -137,27 +135,23 @@ const MentionsLegales = () => {
       <section className="section-blanche">
         <div className="container mentions-contenu">
 
-          {contenu
-            ? <div className="cms-html" dangerouslySetInnerHTML={{ __html: contenu }} />
-            : (
-              <>
-                {/* ── SOMMAIRE ──────────────────────────────────── */}
-                <nav className="mentions-sommaire">
-                  <p className="mentions-sommaire__titre">{t(`${P}.sommaire`)}</p>
-                  <ol>
-                    {SECTIONS.map(({ id, cle }) => (
-                      <li key={id}><a href={`#${id}`}>{t(`${P}.sections.${cle}.titreCourt`, { defaultValue: t(`${P}.sections.${cle}.titre`) })}</a></li>
-                    ))}
-                  </ol>
-                </nav>
+          {/* Contenu juridique versionné dans le code (traduit FR / EN) :
+              volontairement PAS surchargé par le CMS, pour qu'un texte
+              incomplet en base ne remplace jamais les mentions RGPD. */}
+          {/* ── SOMMAIRE ──────────────────────────────────── */}
+          <nav className="mentions-sommaire">
+            <p className="mentions-sommaire__titre">{t(`${P}.sommaire`)}</p>
+            <ol>
+              {SECTIONS.map(({ id, cle }) => (
+                <li key={id}><a href={`#${id}`}>{t(`${P}.sections.${cle}.titreCourt`, { defaultValue: t(`${P}.sections.${cle}.titre`) })}</a></li>
+              ))}
+            </ol>
+          </nav>
 
-                {/* ── SECTIONS NUMÉROTÉES ───────────────────────── */}
-                {SECTIONS.map(({ id, cle, alerte }, i) => (
-                  <Section key={id} id={id} cle={cle} numero={i + 1} alerte={alerte} />
-                ))}
-              </>
-            )
-          }
+          {/* ── SECTIONS NUMÉROTÉES ───────────────────────── */}
+          {SECTIONS.map(({ id, cle, alerte }, i) => (
+            <Section key={id} id={id} cle={cle} numero={i + 1} alerte={alerte} />
+          ))}
 
           <p className="mentions-date">
             {t(`${P}.miseAJour`, { date: new Date().toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) })}
