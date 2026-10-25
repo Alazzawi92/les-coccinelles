@@ -36,35 +36,42 @@
 /* Carte illustrée : vignette (image ou dégradé+icône) + contenu.
    Toute la carte est cliquable (c'est un <Link>). */
 .actu-carte {
+  --carte:         var(--primary);  /* Couleur propre à la carte (voir nth-child) */
   display:         flex;
   flex-direction:  column;
   overflow:        hidden;
   background:      var(--surface);
   border-radius:   var(--radius-xl);
   box-shadow:      var(--shadow-sm);
-  border:          1px solid var(--bg-gray);
+  border:          2px solid color-mix(in srgb, var(--carte) 25%, transparent);
   transition:      var(--transition);
   text-decoration: none;
   color:           inherit;
 }
 
-/* Au survol : élévation marquée + ombre colorée + légère mise à l'échelle
-   de la vignette, pour un effet vivant et bien visible */
+/* Une couleur unie par carte, en rotation (même palette que la page Menus) */
+.actu-carte:nth-child(5n+1) { --carte: #FF7A45; }  /* Orange */
+.actu-carte:nth-child(5n+2) { --carte: #EC407A; }  /* Rose   */
+.actu-carte:nth-child(5n+3) { --carte: #9C4DCC; }  /* Violet */
+.actu-carte:nth-child(5n+4) { --carte: #1E88E5; }  /* Bleu   */
+.actu-carte:nth-child(5n+5) { --carte: #43A047; }  /* Vert   */
+
+/* Au survol : élévation marquée + ombre teintée de la couleur de la carte */
 .actu-carte:hover {
-  box-shadow: var(--shadow-colored);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--carte) 25%, transparent);
   transform:  translateY(-4px);
 }
 
 .actu-carte:hover .actu-carte__vignette img { transform: scale(1.06); }
 .actu-carte:hover .actu-carte__lire span    { transform: translateX(4px); }
 
-/* Vignette : image en haut de carte, ou dégradé de marque + icône si
-   l'actualité n'a pas d'image associée */
+/* Vignette : image en haut de carte, ou couleur unie de la carte + icône
+   si l'actualité n'a pas d'image associée */
 .actu-carte__vignette {
   position:   relative;
   height:     170px;
   overflow:   hidden;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: var(--carte);
   display:        flex;
   align-items:    center;
   justify-content: center;
@@ -92,8 +99,8 @@
   align-self:    flex-start;
   font-size:     0.75rem;
   font-weight:   700;
-  color:         var(--primary-dark);
-  background:    var(--primary-light);
+  color:         var(--carte, var(--primary-dark));
+  background:    color-mix(in srgb, var(--carte, var(--primary)) 12%, var(--surface));
   padding:       2px 10px;
   border-radius: var(--radius-pill);
   margin-bottom: var(--space-sm);
@@ -122,7 +129,7 @@
   margin-top:    var(--space-md);
   font-size:     0.85rem;
   font-weight:   700;
-  color:         var(--primary);
+  color:         var(--carte);
 }
 .actu-carte__lire span { display: inline-block; transition: transform 0.2s ease; }
 

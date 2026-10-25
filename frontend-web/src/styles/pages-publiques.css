@@ -33,11 +33,11 @@
 /* Variantes de couleur du hero selon la page :
    orange = présentation, vert = équipe/pédagogie,
    bleu = horaires/tarifs, violet = projet, rose = contact */
-.page-hero--orange { background: linear-gradient(135deg, var(--primary-light) 0%, var(--yellow-bg) 100%); }
-.page-hero--vert   { background: linear-gradient(135deg, var(--success-bg) 0%, var(--success-bg) 100%); }
-.page-hero--bleu   { background: linear-gradient(135deg, var(--info-bg) 0%, var(--info-bg) 100%); }
-.page-hero--violet { background: linear-gradient(135deg, var(--violet-bg) 0%, var(--violet-bg) 100%); }
-.page-hero--rose   { background: linear-gradient(135deg, var(--rose-bg) 0%, var(--rose-bg) 100%); }
+.page-hero--orange { background: var(--primary-light); }  /* Couleurs unies, pas de dégradé */
+.page-hero--vert   { background: var(--success-bg); }
+.page-hero--bleu   { background: var(--info-bg); }
+.page-hero--violet { background: var(--violet-bg); }
+.page-hero--rose   { background: var(--rose-bg); }
 
 /* Tag de catégorie : petit pill orange (ex: "📍 Notre crèche") */
 .page-hero__tag {
@@ -197,9 +197,9 @@
 /* ── 8. CTA BAS DE PAGE ─────────────────────────────────── */
 
 /* Section d'appel à l'action orange en bas de page.
-   Dégradé orange → orange foncé pour l'effet "dynamique". */
+   Couleur orange unie (pas de dégradé). */
 .cta-bas {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: var(--primary);
   padding:    var(--space-2xl) 0;
 }
 
