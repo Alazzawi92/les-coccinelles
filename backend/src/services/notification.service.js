@@ -17,8 +17,9 @@ const creerNotification = async (userId, titre, message, type = 'info', lien = n
   }
 };
 
-// Notifier un changement de statut d'inscription
-const notifierStatutInscription = async (userId, statut, prenomEnfant) => {
+// Notifier un changement de statut d'inscription.
+// Le lien ouvre "Mes enfants" directement sur la demande concernée.
+const notifierStatutInscription = async (userId, statut, prenomEnfant, inscriptionId) => {
   const messages = {
     accepte:       `La demande d'inscription de ${prenomEnfant} a été acceptée.`,
     refuse:        `La demande d'inscription de ${prenomEnfant} a été refusée.`,
@@ -28,7 +29,7 @@ const notifierStatutInscription = async (userId, statut, prenomEnfant) => {
 
   const message = messages[statut] || `Statut de l'inscription de ${prenomEnfant} mis à jour.`;
 
-  await creerNotification(userId, 'Mise à jour inscription', message, 'inscription', '/parent/mes-enfants');
+  await creerNotification(userId, 'Mise à jour inscription', message, 'inscription', `/parent/mes-enfants?demande=${inscriptionId}`);
 };
 
 module.exports = { creerNotification, notifierStatutInscription };

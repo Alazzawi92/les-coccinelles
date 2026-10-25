@@ -67,6 +67,10 @@ const Register = () => {
       e.password = 'mdpCriteres';
     if (form.password !== form.confirmPassword)
       e.confirmPassword = 'mdpDifferents';
+    // Téléphone optionnel, mais s'il est rempli il doit être valide
+    // (même règle que le serveur : 8 à 20 caractères, chiffres + espaces . - ( ) +)
+    if (form.telephone.trim() && !/^\+?[0-9 .\-()]{8,20}$/.test(form.telephone.trim()))
+      e.telephone = 'telInvalide';
     return e;
   };
 
@@ -94,7 +98,9 @@ const Register = () => {
         state: { messageCle: 'auth.register.compteCreeInfo' } // Clé traduite par la page de connexion
       });
     } catch (err) {
-      setErreur(err.response?.data?.message || t('auth.register.erreur'));
+      // Erreur de validation serveur : on affiche le message précis du 1er champ
+      const data = err.response?.data;
+      setErreur(data?.erreurs?.[0]?.msg || data?.message || t('auth.register.erreur'));
     }
     setEnvoi(false);
   };
@@ -127,14 +133,14 @@ const Register = () => {
           <div className="form-row-double">
             <div className="form-groupe">
               <label htmlFor="prenom" className="form-label">{t('auth.register.prenom')} <span className="requis">*</span></label>
-              <input id="prenom" name="prenom" type="text"
+              <input id="prenom" name="prenom" type="text" autoComplete="given-name"
                 className={`form-input ${erreurs.prenom ? 'form-input--erreur' : ''}`}
                 placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} autoFocus />
               {erreurs.prenom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.prenom}`)}</p>}
             </div>
             <div className="form-groupe">
               <label htmlFor="nom" className="form-label">{t('auth.register.nom')} <span className="requis">*</span></label>
-              <input id="nom" name="nom" type="text"
+              <input id="nom" name="nom" type="text" autoComplete="family-name"
                 className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
                 placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} />
               {erreurs.nom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.nom}`)}</p>}
@@ -144,7 +150,7 @@ const Register = () => {
           {/* Email */}
           <div className="form-groupe">
             <label htmlFor="email" className="form-label">{t('auth.emailCourt')} <span className="requis">*</span></label>
-            <input id="email" name="email" type="email"
+            <input id="email" name="email" type="email" autoComplete="email"
               className={`form-input ${erreurs.email ? 'form-input--erreur' : ''}`}
               placeholder={t('auth.emailPlaceholder')} value={form.email} onChange={handleChange} />
             {erreurs.email && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.email}`)}</p>}
@@ -153,8 +159,10 @@ const Register = () => {
           {/* Téléphone : optionnel */}
           <div className="form-groupe">
             <label htmlFor="telephone" className="form-label">{t('auth.register.telephone')}</label>
-            <input id="telephone" name="telephone" type="tel" className="form-input"
+            <input id="telephone" name="telephone" type="tel" autoComplete="tel"
+              className={`form-input ${erreurs.telephone ? 'form-input--erreur' : ''}`}
               placeholder={t('auth.register.telephonePlaceholder')} value={form.telephone} onChange={handleChange} />
+            {erreurs.telephone && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.telephone}`)}</p>}
           </div>
 
           {/* Mot de passe + indicateur de critères */}

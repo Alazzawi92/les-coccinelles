@@ -6,10 +6,12 @@
 //            Validation locale : TOUS les champs sont obligatoires.
 //            Affiche sante badges (allergies ⚠️, médicaments 💊).
 //            Liens : Suivi, Inscription, Modifier.
+//            DemandesInscription : statut des demandes d'inscription,
+//            message de la crèche, envoi des documents manquants.
 // ============================================================
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import i18n from '../../../i18n';
@@ -33,7 +35,9 @@ const calculerAge = (dateNaissance) => {
 // Props : initial (objet enfant pour édition, null pour ajout)
 //         onSave (callback appelé avec les données du formulaire)
 //         onAnnuler (callback pour fermer le formulaire)
-const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
+// Exporté : réutilisé dans le formulaire d'inscription (ajout d'un enfant
+// sans quitter le formulaire)
+export const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Objet vide utilisé pour l'ajout d'un nouvel enfant
   const vide = { prenom: '', nom: '', date_naissance: '', sexe: '', allergies: '', medicaments: '', medecin_nom: '', medecin_tel: '' };
@@ -146,9 +150,137 @@ const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
   );
 };
 
+// ── Sous-composant : demandes d'inscription du parent ────────
+// Liste chaque demande avec son statut et le message de la crèche.
+// Statut "incomplet" : encadré d'alerte + envoi des documents manquants
+// (POST /inscriptions/:id/documents → la demande repasse "en cours").
+// demandeCiblee : id venant de l'URL (?demande=ID, lien de la notification)
+// → la carte est mise en avant et la page défile jusqu'à elle.
+const DemandesInscription = ({ demandeCiblee }) => {
+  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  const D = 'parent.mesEnfants.demandes';
+
+  const [demandes, setDemandes] = useState([]);
+  // Fichiers choisis par demande : { [idDemande]: File[] }
+  const [fichiers, setFichiers] = useState({});
+  // Id de la demande en cours d'envoi (désactive son bouton)
+  const [envoiId,  setEnvoiId]  = useState(null);
+
+  const charger = async () => {
+    try {
+      const res = await api.get('/inscriptions');
+      setDemandes(res.data.data || []);
+    } catch { /* section simplement masquée si l'appel échoue */ }
+  };
+
+  useEffect(() => { charger(); }, []);
+
+  // Défilement jusqu'à la demande ciblée une fois la liste chargée
+  useEffect(() => {
+    if (!demandeCiblee || demandes.length === 0) return;
+    document.getElementById(`demande-${demandeCiblee}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [demandeCiblee, demandes]);
+
+  // Envoi des documents manquants d'une demande incomplète
+  const envoyerDocuments = async (demande) => {
+    const liste = fichiers[demande.id] || [];
+    if (liste.length === 0) return;
+    setEnvoiId(demande.id);
+    try {
+      const fd = new FormData();
+      liste.forEach(f => { fd.append('fichiers', f); fd.append('labels', f.name); });
+      await api.post(`/inscriptions/${demande.id}/documents`, fd);
+      toast.success(t(`${D}.toastEnvoye`));
+      setFichiers(p => ({ ...p, [demande.id]: [] }));
+      await charger(); // Statut mis à jour (incomplet → en cours)
+    } catch (err) {
+      toast.error(err.response?.data?.message || t(`${D}.erreurEnvoi`));
+    }
+    setEnvoiId(null);
+  };
+
+  if (demandes.length === 0) return null;
+
+  return (
+    <section className="demandes">
+      <h2 className="demandes__titre">📝 {t(`${D}.titre`)}</h2>
+
+      <div className="demandes__liste">
+        {demandes.map(d => {
+          const choisis = fichiers[d.id] || [];
+          return (
+            <article
+              key={d.id}
+              id={`demande-${d.id}`}
+              className={`demande demande--${d.statut} ${String(d.id) === demandeCiblee ? 'demande--ciblee' : ''}`}
+            >
+              {/* En-tête : enfant + date d'envoi + statut */}
+              <div className="demande__entete">
+                <div>
+                  <h3 className="demande__enfant">{d.enfant?.prenom} {d.enfant?.nom}</h3>
+                  <p className="demande__date">
+                    {t(`${D}.envoyeeLe`, { date: new Date(d.created_at).toLocaleDateString(i18n.language) })}
+                  </p>
+                </div>
+                <span className={`demande__statut demande__statut--${d.statut}`}>
+                  {t(`common.statutInscription.${d.statut}`, { defaultValue: d.statut })}
+                </span>
+              </div>
+
+              {/* Message laissé par la crèche lors du traitement */}
+              {d.commentaire_admin && (
+                <div className="demande__message">
+                  <p className="demande__message-titre">💬 {t(`${D}.messageCreche`)}</p>
+                  <p className="demande__message-texte">{d.commentaire_admin}</p>
+                </div>
+              )}
+
+              {/* Dossier incomplet : ajout des documents manquants */}
+              {d.statut === 'incomplet' && (
+                <div className="demande__completer">
+                  <p className="demande__completer-titre">⚠️ {t(`${D}.incompletTitre`)}</p>
+                  <p className="demande__completer-texte">{t(`${D}.incompletTexte`)}</p>
+
+                  <label className="demande__fichiers">
+                    <input
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={e => setFichiers(p => ({ ...p, [d.id]: Array.from(e.target.files) }))}
+                    />
+                    <span className="demande__fichiers-bouton">📎 {t(`${D}.choisir`)}</span>
+                    <span className="demande__fichiers-aide">{t(`${D}.formats`)}</span>
+                  </label>
+
+                  {choisis.length > 0 && (
+                    <ul className="demande__fichiers-liste">
+                      {choisis.map(f => <li key={f.name}>📄 {f.name}</li>)}
+                    </ul>
+                  )}
+
+                  <button
+                    className="btn btn--primary"
+                    disabled={choisis.length === 0 || envoiId === d.id}
+                    onClick={() => envoyerDocuments(d)}
+                  >
+                    {envoiId === d.id ? t('common.enregistrement') : t(`${D}.envoyer`, { count: choisis.length })}
+                  </button>
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+};
+
 // ── Page principale ───────────────────────────────────────────
 const MesEnfants = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+  // ?demande=ID : demande à mettre en avant (lien de la notification / email)
+  const [searchParams] = useSearchParams();
+  const demandeCiblee  = searchParams.get('demande');
   // Liste des enfants du parent connecté
   const [enfants,    setEnfants]    = useState([]);
   // Masque la grille pendant le chargement initial
@@ -214,6 +346,9 @@ const MesEnfants = () => {
           </button>
         )}
       </div>
+
+      {/* ── DEMANDES D'INSCRIPTION (statut + documents manquants) ─ */}
+      <DemandesInscription demandeCiblee={demandeCiblee} />
 
       {/* ── FORMULAIRE D'AJOUT ────────────────────────────────── */}
       {modeAjout && (

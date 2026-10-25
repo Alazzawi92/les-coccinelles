@@ -13,6 +13,7 @@
      4. En-tête de la fiche
      5. Informations de santé
      6. Actions sur la fiche
+     6b. Demandes d'inscription (statut, message, documents manquants)
      7. Responsive
    ============================================================ */
 
@@ -121,6 +122,138 @@
   justify-content: flex-end;
   padding-top:     var(--space-md);
   border-top:      1px solid var(--bg-gray);
+}
+
+/* ── 6b. DEMANDES D'INSCRIPTION ─────────────────────────── */
+
+/* Section au-dessus des fiches enfants */
+.demandes { margin-bottom: var(--space-2xl); }
+
+.demandes__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.2rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+.demandes__liste { display: flex; flex-direction: column; gap: var(--space-md); }
+
+/* Carte d'une demande : barre de couleur à gauche selon le statut */
+.demande {
+  --statut:      var(--warning);
+  background:    var(--surface);
+  border-radius: var(--radius-xl);
+  border:        1px solid var(--bg-gray);
+  border-left:   5px solid var(--statut);
+  padding:       var(--space-lg);
+  box-shadow:    var(--shadow-sm);
+  transition:    var(--transition);
+}
+
+.demande--en_attente    { --statut: var(--warning); }
+.demande--en_cours      { --statut: var(--info); }
+.demande--incomplet     { --statut: var(--error); }
+.demande--accepte       { --statut: var(--success); }
+.demande--refuse        { --statut: var(--text-light); }
+.demande--liste_attente { --statut: var(--accent-3); }
+
+/* Demande ouverte depuis une notification / un email : mise en avant */
+.demande--ciblee {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--statut) 35%, transparent), var(--shadow-md);
+}
+
+.demande__entete {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     flex-start;
+  gap:             var(--space-md);
+  flex-wrap:       wrap;
+}
+
+.demande__enfant { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); }
+.demande__date   { font-size: 0.85rem; color: var(--text-gray); margin-top: 2px; }
+
+/* Pastille de statut, teintée de la couleur du statut */
+.demande__statut {
+  padding:       4px var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size:     0.8rem;
+  font-weight:   700;
+  white-space:   nowrap;
+  color:         color-mix(in srgb, var(--statut) 80%, var(--text-dark));
+  background:    color-mix(in srgb, var(--statut) 14%, var(--surface));
+}
+
+/* Message de la crèche (commentaire de l'admin) */
+.demande__message {
+  margin-top:    var(--space-md);
+  padding:       var(--space-md);
+  background:    var(--bg-light);
+  border-radius: var(--radius-md);
+}
+
+.demande__message-titre { font-size: 0.8rem; font-weight: 700; color: var(--text-gray); margin-bottom: 4px; }
+.demande__message-texte { color: var(--text-dark); white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Encadré "dossier incomplet" avec l'envoi des documents */
+.demande__completer {
+  margin-top:     var(--space-md);
+  padding:        var(--space-md) var(--space-lg);
+  background:     var(--error-bg);
+  border-radius:  var(--radius-md);
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-start;
+  gap:            var(--space-sm);
+}
+
+.demande__completer-titre { font-weight: 700; color: var(--error); }
+.demande__completer-texte { font-size: 0.9rem; color: var(--text-dark); }
+
+/* Zone de choix des fichiers : l'input natif est masqué,
+   le label sert de bouton (toujours accessible au clavier via l'input) */
+.demande__fichiers {
+  position:    relative;
+  display:     flex;
+  align-items: center;
+  flex-wrap:   wrap;
+  gap:         var(--space-sm);
+  cursor:      pointer;
+}
+
+.demande__fichiers input {
+  position: absolute;
+  width:    1px;
+  height:   1px;
+  opacity:  0;
+}
+
+.demande__fichiers-bouton {
+  padding:       var(--space-sm) var(--space-md);
+  background:    var(--surface);
+  border:        2px dashed var(--error);
+  border-radius: var(--radius-md);
+  font-weight:   700;
+  color:         var(--text-dark);
+  transition:    var(--transition);
+}
+
+.demande__fichiers:hover .demande__fichiers-bouton,
+.demande__fichiers input:focus-visible + .demande__fichiers-bouton {
+  border-style: solid;
+  box-shadow:   var(--focus-ring);
+}
+
+.demande__fichiers-aide { font-size: 0.8rem; color: var(--text-gray); }
+
+.demande__fichiers-liste {
+  list-style: none;
+  font-size:  0.85rem;
+  color:      var(--text-dark);
+  display:    flex;
+  flex-direction: column;
+  gap:        2px;
+  overflow-wrap: anywhere;
 }
 
 /* ── 7. RESPONSIVE ──────────────────────────────────────── */

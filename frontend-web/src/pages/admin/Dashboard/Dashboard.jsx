@@ -37,18 +37,20 @@ const AdminDashboard = () => {
   useEffect(() => {
     const charger = async () => {
       try {
-        const [resInscStats, resAbsences, resMessages] = await Promise.all([
+        // allSettled : si un appel échoue, les autres s'affichent quand même
+        const [resInscStats, resAbsences, resMessages] = await Promise.allSettled([
           api.get('/inscriptions/stats'),
           api.get('/absences'),
           api.get('/messages')
         ]);
-        setStats(resInscStats.data.data);
+        const donnees = (r) => (r.status === 'fulfilled' ? r.value.data.data : null);
+        setStats(donnees(resInscStats));
 
         // Calculer les alertes à partir des données reçues
         // Absences : seulement celles en statut 'en_attente'
-        const abs = (resAbsences.data.data || []).filter(a => a.statut === 'en_attente');
+        const abs = (donnees(resAbsences) || []).filter(a => a.statut === 'en_attente');
         // Messages : seulement ceux non lus ET adressés à cet admin
-        const msg = (resMessages.data.data || []).filter(m => !m.lu && m.destinataire_id === user.id);
+        const msg = (donnees(resMessages) || []).filter(m => !m.lu && m.destinataire_id === user.id);
         const al  = [];
         if (abs.length > 0)  al.push({ type: 'absence',  cle: 'alerteAbsences', n: abs.length, lien: '/admin/absences',    icone: '📅' });
         if (msg.length > 0)  al.push({ type: 'message',  cle: 'alerteMessages', n: msg.length, lien: '/admin/messagerie',  icone: '✉️' });

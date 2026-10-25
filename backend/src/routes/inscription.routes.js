@@ -13,11 +13,16 @@ const dossierJustificatifs = (req, res, next) => { req.uploadDossier = 'justific
 // GET /api/inscriptions — Mes inscriptions (parent) ou toutes (admin)
 router.get('/',                    verifierToken, inscriptionController.lister);
 
-// GET /api/inscriptions/stats — Statistiques (admin)
-router.get('/stats',               verifierToken, verifierRole('super_admin'), inscriptionController.stats);
+// GET /api/inscriptions/acces — La famille a-t-elle une inscription acceptée ?
+// (sert au frontend à verrouiller galerie, suivi, absences...) — AVANT /:id
+router.get('/acces',               verifierToken, inscriptionController.acces);
+
+// GET /api/inscriptions/stats — Statistiques (admin + super admin : l'admin
+// voit déjà toute la liste, les compteurs du tableau de bord doivent suivre)
+router.get('/stats',               verifierToken, verifierRole('admin', 'super_admin'), inscriptionController.stats);
 
 // POST /api/inscriptions — Créer une demande d'inscription
-router.post('/',                   verifierToken, inscriptionController.creer);
+router.post('/',                   verifierToken, dossierJustificatifs, uploadDocument.array('fichiers', 20), inscriptionController.creer);
 
 // GET /api/inscriptions/:id — Détail d'une inscription
 router.get('/:id',                 verifierToken, inscriptionController.getInscription);

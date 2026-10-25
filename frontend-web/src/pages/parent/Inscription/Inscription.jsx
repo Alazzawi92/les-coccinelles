@@ -13,6 +13,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
+import { FormulaireEnfant } from '../MesEnfants/MesEnfants';
 import '../../../styles/parent.css';
 import './Inscription.css';
 
@@ -163,6 +164,32 @@ const Inscription = () => {
   const [enfants,  setEnfants]  = useState([]);
   const [envoi,    setEnvoi]    = useState(false);
   const [fichiers, setFichiers] = useState(PIECES.map(() => null));
+  // true après un clic sur "Continuer" avec des documents manquants :
+  // les pièces non fournies sont alors surlignées en rouge
+  const [docsManquants, setDocsManquants] = useState(false);
+
+  // ── Aperçu des documents avant envoi ──────────────────────
+  // Les fichiers sont encore sur l'ordinateur du parent : on les affiche
+  // via une adresse locale temporaire (blob:), sans rien envoyer au serveur.
+  const [apercus,   setApercus]   = useState(PIECES.map(() => null));
+  // Image affichée en grand ({ url, titre }) ou null
+  const [imageZoom, setImageZoom] = useState(null);
+
+  // (Re)crée les adresses locales quand les fichiers changent, et libère
+  // les anciennes pour ne pas garder les fichiers en mémoire
+  useEffect(() => {
+    const urls = fichiers.map(f => (f ? URL.createObjectURL(f) : null));
+    setApercus(urls);
+    return () => urls.forEach(u => u && URL.revokeObjectURL(u));
+  }, [fichiers]);
+
+  // Échap ferme l'aperçu d'image
+  useEffect(() => {
+    if (!imageZoom) return;
+    const surTouche = (e) => { if (e.key === 'Escape') setImageZoom(null); };
+    document.addEventListener('keydown', surTouche);
+    return () => document.removeEventListener('keydown', surTouche);
+  }, [imageZoom]);
 
   const [form, setForm] = useState({
     enfant_id: '', date_debut_souhaitee: '', jours_souhaites: '',
@@ -187,6 +214,22 @@ const Inscription = () => {
 
   const majForm = (champs) => setForm(p => ({ ...p, ...champs }));
 
+  // Étape "Enfant" : ajout d'un enfant directement dans le formulaire
+  // (avant, il fallait quitter la page et on perdait toute la saisie)
+  const [ajoutEnfant, setAjoutEnfant] = useState(false);
+  const ajouterEnfant = async (donnees) => {
+    try {
+      const res = await api.post('/enfants', donnees);
+      const nouvel = res.data.data;
+      setEnfants(prev => [...prev, nouvel]);
+      majForm({ enfant_id: String(nouvel.id) }); // Sélectionné automatiquement
+      setAjoutEnfant(false);
+      toast.success(t('parent.mesEnfants.toastAjoute'));
+    } catch (err) {
+      toast.error(err.response?.data?.message || t('parent.mesEnfants.erreurAjout'));
+    }
+  };
+
   const majPI = (section, champ, valeur) =>
     setPi(p => ({ ...p, [section]: { ...p[section], [champ]: valeur } }));
 
@@ -194,18 +237,24 @@ const Inscription = () => {
     setPi(p => ({ ...p, [champ]: valeur }));
 
   const handleSubmit = async () => {
+    // Sécurité : retour à l'étape documents s'il en manque un
+    if (!fichiers.every(f => f !== null)) {
+      setDocsManquants(true);
+      setEtape(3);
+      toast.error(t(`${I}.e4.docsManquants`));
+      return;
+    }
     setEnvoi(true);
     try {
-      const res = await api.post('/inscriptions', { ...form, preinscription: pi });
-      const inscriptionId = res.data.data?.id;
-      const aDesFichiers = fichiers.some(f => f !== null);
-      if (inscriptionId && aDesFichiers) {
-        const fd = new FormData();
-        fichiers.forEach((f, i) => {
-          if (f) { fd.append('fichiers', f); fd.append('labels', PIECES[i].doc); }
-        });
-        await api.post(`/inscriptions/${inscriptionId}/documents`, fd);
-      }
+      // Demande + pièces justificatives envoyées en UNE seule requête :
+      // le serveur refuse la demande s'il manque un document
+      const fd = new FormData();
+      Object.entries(form).forEach(([cle, valeur]) => fd.append(cle, valeur ?? ''));
+      fd.append('preinscription', JSON.stringify(pi));
+      fichiers.forEach((f, i) => {
+        if (f) { fd.append('fichiers', f); fd.append('labels', PIECES[i].doc); }
+      });
+      await api.post('/inscriptions', fd);
       toast.success(t(`${I}.toastEnvoyee`));
       navigate('/parent/mes-enfants');
     } catch (err) {
@@ -258,10 +307,47 @@ const Inscription = () => {
   // Passage à l'étape suivante (avec validation selon l'étape courante)
   const etapeSuivante = () => {
     if (etape === 0 && !validerEtape0()) return;
+    // Étape documents : les 5 pièces justificatives sont obligatoires
+    if (etape === 3 && !fichiers.every(f => f !== null)) {
+      setDocsManquants(true);
+      toast.error(t(`${I}.e4.docsManquants`));
+      return;
+    }
     setEtape(e => e + 1);
   };
 
   const enfantSelectionne = enfants.find(e => e.id === parseInt(form.enfant_id));
+
+  // ── Documents : choix, contrôle, aperçu, retrait ──────────
+  // Mêmes règles que le serveur : PDF / JPG / PNG, 5 Mo max
+  const TYPES_ACCEPTES = ['application/pdf', 'image/jpeg', 'image/png'];
+  const TAILLE_MAX     = 5 * 1024 * 1024;
+
+  const estImage = (f) => Boolean(f?.type?.startsWith('image/'));
+
+  // Taille lisible : "350 Ko" / "1,2 Mo" (séparateur selon la langue)
+  const formaterTaille = (octets) => octets < 1024 * 1024
+    ? `${Math.max(1, Math.round(octets / 1024))} Ko`
+    : `${(octets / (1024 * 1024)).toLocaleString(getLocale(), { maximumFractionDigits: 1 })} Mo`;
+
+  // Contrôle immédiat du fichier choisi (sans attendre l'envoi final)
+  const choisirFichier = (i, e) => {
+    const f = e.target.files[0];
+    e.target.value = ''; // Permet de rechoisir le même fichier après un retrait
+    if (!f) return;
+    if (!TYPES_ACCEPTES.includes(f.type)) { toast.error(t(`${I}.e4.typeInvalide`, { nom: f.name })); return; }
+    if (f.size > TAILLE_MAX)              { toast.error(t(`${I}.e4.tropLourd`,    { nom: f.name })); return; }
+    setFichiers(prev => prev.map((v, j) => (j === i ? f : v)));
+  };
+
+  const retirerFichier = (i) => setFichiers(prev => prev.map((v, j) => (j === i ? null : v)));
+
+  // Image → grande vue dans la page ; PDF → nouvel onglet (lecteur du navigateur)
+  const voirFichier = (i) => {
+    if (!apercus[i]) return;
+    if (estImage(fichiers[i])) setImageZoom({ url: apercus[i], titre: t(`${I}.pieces.${i}`) });
+    else window.open(apercus[i], '_blank', 'noopener');
+  };
 
   // Libellé traduit d'une valeur stockée (place dans la fratrie, jour)
   const libelleFratrie = (v) => { const i = FRATRIEOPT.indexOf(v); return i >= 0 ? t(`${I}.fratrie.${i}`) : v; };
@@ -416,13 +502,18 @@ const Inscription = () => {
         {etape === 1 && (
           <div className="etape-section">
             <h2 className="etape-titre">{t(`${I}.e2.titre`)}</h2>
-            {enfants.length === 0 ? (
-              <div className="p-vide">
-                <span className="p-vide__icone">👶</span>
-                <p>{t(`${I}.e2.dAbord`)}</p>
-                <button className="btn btn--primary btn--sm" onClick={() => navigate('/parent/mes-enfants')}>{t('parent.commun.ajouterEnfant')}</button>
+            {enfants.length === 0 || ajoutEnfant ? (
+              // Aucun enfant (ou ajout demandé) : formulaire enfant intégré,
+              // la saisie des étapes précédentes est conservée
+              <div className="p-card">
+                <p className="etape-intro">👶 {t(enfants.length === 0 ? `${I}.e2.dAbord` : `${I}.e2.ajoutIntro`)}</p>
+                <FormulaireEnfant
+                  onSave={ajouterEnfant}
+                  onAnnuler={() => (enfants.length === 0 ? setEtape(0) : setAjoutEnfant(false))}
+                />
               </div>
             ) : (
+              <>
               <div className="enfants-choix">
                 {enfants.map(enfant => (
                   <label key={enfant.id} className={`enfant-option ${form.enfant_id === String(enfant.id) ? 'enfant-option--selectionne' : ''}`}>
@@ -434,6 +525,10 @@ const Inscription = () => {
                   </label>
                 ))}
               </div>
+              <button type="button" className="btn btn--ghost btn--sm" style={{ marginTop: 'var(--space-md)' }} onClick={() => setAjoutEnfant(true)}>
+                {t(`${I}.e2.autreEnfant`)}
+              </button>
+              </>
             )}
           </div>
         )}
@@ -530,20 +625,37 @@ const Inscription = () => {
             </p>
             <div className="pieces-liste">
               {PIECES.map((p, i) => (
-                <div key={p.doc} className={`piece-item ${fichiers[i] ? 'piece-item--coche' : ''}`}>
-                  <span className="piece-item__icone">{p.icone}</span>
+                <div key={p.doc} className={`piece-item ${fichiers[i] ? 'piece-item--coche' : docsManquants ? 'piece-item--manquant' : ''}`}>
+                  {/* Miniature si le document est une photo, sinon l'icône de la pièce */}
+                  {estImage(fichiers[i]) && apercus[i]
+                    ? <img src={apercus[i]} alt="" className="piece-item__miniature" />
+                    : <span className="piece-item__icone">{fichiers[i] ? '📄' : p.icone}</span>}
                   <div className="piece-item__info">
-                    <span className="piece-item__doc">{t(`${I}.pieces.${i}`)}</span>
-                    {fichiers[i] && <span className="piece-item__fichier">📎 {fichiers[i].name}</span>}
+                    <span className="piece-item__doc">{t(`${I}.pieces.${i}`)} <span className="requis">*</span></span>
+                    {fichiers[i] && (
+                      <span className="piece-item__fichier">
+                        📎 {fichiers[i].name} <span className="piece-item__taille">· {formaterTaille(fichiers[i].size)}</span>
+                      </span>
+                    )}
                   </div>
-                  <label className="piece-item__btn">
-                    {fichiers[i] ? t(`${I}.e4.changer`) : t(`${I}.e4.choisir`)}
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }}
-                      onChange={e => {
-                        const f = e.target.files[0];
-                        if (f) setFichiers(prev => prev.map((v, j) => j === i ? f : v));
-                      }} />
-                  </label>
+                  <div className="piece-item__actions">
+                    {fichiers[i] && (
+                      <button type="button" className="piece-item__btn piece-item__btn--voir" onClick={() => voirFichier(i)}>
+                        {t(`${I}.e4.voir`)}
+                      </button>
+                    )}
+                    <label className="piece-item__btn">
+                      {fichiers[i] ? t(`${I}.e4.changer`) : t(`${I}.e4.choisir`)}
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png" style={{ display: 'none' }}
+                        onChange={e => choisirFichier(i, e)} />
+                    </label>
+                    {fichiers[i] && (
+                      <button type="button" className="piece-item__btn piece-item__btn--retirer" onClick={() => retirerFichier(i)}
+                        aria-label={t(`${I}.e4.retirerAria`, { doc: t(`${I}.pieces.${i}`) })}>
+                        {t(`${I}.e4.retirer`)}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -551,6 +663,9 @@ const Inscription = () => {
               {t(`${I}.e4.compteur`, { n: fichiers.filter(f => f !== null).length, total: PIECES.length })}
               {fichiers.every(f => f !== null) && t(`${I}.e4.complet`)}
             </p>
+            {docsManquants && !fichiers.every(f => f !== null) && (
+              <p className="p-erreur">⚠️ {t(`${I}.e4.docsManquants`)}</p>
+            )}
           </div>
         )}
 
@@ -586,6 +701,31 @@ const Inscription = () => {
                 <div className="recap-item recap-item--full"><strong>{t(`${I}.e6.message`)}</strong><span>{form.commentaire_parent}</span></div>
               )}
             </div>
+
+            {/* Documents joints : dernière vérification avant l'envoi */}
+            <h3 className="docs-titre-section">📎 {t(`${I}.e6.documents`)}</h3>
+            <ul className="recap-docs">
+              {PIECES.map((p, i) => (
+                <li key={p.doc} className="recap-doc">
+                  {estImage(fichiers[i]) && apercus[i]
+                    ? <img src={apercus[i]} alt="" className="piece-item__miniature" />
+                    : <span className="piece-item__icone">📄</span>}
+                  <div className="piece-item__info">
+                    <span className="piece-item__doc">{t(`${I}.pieces.${i}`)}</span>
+                    {fichiers[i] && (
+                      <span className="piece-item__fichier">
+                        {fichiers[i].name} <span className="piece-item__taille">· {formaterTaille(fichiers[i].size)}</span>
+                      </span>
+                    )}
+                  </div>
+                  {fichiers[i] && (
+                    <button type="button" className="piece-item__btn piece-item__btn--voir" onClick={() => voirFichier(i)}>
+                      {t(`${I}.e4.voir`)}
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
             <div className="recap-info">
               <span>ℹ️</span>
               <p>{t(`${I}.e6.info`)}</p>
@@ -615,6 +755,22 @@ const Inscription = () => {
         </div>
 
       </div>
+
+      {/* ── APERÇU D'UNE IMAGE EN GRAND ─────────────────────────
+          Clic sur le fond, bouton Fermer ou touche Échap pour fermer */}
+      {imageZoom && (
+        <div className="apercu-doc" role="dialog" aria-modal="true" aria-label={imageZoom.titre} onClick={() => setImageZoom(null)}>
+          <div className="apercu-doc__contenu" onClick={e => e.stopPropagation()}>
+            <div className="apercu-doc__entete">
+              <p className="apercu-doc__titre">{imageZoom.titre}</p>
+              <button type="button" className="btn btn--ghost btn--sm" onClick={() => setImageZoom(null)} autoFocus>
+                ✕ {t('common.fermer')}
+              </button>
+            </div>
+            <img src={imageZoom.url} alt={imageZoom.titre} className="apercu-doc__image" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -175,6 +175,10 @@
 /* Pièce avec fichier ajouté : bordure verte */
 .piece-item--coche { border-color: var(--success); background: var(--success-bg); }
 
+/* Pièce obligatoire non fournie (après un "Continuer" refusé) : rouge */
+.piece-item--manquant { border-color: var(--error); background: var(--error-bg); }
+.piece-item--manquant .piece-item__btn { border-color: var(--error); color: var(--error); }
+
 .piece-item__icone { font-size: 1.4rem; flex-shrink: 0; }
 
 /* Zone texte : nom de la pièce + nom du fichier */
@@ -197,6 +201,100 @@
 }
 .piece-item--coche .piece-item__btn { border-color: var(--success); color: var(--success); }
 .piece-item__btn:hover { background: var(--primary-light); }
+
+/* ── Aperçu des documents ── */
+
+/* Miniature d'une pièce fournie en image (remplace l'icône) */
+.piece-item__miniature {
+  width:         44px;
+  height:        44px;
+  flex-shrink:   0;
+  object-fit:    cover;
+  border-radius: var(--radius-sm);
+  border:        1px solid var(--border);
+  background:    var(--surface);
+}
+
+/* Taille du fichier, discrète à côté du nom */
+.piece-item__taille { color: var(--text-gray); font-weight: 500; }
+
+/* Boutons Voir / Changer / Retirer regroupés à droite */
+.piece-item__actions {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-xs);
+  flex-wrap:   wrap;
+  justify-content: flex-end;
+}
+
+/* Les boutons partagent le style pilule de .piece-item__btn */
+button.piece-item__btn { background: var(--surface); font-family: inherit; }
+.piece-item__btn--voir    { border-color: var(--info);  color: var(--info); }
+.piece-item__btn--retirer { border-color: var(--error); color: var(--error); }
+.piece-item--coche .piece-item__btn--voir    { border-color: var(--info);  color: var(--info); }
+.piece-item--coche .piece-item__btn--retirer { border-color: var(--error); color: var(--error); }
+.piece-item__btn--voir:hover    { background: var(--info-bg); }
+.piece-item__btn--retirer:hover { background: var(--error-bg); }
+
+/* Récapitulatif : liste des 5 documents joints */
+.recap-docs {
+  list-style:     none;
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  margin-bottom:  var(--space-lg);
+}
+
+.recap-doc {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-sm) var(--space-md);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-md);
+  background:    var(--surface);
+}
+
+/* Fenêtre d'aperçu d'une image, par-dessus la page */
+.apercu-doc {
+  position:        fixed;
+  inset:           0;
+  z-index:         var(--z-modal);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--space-lg);
+  background:      rgba(0, 0, 0, 0.6);
+}
+
+.apercu-doc__contenu {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  max-width:      min(900px, 100%);
+  max-height:     100%;
+  padding:        var(--space-md);
+  background:     var(--surface);
+  border-radius:  var(--radius-xl);
+  box-shadow:     var(--shadow-lg);
+}
+
+.apercu-doc__entete {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-md);
+}
+
+.apercu-doc__titre { font-weight: 700; color: var(--text-dark); overflow-wrap: anywhere; }
+
+.apercu-doc__image {
+  max-width:     100%;
+  max-height:    75vh;
+  object-fit:    contain;
+  border-radius: var(--radius-md);
+  margin:        0 auto;
+}
 
 /* Compteur de documents ajoutés */
 .pieces-info {
@@ -596,6 +694,11 @@
   .preinsc-autorisation { flex-direction: row; }
   /* Sections : padding réduit */
   .preinsc-section { padding: var(--space-md); }
+  /* Documents : les boutons Voir / Changer / Retirer passent sous le nom */
+  .piece-item               { flex-wrap: wrap; padding: var(--space-sm) var(--space-md); }
+  .piece-item__actions      { width: 100%; justify-content: flex-start; }
+  .recap-doc                { flex-wrap: wrap; }
+  .apercu-doc               { padding: var(--space-sm); }
 }
 
 /* Petit mobile (≤479px) : navigation d'étapes et cartes en 1 colonne serrée */

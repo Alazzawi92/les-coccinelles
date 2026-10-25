@@ -30,7 +30,13 @@ const reglesRegister = [
   body('prenom')
     .trim().isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères').escape(),
   body('nom')
-    .trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères').escape()
+    .trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères').escape(),
+  // Téléphone optionnel : chiffres, espaces, + . - ( ) — 20 caractères max
+  // (taille de la colonne users.telephone)
+  body('telephone')
+    .optional({ checkFalsy: true })
+    .trim()
+    .matches(/^\+?[0-9 .\-()]{8,20}$/).withMessage('Numéro de téléphone invalide (ex : 06 12 34 56 78)')
 ];
 
 // Règles de validation pour la connexion
