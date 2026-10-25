@@ -119,6 +119,9 @@
 }
 
 /* Lien de navigation : barre droite orange à l'état actif */
+/* Cadenas sur une page réservée (aucune inscription acceptée) */
+.parent-lien-verrou { margin-left: auto; font-size: 0.8rem; opacity: 0.7; }
+
 .parent-sidebar__link {
   display:         flex;
   align-items:     center;

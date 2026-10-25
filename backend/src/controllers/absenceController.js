@@ -40,7 +40,9 @@ const creer = async (req, res) => {
     const enfant = await Enfant.findOne({ where: { id: req.body.enfant_id, user_id: req.user.id } });
     if (!enfant) return erreur(res, 'Enfant non trouvé', 404);
 
-    const donneesAbsence = { ...req.body, user_id: req.user.id };
+    // Champs autorisés uniquement : jamais statut / valide_par envoyés par le parent
+    const { enfant_id, date_debut, date_fin, motif, description } = req.body;
+    const donneesAbsence = { enfant_id, date_debut, date_fin, motif, description: description || null, user_id: req.user.id };
     if (req.file) donneesAbsence.justificatif = `/uploads/justificatifs/${req.file.filename}`;
 
     const absence = await Absence.create(donneesAbsence);
@@ -64,7 +66,10 @@ const modifier = async (req, res) => {
     const absence = await Absence.findOne({ where: { id: req.params.id, user_id: req.user.id } });
     if (!absence) return erreur(res, 'Absence non trouvée', 404);
     if (absence.statut !== 'en_attente') return erreur(res, 'Impossible de modifier une absence déjà traitée', 400);
-    await absence.update(req.body);
+    // Champs modifiables par le parent (seulement ceux réellement envoyés)
+    const modifs = {};
+    ['date_debut', 'date_fin', 'motif', 'description'].forEach(c => { if (req.body[c] !== undefined) modifs[c] = req.body[c]; });
+    await absence.update(modifs);
     return succes(res, absence, 'Absence mise à jour');
   } catch (err) { return erreur(res, 'Erreur lors de la mise à jour'); }
 };

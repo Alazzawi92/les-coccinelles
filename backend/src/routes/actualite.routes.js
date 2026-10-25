@@ -12,7 +12,9 @@ router.get('/',    verifierTokenOptional, actualiteController.lister);       // 
 router.get('/:id', verifierTokenOptional, actualiteController.getActualite); // Détail
 
 // Routes admin
-router.post('/',            verifierToken, verifierRole('super_admin'), uploadDocument.single('image'), actualiteController.creer);
+// Image rangée dans uploads/actualites (dossier public : affichée sur le site)
+const dossierActualites = (req, res, next) => { req.uploadDossier = 'actualites'; next(); };
+router.post('/',            verifierToken, verifierRole('super_admin'), dossierActualites, uploadDocument.single('image'), actualiteController.creer);
 router.put('/:id',          verifierToken, verifierRole('super_admin'), actualiteController.modifier);
 router.patch('/:id/publier',verifierToken, verifierRole('super_admin'), actualiteController.togglePublier);
 router.delete('/:id',       verifierToken, verifierRole('super_admin'), actualiteController.supprimer);

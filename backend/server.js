@@ -4,10 +4,12 @@ const cors    = require('cors');      // Permettre les requêtes cross-origin
 const helmet  = require('helmet');    // Sécurité HTTP headers
 const morgan  = require('morgan');    // Logs des requêtes
 const path    = require('path');      // Gestion des chemins fichiers
+const fs      = require('fs');        // Création des dossiers d'upload
 require('dotenv').config();           // Charger les variables d'environnement
 
 const sequelize = require('./src/config/database'); // Connexion BDD
 const routes    = require('./src/routes');           // Toutes les routes
+const { signerReponsesApi, protegerUploads } = require('./src/utils/fichiersSignes'); // Liens signés
 
 const app = express(); // Créer l'application Express
 
@@ -75,10 +77,18 @@ const ORIGINES_AUTORISEES = [
   'http://localhost:3003',
   'http://192.168.1.234:3003'
 ];
+
+// En développement uniquement : accepte aussi tout poste du réseau local
+// (192.168.x.x, 10.x.x.x, 172.16-31.x.x) sur les ports 3000 à 3009, pour
+// tester l'app depuis un autre ordinateur ou téléphone du même réseau.
+const RESEAU_LOCAL = /^http:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+):300\d$/;
+const estOrigineLocale = (origin) =>
+  process.env.NODE_ENV !== 'production' && RESEAU_LOCAL.test(origin);
+
 app.use(cors({
   origin: (origin, callback) => {
     // origin est undefined pour les requêtes sans navigateur (ex: Postman, curl)
-    if (!origin || ORIGINES_AUTORISEES.includes(origin)) return callback(null, true);
+    if (!origin || ORIGINES_AUTORISEES.includes(origin) || estOrigineLocale(origin)) return callback(null, true);
     callback(new Error('Origine non autorisée par CORS'));
   },
   credentials: true                   // Autoriser les cookies et headers d'auth
@@ -91,13 +101,22 @@ app.use(morgan('dev'));               // Afficher les logs de requêtes
 // Cross-Origin-Resource-Policy est mis à "cross-origin" pour permettre
 // au frontend (localhost:3003) d'afficher les images du backend (localhost:3002).
 // Helmet le force à "same-origin" par défaut, ce middleware l'écrase.
+// protegerUploads : les dossiers privés (photos, justificatifs, documents,
+// messages) exigent un lien signé — voir src/utils/fichiersSignes.js.
 app.use('/uploads', (req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
-}, express.static(path.join(__dirname, 'uploads')));
+}, protegerUploads, express.static(path.join(__dirname, 'uploads')));
+
+// Crée les sous-dossiers d'upload manquants au démarrage (multer ne les crée pas)
+['avatars', 'actualites', 'documents', 'equipe', 'justificatifs', 'messages', 'photos'].forEach(d =>
+  fs.mkdirSync(path.join(__dirname, 'uploads', d), { recursive: true })
+);
 
 // ── ROUTES API ───────────────────────────────────────────────────────
-app.use('/api', routes); // Toutes les routes préfixées par /api
+// signerReponsesApi : ajoute une signature temporaire aux chemins de
+// fichiers privés présents dans les réponses JSON
+app.use('/api', signerReponsesApi, routes); // Toutes les routes préfixées par /api
 
 // ── ROUTE DE SANTÉ (vérifier que le serveur fonctionne) ─────────────
 app.get('/health', (req, res) => {

@@ -5,12 +5,13 @@ const router  = express.Router();
 const { verifierToken }  = require('../middlewares/auth.middleware');
 const { verifierRole }   = require('../middlewares/role.middleware');
 const suiviController    = require('../controllers/suiviController');
+const { verifierInscriptionAcceptee } = require('../middlewares/inscription.middleware'); // Famille avec inscription acceptée
 
 // GET /api/suivi/:enfant_id — Suivi d'un enfant (tous les jours)
-router.get('/:enfant_id',            verifierToken, suiviController.lister);
+router.get('/:enfant_id',            verifierToken, verifierInscriptionAcceptee, suiviController.lister);
 
 // GET /api/suivi/:enfant_id/:date — Suivi d'un jour précis
-router.get('/:enfant_id/:date',      verifierToken, suiviController.getSuiviDuJour);
+router.get('/:enfant_id/:date',      verifierToken, verifierInscriptionAcceptee, suiviController.getSuiviDuJour);
 
 // POST /api/suivi — Créer un suivi (admin seulement)
 router.post('/',                     verifierToken, verifierRole('admin', 'super_admin'), suiviController.creer);

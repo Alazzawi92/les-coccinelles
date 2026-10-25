@@ -11,7 +11,7 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import api, { BACKEND_URL } from '../../../services/api';
+import api, { BACKEND_URL, urlFichier } from '../../../services/api';
 import usePageCMS from '../../../hooks/usePageCMS';
 import { getLocale } from '../../../i18n';
 import './Accueil.css';
@@ -271,7 +271,7 @@ const Accueil = () => {
                   {/* Image de couverture (optionnelle) */}
                   {actu.image && (
                     <div className="actu-carte__image">
-                      <img src={actu.image} alt={actu.titre} />
+                      <img src={urlFichier(actu.image)} alt={actu.titre} />
                     </div>
                   )}
                   <div className="actu-carte__corps">

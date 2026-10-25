@@ -19,6 +19,8 @@ backend/uploads/avatars/*
 backend/uploads/documents/*
 backend/uploads/photos/*
 backend/uploads/justificatifs/*
+backend/uploads/messages/*
+backend/uploads/actualites/*
 !backend/uploads/**/.gitkeep
 
 # Logs

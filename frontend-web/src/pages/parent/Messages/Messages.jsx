@@ -14,7 +14,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
 import { getLocale } from '../../../i18n';
-import api, { BACKEND_URL as BACKEND } from '../../../services/api';
+import api, { BACKEND_URL as BACKEND, estCheminImage } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Messages.css';
@@ -26,7 +26,7 @@ const PieceJointe = ({ pj, nom }) => {
   const { t } = useTranslation();
   if (!pj) return null;
   const url      = `${BACKEND}${pj}`;
-  const estImage = /\.(jpg|jpeg|png|webp)$/i.test(pj);
+  const estImage = estCheminImage(pj); // Ignore la signature ?exp=...&sig=...
   if (estImage) {
     return (
       <a href={url} target="_blank" rel="noopener noreferrer" className="pj-bulle">

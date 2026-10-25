@@ -17,19 +17,22 @@ import { useTranslation } from 'react-i18next';
 import NotifCloche from '../../components/NotifCloche/NotifCloche';
 import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
+import useAccesFamille from '../../hooks/useAccesFamille';
+import { urlFichier } from '../../services/api';
 import './ParentLayout.css';
 
 // ── Liens de la sidebar parent ────────────────────────────────
 // cle : clé de traduction du libellé (common.parentLayout.liens.*)
+// reserve : page accessible seulement après une inscription acceptée (🔒 sinon)
 const LIENS_PARENT = [
   { to: '/parent/tableau-de-bord', cle: 'tableauDeBord',   icone: '🏠' },
   { to: '/parent/mes-enfants',     cle: 'mesEnfants',      icone: '👶' },
   { to: '/parent/inscription',     cle: 'inscription',     icone: '📝' },
-  { to: '/parent/suivi',           cle: 'suivi',           icone: '📊' },
-  { to: '/parent/absences',        cle: 'absences',        icone: '📅' },
+  { to: '/parent/suivi',           cle: 'suivi',           icone: '📊', reserve: true },
+  { to: '/parent/absences',        cle: 'absences',        icone: '📅', reserve: true },
   { to: '/parent/documents',       cle: 'documents',       icone: '📄' },
   { to: '/parent/messages',        cle: 'messages',        icone: '✉️' },
-  { to: '/parent/galerie',         cle: 'galerie',         icone: '🖼️' },
+  { to: '/parent/galerie',         cle: 'galerie',         icone: '🖼️', reserve: true },
   { to: '/parent/mon-profil',      cle: 'monProfil',       icone: '👤' }
 ];
 
@@ -38,6 +41,8 @@ const ParentLayout = () => {
   // Récupère les données du parent connecté et la fonction de déconnexion
   const { user, deconnecter } = useAuth();
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+  // false = aucune inscription acceptée → cadenas sur les pages réservées
+  const { acces } = useAccesFamille();
 
   // Contrôle l'ouverture du menu burger (mobile uniquement)
   const [menuOuvert, setMenuOuvert] = useState(false);
@@ -66,7 +71,7 @@ const ParentLayout = () => {
         <div className="parent-sidebar__user">
           <div className="parent-sidebar__avatar">
             {user?.avatar
-              ? <img src={user.avatar} alt={t('common.parentLayout.avatar')} />
+              ? <img src={urlFichier(user.avatar)} alt={t('common.parentLayout.avatar')} />
               : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
             }
           </div>
@@ -79,7 +84,7 @@ const ParentLayout = () => {
         {/* Liens de navigation.
             isActive : React Router ajoute 'active' sur le lien de la page courante. */}
         <nav className="parent-sidebar__nav">
-          {LIENS_PARENT.map(({ to, cle, icone }) => (
+          {LIENS_PARENT.map(({ to, cle, icone, reserve }) => (
             <NavLink
               key={to}
               to={to}
@@ -89,6 +94,9 @@ const ParentLayout = () => {
             >
               <span>{icone}</span>
               <span>{t(`common.parentLayout.liens.${cle}`)}</span>
+              {reserve && acces === false && (
+                <span className="parent-lien-verrou" title={t('common.accesReserve.titre')}>🔒</span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -124,7 +132,7 @@ const ParentLayout = () => {
           <div className="parent-mobile-menu__user">
             <div className="parent-sidebar__avatar">
               {user?.avatar
-                ? <img src={user.avatar} alt={t('common.parentLayout.avatar')} />
+                ? <img src={urlFichier(user.avatar)} alt={t('common.parentLayout.avatar')} />
                 : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
               }
             </div>
@@ -135,7 +143,7 @@ const ParentLayout = () => {
           </div>
 
           <nav className="parent-mobile-menu__nav">
-            {LIENS_PARENT.map(({ to, cle, icone }) => (
+            {LIENS_PARENT.map(({ to, cle, icone, reserve }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -146,6 +154,9 @@ const ParentLayout = () => {
               >
                 <span>{icone}</span>
                 <span>{t(`common.parentLayout.liens.${cle}`)}</span>
+                {reserve && acces === false && (
+                  <span className="parent-lien-verrou" title={t('common.accesReserve.titre')}>🔒</span>
+                )}
               </NavLink>
             ))}
           </nav>

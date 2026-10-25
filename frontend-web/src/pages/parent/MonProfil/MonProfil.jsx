@@ -11,7 +11,7 @@
 import { useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
-import api from '../../../services/api';
+import api, { urlFichier } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MonProfil.css';
@@ -88,7 +88,7 @@ const MonProfil = () => {
       <div className="profil-identite">
         <div className="profil-avatar">
           {user?.avatar
-            ? <img src={user.avatar} alt={t('parent.monProfil.avatar')} />
+            ? <img src={urlFichier(user.avatar)} alt={t('parent.monProfil.avatar')} />
             : <span>{user?.prenom?.[0]}{user?.nom?.[0]}</span>
           }
         </div>

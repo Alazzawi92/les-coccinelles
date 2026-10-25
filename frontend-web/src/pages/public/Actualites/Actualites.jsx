@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import api from '../../../services/api';
+import api, { urlFichier } from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import './Actualites.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
@@ -75,7 +75,7 @@ const ListeActualites = () => {
                     {/* Vignette : image de l'actualité, sinon fond dégradé avec icône */}
                     <div className="actu-carte__vignette">
                       {actu.image
-                        ? <img src={actu.image} alt={actu.titre} />
+                        ? <img src={urlFichier(actu.image)} alt={actu.titre} />
                         : <span className="actu-carte__icone">📰</span>}
                     </div>
 
@@ -150,7 +150,7 @@ const DetailActualite = ({ id }) => {
         <Link to="/actualites" className="retour-lien">{t('public.actualites.retour')}</Link>
 
         {/* Image principale de l'article */}
-        {actu.image && <img src={actu.image} alt={actu.titre} className="detail-image" />}
+        {actu.image && <img src={urlFichier(actu.image)} alt={actu.titre} className="detail-image" />}
 
         <article className="detail-article">
           {/* Date longue : "mardi 15 janvier 2025" / "Tuesday 15 January 2025" */}

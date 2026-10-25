@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import api from '../../../services/api';
+import api, { urlFichier } from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -207,7 +207,7 @@ const GalerieAdmin = () => {
               <button className="modal__fermer" onClick={() => setPhotoTag(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
             {/* Aperçu de la miniature de la photo à taguer */}
-            <img src={photoTag.photo.chemin_miniature} alt={t('admin.galerie.photo')} style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
+            <img src={urlFichier(photoTag.photo.chemin_miniature)} alt={t('admin.galerie.photo')} style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
             <p style={{fontSize:'0.85rem',color:'var(--text-gray)',marginBottom:'var(--space-md)'}}>
               {t('admin.galerie.tagAide')}
             </p>
@@ -339,7 +339,7 @@ const GalerieAdmin = () => {
             <div className="photos-admin-grille">
               {photos.map(photo => (
                 <div key={photo.id} className="photo-admin-item">
-                  <img src={photo.chemin_miniature} alt={photo.legende || t('admin.galerie.photo')} loading="lazy" />
+                  <img src={urlFichier(photo.chemin_miniature)} alt={photo.legende || t('admin.galerie.photo')} loading="lazy" />
                   {/* Overlay avec boutons : taguer enfants | supprimer */}
                   <div className="photo-admin-overlay">
                     {/* Ouvre la modal de tagging pour cette photo spécifique */}

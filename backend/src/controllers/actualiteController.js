@@ -33,7 +33,8 @@ const getActualite = async (req, res) => {
 const creer = async (req, res) => {
   try {
     const donnees = { ...req.body, auteur_id: req.user.id };
-    if (req.file) donnees.image = `/uploads/documents/${req.file.filename}`;
+    // Images d'actualités : dossier public séparé des documents privés
+    if (req.file) donnees.image = `/uploads/actualites/${req.file.filename}`;
     if (donnees.publie) donnees.date_publication = new Date();
 
     const actualite = await Actualite.create(donnees);

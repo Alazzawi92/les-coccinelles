@@ -1,0 +1,58 @@
+/* ============================================================
+   FICHIER : AccesReserve.css
+   RÔLE    : Écran "accès réservé" affiché à la place d'une page
+             parent tant qu'aucune inscription n'est acceptée.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Carte centrée, sobre, avec un grand cadenas */
+.acces-reserve {
+  max-width:     560px;
+  margin:        var(--space-2xl) auto;
+  padding:       var(--space-2xl) var(--space-xl);
+  text-align:    center;
+  background:    var(--surface);
+  border:        1px solid var(--bg-gray);
+  border-top:    4px solid var(--primary);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-sm);
+}
+
+.acces-reserve__icone {
+  display:       inline-flex;
+  align-items:   center;
+  justify-content: center;
+  width:         80px;
+  height:        80px;
+  margin-bottom: var(--space-md);
+  font-size:     2.5rem;
+  background:    var(--primary-light);
+  border-radius: 50%;
+}
+
+.acces-reserve__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.4rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-sm);
+}
+
+.acces-reserve__texte {
+  color:         var(--text-gray);
+  line-height:   1.6;
+  margin-bottom: var(--space-xl);
+}
+
+.acces-reserve__actions {
+  display:         flex;
+  gap:             var(--space-md);
+  justify-content: center;
+  flex-wrap:       wrap;
+}
+
+/* Petit mobile (≤479px) : boutons pleine largeur */
+@media (max-width: 479px) {
+  .acces-reserve { margin: var(--space-lg) auto; padding: var(--space-xl) var(--space-md); }
+  .acces-reserve__actions { flex-direction: column; }
+}

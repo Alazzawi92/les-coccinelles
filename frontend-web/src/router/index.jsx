@@ -44,6 +44,7 @@ import Documents       from '../pages/parent/Documents/Documents';
 import Messages        from '../pages/parent/Messages/Messages';
 import GaleriePrivee   from '../pages/parent/GaleriePrivee/GaleriePrivee';
 import Consentement    from '../pages/parent/Consentement/Consentement';
+import AccesReserve    from '../components/ui/AccesReserve/AccesReserve'; // Pages réservées aux familles inscrites
 
 // ── Pages espace admin ────────────────────────────────────────
 import AdminDashboard    from '../pages/admin/Dashboard/Dashboard';
@@ -106,13 +107,13 @@ const AppRouter = () => {
             <Route path="/parent/mon-profil"      element={<MonProfil />} />
             <Route path="/parent/mes-enfants"     element={<MesEnfants />} />
             <Route path="/parent/inscription"     element={<Inscription />} />
-            <Route path="/parent/suivi"           element={<SuiviIndex />} />  {/* Sans id : redirige ou fait choisir un enfant */}
-            <Route path="/parent/suivi/:id"       element={<Suivi />} />  {/* :id = id de l'enfant */}
-            <Route path="/parent/absences"        element={<Absences />} />
+            <Route path="/parent/suivi"           element={<AccesReserve><SuiviIndex /></AccesReserve>} />  {/* Sans id : redirige ou fait choisir un enfant */}
+            <Route path="/parent/suivi/:id"       element={<AccesReserve><Suivi /></AccesReserve>} />  {/* :id = id de l'enfant */}
+            <Route path="/parent/absences"        element={<AccesReserve><Absences /></AccesReserve>} />
             <Route path="/parent/documents"       element={<Documents />} />
             <Route path="/parent/messages"        element={<Messages />} />
-            <Route path="/parent/galerie"         element={<GaleriePrivee />} />
-            <Route path="/parent/consentement"    element={<Consentement />} />
+            <Route path="/parent/galerie"         element={<AccesReserve><GaleriePrivee /></AccesReserve>} />
+            <Route path="/parent/consentement"    element={<AccesReserve><Consentement /></AccesReserve>} />
           </Route>
         </Route>
 
