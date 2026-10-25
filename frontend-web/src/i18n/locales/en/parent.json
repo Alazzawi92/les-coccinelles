@@ -104,7 +104,13 @@
     "journee": "Day",
     "activites": "Today's activities:",
     "temperature": "Temperature taken:",
-    "messageEquipe": "Message from the team"
+    "messageEquipe": "Message from the team",
+    "biberons": "Bottles",
+    "totalBiberons_one": "{{count}} bottle · {{ml}} ml during the day",
+    "totalBiberons_other": "{{count}} bottles · {{ml}} ml during the day",
+    "auMenu": "On the menu that day",
+    "selles": "Nappy changes",
+    "dortEncore": "still asleep"
   },
   "mesEnfants": {
     "titre": "My <s>children</s>",
@@ -146,6 +152,19 @@
       "medicaments": "Required field (enter “None” if needed)",
       "medecin_nom": "Doctor's name required",
       "medecin_tel": "Doctor's phone required"
+    },
+    "demandes": {
+      "titre": "My enrolment requests",
+      "envoyeeLe": "Request sent on {{date}}",
+      "messageCreche": "Message from the nursery",
+      "incompletTitre": "Incomplete file",
+      "incompletTexte": "Some documents are missing to process your request. Add them below: the nursery will be notified automatically.",
+      "choisir": "Choose documents",
+      "formats": "PDF, JPG or PNG — 5 MB max per file",
+      "envoyer_one": "Send {{count}} document",
+      "envoyer_other": "Send {{count}} documents",
+      "toastEnvoye": "Documents sent! The nursery has been notified.",
+      "erreurEnvoi": "Error while sending the documents"
     }
   },
   "absences": {
@@ -351,7 +370,9 @@
     },
     "e2": {
       "titre": "Which child would you like to enrol?",
-      "dAbord": "You must add a child first."
+      "dAbord": "You haven't registered a child yet: add them here without leaving the form (what you've already entered is kept).",
+      "ajoutIntro": "Add another child, they will be selected automatically.",
+      "autreEnfant": "+ Add another child"
     },
     "e3": {
       "titre": "Requested care arrangements",
@@ -374,11 +395,17 @@
       "profession2Placeholder": "E.g. accountant, shopkeeper...",
       "employeur2Placeholder": "E.g. Martin & Co, self-employed...",
       "docsTitre": "Documents to provide",
-      "docsIntro": "Upload your documents now (PDF or image). You can also bring them in person — this step is optional.",
+      "docsIntro": "Upload your 5 documents (PDF or image, 5 MB max each). They are required: the request cannot be sent without them.",
       "changer": "🔄 Change",
       "choisir": "📤 Choose",
       "compteur": "{{n}} / {{total}} document(s) added",
-      "complet": " — File complete ✓"
+      "complet": " — File complete ✓",
+      "docsManquants": "All 5 documents are required to send the request.",
+      "voir": "👁 View",
+      "retirer": "✕ Remove",
+      "retirerAria": "Remove document: {{doc}}",
+      "typeInvalide": "“{{nom}}”: format not accepted (PDF, JPG or PNG only)",
+      "tropLourd": "“{{nom}}” is larger than 5 MB: please choose a smaller file"
     },
     "e5": {
       "titre": "Message to the team (optional)",
@@ -405,7 +432,8 @@
       },
       "oui": "Yes ✓",
       "non": "No",
-      "info": "Your request will be reviewed by the team as soon as possible. You will receive a notification once a decision has been made."
+      "info": "Your request will be reviewed by the team as soon as possible. You will receive a notification once a decision has been made.",
+      "documents": "Attached documents"
     },
     "retour": "← Back",
     "continuer": "Continue →",

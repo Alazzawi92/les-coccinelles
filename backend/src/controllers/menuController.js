@@ -45,6 +45,42 @@ const sauvegarderMenuDefaut = async (req, res) => {
   } catch (err) { return erreur(res, 'Erreur lors de la sauvegarde'); }
 };
 
+// GET /api/menus/jour/:date — Déjeuner et goûter d'un jour précis (YYYY-MM-DD).
+// Sert au suivi quotidien (parent et admin) pour afficher "Au menu : ...".
+// Même règle que la page Menus : menu publié de la semaine, sinon menu par défaut.
+// Samedi / dimanche : crèche fermée → midi et goûter à null.
+const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+
+const getMenuJour = async (req, res) => {
+  try {
+    const { date } = req.params;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return erreur(res, 'Date invalide (format AAAA-MM-JJ)', 400);
+    const jourDate = new Date(`${date}T00:00:00Z`);  // UTC : pas de décalage de fuseau
+    if (isNaN(jourDate)) return erreur(res, 'Date invalide', 400);
+
+    const numJour = jourDate.getUTCDay();
+    const jour    = JOURS[numJour];
+    if (numJour === 0 || numJour === 6) return succes(res, { date, jour, midi: null, gouter: null, est_defaut: false });
+
+    // Lundi de la semaine de cette date
+    const lundi = new Date(jourDate);
+    lundi.setUTCDate(jourDate.getUTCDate() - (numJour - 1));
+    const semaine = lundi.toISOString().split('T')[0];
+
+    let menu = await Menu.findOne({ where: { semaine_debut: semaine, publie: true } });
+    const estDefaut = !menu;
+    if (!menu) menu = await Menu.findOne({ where: { semaine_debut: SEMAINE_DEFAUT } });
+
+    return succes(res, {
+      date,
+      jour,
+      midi:       menu?.[`${jour}_midi`]   || null,
+      gouter:     menu?.[`${jour}_gouter`] || null,
+      est_defaut: estDefaut
+    });
+  } catch (err) { return erreur(res, 'Erreur récupération du menu du jour'); }
+};
+
 const getMenuSemaine = async (req, res) => {
   try {
     // Cherche d'abord un menu spécifique à la semaine demandée
@@ -86,4 +122,4 @@ const supprimer = async (req, res) => {
   } catch (err) { return erreur(res, 'Erreur lors de la suppression'); }
 };
 
-module.exports = { lister, getMenuDefaut, sauvegarderMenuDefaut, getMenuSemaine, creer, modifier, supprimer };
+module.exports = { lister, getMenuDefaut, sauvegarderMenuDefaut, getMenuJour, getMenuSemaine, creer, modifier, supprimer };

@@ -214,5 +214,16 @@
     "temps_plein": "Temps plein",
     "temps_partiel": "Temps partiel",
     "occasionnel": "Occasionnel"
+  },
+  "accesReserve": {
+    "titre": "Accès réservé aux familles inscrites",
+    "texte": "Cette page sera disponible dès que l'inscription de votre enfant aura été acceptée par la crèche. Vous pouvez suivre l'avancement de votre demande dans « Mes enfants ».",
+    "voirDemandes": "Voir mes demandes",
+    "inscrire": "Faire une demande d'inscription"
+  },
+  "typeSelle": {
+    "normale": "Normale",
+    "molle": "Molle",
+    "liquide": "Liquide"
   }
 }

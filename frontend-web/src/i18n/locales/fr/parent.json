@@ -104,7 +104,13 @@
     "journee": "Journée",
     "activites": "Activités du jour :",
     "temperature": "Température relevée :",
-    "messageEquipe": "Message de l'équipe"
+    "messageEquipe": "Message de l'équipe",
+    "biberons": "Biberons",
+    "totalBiberons_one": "{{count}} biberon · {{ml}} ml dans la journée",
+    "totalBiberons_other": "{{count}} biberons · {{ml}} ml dans la journée",
+    "auMenu": "Au menu ce jour-là",
+    "selles": "Changes",
+    "dortEncore": "dort encore"
   },
   "mesEnfants": {
     "titre": "Mes <s>enfants</s>",
@@ -146,6 +152,19 @@
       "medicaments": "Champ requis (indiquer « Aucun » si besoin)",
       "medecin_nom": "Nom du médecin requis",
       "medecin_tel": "Téléphone du médecin requis"
+    },
+    "demandes": {
+      "titre": "Mes demandes d'inscription",
+      "envoyeeLe": "Demande envoyée le {{date}}",
+      "messageCreche": "Message de la crèche",
+      "incompletTitre": "Dossier incomplet",
+      "incompletTexte": "Il manque des documents pour traiter votre demande. Ajoutez-les ci-dessous : la crèche sera prévenue automatiquement.",
+      "choisir": "Choisir les documents",
+      "formats": "PDF, JPG ou PNG — 5 Mo max par fichier",
+      "envoyer_one": "Envoyer {{count}} document",
+      "envoyer_other": "Envoyer {{count}} documents",
+      "toastEnvoye": "Documents envoyés ! La crèche a été prévenue.",
+      "erreurEnvoi": "Erreur lors de l'envoi des documents"
     }
   },
   "absences": {
@@ -351,7 +370,9 @@
     },
     "e2": {
       "titre": "Quel enfant souhaitez-vous inscrire ?",
-      "dAbord": "Vous devez d'abord ajouter un enfant."
+      "dAbord": "Vous n'avez pas encore enregistré d'enfant : ajoutez-le ici, sans quitter le formulaire (vos informations déjà saisies sont conservées).",
+      "ajoutIntro": "Ajoutez un autre enfant, il sera sélectionné automatiquement.",
+      "autreEnfant": "+ Ajouter un autre enfant"
     },
     "e3": {
       "titre": "Modalités d'accueil souhaitées",
@@ -374,11 +395,17 @@
       "profession2Placeholder": "Ex : Comptable, Commerçant...",
       "employeur2Placeholder": "Ex : Cabinet Martin, Auto-entrepreneur...",
       "docsTitre": "Documents à fournir",
-      "docsIntro": "Déposez dès maintenant vos documents (PDF ou image). Vous pouvez aussi les apporter en mains propres — cette étape est facultative.",
+      "docsIntro": "Déposez vos 5 documents (PDF ou image, 5 Mo max chacun). Ils sont obligatoires : la demande ne peut pas être envoyée sans eux.",
       "changer": "🔄 Changer",
       "choisir": "📤 Choisir",
       "compteur": "{{n}} / {{total}} document(s) ajouté(s)",
-      "complet": " — Dossier complet ✓"
+      "complet": " — Dossier complet ✓",
+      "docsManquants": "Les 5 documents sont obligatoires pour envoyer la demande.",
+      "voir": "👁 Voir",
+      "retirer": "✕ Retirer",
+      "retirerAria": "Retirer le document : {{doc}}",
+      "typeInvalide": "« {{nom}} » : format non accepté (PDF, JPG ou PNG uniquement)",
+      "tropLourd": "« {{nom}} » dépasse 5 Mo : merci de choisir un fichier plus léger"
     },
     "e5": {
       "titre": "Message à l'équipe (optionnel)",
@@ -405,7 +432,8 @@
       },
       "oui": "Oui ✓",
       "non": "Non",
-      "info": "Votre demande sera examinée par l'équipe dans les meilleurs délais. Vous recevrez une notification dès qu'une décision sera prise."
+      "info": "Votre demande sera examinée par l'équipe dans les meilleurs délais. Vous recevrez une notification dès qu'une décision sera prise.",
+      "documents": "Documents joints"
     },
     "retour": "← Retour",
     "continuer": "Continuer →",

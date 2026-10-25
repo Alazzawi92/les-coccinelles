@@ -17,6 +17,7 @@ import { getLocale } from '../../../i18n';
 import '../../../styles/parent.css';
 import './Suivi.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import useMenuDuJour from '../../../hooks/useMenuDuJour';
 
 // Mappage des valeurs de repas vers emoji + classe CSS de couleur
 // (le libellé est traduit via common.repasValeur.<valeur>)
@@ -42,6 +43,8 @@ const Suivi = () => {
   const [selectionne, setSelectionne] = useState(null);
   // Masque le contenu pendant le chargement
   const [chargement,  setChargement]  = useState(true);
+  // Menu prévu ce jour-là (déjeuner + goûter), affiché sous les repas
+  const menuDuJour = useMenuDuJour(selectionne?.date_suivi?.slice(0, 10));
 
   // ── Chargement parallèle : enfant + liste des suivis ─────
   useEffect(() => {
@@ -135,9 +138,59 @@ const Suivi = () => {
                     );
                   })}
                 </div>
+                {/* Menu du jour (page Menus) : ce qui était servi */}
+                {(menuDuJour.midi || menuDuJour.gouter) && (
+                  <div className="menu-du-jour">
+                    <p className="menu-du-jour__titre">🍽️ {t('parent.suivi.auMenu')}</p>
+                    {menuDuJour.midi && (
+                      <p className="menu-du-jour__ligne"><strong>{t('parent.suivi.moments.midi')} :</strong> {menuDuJour.midi}</p>
+                    )}
+                    {menuDuJour.gouter && (
+                      <p className="menu-du-jour__ligne"><strong>{t('parent.suivi.moments.gouter')} :</strong> {menuDuJour.gouter}</p>
+                    )}
+                  </div>
+                )}
                 {/* Note repas optionnelle */}
                 {selectionne.repas_note && <p className="suivi-note-texte">💬 {selectionne.repas_note}</p>}
               </div>
+
+              {/* ── BIBERONS ───────────────────────────────────── */}
+              {/* Affiché seulement si l'équipe a noté au moins un biberon ce jour-là */}
+              {selectionne.biberons?.length > 0 && (
+                <div className="p-card suivi-section">
+                  <h3 className="suivi-section__titre">🍼 {t('parent.suivi.biberons')}</h3>
+                  <ul className="biberons-liste">
+                    {selectionne.biberons.map((b, idx) => (
+                      <li key={idx} className="biberon-ligne-parent">
+                        <span className="biberon-ligne-parent__heure">{b.heure || '—'}</span>
+                        <span className="biberon-ligne-parent__ml">{b.ml} ml</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="biberons-total">
+                    {t('parent.suivi.totalBiberons', {
+                      count: selectionne.biberons.length,
+                      ml: selectionne.biberons.reduce((total, b) => total + (Number(b.ml) || 0), 0)
+                    })}
+                  </p>
+                </div>
+              )}
+
+              {/* ── SELLES (changes) ───────────────────────────── */}
+              {/* Heure + consistance de chaque selle notée par l'équipe */}
+              {selectionne.selles_details?.length > 0 && (
+                <div className="p-card suivi-section">
+                  <h3 className="suivi-section__titre">🧷 {t('parent.suivi.selles')}</h3>
+                  <ul className="biberons-liste">
+                    {selectionne.selles_details.map((e, idx) => (
+                      <li key={idx} className={`selle-ligne-parent selle-ligne-parent--${e.type}`}>
+                        <span className="biberon-ligne-parent__heure">{e.heure || '—'}</span>
+                        <span className="selle-ligne-parent__type">{t(`common.typeSelle.${e.type}`)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* ── SIESTE ─────────────────────────────────────── */}
               {/* L'équipe saisit les siestes dans le tableau "siestes" (siestes multiples
@@ -148,7 +201,9 @@ const Suivi = () => {
                 {selectionne.siestes?.length > 0 ? (
                   <div className="sieste-info">
                     {selectionne.siestes.map((sv, idx) => (
-                      <span key={idx} className="sieste-heure">{sv.debut} → {sv.fin}</span>
+                      <span key={idx} className="sieste-heure">
+                        {sv.debut} → {sv.fin || <em className="sieste-en-cours">😴 {t('parent.suivi.dortEncore')}</em>}
+                      </span>
                     ))}
                     {selectionne.sieste_note && <p className="suivi-note-texte">💬 {selectionne.sieste_note}</p>}
                   </div>

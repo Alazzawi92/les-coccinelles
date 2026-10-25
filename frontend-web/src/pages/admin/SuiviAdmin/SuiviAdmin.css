@@ -66,6 +66,17 @@
 /* 3 colonnes : Entrée | Plat | Dessert */
 .repas-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); }
 
+/* Rappel du menu du jour sous les repas */
+.suivi-menu-rappel {
+  margin-top:    var(--space-sm);
+  padding:       var(--space-xs) var(--space-sm);
+  background:    var(--yellow-bg);
+  border-radius: var(--radius-sm);
+  font-size:     0.78rem;
+  color:         var(--text-dark);
+  line-height:   1.45;
+}
+
 /* Colonne d'un repas : label + select */
 .repas-col { display: flex; flex-direction: column; gap: 4px; }
 
@@ -120,6 +131,52 @@
 
 /* Champ ml : petite largeur fixe */
 .biberon-ml-input { width: 7rem; }
+
+/* Un biberon : ligne (numéro + heure + ml + suppression) puis quantités rapides */
+.biberon-item {
+  display:        flex;
+  flex-direction: column;
+  gap:            4px;
+  padding:        var(--space-xs) 0;
+  border-bottom:  1px dashed var(--border);
+}
+
+.biberon-ligne { display: flex; align-items: center; gap: var(--space-sm); }
+
+.biberon-heure { width: 7.5rem; }
+
+/* Quantité hors limites : bordure rouge */
+.biberon-ml-input--erreur { border-color: var(--error); background: var(--error-bg); }
+
+/* Boutons de quantité rapide (90, 120, 150...) */
+.biberon-rapides { display: flex; flex-wrap: wrap; gap: 4px; padding-left: 1.9rem; }
+
+.biberon-rapide {
+  padding:       2px 10px;
+  border:        1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background:    var(--surface);
+  color:         var(--text-gray);
+  font-size:     0.75rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    var(--transition);
+}
+
+.biberon-rapide:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Quantité actuellement choisie */
+.biberon-rapide--actif { background: var(--primary); border-color: var(--primary); color: var(--white); }
+
+.biberon-erreur { font-size: 0.75rem; color: var(--error); padding-left: 1.9rem; }
+
+/* Total de la journée : "3 biberons · 450 ml" */
+.biberon-total {
+  margin-top:    var(--space-xs);
+  font-size:     0.85rem;
+  font-weight:   700;
+  color:         var(--primary);
+}
 
 /* ── 7. SAISIE DES SIESTES MULTIPLES ────────────────────── */
 
@@ -194,26 +251,79 @@
 
 /* ── 8. SAISIE DES SELLES ───────────────────────────────── */
 
-/* Rangée : boutons Oui/Non + compteur inline */
-.selles-row { display: flex; align-items: center; gap: var(--space-sm); flex-wrap: wrap; }
+/* Une selle : numéro + heure + ⏱ + type + suppression */
+.selle-item {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-sm);
+  flex-wrap:     wrap;
+  padding:       var(--space-xs) 0;
+  border-bottom: 1px dashed var(--border);
+}
 
-/* Bouton bascule Oui / Non */
-.selles-toggle {
-  padding:       var(--space-xs) var(--space-md);
-  border:        2px solid var(--border);
+/* Choix du type : 3 pastilles */
+.selle-types { display: flex; gap: 4px; }
+
+.selle-type {
+  padding:       2px 10px;
+  border:        1px solid var(--border);
   border-radius: var(--radius-pill);
   background:    var(--surface);
-  font-size:     0.85rem;
+  color:         var(--text-gray);
+  font-size:     0.75rem;
   font-weight:   600;
   cursor:        pointer;
   transition:    var(--transition);
-  color:         var(--text-gray);
 }
-.selles-toggle:hover                        { border-color: var(--primary); }
-/* Actif Non : rouge doux */
-.selles-toggle--non.selles-toggle--actif   { background: var(--error-bg); border-color: var(--error); color: var(--error); }
-/* Actif Oui : vert doux */
-.selles-toggle--oui.selles-toggle--actif   { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+
+.selle-type:hover { border-color: var(--primary); }
+
+/* Type choisi : couleur selon la consistance */
+.selle-type--normale.selle-type--actif { background: var(--success-bg); border-color: var(--success); color: var(--success-text); }
+.selle-type--molle.selle-type--actif   { background: var(--warning-bg); border-color: var(--warning); color: var(--warning-text); }
+.selle-type--liquide.selle-type--actif { background: var(--error-bg);   border-color: var(--error);   color: var(--error-text); }
+
+/* Texte "aucune selle" sous le bouton d'ajout */
+.suivi-aucune { font-size: 0.78rem; color: var(--text-light); font-style: italic; margin-top: 4px; }
+
+/* ── 8b. HEURE ACTUELLE ─────────────────────────────────── */
+
+/* Bouton "maintenant" : ⏰ Réveil maintenant (siestes), ⏱ (biberons, selles) */
+.btn-maintenant {
+  padding:       2px 10px;
+  border:        1px solid var(--info);
+  border-radius: var(--radius-pill);
+  background:    var(--info-bg);
+  color:         var(--info-text);
+  font-size:     0.75rem;
+  font-weight:   700;
+  cursor:        pointer;
+  white-space:   nowrap;
+  transition:    var(--transition);
+}
+
+.btn-maintenant:hover { background: var(--info); color: var(--white); }
+
+/* Version icône seule (⏱) */
+.btn-maintenant--icone { padding: 2px 6px; font-size: 0.9rem; }
+
+/* Badge "😴 en cours" : sieste sans heure de fin */
+.sieste-en-cours {
+  padding:       2px 8px;
+  border-radius: var(--radius-pill);
+  background:    var(--violet-bg);
+  color:         var(--violet-text);
+  font-size:     0.72rem;
+  font-weight:   700;
+  white-space:   nowrap;
+}
+
+/* ── 8c. ÉTAT DE L'ENREGISTREMENT AUTOMATIQUE ───────────── */
+
+.suivi-etat { margin-top: 6px; font-size: 0.78rem; text-align: center; color: var(--text-gray); }
+.suivi-etat--ok        { color: var(--success-text); }
+.suivi-etat--aCorriger,
+.suivi-etat--erreur    { color: var(--error); font-weight: 600; }
 
 /* ── 9. SAISIE DE L'HUMEUR ──────────────────────────────── */
 
@@ -252,7 +362,10 @@
   .suivi-admin-carte { padding: var(--space-md); }
   .repas-row         { grid-template-columns: 1fr; gap: var(--space-xs); }
   .sieste-item       { flex-wrap: wrap; }
+  .biberon-ligne     { flex-wrap: wrap; }
+  .biberon-rapides,
+  .biberon-erreur    { padding-left: 0; }
   .sieste-time       { width: 100%; }
-  .selles-row        { gap: var(--space-xs); }
+  .selle-item        { gap: var(--space-xs); }
   .humeur-row        { flex-wrap: wrap; }
 }

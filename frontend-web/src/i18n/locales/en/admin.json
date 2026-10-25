@@ -514,7 +514,7 @@
     "biberon": "🍼 Bottle",
     "biberons_one": "bottle",
     "biberons_other": "bottles",
-    "mlPlaceholder": "ml per bottle",
+    "mlPlaceholder": "ml",
     "mlUnite": "ml / bottle",
     "siestes": "😴 Naps",
     "supprimerSieste": "Delete this nap",
@@ -529,6 +529,28 @@
     "notePlaceholder": "Message for the parents...",
     "enregistrer": "💾 Save",
     "toastEnregistre": "{{prenom}}'s report saved",
-    "erreurEnregistrement": "Saving error"
+    "erreurEnregistrement": "Saving error",
+    "ajouterBiberon": "+ Add a bottle",
+    "supprimerBiberon": "Remove this bottle",
+    "heureBiberon": "Time of bottle {{n}}",
+    "quantiteBiberon": "Amount of bottle {{n}} (ml)",
+    "mlInvalide": "Invalid bottle amount: between 0 and {{max}} ml",
+    "totalBiberons_one": "Total: {{count}} bottle · {{ml}} ml",
+    "totalBiberons_other": "Total: {{count}} bottles · {{ml}} ml",
+    "enCours": "in progress",
+    "reveilMaintenant": "Woke up now",
+    "mettreHeureActuelle": "Set current time",
+    "heureSelle": "Time of stool {{n}}",
+    "typeSelle": "Stool type",
+    "supprimerSelle": "Remove this stool",
+    "ajouterSelle": "+ Add a stool",
+    "aucuneSelle": "No stool recorded today",
+    "etat": {
+      "modifie": "Unsaved changes…",
+      "enCours": "Saving…",
+      "ok": "✓ Saved at {{heure}}",
+      "aCorriger": "⚠️ Please fix before saving (bottle amount)",
+      "erreur": "⚠️ Saving failed — please retry"
+    }
   }
 }

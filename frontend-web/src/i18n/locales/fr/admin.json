@@ -514,7 +514,7 @@
     "biberon": "🍼 Biberon",
     "biberons_one": "biberon",
     "biberons_other": "biberons",
-    "mlPlaceholder": "ml par biberon",
+    "mlPlaceholder": "ml",
     "mlUnite": "ml / biberon",
     "siestes": "😴 Siestes",
     "supprimerSieste": "Supprimer cette sieste",
@@ -529,6 +529,28 @@
     "notePlaceholder": "Message pour les parents...",
     "enregistrer": "💾 Enregistrer",
     "toastEnregistre": "Suivi de {{prenom}} enregistré",
-    "erreurEnregistrement": "Erreur enregistrement"
+    "erreurEnregistrement": "Erreur enregistrement",
+    "ajouterBiberon": "+ Ajouter un biberon",
+    "supprimerBiberon": "Supprimer ce biberon",
+    "heureBiberon": "Heure du biberon {{n}}",
+    "quantiteBiberon": "Quantité du biberon {{n}} (ml)",
+    "mlInvalide": "Quantité de biberon invalide : entre 0 et {{max}} ml",
+    "totalBiberons_one": "Total : {{count}} biberon · {{ml}} ml",
+    "totalBiberons_other": "Total : {{count}} biberons · {{ml}} ml",
+    "enCours": "en cours",
+    "reveilMaintenant": "Réveil maintenant",
+    "mettreHeureActuelle": "Mettre l'heure actuelle",
+    "heureSelle": "Heure de la selle {{n}}",
+    "typeSelle": "Type de selle",
+    "supprimerSelle": "Supprimer cette selle",
+    "ajouterSelle": "+ Ajouter une selle",
+    "aucuneSelle": "Aucune selle notée aujourd'hui",
+    "etat": {
+      "modifie": "Modifications en attente…",
+      "enCours": "Enregistrement…",
+      "ok": "✓ Enregistré à {{heure}}",
+      "aCorriger": "⚠️ À corriger avant l'enregistrement (quantité de biberon)",
+      "erreur": "⚠️ Échec de l'enregistrement — réessayez"
+    }
   }
 }

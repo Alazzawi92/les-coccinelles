@@ -125,8 +125,10 @@ CREATE TABLE IF NOT EXISTS suivi_quotidien (
   humeur         ENUM('joyeux','calme','fatigue','pleureur','autre'), -- Humeur générale
   biberon_nb     TINYINT UNSIGNED DEFAULT 0,              -- Nombre de biberons donnés
   biberon_ml     SMALLINT UNSIGNED,                       -- Quantité en ml par biberon (optionnel)
+  biberons       JSON,                                    -- Tableau [{heure, ml}] : un élément par biberon
   selles         BOOLEAN DEFAULT FALSE,                   -- A eu des selles oui/non (hygiène)
   selles_nb      TINYINT UNSIGNED DEFAULT 0,              -- Nombre de selles dans la journée
+  selles_details JSON,                                    -- Tableau [{heure, type}] : normale | molle | liquide
   temperature    DECIMAL(4,1),                            -- Température si fièvre (ex: 38.5)
   note_generale  TEXT,                                    -- Message général pour les parents
   redige_par     INT NOT NULL,                            -- Puéricultrice / admin auteur

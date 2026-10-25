@@ -10,14 +10,15 @@
 //            Charge en parallèle le suivi existant de chaque
 //            enfant pour la date sélectionnée.
 //            Pour chaque enfant : formulaire repas (3 selects),
-//            biberons (compteur), siestes multiples (liste début/fin),
+//            biberons (liste heure + ml, quantités rapides, total),
+//            siestes multiples (liste début/fin),
 //            selles (oui/non + compteur), humeur (5 boutons emoji),
 //            activités et note générale (textareas).
 //            POST si nouveau (_nouveau flag), PUT si existant.
 //            envoi{} : objet pour désactiver le bouton par enfant.
 // ============================================================
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
@@ -25,9 +26,29 @@ import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './SuiviAdmin.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import useMenuDuJour from '../../../hooks/useMenuDuJour';
 
 // Date du jour au format YYYY-MM-DD (constante, ne change pas au rendu)
 const today = new Date().toISOString().split('T')[0];
+
+// ── Biberons ─────────────────────────────────────────────────
+// Boutons de quantité rapide (ml) proposés sous chaque biberon
+const QUANTITES_RAPIDES = [90, 120, 150, 180, 210];
+// Même limite que le serveur
+const BIBERON_ML_MAX = 400;
+
+// Délai sans nouvelle saisie avant l'enregistrement automatique (ms)
+const DELAI_SAUVEGARDE_AUTO = 1000;
+
+// Types de selles proposés (même liste que le serveur)
+const TYPES_SELLES = ['normale', 'molle', 'liquide'];
+
+// Quantité valide : entier entre 0 et 400 ml
+const mlValide = (ml) => ml !== '' && ml !== null && Number.isInteger(Number(ml))
+  && Number(ml) >= 0 && Number(ml) <= BIBERON_ML_MAX;
+
+// Heure actuelle "HH:MM" (pré-remplie pour un biberon ajouté aujourd'hui)
+const heureActuelle = () => new Date().toTimeString().slice(0, 5);
 
 // Calculer la durée en minutes entre deux horaires "HH:MM"
 const calcDuree = (debut, fin) => {
@@ -61,12 +82,29 @@ const SuiviAdmin = () => {
   const [enfants,    setEnfants]    = useState([]);
   // Date sélectionnée pour le suivi (défaut = aujourd'hui)
   const [date,       setDate]       = useState(today);
+  // Menu prévu pour la date choisie (rappel dans chaque carte enfant)
+  const menuDuJour = useMenuDuJour(date);
   // Objet { [enfant_id]: suivi_data } — un suivi par enfant pour la date
   const [suivis,     setSuivis]     = useState({});
   // Masque le composant pendant le chargement des enfants
   const [chargement, setChargement] = useState(true);
-  // Objet { [enfant_id]: true/false } pour désactiver le bouton Enregistrer
-  const [envoi,      setEnvoi]      = useState({});
+  // État d'enregistrement par enfant :
+  // 'modifie' (en attente) | 'enCours' | 'ok' | 'aCorriger' (saisie invalide) | 'erreur'
+  const [etat,       setEtat]       = useState({});
+  // Heure du dernier enregistrement réussi, par enfant ("10:42")
+  const [derniereSauvegarde, setDerniereSauvegarde] = useState({});
+
+  // Références lues par les minuteurs d'enregistrement automatique :
+  // un minuteur garde la version des données du moment où il a été créé,
+  // suivisRef donne toujours la DERNIÈRE version saisie.
+  const suivisRef = useRef(suivis);
+  suivisRef.current = suivis;
+  const minuteurs = useRef({});   // setTimeout en attente, par enfant
+  const enCours   = useRef({});   // true pendant une requête d'enregistrement
+  const aRefaire  = useRef({});   // modification arrivée pendant une requête
+
+  // Heures pré-remplies seulement si on saisit le suivi du jour même
+  const estAujourdhui = date === today;
 
   // Options disponibles pour les selects repas
   const REPAS_OPTIONS   = ['absent', 'tout', 'peu', 'rien'];
@@ -101,104 +139,171 @@ const SuiviAdmin = () => {
           const r = await api.get(`/suivi/${e.id}/${date}`);
           nouveauxSuivis[e.id] = {
             ...r.data.data,
-            // S'assurer que siestes est toujours un tableau
-            siestes: r.data.data.siestes || []
+            // S'assurer que les listes horodatées sont toujours des tableaux
+            siestes:        r.data.data.siestes        || [],
+            biberons:       r.data.data.biberons       || [],
+            selles_details: r.data.data.selles_details || []
           };
         } catch {
           // Pas de suivi pour ce jour → initialiser un objet vide marqué _nouveau
           // _nouveau : flag interne, jamais envoyé à l'API
           nouveauxSuivis[e.id] = {
-            enfant_id:     e.id,
-            date_suivi:    date,
-            repas_matin:   'absent',
-            repas_midi:    'absent',
-            repas_gouter:  'absent',
-            repas_note:    '',
-            siestes:       [],           // Tableau vide — siestes multiples
-            activites:     '',
-            humeur:        '',
-            biberon_nb:    0,            // Nombre de biberons
-            biberon_ml:    '',           // Ml par biberon
-            selles:        false,        // Selles oui/non
-            selles_nb:     0,            // Nombre de selles
-            temperature:   '',
-            note_generale: '',
-            _nouveau:      true          // Indique qu'il faut faire un POST et non PUT
+            enfant_id:      e.id,
+            date_suivi:     date,
+            repas_matin:    'absent',
+            repas_midi:     'absent',
+            repas_gouter:   'absent',
+            repas_note:     '',
+            siestes:        [],           // [{debut, fin}] — fin vide = sieste en cours
+            activites:      '',
+            humeur:         '',
+            biberons:       [],           // [{heure, ml}] — un élément par biberon
+            selles_details: [],           // [{heure, type}] — un élément par selle
+            temperature:    '',
+            note_generale:  '',
+            _nouveau:       true          // Indique qu'il faut faire un POST et non PUT
           };
         }
       }));
       setSuivis(nouveauxSuivis);
+      setEtat({});
+      setDerniereSauvegarde({});
     };
     chargerSuivis();
   }, [date, enfants]); // Se relance à chaque changement de date
 
+  // ── Enregistrement automatique ───────────────────────────
+  // Chaque modification (re)lance un minuteur : 1 s sans nouvelle saisie
+  // → enregistrement. Le bouton "Enregistrer" reste disponible.
+  const programmerSauvegarde = (enfantId) => {
+    setEtat(prev => ({ ...prev, [enfantId]: 'modifie' }));
+    clearTimeout(minuteurs.current[enfantId]);
+    minuteurs.current[enfantId] = setTimeout(() => {
+      delete minuteurs.current[enfantId];
+      sauvegarder(enfantId, { auto: true });
+    }, DELAI_SAUVEGARDE_AUTO);
+  };
+
+  // Changement de date ou sortie de la page : on enregistre tout de suite
+  // ce qui était encore en attente, pour ne rien perdre
+  useEffect(() => () => {
+    Object.keys(minuteurs.current).forEach(id => {
+      clearTimeout(minuteurs.current[id]);
+      delete minuteurs.current[id];
+      sauvegarder(Number(id), { auto: true });
+    });
+  }, [date]); // Volontairement lié à la date seule (sauvegarder lit suivisRef)
+
+  // Fermeture de l'onglet avec une saisie pas encore enregistrée : avertissement
+  useEffect(() => {
+    const enAttente = Object.values(etat).some(e => e === 'modifie' || e === 'enCours');
+    if (!enAttente) return;
+    const avertir = (e) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', avertir);
+    return () => window.removeEventListener('beforeunload', avertir);
+  }, [etat]);
+
   // ── Mise à jour d'un champ d'un suivi spécifique ─────────
-  // Merge immutable sur l'objet suivis pour un seul enfant
-  const majSuivi = (enfantId, champ, valeur) =>
+  // Merge immutable sur l'objet suivis pour un seul enfant, puis
+  // enregistrement automatique
+  const majSuivi = (enfantId, champ, valeur) => {
     setSuivis(prev => ({ ...prev, [enfantId]: { ...prev[enfantId], [champ]: valeur } }));
-
-  // ── Ajouter une sieste vide à la liste ───────────────────
-  const ajouterSieste = (enfantId) => {
-    const actuelles = suivis[enfantId]?.siestes || [];
-    majSuivi(enfantId, 'siestes', [...actuelles, { debut: '', fin: '' }]);
+    programmerSauvegarde(enfantId);
   };
 
-  // ── Modifier le début ou la fin d'une sieste ─────────────
-  const majSieste = (enfantId, index, champ, valeur) => {
-    const actuelles = [...(suivis[enfantId]?.siestes || [])];
-    actuelles[index] = { ...actuelles[index], [champ]: valeur };
-    majSuivi(enfantId, 'siestes', actuelles);
+  // Outils communs aux listes horodatées (siestes, biberons, selles)
+  const majListe = (enfantId, cle, index, champ, valeur) => {
+    const liste = [...(suivis[enfantId]?.[cle] || [])];
+    liste[index] = { ...liste[index], [champ]: valeur };
+    majSuivi(enfantId, cle, liste);
   };
+  const supprimerDeListe = (enfantId, cle, index) => {
+    const liste = [...(suivis[enfantId]?.[cle] || [])];
+    liste.splice(index, 1);
+    majSuivi(enfantId, cle, liste);
+  };
+  const ajouterAListe = (enfantId, cle, element) =>
+    majSuivi(enfantId, cle, [...(suivis[enfantId]?.[cle] || []), element]);
 
-  // ── Supprimer une sieste de la liste ─────────────────────
-  const supprimerSieste = (enfantId, index) => {
-    const actuelles = [...(suivis[enfantId]?.siestes || [])];
-    actuelles.splice(index, 1);
-    majSuivi(enfantId, 'siestes', actuelles);
-  };
+  // ── Siestes : début = heure actuelle, bouton "Réveil maintenant" ──
+  const ajouterSieste   = (enfantId) => ajouterAListe(enfantId, 'siestes', { debut: estAujourdhui ? heureActuelle() : '', fin: '' });
+  const majSieste       = (enfantId, index, champ, valeur) => majListe(enfantId, 'siestes', index, champ, valeur);
+  const reveilSieste    = (enfantId, index) => majListe(enfantId, 'siestes', index, 'fin', heureActuelle());
+  const supprimerSieste = (enfantId, index) => supprimerDeListe(enfantId, 'siestes', index);
 
-  // ── Incrémenter / décrémenter un compteur numérique ──────
-  // champ : 'biberon_nb' ou 'selles_nb' | min : valeur minimale (0)
-  const incrementer = (enfantId, champ, delta, min = 0) => {
-    const actuel = suivis[enfantId]?.[champ] || 0;
-    const nouvel = Math.max(min, actuel + delta);
-    majSuivi(enfantId, champ, nouvel);
-  };
+  // ── Biberons : heure actuelle à l'ajout, bouton ⏱ pour la remettre ──
+  const ajouterBiberon   = (enfantId) => ajouterAListe(enfantId, 'biberons', { heure: estAujourdhui ? heureActuelle() : '', ml: '' });
+  const majBiberon       = (enfantId, index, champ, valeur) => majListe(enfantId, 'biberons', index, champ, valeur);
+  const supprimerBiberon = (enfantId, index) => supprimerDeListe(enfantId, 'biberons', index);
+
+  // ── Selles : heure actuelle + type (normale / molle / liquide) ──
+  const ajouterSelle   = (enfantId) => ajouterAListe(enfantId, 'selles_details', { heure: estAujourdhui ? heureActuelle() : '', type: 'normale' });
+  const majSelle       = (enfantId, index, champ, valeur) => majListe(enfantId, 'selles_details', index, champ, valeur);
+  const supprimerSelle = (enfantId, index) => supprimerDeListe(enfantId, 'selles_details', index);
 
   // ── Sauvegarde du suivi d'un enfant ──────────────────────
-  // POST si _nouveau ou pas d'id, PUT sinon
-  const sauvegarder = async (enfantId) => {
-    const s = suivis[enfantId];
+  // POST si _nouveau ou pas d'id, PUT sinon.
+  // auto : enregistrement automatique (pas de toast de succès)
+  const sauvegarder = async (enfantId, { auto = false } = {}) => {
+    clearTimeout(minuteurs.current[enfantId]);
+    delete minuteurs.current[enfantId];
+
+    const s = suivisRef.current[enfantId];
     if (!s) return;
-    setEnvoi(prev => ({ ...prev, [enfantId]: true }));
+
+    // Une requête est déjà en cours pour cet enfant : on relancera à la fin
+    // (évite deux POST simultanés qui créeraient le suivi en double)
+    if (enCours.current[enfantId]) { aRefaire.current[enfantId] = true; return; }
+
+    // Chaque biberon doit avoir une quantité valide (0 à 400 ml)
+    if ((s.biberons || []).some(b => !mlValide(b.ml))) {
+      setEtat(prev => ({ ...prev, [enfantId]: 'aCorriger' }));
+      if (!auto) toast.error(t('admin.suivi.mlInvalide', { max: BIBERON_ML_MAX }));
+      return;
+    }
+
+    enCours.current[enfantId] = true;
+    setEtat(prev => ({ ...prev, [enfantId]: 'enCours' }));
     try {
-      // Nettoyer le payload : supprimer les champs internes et convertir les vides en null
-      const { _nouveau, id, created_at, updated_at, ...payload } = s;
+      // Nettoyer le payload : supprimer les champs internes et convertir les vides en null.
+      // biberon_nb / biberon_ml / selles / selles_nb : recalculés par le serveur
+      const { _nouveau, id, created_at, updated_at, biberon_nb, biberon_ml, selles, selles_nb, ...payload } = s;
       const propre = {
         ...payload,
-        enfant_id:    enfantId,
-        date_suivi:   date,
-        humeur:       payload.humeur       || null,
-        temperature:  payload.temperature  || null,
-        biberon_ml:   payload.biberon_ml   || null,
-        // Filtrer les siestes incomplètes (sans début ET fin)
-        siestes:      (payload.siestes || []).filter(sv => sv.debut && sv.fin),
+        enfant_id:      enfantId,
+        date_suivi:     s.date_suivi || date,
+        humeur:         payload.humeur       || null,
+        temperature:    payload.temperature  || null,
+        biberons:       (payload.biberons || []).map(b => ({ heure: b.heure || null, ml: Number(b.ml) })),
+        // Une sieste sans fin = en cours : elle est enregistrée quand même
+        siestes:        (payload.siestes || []).filter(sv => sv.debut).map(sv => ({ debut: sv.debut, fin: sv.fin || null })),
+        selles_details: (payload.selles_details || []).map(e => ({ heure: e.heure || null, type: e.type || 'normale' }))
       };
-      if (_nouveau || !id) {
-        // Création : POST /suivi
-        const res = await api.post('/suivi', propre);
-        setSuivis(prev => ({ ...prev, [enfantId]: { ...res.data.data, siestes: res.data.data.siestes || [] } }));
-      } else {
-        // Mise à jour : PUT /suivi/:id
-        const res = await api.put(`/suivi/${id}`, propre);
-        setSuivis(prev => ({ ...prev, [enfantId]: { ...res.data.data, siestes: res.data.data.siestes || [] } }));
+      const res = (_nouveau || !id)
+        ? await api.post('/suivi', propre)          // Création
+        : await api.put(`/suivi/${id}`, propre);    // Mise à jour
+
+      // On ne remplace PAS les champs affichés par la réponse : l'équipe a pu
+      // continuer à saisir pendant la requête. On récupère seulement l'id.
+      const nouvelId = res.data.data?.id ?? id;
+      suivisRef.current = { ...suivisRef.current, [enfantId]: { ...suivisRef.current[enfantId], id: nouvelId, _nouveau: false } };
+      setSuivis(prev => ({ ...prev, [enfantId]: { ...prev[enfantId], id: nouvelId, _nouveau: false } }));
+      setEtat(prev => ({ ...prev, [enfantId]: aRefaire.current[enfantId] ? 'modifie' : 'ok' }));
+      setDerniereSauvegarde(prev => ({ ...prev, [enfantId]: heureActuelle() }));
+      if (!auto) {
+        const enfant = enfants.find(e => e.id === enfantId);
+        toast.success(t('admin.suivi.toastEnregistre', { prenom: enfant?.prenom }));
       }
-      const enfant = enfants.find(e => e.id === enfantId);
-      toast.success(t('admin.suivi.toastEnregistre', { prenom: enfant?.prenom }));
     } catch (err) {
+      setEtat(prev => ({ ...prev, [enfantId]: 'erreur' }));
       toast.error(err.response?.data?.message || t('admin.suivi.erreurEnregistrement'));
+    } finally {
+      enCours.current[enfantId] = false;
+      if (aRefaire.current[enfantId]) {
+        aRefaire.current[enfantId] = false;
+        sauvegarder(enfantId, { auto: true });
+      }
     }
-    setEnvoi(prev => ({ ...prev, [enfantId]: false }));
   };
 
   // Garde : spinner si chargement des enfants en cours
@@ -264,44 +369,91 @@ const SuiviAdmin = () => {
                     </div>
                   ))}
                 </div>
+                {/* Rappel du menu du jour (page Menus) pendant la saisie */}
+                {(menuDuJour.midi || menuDuJour.gouter) && (
+                  <div className="suivi-menu-rappel">
+                    {menuDuJour.midi   && <p><strong>🍽️ {t('admin.suivi.moments.midi')} :</strong> {menuDuJour.midi}</p>}
+                    {menuDuJour.gouter && <p><strong>🍪 {t('admin.suivi.moments.gouter')} :</strong> {menuDuJour.gouter}</p>}
+                  </div>
+                )}
               </div>
 
-              {/* ── BIBERON ───────────────────────────────────── */}
-              {/* Compteur boutons - / + pour le nombre de biberons + champ ml optionnel */}
+              {/* ── BIBERONS ──────────────────────────────────── */}
+              {/* Une ligne par biberon : heure + quantité (ml) + quantités rapides.
+                  Le total (nombre + ml) est calculé automatiquement. */}
               <div className="suivi-admin-section">
                 <p className="suivi-admin-label">{t('admin.suivi.biberon')}</p>
-                <div className="compteur-row">
-                  {/* Bouton diminuer — ne descend pas en dessous de 0 */}
-                  <button
-                    type="button"
-                    className="compteur-btn"
-                    onClick={() => incrementer(enfant.id, 'biberon_nb', -1)}
-                    disabled={!s.biberon_nb || s.biberon_nb <= 0}
-                  >−</button>
-                  {/* Valeur actuelle */}
-                  <span className="compteur-valeur">{s.biberon_nb || 0}</span>
-                  {/* Bouton augmenter */}
-                  <button
-                    type="button"
-                    className="compteur-btn"
-                    onClick={() => incrementer(enfant.id, 'biberon_nb', 1)}
-                  >+</button>
-                  <span className="compteur-unite">{t('admin.suivi.biberons', { count: s.biberon_nb || 0 })}</span>
-                </div>
-                {/* Champ ml optionnel — s'affiche seulement si au moins 1 biberon */}
-                {s.biberon_nb > 0 && (
-                  <div className="biberon-ml-row">
-                    <input
-                      type="number"
-                      className="a-input biberon-ml-input"
-                      value={s.biberon_ml || ''}
-                      onChange={e => majSuivi(enfant.id, 'biberon_ml', e.target.value)}
-                      placeholder={t('admin.suivi.mlPlaceholder')}
-                      min="0"
-                      max="500"
-                    />
-                    <span className="compteur-unite">{t('admin.suivi.mlUnite')}</span>
-                  </div>
+                {(s.biberons || []).map((b, idx) => {
+                  const invalide = b.ml !== '' && !mlValide(b.ml);
+                  return (
+                    <div key={idx} className="biberon-item">
+                      <div className="biberon-ligne">
+                        <span className="sieste-numero">{idx + 1}</span>
+                        <input
+                          type="time"
+                          className="a-input biberon-heure"
+                          value={b.heure || ''}
+                          onChange={e => majBiberon(enfant.id, idx, 'heure', e.target.value)}
+                          aria-label={t('admin.suivi.heureBiberon', { n: idx + 1 })}
+                        />
+                        <button
+                          type="button"
+                          className="btn-maintenant btn-maintenant--icone"
+                          onClick={() => majBiberon(enfant.id, idx, 'heure', heureActuelle())}
+                          title={t('admin.suivi.mettreHeureActuelle')}
+                          aria-label={t('admin.suivi.mettreHeureActuelle')}
+                        >⏱</button>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          className={`a-input biberon-ml-input ${invalide ? 'biberon-ml-input--erreur' : ''}`}
+                          value={b.ml}
+                          onChange={e => majBiberon(enfant.id, idx, 'ml', e.target.value)}
+                          placeholder={t('admin.suivi.mlPlaceholder')}
+                          aria-label={t('admin.suivi.quantiteBiberon', { n: idx + 1 })}
+                          min="0"
+                          max={BIBERON_ML_MAX}
+                          step="10"
+                        />
+                        <span className="compteur-unite">ml</span>
+                        <button
+                          type="button"
+                          className="sieste-supprimer"
+                          onClick={() => supprimerBiberon(enfant.id, idx)}
+                          title={t('admin.suivi.supprimerBiberon')}
+                          aria-label={t('admin.suivi.supprimerBiberon')}
+                        >✕</button>
+                      </div>
+                      {/* Quantités rapides : un clic remplit le champ ml */}
+                      <div className="biberon-rapides">
+                        {QUANTITES_RAPIDES.map(q => (
+                          <button
+                            key={q}
+                            type="button"
+                            className={`biberon-rapide ${Number(b.ml) === q && b.ml !== '' ? 'biberon-rapide--actif' : ''}`}
+                            onClick={() => majBiberon(enfant.id, idx, 'ml', q)}
+                          >{q}</button>
+                        ))}
+                      </div>
+                      {invalide && <p className="biberon-erreur">{t('admin.suivi.mlInvalide', { max: BIBERON_ML_MAX })}</p>}
+                    </div>
+                  );
+                })}
+                <button
+                  type="button"
+                  className="sieste-ajouter"
+                  onClick={() => ajouterBiberon(enfant.id)}
+                >
+                  {t('admin.suivi.ajouterBiberon')}
+                </button>
+                {/* Total de la journée, si au moins un biberon */}
+                {(s.biberons || []).length > 0 && (
+                  <p className="biberon-total">
+                    {t('admin.suivi.totalBiberons', {
+                      count: s.biberons.length,
+                      ml: s.biberons.reduce((total, b) => total + (mlValide(b.ml) ? Number(b.ml) : 0), 0)
+                    })}
+                  </p>
                 )}
               </div>
 
@@ -335,6 +487,17 @@ const SuiviAdmin = () => {
                       {duree && (
                         <span className="sieste-duree">{formatDuree(duree)}</span>
                       )}
+                      {/* Sieste commencée mais pas terminée : l'enfant dort encore */}
+                      {sv.debut && !sv.fin && (
+                        <>
+                          <span className="sieste-en-cours">😴 {t('admin.suivi.enCours')}</span>
+                          <button
+                            type="button"
+                            className="btn-maintenant"
+                            onClick={() => reveilSieste(enfant.id, idx)}
+                          >⏰ {t('admin.suivi.reveilMaintenant')}</button>
+                        </>
+                      )}
                       {/* Bouton supprimer cette sieste */}
                       <button
                         type="button"
@@ -356,44 +519,58 @@ const SuiviAdmin = () => {
               </div>
 
               {/* ── SELLES ────────────────────────────────────── */}
-              {/* Bascule oui / non puis compteur + / - si oui */}
+              {/* Une ligne par selle : heure (actuelle à l'ajout) + type.
+                  Le nombre est calculé automatiquement. */}
               <div className="suivi-admin-section">
                 <p className="suivi-admin-label">{t('admin.suivi.selles')}</p>
-                <div className="selles-row">
-                  {/* Bouton Non */}
-                  <button
-                    type="button"
-                    className={`selles-toggle ${!s.selles ? 'selles-toggle--actif selles-toggle--non' : ''}`}
-                    onClick={() => {
-                      majSuivi(enfant.id, 'selles', false);
-                      majSuivi(enfant.id, 'selles_nb', 0);
-                    }}
-                  >{t('admin.suivi.non')}</button>
-                  {/* Bouton Oui */}
-                  <button
-                    type="button"
-                    className={`selles-toggle ${s.selles ? 'selles-toggle--actif selles-toggle--oui' : ''}`}
-                    onClick={() => majSuivi(enfant.id, 'selles', true)}
-                  >{t('admin.suivi.oui')}</button>
-                  {/* Compteur nombre de selles — visible uniquement si selles=oui */}
-                  {s.selles && (
-                    <div className="compteur-row compteur-row--inline">
-                      <button
-                        type="button"
-                        className="compteur-btn"
-                        onClick={() => incrementer(enfant.id, 'selles_nb', -1)}
-                        disabled={!s.selles_nb || s.selles_nb <= 1}
-                      >−</button>
-                      <span className="compteur-valeur">{s.selles_nb || 1}</span>
-                      <button
-                        type="button"
-                        className="compteur-btn"
-                        onClick={() => incrementer(enfant.id, 'selles_nb', 1)}
-                      >+</button>
-                      <span className="compteur-unite">{t('admin.suivi.fois')}</span>
+                {(s.selles_details || []).map((e, idx) => (
+                  <div key={idx} className="selle-item">
+                    <span className="sieste-numero">{idx + 1}</span>
+                    <input
+                      type="time"
+                      className="a-input biberon-heure"
+                      value={e.heure || ''}
+                      onChange={ev => majSelle(enfant.id, idx, 'heure', ev.target.value)}
+                      aria-label={t('admin.suivi.heureSelle', { n: idx + 1 })}
+                    />
+                    <button
+                      type="button"
+                      className="btn-maintenant btn-maintenant--icone"
+                      onClick={() => majSelle(enfant.id, idx, 'heure', heureActuelle())}
+                      title={t('admin.suivi.mettreHeureActuelle')}
+                      aria-label={t('admin.suivi.mettreHeureActuelle')}
+                    >⏱</button>
+                    {/* Type : normale / molle / liquide (utile en cas de maladie) */}
+                    <div className="selle-types" role="group" aria-label={t('admin.suivi.typeSelle')}>
+                      {TYPES_SELLES.map(type => (
+                        <button
+                          key={type}
+                          type="button"
+                          className={`selle-type selle-type--${type} ${e.type === type ? 'selle-type--actif' : ''}`}
+                          aria-pressed={e.type === type}
+                          onClick={() => majSelle(enfant.id, idx, 'type', type)}
+                        >{t(`common.typeSelle.${type}`)}</button>
+                      ))}
                     </div>
-                  )}
-                </div>
+                    <button
+                      type="button"
+                      className="sieste-supprimer"
+                      onClick={() => supprimerSelle(enfant.id, idx)}
+                      title={t('admin.suivi.supprimerSelle')}
+                      aria-label={t('admin.suivi.supprimerSelle')}
+                    >✕</button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="sieste-ajouter"
+                  onClick={() => ajouterSelle(enfant.id)}
+                >
+                  {t('admin.suivi.ajouterSelle')}
+                </button>
+                {(s.selles_details || []).length === 0 && (
+                  <p className="suivi-aucune">{t('admin.suivi.aucuneSelle')}</p>
+                )}
               </div>
 
               {/* ── HUMEUR ────────────────────────────────────── */}
@@ -444,10 +621,18 @@ const SuiviAdmin = () => {
                 className="btn btn--primary"
                 style={{ width:'100%' }}
                 onClick={() => sauvegarder(enfant.id)}
-                disabled={envoi[enfant.id]}
+                disabled={etat[enfant.id] === 'enCours'}
               >
-                {envoi[enfant.id] ? t('common.enregistrement') : t('admin.suivi.enregistrer')}
+                {etat[enfant.id] === 'enCours' ? t('common.enregistrement') : t('admin.suivi.enregistrer')}
               </button>
+              {/* État de l'enregistrement automatique */}
+              {etat[enfant.id] && (
+                <p className={`suivi-etat suivi-etat--${etat[enfant.id]}`} role="status">
+                  {etat[enfant.id] === 'ok'
+                    ? t('admin.suivi.etat.ok', { heure: derniereSauvegarde[enfant.id] })
+                    : t(`admin.suivi.etat.${etat[enfant.id]}`)}
+                </p>
+              )}
 
             </div>
           );

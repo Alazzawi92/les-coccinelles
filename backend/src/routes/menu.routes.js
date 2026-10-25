@@ -10,6 +10,7 @@ router.get('/',           menuController.lister);              // Semaine couran
 // /defaut AVANT /:semaine pour ne pas être capturé comme paramètre
 router.get('/defaut',     verifierToken, verifierRole('super_admin'), menuController.getMenuDefaut);
 router.post('/defaut',    verifierToken, verifierRole('super_admin'), menuController.sauvegarderMenuDefaut);
+router.get('/jour/:date', menuController.getMenuJour);         // Déjeuner + goûter d'un jour (public) — AVANT /:semaine
 router.get('/:semaine',   menuController.getMenuSemaine);      // Semaine précise (public + fallback défaut)
 router.post('/',          verifierToken, verifierRole('super_admin'), menuController.creer);
 router.put('/:id',        verifierToken, verifierRole('super_admin'), menuController.modifier);

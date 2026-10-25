@@ -121,6 +121,18 @@
 /* Note écrite par l'équipe : fond gris discret */
 .suivi-note-texte { margin-top: var(--space-md); font-size: 0.9rem; color: var(--text-gray); background: var(--bg-gray); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); }
 
+/* Menu du jour sous les repas : ce qui était servi */
+.menu-du-jour {
+  margin-top:    var(--space-md);
+  padding:       var(--space-sm) var(--space-md);
+  background:    var(--yellow-bg);
+  border-left:   3px solid var(--secondary);
+  border-radius: var(--radius-md);
+}
+
+.menu-du-jour__titre { font-size: 0.8rem; font-weight: 700; color: var(--text-gray); margin-bottom: 4px; }
+.menu-du-jour__ligne { font-size: 0.9rem; color: var(--text-dark); line-height: 1.5; }
+
 /* Texte quand il n'y a aucune info : italique, très clair */
 .suivi-info-vide  { color: var(--text-light); font-style: italic; font-size: 0.9rem; }
 
@@ -176,6 +188,39 @@
    1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
 /* Petit ordinateur (≤1279px) : colonne calendrier légèrement réduite */
+/* ── Biberons (heure + quantité, total de la journée) ── */
+.biberons-liste { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+
+.biberon-ligne-parent {
+  display:       flex;
+  align-items:   baseline;
+  gap:           var(--space-sm);
+  padding:       var(--space-xs) var(--space-md);
+  background:    var(--info-bg);
+  border-radius: var(--radius-pill);
+}
+
+.biberon-ligne-parent__heure { font-size: 0.85rem; color: var(--text-gray); font-weight: 600; }
+.biberon-ligne-parent__ml    { font-weight: 700; color: var(--info-text); }
+
+.biberons-total { margin-top: var(--space-md); font-weight: 700; color: var(--text-dark); }
+
+/* ── Selles : heure + consistance ── */
+.selle-ligne-parent {
+  display:       flex;
+  align-items:   baseline;
+  gap:           var(--space-sm);
+  padding:       var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  background:    var(--success-bg);
+}
+.selle-ligne-parent--molle   { background: var(--warning-bg); }
+.selle-ligne-parent--liquide { background: var(--error-bg); }
+.selle-ligne-parent__type    { font-weight: 700; color: var(--text-dark); }
+
+/* Sieste en cours : l'enfant dort encore */
+.sieste-en-cours { font-style: normal; font-weight: 700; color: var(--violet-text); }
+
 @media (max-width: 1279px) {
   .suivi-layout { grid-template-columns: 200px 1fr; }
 }

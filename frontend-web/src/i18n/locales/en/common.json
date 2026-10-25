@@ -214,5 +214,16 @@
     "temps_plein": "Full-time",
     "temps_partiel": "Part-time",
     "occasionnel": "Occasional"
+  },
+  "accesReserve": {
+    "titre": "Reserved for enrolled families",
+    "texte": "This page will be available as soon as your child's enrolment has been accepted by the nursery. You can follow your request in “My children”.",
+    "voirDemandes": "See my requests",
+    "inscrire": "Apply for enrolment"
+  },
+  "typeSelle": {
+    "normale": "Normal",
+    "molle": "Soft",
+    "liquide": "Liquid"
   }
 }
