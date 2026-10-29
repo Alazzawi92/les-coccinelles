@@ -105,6 +105,21 @@
 /* Médicament en cours : fond bleu clair */
 .sante-medicament { background: var(--info-bg); color: var(--info-text); }
 
+/* "Aucune allergie" / "Aucun traitement" : badge neutre (pas d'alerte) */
+.sante-neutre     { background: var(--bg-gray); color: var(--text-gray); }
+
+/* Demande d'inscription déjà active : remplace le bouton "Inscription" */
+.enfant-demande-active {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  background:    var(--info-bg);
+  color:         var(--info-text);
+  font-size:     0.8rem;
+  font-weight:   700;
+}
+
 /* ── 6. ACTIONS ─────────────────────────────────────────── */
 
 /* Boutons d'action de la fiche : Voir suivi, Signaler absence, etc. */

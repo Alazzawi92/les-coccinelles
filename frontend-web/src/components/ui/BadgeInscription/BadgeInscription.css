@@ -1,0 +1,28 @@
+/* ============================================================
+   FICHIER : BadgeInscription.css
+   RÔLE    : Couleur du badge selon le statut de la demande.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+.badge-inscription {
+  display:       inline-flex;
+  align-items:   center;
+  padding:       var(--space-xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  font-size:     0.8rem;
+  font-weight:   700;
+  white-space:   nowrap;
+}
+
+/* Inscrit(e) : vert */
+.badge-inscription--accepte       { background: var(--success-bg); color: var(--success-text); }
+/* En attente / en cours d'étude : bleu */
+.badge-inscription--en_attente,
+.badge-inscription--en_cours      { background: var(--info-bg);    color: var(--info-text); }
+/* Dossier incomplet : orange */
+.badge-inscription--incomplet     { background: var(--warning-bg); color: var(--warning-text); }
+/* Liste d'attente : violet */
+.badge-inscription--liste_attente { background: var(--violet-bg);  color: var(--violet-text); }
+/* Refusée : rouge */
+.badge-inscription--refuse        { background: var(--error-bg);   color: var(--error-text); }

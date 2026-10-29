@@ -19,17 +19,17 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MesEnfants.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import BadgeInscription from '../../../components/ui/BadgeInscription/BadgeInscription';
+import { statutParEnfant, estDemandeActive } from '../../../utils/demandes';
+import { TAILLE_MAX_DOCUMENT_MO, documentTropLourd } from '../../../config/limites'; // Taille max partagée
+import { calculerAge } from '../../../utils/age'; // Âge : fonction unique partagée
 
-// ── Calcul de l'âge en mois ou en années ─────────────────────
-// Utilisé dans la fiche enfant (traduit dans la langue active)
-const calculerAge = (dateNaissance) => {
-  const naissance  = new Date(dateNaissance);
-  const maintenant = new Date();
-  const mois = (maintenant.getFullYear() - naissance.getFullYear()) * 12 + (maintenant.getMonth() - naissance.getMonth());
-  return mois < 24
-    ? i18n.t('common.age.mois', { count: mois })
-    : i18n.t('common.age.ans', { count: Math.floor(mois / 12) });
-};
+// ── Santé : "Aucune", "Aucun", "Néant"... = pas d'allergie / traitement ──
+// Ces réponses sont obligatoires dans le formulaire : elles ne doivent pas
+// s'afficher comme une alerte.
+const REPONSES_NEANT = ['aucune', 'aucun', 'non', 'néant', 'neant', 'rien', 'ras', 'none', 'no', '-', '/'];
+const estNeant = (texte) => REPONSES_NEANT.includes(String(texte || '').trim().toLowerCase().replace(/[.!]+$/, ''));
+
 
 // ── Sous-composant formulaire enfant ─────────────────────────
 // Props : initial (objet enfant pour édition, null pour ajout)
@@ -156,24 +156,15 @@ export const FormulaireEnfant = ({ initial, onSave, onAnnuler }) => {
 // (POST /inscriptions/:id/documents → la demande repasse "en cours").
 // demandeCiblee : id venant de l'URL (?demande=ID, lien de la notification)
 // → la carte est mise en avant et la page défile jusqu'à elle.
-const DemandesInscription = ({ demandeCiblee }) => {
+// demandes / recharger : fournis par la page (un seul appel à /inscriptions)
+const DemandesInscription = ({ demandeCiblee, demandes, recharger }) => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
   const D = 'parent.mesEnfants.demandes';
 
-  const [demandes, setDemandes] = useState([]);
   // Fichiers choisis par demande : { [idDemande]: File[] }
   const [fichiers, setFichiers] = useState({});
   // Id de la demande en cours d'envoi (désactive son bouton)
   const [envoiId,  setEnvoiId]  = useState(null);
-
-  const charger = async () => {
-    try {
-      const res = await api.get('/inscriptions');
-      setDemandes(res.data.data || []);
-    } catch { /* section simplement masquée si l'appel échoue */ }
-  };
-
-  useEffect(() => { charger(); }, []);
 
   // Défilement jusqu'à la demande ciblée une fois la liste chargée
   useEffect(() => {
@@ -192,7 +183,7 @@ const DemandesInscription = ({ demandeCiblee }) => {
       await api.post(`/inscriptions/${demande.id}/documents`, fd);
       toast.success(t(`${D}.toastEnvoye`));
       setFichiers(p => ({ ...p, [demande.id]: [] }));
-      await charger(); // Statut mis à jour (incomplet → en cours)
+      await recharger(); // Statut mis à jour (incomplet → en cours)
     } catch (err) {
       toast.error(err.response?.data?.message || t(`${D}.erreurEnvoi`));
     }
@@ -237,7 +228,7 @@ const DemandesInscription = ({ demandeCiblee }) => {
 
               {/* Dossier incomplet : ajout des documents manquants */}
               {d.statut === 'incomplet' && (
-                <div className="demande__completer">
+                <form className="demande__completer" onSubmit={e => { e.preventDefault(); envoyerDocuments(d); }}>
                   <p className="demande__completer-titre">⚠️ {t(`${D}.incompletTitre`)}</p>
                   <p className="demande__completer-texte">{t(`${D}.incompletTexte`)}</p>
 
@@ -246,10 +237,16 @@ const DemandesInscription = ({ demandeCiblee }) => {
                       type="file"
                       multiple
                       accept=".pdf,.jpg,.jpeg,.png"
-                      onChange={e => setFichiers(p => ({ ...p, [d.id]: Array.from(e.target.files) }))}
+                      onChange={e => {
+                        // Fichiers trop lourds refusés tout de suite (même limite que le serveur)
+                        const liste = Array.from(e.target.files);
+                        const trop  = liste.find(documentTropLourd);
+                        if (trop) { toast.error(t('common.fichierTropLourd', { nom: trop.name, max: TAILLE_MAX_DOCUMENT_MO })); e.target.value = ''; return; }
+                        setFichiers(p => ({ ...p, [d.id]: liste }));
+                      }}
                     />
                     <span className="demande__fichiers-bouton">📎 {t(`${D}.choisir`)}</span>
-                    <span className="demande__fichiers-aide">{t(`${D}.formats`)}</span>
+                    <span className="demande__fichiers-aide">{t(`${D}.formats`, { max: TAILLE_MAX_DOCUMENT_MO })}</span>
                   </label>
 
                   {choisis.length > 0 && (
@@ -259,13 +256,13 @@ const DemandesInscription = ({ demandeCiblee }) => {
                   )}
 
                   <button
+                    type="submit"
                     className="btn btn--primary"
                     disabled={choisis.length === 0 || envoiId === d.id}
-                    onClick={() => envoyerDocuments(d)}
                   >
                     {envoiId === d.id ? t('common.enregistrement') : t(`${D}.envoyer`, { count: choisis.length })}
                   </button>
-                </div>
+                </form>
               )}
             </article>
           );
@@ -289,10 +286,25 @@ const MesEnfants = () => {
   const [modeAjout,  setModeAjout]  = useState(false);
   // Enfant actuellement en mode édition (null = aucun)
   const [enfantEdit, setEnfantEdit] = useState(null);
+  // Demandes d'inscription de la famille (section "Mes demandes" + bouton Inscription)
+  const [demandes,   setDemandes]   = useState([]);
 
+  // Un seul appel par liste au chargement de la page
   useEffect(() => {
     chargerEnfants();
+    chargerDemandes();
   }, []);
+
+  // ── Chargement ou rechargement des demandes d'inscription ─
+  const chargerDemandes = async () => {
+    try {
+      const res = await api.get('/inscriptions');
+      setDemandes(res.data.data || []);
+    } catch { /* section simplement masquée si l'appel échoue */ }
+  };
+
+  // Statut de la dernière demande de chaque enfant (badge + bouton "Inscription")
+  const statuts = statutParEnfant(demandes);
 
   // ── Chargement ou rechargement de la liste ────────────────
   const chargerEnfants = async () => {
@@ -348,7 +360,7 @@ const MesEnfants = () => {
       </div>
 
       {/* ── DEMANDES D'INSCRIPTION (statut + documents manquants) ─ */}
-      <DemandesInscription demandeCiblee={demandeCiblee} />
+      <DemandesInscription demandeCiblee={demandeCiblee} demandes={demandes} recharger={chargerDemandes} />
 
       {/* ── FORMULAIRE D'AJOUT ────────────────────────────────── */}
       {modeAjout && (
@@ -372,7 +384,7 @@ const MesEnfants = () => {
               {/* Si cet enfant est en mode édition : affiche le formulaire */}
               {enfantEdit?.id === enfant.id ? (
                 <div className="p-card">
-                  <h2 className="p-card__titre">✏️ {t('parent.mesEnfants.modifierTitre', { prenom: enfant.prenom })}</h2>
+                  <h2 className="p-card__titre">✏️ {t('parent.mesEnfants.modifierTitre', { prenom: `${enfant.prenom} ${enfant.nom}` })}</h2>
                   {/* Pré-rempli avec les données actuelles de l'enfant */}
                   <FormulaireEnfant initial={{
                     prenom: enfant.prenom, nom: enfant.nom,
@@ -398,15 +410,24 @@ const MesEnfants = () => {
                   {/* Badges santé (allergies et médicaments) */}
                   {(enfant.allergies || enfant.medicaments) && (
                     <div className="enfant-fiche__sante">
-                      {enfant.allergies   && <p className="sante-item sante-allergie">⚠️ {enfant.allergies}</p>}
-                      {enfant.medicaments && <p className="sante-item sante-medicament">💊 {enfant.medicaments}</p>}
+                      {enfant.allergies && (estNeant(enfant.allergies)
+                        ? <p className="sante-item sante-neutre">✓ {t('parent.mesEnfants.aucuneAllergie')}</p>
+                        : <p className="sante-item sante-allergie">⚠️ {enfant.allergies}</p>)}
+                      {enfant.medicaments && (estNeant(enfant.medicaments)
+                        ? <p className="sante-item sante-neutre">✓ {t('parent.mesEnfants.aucunTraitement')}</p>
+                        : <p className="sante-item sante-medicament">💊 {enfant.medicaments}</p>)}
                     </div>
                   )}
 
                   {/* Actions : Suivi | Inscription | Modifier */}
                   <div className="enfant-fiche__actions">
                     <Link to={`/parent/suivi/${enfant.id}`} className="btn btn--ghost btn--sm">{t('parent.mesEnfants.suivi')}</Link>
-                    <Link to="/parent/inscription" className="btn btn--ghost btn--sm">{t('parent.mesEnfants.inscription')}</Link>
+                    {/* Badge adapté au statut (Inscrit, En attente, Refusée...) */}
+                    <BadgeInscription statut={statuts[enfant.id]} />
+                    {/* Nouvelle demande possible seulement sans demande active (ou après un refus) */}
+                    {!estDemandeActive(statuts[enfant.id]) && (
+                      <Link to="/parent/inscription" className="btn btn--ghost btn--sm">{t('parent.mesEnfants.inscription')}</Link>
+                    )}
                     <button className="btn btn--outline btn--sm" onClick={() => setEnfantEdit(enfant)}>{t('parent.mesEnfants.modifier')}</button>
                   </div>
                 </div>

@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Documents.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { TAILLE_MAX_DOCUMENT_MO, documentTropLourd } from '../../../config/limites'; // Taille max partagée
 
 // Métadonnées d'affichage pour chaque catégorie de document
 // (libellé traduit via common.categorieDoc.<clé>)
@@ -38,6 +39,8 @@ const Documents = () => {
   const libelleCategorie = (cle) => `${CATEGORIES[cle].icone} ${t(`common.categorieDoc.${cle}`)}`;
   // Liste des documents uploadés par ce parent
   const [documents,  setDocuments]  = useState([]);
+  // Pièces envoyées avec les demandes d'inscription (lecture seule)
+  const [piecesInscription, setPiecesInscription] = useState([]);
   // Liste des enfants du parent (pour sélectionner l'enfant concerné)
   const [enfants,    setEnfants]    = useState([]);
   // Masque la liste pendant le chargement initial
@@ -51,13 +54,29 @@ const Documents = () => {
   // Ref sur l'input file masqué (déclenché par clic sur la drop-zone)
   const inputRef = useRef(null);
 
+  // Choix d'un fichier (clic ou glisser-déposer) : refusé tout de suite s'il est trop lourd
+  const choisirFichier = (f) => {
+    if (!f) return;
+    if (documentTropLourd(f)) {
+      toast.error(t('common.fichierTropLourd', { nom: f.name, max: TAILLE_MAX_DOCUMENT_MO }));
+      if (inputRef.current) inputRef.current.value = '';
+      return;
+    }
+    setFichier(f);
+  };
+
   // ── Chargement initial : documents + enfants en parallèle ─
   useEffect(() => {
     const charger = async () => {
       try {
-        const [rd, re] = await Promise.all([api.get('/documents'), api.get('/enfants')]);
+        const [rd, re, rp] = await Promise.all([
+          api.get('/documents'),
+          api.get('/enfants'),
+          api.get('/inscriptions/mes-documents').catch(() => ({ data: { data: [] } })) // Section facultative
+        ]);
         setDocuments(rd.data.data || []);
         setEnfants(re.data.data || []);
+        setPiecesInscription(rp.data.data || []);
       } catch {}
       setChargement(false);
     };
@@ -104,6 +123,24 @@ const Documents = () => {
     } catch { toast.error(t('common.erreurTelechargement')); }
   };
 
+  // ── Ouvrir une pièce d'inscription (stockage privé) ───────
+  // Téléchargée avec le jeton de connexion puis affichée dans un nouvel onglet.
+  // Type re-choisi dans une liste autorisée (jamais ouvert comme une page web).
+  const ouvrirPieceInscription = async (piece) => {
+    const onglet = window.open('', '_blank');               // Ouvert au clic (anti pop-up)
+    try {
+      const res = await api.get(`/inscriptions/${piece.inscription_id}/documents/${piece.id}/fichier`, { responseType: 'blob' });
+      const TYPES_SURS = ['application/pdf', 'image/jpeg', 'image/png'];
+      const type = TYPES_SURS.includes(res.data.type) ? res.data.type : 'application/octet-stream';
+      const url  = URL.createObjectURL(new Blob([res.data], { type }));
+      if (onglet) onglet.location.href = url; else window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+    } catch {
+      onglet?.close();
+      toast.error(t('common.erreurTelechargement'));
+    }
+  };
+
   // ── Supprimer un document ─────────────────────────────────
   const handleSuppression = async (id) => {
     if (!window.confirm(t('parent.documents.confirmerSuppression'))) return;
@@ -135,10 +172,10 @@ const Documents = () => {
             className={`drop-zone ${fichier ? 'drop-zone--fichier' : ''}`}
             onClick={() => inputRef.current?.click()}
             onDragOver={e => e.preventDefault()} // Nécessaire pour autoriser le drop
-            onDrop={e => { e.preventDefault(); setFichier(e.dataTransfer.files[0]); }}
+            onDrop={e => { e.preventDefault(); choisirFichier(e.dataTransfer.files[0]); }}
           >
             {/* Input masqué — déclenché par le clic sur la drop-zone */}
-            <input type="file" ref={inputRef} style={{ display: 'none' }} accept=".pdf,.jpg,.jpeg,.png" onChange={e => setFichier(e.target.files[0])} />
+            <input type="file" ref={inputRef} style={{ display: 'none' }} accept=".pdf,.jpg,.jpeg,.png" onChange={e => choisirFichier(e.target.files[0])} />
             {fichier ? (
               // Aperçu du fichier sélectionné
               <>
@@ -151,7 +188,7 @@ const Documents = () => {
               <>
                 <span style={{ fontSize: '2.5rem' }}>📁</span>
                 <p>{t('parent.documents.dropZone')}</p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{t('parent.documents.formats')}</p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>{t('parent.documents.formats', { max: TAILLE_MAX_DOCUMENT_MO })}</p>
               </>
             )}
           </div>
@@ -168,7 +205,7 @@ const Documents = () => {
               <label className="p-label">{t('parent.documents.enfant')}</label>
               <select className="p-input" value={formUpload.enfant_id} onChange={e => setFormUpload(p => ({...p, enfant_id: e.target.value}))}>
                 <option value="">{t('parent.documents.nonSpecifie')}</option>
-                {enfants.map(e => <option key={e.id} value={e.id}>{e.prenom}</option>)}
+                {enfants.map(e => <option key={e.id} value={e.id}>{e.prenom} {e.nom}</option>)}
               </select>
             </div>
           </div>
@@ -221,6 +258,34 @@ const Documents = () => {
                 </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* ── PIÈCES DES DEMANDES D'INSCRIPTION ─────────────────── */}
+      {/* Envoyées avec le formulaire d'inscription : consultables ici, non
+          supprimables (elles font partie du dossier de la crèche) */}
+      {piecesInscription.length > 0 && (
+        <div className="p-card" style={{ marginTop: 'var(--space-xl)' }}>
+          <h2 className="p-card__titre">📝 {t('parent.documents.piecesInscription', { n: piecesInscription.length })}</h2>
+          <div className="documents-liste">
+            {piecesInscription.map(piece => (
+              <div key={piece.id} className="document-ligne">
+                <span className="doc-icone">📎</span>
+                <div className="doc-infos">
+                  <p className="doc-nom">{piece.label}</p>
+                  <div className="doc-meta">
+                    {piece.enfant && <span className="doc-categorie doc-categorie--bleu">{piece.enfant.prenom} {piece.enfant.nom}</span>}
+                    <span className="doc-description">{piece.fichier_nom}</span>
+                    <span className="doc-date">{new Date(piece.created_at).toLocaleDateString(getLocale())}</span>
+                  </div>
+                </div>
+                <div className="doc-actions">
+                  <button type="button" className="btn btn--ghost btn--sm" onClick={() => ouvrirPieceInscription(piece)}
+                    title={t('parent.documents.voirPiece')} aria-label={`${t('parent.documents.voirPiece')} : ${piece.label}`}>👁</button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

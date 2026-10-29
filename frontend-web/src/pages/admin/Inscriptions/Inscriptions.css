@@ -129,6 +129,8 @@
   transition:     var(--transition);
 }
 .doc-item:hover { border-color: var(--primary); background: var(--primary-light); }
+/* La ligne est un <button> : largeur et police du texte, alignée à gauche */
+button.doc-item { width: 100%; text-align: left; font: inherit; cursor: pointer; }
 
 .doc-item__icone { font-size: 1.3rem; flex-shrink: 0; }
 .doc-item__info  { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }

@@ -112,8 +112,23 @@
   transition:    var(--transition);
 }
 
-/* La vraie radio est masquée visuellement */
-.enfant-option input { display: none; }
+/* La vraie radio est masquée visuellement (mais reste utilisable au clavier) */
+.enfant-option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.enfant-option:focus-within { box-shadow: var(--focus-ring); }
+
+/* Enfant qui a déjà une demande active : non sélectionnable */
+.enfant-option--bloque { opacity: 0.6; cursor: not-allowed; }
+.enfant-option--bloque:hover { border-color: var(--bg-gray); background: transparent; }
+.enfant-option__badge-statut { margin-left: auto; }
+.enfant-option__badge {
+  margin-left:   auto;
+  padding:       2px 10px;
+  border-radius: var(--radius-pill);
+  background:    var(--info-bg);
+  color:         var(--info-text);
+  font-size:     0.78rem;
+  font-weight:   700;
+}
 
 /* Au survol : bordure et fond orange */
 .enfant-option:hover              { border-color: var(--primary); background: var(--primary-light); }
@@ -134,17 +149,23 @@
 
 /* Un bouton jour : bordure grise par défaut, cochable */
 .jour-checkbox {
-  padding:       var(--space-sm) var(--space-md);
-  border:        2px solid var(--bg-gray);
-  border-radius: var(--radius-pill);
-  cursor:        pointer;
-  transition:    var(--transition);
-  font-weight:   600;
-  font-size:     0.9rem;
+  position:        relative;            /* Ancre la case masquée */
+  display:         inline-flex;
+  justify-content: center;
+  min-width:       6.5rem;              /* Largeur fixe : pas de saut au clic */
+  padding:         var(--space-sm) var(--space-md);
+  border:          2px solid var(--bg-gray);
+  border-radius:   var(--radius-pill);
+  cursor:          pointer;
+  user-select:     none;
+  /* Seules les couleurs changent (jamais la taille) : pas de saut de mise en page */
+  transition:      background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  font-weight:     600;
+  font-size:       0.9rem;
 }
 
-/* Checkbox caché sous le bouton */
-.jour-checkbox input { display: none; }
+/* Focus clavier visible sur la case (masquée) du jour */
+.jour-checkbox:focus-within { box-shadow: var(--focus-ring); }
 
 /* Survol : bordure orange */
 .jour-checkbox:hover     { border-color: var(--primary); }
@@ -664,6 +685,84 @@ button.piece-item__btn { background: var(--surface); font-family: inherit; }
   padding-bottom: var(--space-sm);
   border-bottom:  2px solid var(--bg-gray);
 }
+
+/* ── VALIDATION, ACCESSIBILITÉ, RÉCAPITULATIF ───────────── */
+
+/* Les blocs sont des <fieldset> / <legend> (regroupement accessible).
+   :where() = spécificité nulle → les classes de la page gardent la main. */
+:where(.inscription-page) fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+/* float + width : la légende reste DANS le bloc (et non sur sa bordure) */
+:where(.inscription-page) legend   { float: left; width: 100%; padding: 0; }
+:where(.inscription-page) legend + * { clear: both; }
+
+/* Petit texte d'aide sous un champ */
+.p-aide { font-size: 0.8rem; color: var(--text-gray); margin-top: 4px; }
+
+/* Groupe (jours) en erreur : cadre rouge discret */
+.champ-en-erreur .jours-checkboxes { outline: 2px solid var(--error); outline-offset: 4px; border-radius: var(--radius-md); }
+
+/* Mention « (facultatif) » dans un titre de bloc */
+.preinsc-facultatif { font-family: var(--font-body); font-weight: 500; font-size: 0.85rem; color: var(--text-gray); }
+
+/* Case à cocher + texte (seul responsable, sans emploi) */
+.preinsc-case {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-sm);
+  margin-bottom: var(--space-md);
+  cursor:        pointer;
+  font-size:     0.9rem;
+}
+.preinsc-case input { margin-top: 3px; accent-color: var(--primary); }
+.preinsc-case small { display: block; color: var(--text-gray); font-size: 0.8rem; }
+
+/* Variante mise en avant : "Je suis le seul responsable légal" */
+.preinsc-case--seul {
+  padding:       var(--space-md) var(--space-lg);
+  background:    var(--info-bg);
+  border:        1.5px solid var(--info);
+  border-radius: var(--radius-xl);
+}
+
+/* Champ désactivé (employeur quand "sans emploi" est coché) */
+.p-input:disabled { background: var(--bg-gray); cursor: not-allowed; opacity: 0.7; }
+
+/* Récapitulatif : une carte par section, avec un lien "Modifier" */
+.recap-section {
+  margin-bottom: var(--space-lg);
+  padding:       var(--space-md) var(--space-lg);
+  border:        1.5px solid var(--border);
+  border-radius: var(--radius-xl);
+}
+.recap-section .recap-grille { margin-bottom: var(--space-md); }
+.recap-section .recap-grille:last-child { margin-bottom: 0; }
+
+.recap-section__entete {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-md);
+  margin-bottom:   var(--space-md);
+}
+.recap-section__entete h3 { font-family: var(--font-heading); font-size: 1rem; color: var(--text-dark); }
+
+/* Lien "Modifier" (vrai bouton : ramène à l'étape concernée) */
+.recap-modifier {
+  padding:       4px 12px;
+  border:        1.5px solid var(--primary);
+  border-radius: var(--radius-pill);
+  background:    var(--surface);
+  color:         var(--primary);
+  font:          inherit;
+  font-size:     0.8rem;
+  font-weight:   700;
+  cursor:        pointer;
+  transition:    var(--transition);
+}
+.recap-modifier:hover         { background: var(--primary); color: var(--white); }
+.recap-modifier:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.recap-texte { color: var(--text-dark); white-space: pre-line; overflow-wrap: anywhere; }
 
 /* ── 8. RESPONSIVE ──────────────────────────────────────── */
 /* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /

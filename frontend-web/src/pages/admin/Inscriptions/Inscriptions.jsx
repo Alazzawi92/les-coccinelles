@@ -10,7 +10,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import api, { BACKEND_URL } from '../../../services/api';
+import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -52,6 +52,28 @@ const Inscriptions = () => {
   const [envoi,         setEnvoi]         = useState(false);
   // Documents justificatifs du dossier sélectionné
   const [documents,     setDocuments]     = useState([]);
+
+  // Ouvre une pièce justificative : elle est dans le stockage privé du
+  // serveur, lisible seulement via une route authentifiée. On la télécharge
+  // avec le jeton de connexion, puis on l'affiche dans un nouvel onglet.
+  const ouvrirDocument = async (doc) => {
+    // Onglet ouvert tout de suite (au clic) pour ne pas être bloqué
+    // par le navigateur comme une fenêtre pop-up
+    const onglet = window.open('', '_blank');
+    try {
+      const res = await api.get(`/inscriptions/${doc.inscription_id}/documents/${doc.id}/fichier`, { responseType: 'blob' });
+      // Le type est re-choisi dans une liste autorisée : un contenu inattendu
+      // n'est jamais ouvert comme une page web (pas de script exécuté)
+      const TYPES_SURS = ['application/pdf', 'image/jpeg', 'image/png'];
+      const type = TYPES_SURS.includes(res.data.type) ? res.data.type : 'application/octet-stream';
+      const url = URL.createObjectURL(new Blob([res.data], { type })); // Adresse locale temporaire
+      if (onglet) onglet.location.href = url; else window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);  // Libérée après 1 minute
+    } catch {
+      onglet?.close();
+      toast.error(t('admin.inscriptions.erreurDocument'));
+    }
+  };
   const [chargeDocs,    setChargeDocs]    = useState(false);
 
   // ── Chargement de tous les dossiers au montage ───────────
@@ -289,11 +311,10 @@ const Inscriptions = () => {
                   {documents.map(doc => {
                     const estPdf = doc.fichier_nom?.toLowerCase().endsWith('.pdf');
                     return (
-                      <a
+                      <button
                         key={doc.id}
-                        href={`${BACKEND_URL}${doc.fichier_path}`}
-                        target="_blank"
-                        rel="noreferrer"
+                        type="button"
+                        onClick={() => ouvrirDocument(doc)}
                         className="doc-item"
                       >
                         <span className="doc-item__icone">{estPdf ? '📄' : '🖼️'}</span>
@@ -302,7 +323,7 @@ const Inscriptions = () => {
                           <span className="doc-item__nom">{doc.fichier_nom}</span>
                         </div>
                         <span className="doc-item__dl">↓</span>
-                      </a>
+                      </button>
                     );
                   })}
                 </div>
