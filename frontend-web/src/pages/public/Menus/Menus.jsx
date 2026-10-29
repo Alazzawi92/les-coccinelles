@@ -11,6 +11,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import './Menus.css';
+import { versDateISO, depuisDateISO, lundiDeLaSemaine } from '../../../utils/dates'; // Dates en heure locale
 
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
 
@@ -19,13 +20,7 @@ const quillVide = v => !v || v === '<p><br></p>';
 
 // ── Utilitaire : calcule la date du lundi de la semaine donnée ──
 // Retourne une chaîne YYYY-MM-DD utilisée comme clé d'API
-const getLundiSemaine = (date = new Date()) => {
-  const d   = new Date(date);
-  const day = d.getDay();                              // 0=Dim, 1=Lun, ...
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Ramène au lundi
-  d.setDate(diff);
-  return d.toISOString().split('T')[0]; // Format YYYY-MM-DD
-};
+const getLundiSemaine = (date = new Date()) => lundiDeLaSemaine(date); // Heure locale
 
 const Menus = () => {
 
@@ -52,9 +47,9 @@ const Menus = () => {
   // ── Navigation semaine ────────────────────────────────────
   // sens=-1 → semaine précédente, sens=+1 → semaine suivante
   const changerSemaine = (sens) => {
-    const d = new Date(semaine);
+    const d = depuisDateISO(semaine);  // Minuit local (pas UTC)
     d.setDate(d.getDate() + sens * 7); // Décale de 7 jours
-    setSemaine(d.toISOString().split('T')[0]);
+    setSemaine(versDateISO(d));
   };
 
   // ── Formatage de la période de la semaine ─────────────────

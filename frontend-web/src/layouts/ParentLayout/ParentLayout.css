@@ -235,11 +235,20 @@
 
 /* Tablette (≤1023px) : sidebar encore réduite, liens plus compacts */
 @media (max-width: 1023px) {
-  .parent-sidebar { width: 76px; }
+  /* Barre repliée (76px) : rien ne doit dépasser en largeur */
+  .parent-sidebar { width: 76px; overflow-x: hidden; }
   .parent-sidebar__user-nom,
   .parent-sidebar__user-role { display: none; }
-  .parent-sidebar__link { justify-content: center; padding: var(--space-md) var(--space-sm); }
-  .parent-sidebar__link span:last-child { display: none; }  /* masque le libellé, garde l'icône */
+  /* Logo et avatar réduits pour tenir dans la largeur */
+  .parent-sidebar__logo-img { height: auto; max-width: 52px; }
+  .parent-sidebar__user { justify-content: center; padding: var(--space-md) var(--space-sm); }
+  .parent-sidebar__link { position: relative; justify-content: center; padding: var(--space-md) var(--space-sm); }
+  /* Libellés masqués (icône seule) : repérés par leur classe, plus par
+     "dernier élément" (le cadenas 🔒 placé à la fin cassait ce masquage) */
+  .parent-sidebar__libelle { display: none; }
+  /* Cadenas : petit badge sur l'icône au lieu d'occuper la ligne */
+  .parent-lien-verrou { position: absolute; top: 4px; right: 8px; margin: 0; font-size: 0.65rem; }
+  .parent-sidebar__deconnexion { justify-content: center; padding: var(--space-md) var(--space-sm); }
   .layout-main { padding: var(--space-lg); }
 }
 

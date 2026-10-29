@@ -18,9 +18,10 @@ import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Emargement.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { versDateISO } from '../../../utils/dates'; // Dates en heure locale
 
 // Date du jour au format YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0];
+const today = versDateISO(); // Date du jour en heure locale
 
 // Heure courante au format HH:MM (24h) envoyée à l'API : 'fr-FR' est volontaire
 // ici, c'est un format de donnée et non un affichage traduit

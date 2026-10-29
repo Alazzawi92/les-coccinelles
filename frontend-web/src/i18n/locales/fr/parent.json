@@ -85,7 +85,8 @@
     "mdpDifferents": "Les mots de passe ne correspondent pas",
     "mdpCourt": "8 caractères minimum",
     "toastMdp": "Mot de passe modifié",
-    "erreurMdp": "Erreur lors du changement"
+    "erreurMdp": "Erreur lors du changement",
+    "nomInvalide": "Prénom ou nom invalide : lettres, espaces, apostrophe ou tiret uniquement (2 caractères minimum)"
   },
   "suivi": {
     "retour": "← Mes enfants",
@@ -110,7 +111,9 @@
     "totalBiberons_other": "{{count}} biberons · {{ml}} ml dans la journée",
     "auMenu": "Au menu ce jour-là",
     "selles": "Changes",
-    "dortEncore": "dort encore"
+    "dortEncore": "dort encore",
+    "introuvable": "Enfant introuvable",
+    "introuvableTexte": "Cet enfant n'existe pas ou n'est pas rattaché à votre compte."
   },
   "mesEnfants": {
     "titre": "Mes <s>enfants</s>",
@@ -160,12 +163,15 @@
       "incompletTitre": "Dossier incomplet",
       "incompletTexte": "Il manque des documents pour traiter votre demande. Ajoutez-les ci-dessous : la crèche sera prévenue automatiquement.",
       "choisir": "Choisir les documents",
-      "formats": "PDF, JPG ou PNG — 5 Mo max par fichier",
+      "formats": "PDF, JPG ou PNG — {{max}} Mo max par fichier",
       "envoyer_one": "Envoyer {{count}} document",
       "envoyer_other": "Envoyer {{count}} documents",
       "toastEnvoye": "Documents envoyés ! La crèche a été prévenue.",
       "erreurEnvoi": "Erreur lors de l'envoi des documents"
-    }
+    },
+    "aucuneAllergie": "Aucune allergie",
+    "aucunTraitement": "Aucun traitement",
+    "demandeEnCours": "Demande d'inscription en cours"
   },
   "absences": {
     "titre": "Mes <s>absences</s>",
@@ -188,7 +194,11 @@
     "colDuree": "Durée",
     "colMotif": "Motif",
     "colStatut": "Statut",
-    "absenceTitre": "Absence : {{motif}}"
+    "absenceTitre": "Absence : {{motif}}",
+    "joursOuvres_one": "{{count}} jour d'ouverture",
+    "joursOuvres_other": "{{count}} jours d'ouverture",
+    "apercuJours_one": "{{count}} jour d'ouverture de la crèche concerné (hors week-ends et jours fériés)",
+    "apercuJours_other": "{{count}} jours d'ouverture de la crèche concernés (hors week-ends et jours fériés)"
   },
   "documents": {
     "titre": "Mes <s>documents</s>",
@@ -199,7 +209,7 @@
     "confirmerSuppression": "Supprimer ce document ?",
     "toastSupprime": "Document supprimé",
     "dropZone": "Glisser-déposer ou cliquer pour sélectionner",
-    "formats": "PDF, JPG, PNG — max 5 Mo",
+    "formats": "PDF, JPG, PNG — max {{max}} Mo",
     "categorie": "Catégorie",
     "enfant": "Enfant concerné",
     "nonSpecifie": "Non spécifié",
@@ -208,7 +218,9 @@
     "upload": "Upload en cours...",
     "envoyer": "📤 Envoyer",
     "aucun": "Vous n'avez pas encore uploadé de document.",
-    "mesDocuments": "Mes documents ({{n}})"
+    "mesDocuments": "Mes documents ({{n}})",
+    "piecesInscription": "Documents de mes demandes d'inscription ({{n}})",
+    "voirPiece": "Voir le document"
   },
   "galerie": {
     "titre": "Galerie <s>photos</s>",
@@ -245,7 +257,7 @@
     "message": "Message",
     "messagePlaceholder": "Écrivez votre message...",
     "pieceJointe": "Pièce jointe",
-    "pieceJointeAide": "(photo ou PDF, max 10 Mo)",
+    "pieceJointeAide": "(photo ou PDF, max {{max}} Mo)",
     "envoyer": "Envoyer",
     "aucun": "Aucun message",
     "selectionnez": "Sélectionnez une conversation",
@@ -254,7 +266,7 @@
     "reponsePlaceholder": "Écrire une réponse...",
     "joindreTitre": "Joindre un fichier",
     "joindre": "📎 Joindre",
-    "envoyerReponse": "Envoyer ↑"
+    "envoyerReponse": "Envoyer"
   },
   "inscription": {
     "titre": "Dossier <s>d'inscription</s>",
@@ -314,7 +326,19 @@
       "emailInvalide": "Adresse email invalide",
       "adresseRequise": "Adresse requise",
       "situationRequise": "Situation requise",
-      "fratrieRequise": "Place dans la fratrie requise"
+      "fratrieRequise": "Place dans la fratrie requise",
+      "dateRequise": "Date de début souhaitée requise",
+      "datePassee": "La date ne peut pas être dans le passé",
+      "dateAvantNaissance": "La date ne peut pas être antérieure à la naissance de l'enfant",
+      "typeRequis": "Type d'accueil requis",
+      "joursTempsPlein": "Temps plein : sélectionnez les 5 jours (lundi au vendredi)",
+      "joursTempsPartiel": "Temps partiel : sélectionnez 2 ou 3 jours",
+      "professionRequise": "Profession requise (ex : « Étudiante », « Sans emploi »)",
+      "employeurRequis": "Employeur requis — ou cochez « Sans emploi / Étudiant(e) »",
+      "nirRequis": "Numéro de sécurité sociale requis",
+      "nirInvalide": "Numéro invalide : 15 caractères (13 chiffres + clé de 2 chiffres)",
+      "cafRequis": "Numéro allocataire CAF requis",
+      "cafInvalide": "Numéro CAF invalide : 7 chiffres"
     },
     "toastEnvoyee": "Demande d'inscription envoyée !",
     "erreurEnvoi": "Erreur lors de l'envoi",
@@ -366,13 +390,17 @@
       "fratrieLabel": "L'enfant est le…",
       "contactsIntro": "Vous pouvez indiquer deux personnes autorisées à venir chercher l'enfant ou à être contactées en cas d'urgence (en dehors des parents). Ces informations sont facultatives.",
       "contact1": "Personne à contacter n°1",
-      "contact2": "Personne à contacter n°2"
+      "contact2": "Personne à contacter n°2",
+      "facultatif": "facultatif",
+      "seulResponsable": "Je suis le seul responsable légal de l'enfant",
+      "seulResponsableAide": "Parent célibataire, veuf / veuve… Le bloc « Parent 2 » devient facultatif."
     },
     "e2": {
       "titre": "Quel enfant souhaitez-vous inscrire ?",
       "dAbord": "Vous n'avez pas encore enregistré d'enfant : ajoutez-le ici, sans quitter le formulaire (vos informations déjà saisies sont conservées).",
       "ajoutIntro": "Ajoutez un autre enfant, il sera sélectionné automatiquement.",
-      "autreEnfant": "+ Ajouter un autre enfant"
+      "autreEnfant": "+ Ajouter un autre enfant",
+      "demandeEnCours": "Demande déjà en cours"
     },
     "e3": {
       "titre": "Modalités d'accueil souhaitées",
@@ -383,7 +411,14 @@
         "temps_partiel": "Temps partiel (2–3 jours/semaine)",
         "occasionnel": "Occasionnel (selon disponibilités)"
       },
-      "jours": "Jours souhaités"
+      "jours": "Jours souhaités",
+      "dateAide": "À partir du {{date}} (pas de date passée ni antérieure à la naissance).",
+      "aideJours": {
+        "choisirType": "Choisissez d'abord le type d'accueil.",
+        "temps_plein": "Temps plein : les 5 jours, du lundi au vendredi.",
+        "temps_partiel": "Temps partiel : 2 ou 3 jours par semaine.",
+        "occasionnel": "Occasionnel : jours facultatifs, selon les places disponibles."
+      }
     },
     "e4": {
       "titre": "Documents & informations complémentaires",
@@ -395,7 +430,7 @@
       "profession2Placeholder": "Ex : Comptable, Commerçant...",
       "employeur2Placeholder": "Ex : Cabinet Martin, Auto-entrepreneur...",
       "docsTitre": "Documents à fournir",
-      "docsIntro": "Déposez vos 5 documents (PDF ou image, 5 Mo max chacun). Ils sont obligatoires : la demande ne peut pas être envoyée sans eux.",
+      "docsIntro": "Déposez vos 5 documents (PDF ou image, {{max}} Mo max chacun). Ils sont obligatoires : la demande ne peut pas être envoyée sans eux.",
       "changer": "🔄 Changer",
       "choisir": "📤 Choisir",
       "compteur": "{{n}} / {{total}} document(s) ajouté(s)",
@@ -405,7 +440,16 @@
       "retirer": "✕ Retirer",
       "retirerAria": "Retirer le document : {{doc}}",
       "typeInvalide": "« {{nom}} » : format non accepté (PDF, JPG ou PNG uniquement)",
-      "tropLourd": "« {{nom}} » dépasse 5 Mo : merci de choisir un fichier plus léger"
+      "tropLourd": "« {{nom}} » dépasse {{max}} Mo : merci de choisir un fichier plus léger",
+      "sansEmploi": "Sans emploi / Étudiant(e)",
+      "numerosTitre": "Numéros des justificatifs",
+      "nir": "Numéro de sécurité sociale (dont dépend l'enfant)",
+      "nirPlaceholder": "1 85 05 78 006 084 36",
+      "nirAide": "15 caractères, clé de contrôle comprise (les espaces sont acceptés).",
+      "caf": "Numéro allocataire CAF",
+      "cafPlaceholder": "1234567",
+      "cafAide": "7 chiffres, indiqué sur vos courriers de la CAF.",
+      "doublon": "« {{nom}} » est déjà utilisé pour « {{doc}} » : choisissez le bon fichier pour chaque document."
     },
     "e5": {
       "titre": "Message à l'équipe (optionnel)",
@@ -433,7 +477,14 @@
       "oui": "Oui ✓",
       "non": "Non",
       "info": "Votre demande sera examinée par l'équipe dans les meilleurs délais. Vous recevrez une notification dès qu'une décision sera prise.",
-      "documents": "Documents joints"
+      "documents": "Documents joints",
+      "sectionParents": "Parents",
+      "sectionFamille": "Famille et contacts d'urgence",
+      "sectionAccueil": "Enfant et accueil souhaité",
+      "sectionPro": "Professions et numéros",
+      "modifier": "Modifier",
+      "nonRenseigne": "Non renseigné",
+      "seulResponsable": "Aucun (seul responsable légal)"
     },
     "retour": "← Retour",
     "continuer": "Continuer →",

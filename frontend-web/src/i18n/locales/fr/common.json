@@ -89,7 +89,58 @@
     "aucune": "Aucune notification",
     "aLInstant": "À l'instant",
     "ilYaMin": "Il y a {{n}} min",
-    "ilYaH": "Il y a {{n}}h"
+    "ilYaH": "Il y a {{n}}h",
+    "contenu": {
+      "compteAValider": {
+        "titre": "Nouveau compte à valider",
+        "message": "{{parent}} ({{email}}) a créé un compte et confirmé son email"
+      },
+      "nouveauDocument": {
+        "titre": "Nouveau document",
+        "message": "{{parent}} a déposé un document ({{fichier}})"
+      },
+      "nouvelleDemande": {
+        "titre": "Nouvelle demande d'inscription",
+        "message": "{{parent}} a envoyé une demande d'inscription pour {{enfant}}"
+      },
+      "dossierComplete": {
+        "titre": "Dossier complété",
+        "message_one": "{{parent}} a ajouté {{count}} document au dossier de {{enfant}}",
+        "message_other": "{{parent}} a ajouté {{count}} documents au dossier de {{enfant}}"
+      },
+      "statutInscription": {
+        "titre": "Mise à jour de l'inscription",
+        "message": "Le statut de l'inscription de {{enfant}} a été mis à jour.",
+        "messages": {
+          "accepte": "La demande d'inscription de {{enfant}} a été acceptée.",
+          "refuse": "La demande d'inscription de {{enfant}} a été refusée.",
+          "incomplet": "Des documents manquent pour le dossier de {{enfant}}.",
+          "liste_attente": "{{enfant}} est en liste d'attente.",
+          "en_cours": "Le dossier de {{enfant}} est en cours de traitement."
+        }
+      },
+      "absenceValidee": {
+        "titre": "Absence validée",
+        "message": "Votre absence a été validée."
+      },
+      "absenceRefusee": {
+        "titre": "Absence refusée",
+        "message": "Votre absence a été refusée."
+      },
+      "nouveauMessage": {
+        "titre": "Nouveau message",
+        "message": "Message de {{auteur}}"
+      },
+      "nouvellePieceJointe": {
+        "titre": "Nouveau message",
+        "message": "{{auteur}} a envoyé une pièce jointe ({{fichier}})"
+      },
+      "nouvellesPhotos": {
+        "titre": "📷 Nouvelles photos disponibles",
+        "message_one": "{{count}} nouvelle photo dans l'album « {{album}} »",
+        "message_other": "{{count}} nouvelles photos dans l'album « {{album}} »"
+      }
+    }
   },
   "cookies": {
     "aria": "Gestion des cookies",
@@ -123,7 +174,8 @@
     "mois_one": "{{count}} mois",
     "mois_other": "{{count}} mois",
     "ans_one": "{{count}} an",
-    "ans_other": "{{count}} ans"
+    "ans_other": "{{count}} ans",
+    "ansEtMois": "{{ans}} et {{mois}}"
   },
   "humeur": {
     "joyeux": "Joyeux",
@@ -225,5 +277,14 @@
     "normale": "Normale",
     "molle": "Molle",
     "liquide": "Liquide"
+  },
+  "fichierTropLourd": "« {{nom}} » dépasse la taille maximale ({{max}} Mo)",
+  "badgeInscription": {
+    "accepte": "✅ Inscrit(e)",
+    "en_attente": "⏳ Demande en attente",
+    "en_cours": "⏳ Dossier en cours d'étude",
+    "incomplet": "⚠️ Dossier incomplet",
+    "liste_attente": "🕒 Liste d'attente",
+    "refuse": "❌ Demande refusée"
   }
 }

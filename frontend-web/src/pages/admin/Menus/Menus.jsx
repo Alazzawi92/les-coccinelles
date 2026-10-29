@@ -17,6 +17,7 @@ import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Menus.css';
+import { lundiDeLaSemaine } from '../../../utils/dates'; // Dates en heure locale
 
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
 
@@ -36,13 +37,8 @@ const FORM_VIDE = () => {
   return f;
 };
 
-const getLundiSemaine = (offset = 0) => {
-  const d   = new Date();
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1) + offset * 7;
-  d.setDate(diff);
-  return d.toISOString().split('T')[0];
-};
+// Lundi de la semaine courante (+ offset semaines), en heure locale
+const getLundiSemaine = (offset = 0) => lundiDeLaSemaine(new Date(), offset);
 
 const extraireForm = (menu) => {
   const f = {};

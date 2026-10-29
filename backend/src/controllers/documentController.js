@@ -39,7 +39,8 @@ const uploader = async (req, res) => {
         'Nouveau document',
         `${req.user.prenom} ${req.user.nom} a déposé un document (${req.file.originalname})`,
         'document',
-        '/admin/documents'
+        '/admin/documents',
+        { code: 'nouveauDocument', params: { parent: `${req.user.prenom} ${req.user.nom}`, fichier: req.file.originalname } }
       )));
     }
 

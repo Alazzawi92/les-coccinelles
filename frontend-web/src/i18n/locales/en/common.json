@@ -89,7 +89,58 @@
     "aucune": "No notifications",
     "aLInstant": "Just now",
     "ilYaMin": "{{n}} min ago",
-    "ilYaH": "{{n}}h ago"
+    "ilYaH": "{{n}}h ago",
+    "contenu": {
+      "compteAValider": {
+        "titre": "New account to approve",
+        "message": "{{parent}} ({{email}}) created an account and confirmed their email"
+      },
+      "nouveauDocument": {
+        "titre": "New document",
+        "message": "{{parent}} uploaded a document ({{fichier}})"
+      },
+      "nouvelleDemande": {
+        "titre": "New enrolment request",
+        "message": "{{parent}} sent an enrolment request for {{enfant}}"
+      },
+      "dossierComplete": {
+        "titre": "File completed",
+        "message_one": "{{parent}} added {{count}} document to {{enfant}}'s file",
+        "message_other": "{{parent}} added {{count}} documents to {{enfant}}'s file"
+      },
+      "statutInscription": {
+        "titre": "Enrolment update",
+        "message": "The status of {{enfant}}'s enrolment has been updated.",
+        "messages": {
+          "accepte": "{{enfant}}'s enrolment request has been accepted.",
+          "refuse": "{{enfant}}'s enrolment request has been declined.",
+          "incomplet": "Some documents are missing from {{enfant}}'s file.",
+          "liste_attente": "{{enfant}} is on the waiting list.",
+          "en_cours": "{{enfant}}'s file is being processed."
+        }
+      },
+      "absenceValidee": {
+        "titre": "Absence approved",
+        "message": "Your absence has been approved."
+      },
+      "absenceRefusee": {
+        "titre": "Absence declined",
+        "message": "Your absence has been declined."
+      },
+      "nouveauMessage": {
+        "titre": "New message",
+        "message": "Message from {{auteur}}"
+      },
+      "nouvellePieceJointe": {
+        "titre": "New message",
+        "message": "{{auteur}} sent an attachment ({{fichier}})"
+      },
+      "nouvellesPhotos": {
+        "titre": "📷 New photos available",
+        "message_one": "{{count}} new photo in the “{{album}}” album",
+        "message_other": "{{count}} new photos in the “{{album}}” album"
+      }
+    }
   },
   "cookies": {
     "aria": "Cookie settings",
@@ -123,7 +174,8 @@
     "mois_one": "{{count}} month",
     "mois_other": "{{count}} months",
     "ans_one": "{{count}} year",
-    "ans_other": "{{count}} years"
+    "ans_other": "{{count}} years",
+    "ansEtMois": "{{ans}} and {{mois}}"
   },
   "humeur": {
     "joyeux": "Happy",
@@ -225,5 +277,14 @@
     "normale": "Normal",
     "molle": "Soft",
     "liquide": "Liquid"
+  },
+  "fichierTropLourd": "“{{nom}}” exceeds the maximum size ({{max}} MB)",
+  "badgeInscription": {
+    "accepte": "✅ Enrolled",
+    "en_attente": "⏳ Request pending",
+    "en_cours": "⏳ File under review",
+    "incomplet": "⚠️ Incomplete file",
+    "liste_attente": "🕒 Waiting list",
+    "refuse": "❌ Request declined"
   }
 }

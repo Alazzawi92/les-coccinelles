@@ -20,6 +20,7 @@ import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Enfants.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { calculerAge } from '../../../utils/age'; // Âge : fonction unique partagée
 
 // Jours de la semaine gérés (la crèche est fermée le week-end).
 // Le code est la valeur stockée en base ; l'initiale et le nom complet
@@ -31,16 +32,6 @@ const JOURS = [
   { code: 'jeudi' },
   { code: 'vendredi' }
 ];
-
-// ── Calcul de l'âge d'un enfant ──────────────────────────────
-// Retourne "X mois" si < 24 mois, sinon "X ans" (traduit dans la langue active)
-// Division par 2 592 000 000 ms = 30 jours × 24h × 3600s × 1000ms
-const calcAge = (d) => {
-  const m = (new Date() - new Date(d)) / 2592000000;
-  return m < 24
-    ? i18n.t('common.age.mois', { count: Math.floor(m) })
-    : i18n.t('common.age.ans', { count: Math.floor(m / 12) });
-};
 
 const EnfantsAdmin = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -142,7 +133,7 @@ const EnfantsAdmin = () => {
                     </div>
                   </td>
                   {/* Âge calculé dynamiquement (pas stocké en base) */}
-                  <td>{calcAge(e.date_naissance)}</td>
+                  <td>{calculerAge(e.date_naissance)}</td>
                   {/* Groupe : section de la crèche (bébés, moyens, grands) */}
                   <td>{e.groupe || <span style={{ color:'var(--text-light)' }}>—</span>}</td>
                   {/* Jours de garde habituels (contrat) : cliquable pour modifier */}

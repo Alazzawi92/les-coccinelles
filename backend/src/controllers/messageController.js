@@ -43,7 +43,10 @@ const envoyer = async (req, res) => {
       ? `${req.user.prenom} ${req.user.nom} a envoyé une pièce jointe (${req.file.originalname})`
       : `Message de ${req.user.prenom} ${req.user.nom}`;
     const lienNotif = req.user.role === 'parent' ? '/admin/messagerie' : '/parent/messages';
-    await creerNotification(destinataire_id, 'Nouveau message', texteNotif, 'message', lienNotif);
+    await creerNotification(destinataire_id, 'Nouveau message', texteNotif, 'message', lienNotif,
+      req.file
+        ? { code: 'nouvellePieceJointe', params: { auteur: `${req.user.prenom} ${req.user.nom}`, fichier: req.file.originalname } }
+        : { code: 'nouveauMessage', params: { auteur: `${req.user.prenom} ${req.user.nom}` } });
 
     return cree(res, message, 'Message envoyé');
   } catch (err) { return erreur(res, 'Erreur lors de l\'envoi'); }

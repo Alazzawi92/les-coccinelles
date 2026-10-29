@@ -100,6 +100,12 @@ const AbsencesAdmin = () => {
                   {/* Période : date_debut → date_fin au format court */}
                   <td style={{ fontSize:'0.85rem' }}>
                     {new Date(a.date_debut).toLocaleDateString(getLocale())} → {new Date(a.date_fin).toLocaleDateString(getLocale())}
+                    {/* Jours d'ouverture (facturation), calculés par le serveur */}
+                    {a.jours_ouvres !== undefined && (
+                      <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-gray)' }}>
+                        {t('admin.absences.joursOuvres', { count: a.jours_ouvres })}
+                      </span>
+                    )}
                   </td>
                   {/* Motif : traduit via MOTIFS ou valeur brute si inconnu */}
                   <td>{MOTIFS[a.motif] ? `${MOTIFS[a.motif]} ${t(`common.motifAbsence.${a.motif}`)}` : a.motif}</td>

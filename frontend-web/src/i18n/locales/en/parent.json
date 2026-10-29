@@ -85,7 +85,8 @@
     "mdpDifferents": "Passwords do not match",
     "mdpCourt": "At least 8 characters",
     "toastMdp": "Password changed",
-    "erreurMdp": "Error while changing password"
+    "erreurMdp": "Error while changing password",
+    "nomInvalide": "Invalid first or last name: letters, spaces, apostrophe or hyphen only (at least 2 characters)"
   },
   "suivi": {
     "retour": "← My children",
@@ -110,7 +111,9 @@
     "totalBiberons_other": "{{count}} bottles · {{ml}} ml during the day",
     "auMenu": "On the menu that day",
     "selles": "Nappy changes",
-    "dortEncore": "still asleep"
+    "dortEncore": "still asleep",
+    "introuvable": "Child not found",
+    "introuvableTexte": "This child does not exist or is not linked to your account."
   },
   "mesEnfants": {
     "titre": "My <s>children</s>",
@@ -160,12 +163,15 @@
       "incompletTitre": "Incomplete file",
       "incompletTexte": "Some documents are missing to process your request. Add them below: the nursery will be notified automatically.",
       "choisir": "Choose documents",
-      "formats": "PDF, JPG or PNG — 5 MB max per file",
+      "formats": "PDF, JPG or PNG — {{max}} MB max per file",
       "envoyer_one": "Send {{count}} document",
       "envoyer_other": "Send {{count}} documents",
       "toastEnvoye": "Documents sent! The nursery has been notified.",
       "erreurEnvoi": "Error while sending the documents"
-    }
+    },
+    "aucuneAllergie": "No allergies",
+    "aucunTraitement": "No treatment",
+    "demandeEnCours": "Enrolment request in progress"
   },
   "absences": {
     "titre": "My <s>absences</s>",
@@ -188,7 +194,11 @@
     "colDuree": "Duration",
     "colMotif": "Reason",
     "colStatut": "Status",
-    "absenceTitre": "Absence: {{motif}}"
+    "absenceTitre": "Absence: {{motif}}",
+    "joursOuvres_one": "{{count}} opening day",
+    "joursOuvres_other": "{{count}} opening days",
+    "apercuJours_one": "{{count}} nursery opening day concerned (excluding weekends and public holidays)",
+    "apercuJours_other": "{{count}} nursery opening days concerned (excluding weekends and public holidays)"
   },
   "documents": {
     "titre": "My <s>documents</s>",
@@ -199,7 +209,7 @@
     "confirmerSuppression": "Delete this document?",
     "toastSupprime": "Document deleted",
     "dropZone": "Drag and drop or click to select",
-    "formats": "PDF, JPG, PNG — max 5 MB",
+    "formats": "PDF, JPG, PNG — max {{max}} MB",
     "categorie": "Category",
     "enfant": "Child concerned",
     "nonSpecifie": "Not specified",
@@ -208,7 +218,9 @@
     "upload": "Uploading...",
     "envoyer": "📤 Upload",
     "aucun": "You haven't uploaded any documents yet.",
-    "mesDocuments": "My documents ({{n}})"
+    "mesDocuments": "My documents ({{n}})",
+    "piecesInscription": "Documents from my enrolment requests ({{n}})",
+    "voirPiece": "View document"
   },
   "galerie": {
     "titre": "Photo <s>gallery</s>",
@@ -245,7 +257,7 @@
     "message": "Message",
     "messagePlaceholder": "Write your message...",
     "pieceJointe": "Attachment",
-    "pieceJointeAide": "(photo or PDF, max 10 MB)",
+    "pieceJointeAide": "(photo or PDF, max {{max}} MB)",
     "envoyer": "Send",
     "aucun": "No messages",
     "selectionnez": "Select a conversation",
@@ -254,7 +266,7 @@
     "reponsePlaceholder": "Write a reply...",
     "joindreTitre": "Attach a file",
     "joindre": "📎 Attach",
-    "envoyerReponse": "Send ↑"
+    "envoyerReponse": "Send"
   },
   "inscription": {
     "titre": "Enrolment <s>file</s>",
@@ -314,7 +326,19 @@
       "emailInvalide": "Invalid email address",
       "adresseRequise": "Address required",
       "situationRequise": "Situation required",
-      "fratrieRequise": "Position among siblings required"
+      "fratrieRequise": "Position among siblings required",
+      "dateRequise": "Desired start date required",
+      "datePassee": "The date cannot be in the past",
+      "dateAvantNaissance": "The date cannot be before the child's birth",
+      "typeRequis": "Type of care required",
+      "joursTempsPlein": "Full time: select all 5 days (Monday to Friday)",
+      "joursTempsPartiel": "Part time: select 2 or 3 days",
+      "professionRequise": "Occupation required (e.g. “Student”, “Unemployed”)",
+      "employeurRequis": "Employer required — or tick “Unemployed / Student”",
+      "nirRequis": "Social security number required",
+      "nirInvalide": "Invalid number: 15 characters (13 digits + 2-digit key)",
+      "cafRequis": "CAF beneficiary number required",
+      "cafInvalide": "Invalid CAF number: 7 digits"
     },
     "toastEnvoyee": "Enrolment request sent!",
     "erreurEnvoi": "Error while sending",
@@ -366,13 +390,17 @@
       "fratrieLabel": "The child is the…",
       "contactsIntro": "You can name two people authorised to collect the child or to be contacted in an emergency (other than the parents). This information is optional.",
       "contact1": "Contact person no. 1",
-      "contact2": "Contact person no. 2"
+      "contact2": "Contact person no. 2",
+      "facultatif": "optional",
+      "seulResponsable": "I am the child's only legal guardian",
+      "seulResponsableAide": "Single parent, widowed… The “Parent 2” section becomes optional."
     },
     "e2": {
       "titre": "Which child would you like to enrol?",
       "dAbord": "You haven't registered a child yet: add them here without leaving the form (what you've already entered is kept).",
       "ajoutIntro": "Add another child, they will be selected automatically.",
-      "autreEnfant": "+ Add another child"
+      "autreEnfant": "+ Add another child",
+      "demandeEnCours": "Request already in progress"
     },
     "e3": {
       "titre": "Requested care arrangements",
@@ -383,7 +411,14 @@
         "temps_partiel": "Part-time (2–3 days/week)",
         "occasionnel": "Occasional (depending on availability)"
       },
-      "jours": "Requested days"
+      "jours": "Requested days",
+      "dateAide": "From {{date}} (no past date, and not before the child's birth).",
+      "aideJours": {
+        "choisirType": "Choose the type of care first.",
+        "temps_plein": "Full time: all 5 days, Monday to Friday.",
+        "temps_partiel": "Part time: 2 or 3 days a week.",
+        "occasionnel": "Occasional: days optional, depending on availability."
+      }
     },
     "e4": {
       "titre": "Documents & additional information",
@@ -395,7 +430,7 @@
       "profession2Placeholder": "E.g. accountant, shopkeeper...",
       "employeur2Placeholder": "E.g. Martin & Co, self-employed...",
       "docsTitre": "Documents to provide",
-      "docsIntro": "Upload your 5 documents (PDF or image, 5 MB max each). They are required: the request cannot be sent without them.",
+      "docsIntro": "Upload your 5 documents (PDF or image, {{max}} MB max each). They are required: the request cannot be sent without them.",
       "changer": "🔄 Change",
       "choisir": "📤 Choose",
       "compteur": "{{n}} / {{total}} document(s) added",
@@ -405,7 +440,16 @@
       "retirer": "✕ Remove",
       "retirerAria": "Remove document: {{doc}}",
       "typeInvalide": "“{{nom}}”: format not accepted (PDF, JPG or PNG only)",
-      "tropLourd": "“{{nom}}” is larger than 5 MB: please choose a smaller file"
+      "tropLourd": "“{{nom}}” is larger than {{max}} MB: please choose a smaller file",
+      "sansEmploi": "Unemployed / Student",
+      "numerosTitre": "Supporting document numbers",
+      "nir": "Social security number (the child's coverage)",
+      "nirPlaceholder": "1 85 05 78 006 084 36",
+      "nirAide": "15 characters including the check key (spaces allowed).",
+      "caf": "CAF beneficiary number",
+      "cafPlaceholder": "1234567",
+      "cafAide": "7 digits, shown on your CAF letters.",
+      "doublon": "“{{nom}}” is already used for “{{doc}}”: choose the right file for each document."
     },
     "e5": {
       "titre": "Message to the team (optional)",
@@ -433,7 +477,14 @@
       "oui": "Yes ✓",
       "non": "No",
       "info": "Your request will be reviewed by the team as soon as possible. You will receive a notification once a decision has been made.",
-      "documents": "Attached documents"
+      "documents": "Attached documents",
+      "sectionParents": "Parents",
+      "sectionFamille": "Family and emergency contacts",
+      "sectionAccueil": "Child and requested care",
+      "sectionPro": "Occupations and numbers",
+      "modifier": "Edit",
+      "nonRenseigne": "Not provided",
+      "seulResponsable": "None (only legal guardian)"
     },
     "retour": "← Back",
     "continuer": "Continue →",

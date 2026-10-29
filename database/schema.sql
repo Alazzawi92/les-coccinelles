@@ -268,6 +268,8 @@ CREATE TABLE IF NOT EXISTS notifications (
   titre       VARCHAR(255) NOT NULL,                      -- Titre court
   message     TEXT NOT NULL,                              -- Contenu complet
   type        ENUM(
+  code           VARCHAR(60),                             -- Clé de traduction (notifications.<code>)
+  params         JSON,                                    -- Valeurs du texte traduit
                 'info',                                   -- Information générale
                 'inscription',                            -- Changement statut inscription
                 'message',                                -- Nouveau message reçu

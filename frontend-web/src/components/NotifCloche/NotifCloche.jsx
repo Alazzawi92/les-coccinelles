@@ -2,7 +2,8 @@
 // FICHIER  : NotifCloche.jsx
 // ROUTE    : Composant global (admin + parent)
 // RÔLE     : Cloche de notifications avec panneau déroulant.
-//            Polling toutes les 30s via setInterval + clearInterval cleanup.
+//            Rafraîchissement toutes les 60 s, UNIQUEMENT quand l'onglet
+//            est visible (pause si l'onglet est caché, rechargement au retour).
 //            Clic extérieur : mousedown + ref.current.contains pour fermer.
 //            Badge plafonné à "99+" si plus de 99 non lues.
 //            formatDate : relatif ("À l'instant", "Il y a X min", "Il y a Xh").
@@ -19,9 +20,24 @@ import api from '../../services/api';
 import { getLocale } from '../../i18n';
 import './NotifCloche.css';
 
+// Intervalle de rafraîchissement des notifications (60 s)
+const INTERVALLE_NOTIFS = 60 * 1000;
+
 const NotifCloche = () => {
 
-  const { t } = useTranslation(); // Fonction de traduction FR / EN
+  const { t, i18n } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Titre + message dans la langue active.
+  // Notification récente : code + params → common.notifs.contenu.<code>.
+  // Ancienne notification (sans code) : texte français enregistré.
+  const textesNotif = (n) => {
+    const base = `common.notifs.contenu.${n.code}`;
+    if (!n.code || !i18n.exists(`${base}.titre`)) return { titre: n.titre, message: n.message };
+    const params = n.params || {};
+    // Statut d'inscription : un message différent par statut (accepte, refuse...)
+    const cleMessage = i18n.exists(`${base}.messages.${params.statut}`) ? `${base}.messages.${params.statut}` : `${base}.message`;
+    return { titre: t(`${base}.titre`, params), message: t(cleMessage, params) };
+  };
   // Liste de toutes les notifications de l'utilisateur connecté
   const [notifs,     setNotifs]     = useState([]);
   // true = panneau notifications ouvert
@@ -48,12 +64,25 @@ const NotifCloche = () => {
     }
   };
 
-  // ── Polling toutes les 30 secondes + chargement initial ──
+  // ── Rafraîchissement périodique, seulement onglet visible ──
+  // Onglet caché (autre onglet, fenêtre réduite) : aucune requête.
+  // Retour sur l'onglet : rechargement immédiat puis reprise du minuteur.
   useEffect(() => {
-    charger();
-    const intervalle = setInterval(charger, 30000);
-    // Nettoyage : clearInterval au démontage du composant
-    return () => clearInterval(intervalle);
+    let intervalle = null;
+    const demarrer = () => {
+      charger();                                              // Données à jour tout de suite
+      intervalle = setInterval(charger, INTERVALLE_NOTIFS);   // Puis toutes les 60 s
+    };
+    const arreter = () => { clearInterval(intervalle); intervalle = null; };
+    const surVisibilite = () => (document.visibilityState === 'visible' ? demarrer() : arreter());
+
+    if (document.visibilityState === 'visible') demarrer();
+    document.addEventListener('visibilitychange', surVisibilite);
+    // Nettoyage au démontage : minuteur et écouteur supprimés
+    return () => {
+      arreter();
+      document.removeEventListener('visibilitychange', surVisibilite);
+    };
   }, []);
 
   // ── Fermer le panneau si clic en dehors du composant ─────
@@ -170,8 +199,8 @@ const NotifCloche = () => {
               >
                 <span className="notif-item__icone">{iconeType(n.type)}</span>
                 <div className="notif-item__corps">
-                  {n.titre && <p className="notif-item__titre">{n.titre}</p>}
-                  <p className="notif-item__message">{n.message}</p>
+                  {textesNotif(n).titre && <p className="notif-item__titre">{textesNotif(n).titre}</p>}
+                  <p className="notif-item__message">{textesNotif(n).message}</p>
                   <p className="notif-item__date">{formatDate(n.created_at)}</p>
                 </div>
                 <div className="notif-item__droite">

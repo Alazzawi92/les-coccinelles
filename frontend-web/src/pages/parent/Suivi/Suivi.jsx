@@ -43,23 +43,30 @@ const Suivi = () => {
   const [selectionne, setSelectionne] = useState(null);
   // Masque le contenu pendant le chargement
   const [chargement,  setChargement]  = useState(true);
+  // true = enfant inconnu ou qui n'appartient pas au parent (API 403 / 404)
+  const [introuvable, setIntrouvable] = useState(false);
   // Menu prévu ce jour-là (déjeuner + goûter), affiché sous les repas
   const menuDuJour = useMenuDuJour(selectionne?.date_suivi?.slice(0, 10));
 
   // ── Chargement parallèle : enfant + liste des suivis ─────
   useEffect(() => {
     const charger = async () => {
-      try {
-        const [resEnfant, resSuivis] = await Promise.all([
-          api.get(`/enfants/${id}`),
-          api.get(`/suivi/${id}`)
-        ]);
-        setEnfant(resEnfant.data.data);
-        const s = resSuivis.data.data || [];
+      // allSettled : on distingue "enfant introuvable" de "pas encore de suivi"
+      const [resEnfant, resSuivis] = await Promise.allSettled([
+        api.get(`/enfants/${id}`),
+        api.get(`/suivi/${id}`)
+      ]);
+      if (resEnfant.status !== 'fulfilled' || !resEnfant.value.data.data) {
+        // 403 (enfant d'une autre famille) ou 404 (id inexistant) : même message,
+        // sans révéler si l'enfant existe
+        setIntrouvable(true);
+      } else {
+        setEnfant(resEnfant.value.data.data);
+        const s = resSuivis.status === 'fulfilled' ? (resSuivis.value.data.data || []) : [];
         setSuivis(s);
         // Affiche le suivi le plus récent par défaut (premier de la liste triée par date desc)
         if (s.length > 0) setSelectionne(s[0]);
-      } catch { /* Erreur ou pas de suivi disponible */ }
+      }
       setChargement(false);
     };
     charger();
@@ -67,6 +74,21 @@ const Suivi = () => {
 
   // Garde : spinner pendant le chargement
   if (chargement) return <Chargement className="p-chargement" />;
+
+  // Enfant introuvable (ou pas le sien) : message + retour vers "Mes enfants"
+  if (introuvable) {
+    return (
+      <div className="p-vide" role="alert">
+        <span className="p-vide__icone">🔍</span>
+        <p><strong>{t('parent.suivi.introuvable')}</strong></p>
+        <p style={{ fontSize: '0.85rem' }}>{t('parent.suivi.introuvableTexte')}</p>
+        <Link to="/parent/mes-enfants" className="btn btn--primary">{t('parent.suivi.retour')}</Link>
+      </div>
+    );
+  }
+
+  // Nom complet de l'enfant (titre, messages)
+  const nomEnfant = enfant ? `${enfant.prenom} ${enfant.nom}` : '';
 
   return (
     <div className="suivi-page">
@@ -76,7 +98,7 @@ const Suivi = () => {
         <div>
           {/* Lien retour vers la liste des enfants */}
           <Link to="/parent/mes-enfants" className="retour-lien-parent">{t('parent.suivi.retour')}</Link>
-          <h1 className="parent-page-titre"><Trans i18nKey="parent.suivi.titre" values={{ prenom: enfant?.prenom }} components={{ s: <span /> }} /></h1>
+          <h1 className="parent-page-titre"><Trans i18nKey="parent.suivi.titre" values={{ prenom: nomEnfant }} components={{ s: <span /> }} /></h1>
         </div>
       </div>
 
@@ -84,7 +106,7 @@ const Suivi = () => {
         // État vide : l'équipe n'a pas encore saisi de suivi
         <div className="p-vide">
           <span className="p-vide__icone">📋</span>
-          <p>{t('parent.suivi.pasEncore', { prenom: enfant?.prenom })}</p>
+          <p>{t('parent.suivi.pasEncore', { prenom: nomEnfant })}</p>
           <p style={{ fontSize: '0.85rem' }}>{t('parent.suivi.renseigne')}</p>
         </div>
       ) : (

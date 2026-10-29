@@ -169,6 +169,15 @@
    1279 (petit ordinateur) / défaut (ordinateur standard) / 1440 (grand écran) */
 
 /* Petit ordinateur (≤1279px) : padding du calendrier légèrement réduit */
+/* Motif = vrai <button> : police et fond hérités de la pastille */
+button.motif-option { font: inherit; background: var(--surface); }
+button.motif-option.motif-option--actif { background: var(--primary); } /* Même rendu que la pastille active */
+button.motif-option:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Aperçu du nombre de jours d'ouverture dans le formulaire */
+.absence-apercu { font-size: 0.85rem; color: var(--info-text); background: var(--info-bg);
+  padding: var(--space-xs) var(--space-md); border-radius: var(--radius-md); margin-bottom: var(--space-md); }
+
 @media (max-width: 1279px) {
   .calendrier-wrapper { padding: var(--space-lg); }
 }

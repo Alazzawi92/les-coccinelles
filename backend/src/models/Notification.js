@@ -8,6 +8,8 @@ const Notification = sequelize.define('Notification', {
   titre:   { type: DataTypes.STRING(255), allowNull: false },
   message: { type: DataTypes.TEXT, allowNull: false },
   type:    { type: DataTypes.ENUM('info', 'inscription', 'message', 'absence', 'document', 'alerte'), defaultValue: 'info' },
+  code:    { type: DataTypes.STRING(60) },  // Clé de traduction (notifications.<code>), null = ancienne notification
+  params:  { type: DataTypes.JSON },        // Valeurs du texte traduit (noms, nombres...)
   lue:     { type: DataTypes.BOOLEAN, defaultValue: false },
   lien:    { type: DataTypes.STRING(255) }
 }, {

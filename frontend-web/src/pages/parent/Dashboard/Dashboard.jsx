@@ -6,7 +6,7 @@
 //            puis le suivi du jour pour le premier enfant.
 //            Salutation dynamique selon l'heure (matin/après-midi/soir).
 //            6 raccourcis colorés, 3 cartes (enfants, suivi, notifs).
-//            Les fonctions utilitaires (calcAge, emojis) sont définies
+//            L'âge vient de utils/age.js ; les emojis (repas, humeur) sont définies
 //            après le composant car elles ne dépendent pas du state.
 // ============================================================
 
@@ -19,6 +19,8 @@ import i18n, { getLocale } from '../../../i18n';
 import '../../../styles/parent.css';
 import './Dashboard.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { versDateISO } from '../../../utils/dates'; // Dates en heure locale
+import { calculerAge } from '../../../utils/age'; // Âge : fonction unique partagée
 
 const Dashboard = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -44,7 +46,7 @@ const Dashboard = () => {
         let dernierSuivi = null;
         if (enfants.length > 0) {
           try {
-            const today = new Date().toISOString().split('T')[0];
+            const today = versDateISO(); // Date du jour en heure locale
             const res   = await api.get(`/suivi/${enfants[0].id}/${today}`);
             dernierSuivi = res.data.data;
           } catch { /* Pas de suivi aujourd'hui — état normal */ }
@@ -207,16 +209,6 @@ const Dashboard = () => {
 };
 
 // ── Fonctions utilitaires (hors composant) ──────────────────
-// Calculer l'âge en mois (< 24 mois) ou en années, traduit dans la langue active
-// (appelée pendant le rendu, donc i18n.t utilise toujours la langue courante)
-const calculerAge = (dateNaissance) => {
-  const naissance = new Date(dateNaissance);
-  const maintenant = new Date();
-  const mois = (maintenant.getFullYear() - naissance.getFullYear()) * 12 + (maintenant.getMonth() - naissance.getMonth());
-  if (mois < 24) return i18n.t('common.age.mois', { count: mois });
-  return i18n.t('common.age.ans', { count: Math.floor(mois / 12) });
-};
-
 // Emoji pour chaque valeur de repas
 const emojiRepas  = (v) => ({ tout: '😋', peu: '😐', rien: '😕', absent: '—' }[v] || '—');
 // Emoji pour chaque valeur d'humeur

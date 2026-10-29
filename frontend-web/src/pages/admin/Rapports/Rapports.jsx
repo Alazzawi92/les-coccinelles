@@ -18,14 +18,15 @@ import i18n, { getLocale } from '../../../i18n';
 import '../../../styles/admin.css';
 import './Rapports.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { versDateISO } from '../../../utils/dates'; // Dates en heure locale
 
 // Date du jour au format YYYY-MM-DD
-const today = new Date().toISOString().split('T')[0];
+const today = versDateISO(); // Date du jour en heure locale
 
 // Premier jour du mois courant
 const premierJourMois = () => {
   const d = new Date();
-  return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0];
+  return versDateISO(new Date(d.getFullYear(), d.getMonth(), 1));
 };
 
 // Formater des minutes en "Xh Ym"
@@ -83,7 +84,7 @@ const Rapports = () => {
     if (type === 'semaine') {
       const jour = d.getDay() || 7; // dimanche = 0 → 7
       const lundi = new Date(d); lundi.setDate(d.getDate() - jour + 1);
-      setDebut(lundi.toISOString().split('T')[0]);
+      setDebut(versDateISO(lundi));
       setFin(today);
     } else if (type === 'mois') {
       setDebut(premierJourMois());

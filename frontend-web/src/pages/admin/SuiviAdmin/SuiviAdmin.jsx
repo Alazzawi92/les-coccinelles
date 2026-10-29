@@ -27,9 +27,10 @@ import '../../../styles/admin.css';
 import './SuiviAdmin.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
 import useMenuDuJour from '../../../hooks/useMenuDuJour';
+import { versDateISO } from '../../../utils/dates'; // Dates en heure locale
 
 // Date du jour au format YYYY-MM-DD (constante, ne change pas au rendu)
-const today = new Date().toISOString().split('T')[0];
+const today = versDateISO(); // Date du jour en heure locale
 
 // ── Biberons ─────────────────────────────────────────────────
 // Boutons de quantité rapide (ml) proposés sous chaque biberon
@@ -292,7 +293,7 @@ const SuiviAdmin = () => {
       setDerniereSauvegarde(prev => ({ ...prev, [enfantId]: heureActuelle() }));
       if (!auto) {
         const enfant = enfants.find(e => e.id === enfantId);
-        toast.success(t('admin.suivi.toastEnregistre', { prenom: enfant?.prenom }));
+        toast.success(t('admin.suivi.toastEnregistre', { prenom: enfant ? `${enfant.prenom} ${enfant.nom}` : '' }));
       }
     } catch (err) {
       setEtat(prev => ({ ...prev, [enfantId]: 'erreur' }));

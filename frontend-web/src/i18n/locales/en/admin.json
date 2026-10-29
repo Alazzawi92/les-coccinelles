@@ -55,7 +55,9 @@
         "desc": "Reply to parents"
       }
     },
-    "repartition": "Breakdown of files"
+    "repartition": "Breakdown of files",
+    "alerteComptes_one": "{{count}} parent account to approve",
+    "alerteComptes_other": "{{count}} parent accounts to approve"
   },
   "absences": {
     "titre": "Absence <s>management</s>",
@@ -68,7 +70,9 @@
     },
     "aucune": "No absences found.",
     "toastValidee": "Absence approved",
-    "toastRefusee": "Absence refused"
+    "toastRefusee": "Absence refused",
+    "joursOuvres_one": "{{count}} opening day",
+    "joursOuvres_other": "{{count}} opening days"
   },
   "actualites": {
     "titre": "News <s>management</s>",
@@ -208,7 +212,10 @@
       ],
       "enCours": "⏳ Deleting...",
       "confirmer": "🗑️ Yes, delete permanently"
-    }
+    },
+    "emailConfirme": "✓ Email confirmed",
+    "emailNonConfirme": "✉️ Email not confirmed",
+    "activerImpossible": "The parent must first confirm their email address (link sent by email)"
   },
   "rapports": {
     "titre": "Attendance <s>& activity report</s>",
@@ -311,7 +318,8 @@
     "nouveauStatut": "New status",
     "note": "Internal note (optional)",
     "notePlaceholder": "Comment visible to the team only...",
-    "valider": "✅ Confirm decision"
+    "valider": "✅ Confirm decision",
+    "erreurDocument": "Unable to open this document"
   },
   "menus": {
     "titre": "Menu <s>management</s>",
@@ -474,7 +482,7 @@
     "ecrire": "Write a message",
     "de": "From: {{nom}} · {{date}}",
     "reponsePlaceholder": "Write a reply...",
-    "envoyerReponse": "Send ↑",
+    "envoyerReponse": "Send",
     "erreurEnvoi": "Sending error",
     "erreurParents": "Unable to load parents",
     "remplir": "Please fill in all fields",

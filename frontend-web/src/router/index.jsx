@@ -31,6 +31,7 @@ import Login          from '../pages/auth/Login/Login';
 import Register       from '../pages/auth/Register/Register';
 import ForgotPassword from '../pages/auth/ForgotPassword/ForgotPassword';
 import ResetPassword  from '../pages/auth/ResetPassword/ResetPassword';
+import VerifyEmail    from '../pages/auth/VerifyEmail/VerifyEmail';
 
 // ── Pages espace parents ──────────────────────────────────────
 import ParentDashboard from '../pages/parent/Dashboard/Dashboard';
@@ -68,9 +69,15 @@ import Rapports          from '../pages/admin/Rapports/Rapports';
 import ProtectedRoute from './ProtectedRoute';
 import SuperAdminRoute from './SuperAdminRoute';
 
+// Options "future" : adoptent dès maintenant le comportement de React Router v7
+// (et suppriment les avertissements correspondants dans la console)
+//  - v7_startTransition   : changements de page dans React.startTransition
+//  - v7_relativeSplatPath : liens relatifs corrects dans les routes "*"
+const FUTURE_FLAGS = { v7_startTransition: true, v7_relativeSplatPath: true };
+
 const AppRouter = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={FUTURE_FLAGS}>
       <Routes>
 
         {/* ── SITE PUBLIC ─────────────────────────────────────
@@ -97,6 +104,7 @@ const AppRouter = () => {
         <Route path="/creer-un-compte"     element={<Register />} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
         <Route path="/reset-password"      element={<ResetPassword />} /> {/* Reçoit ?token= en query */}
+        <Route path="/verify-email/:token" element={<VerifyEmail />} /> {/* Lien de l'email de confirmation */}
 
         {/* ── ESPACE PARENTS ──────────────────────────────────
             Accessible aux rôles parent, admin et super_admin.

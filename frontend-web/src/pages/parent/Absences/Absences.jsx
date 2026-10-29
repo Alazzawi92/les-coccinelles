@@ -18,6 +18,8 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Absences.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { versDateISO, depuisDateISO } from '../../../utils/dates';      // Dates en heure locale
+import { compterJoursOuvres } from '../../../utils/joursOuvres';        // Aperçu des jours facturés
 
 // Options de motif d'absence pour le formulaire
 // (libellé traduit via common.motifAbsence.<value>)
@@ -46,7 +48,7 @@ const construireCalendrier = (annee, mois) => {
 // Retourne l'objet absence correspondant ou null
 const dateEstAbsente = (date, absences) => {
   if (!date) return null;
-  const d = date.toISOString().split('T')[0];
+  const d = versDateISO(date); // Date locale (toISOString décalait d'un jour en France)
   return absences.find(a => d >= a.date_debut && d <= a.date_fin);
 };
 
@@ -122,7 +124,7 @@ const Absences = () => {
 
   // Tableau des jours du mois affiché dans le calendrier
   const joursCalendrier = construireCalendrier(anneeCalend, moisCalend);
-  const today = new Date().toISOString().split('T')[0];
+  const today = versDateISO(); // Date du jour en heure locale
 
   // ── Navigation mois précédent / suivant ──────────────────
   // Gère le wrapping : décembre (11) → janvier (0) et inversement
@@ -161,8 +163,8 @@ const Absences = () => {
           <h2 className="p-card__titre">📅 {t('parent.absences.formTitre')}</h2>
           <form className="p-form" onSubmit={handleSubmit}>
             <div className="p-form-groupe">
-              <label className="p-label">{t('parent.absences.enfant')} <span className="requis">*</span></label>
-              <select className="p-input" value={form.enfant_id} onChange={e => setForm(p=>({...p,enfant_id:e.target.value}))} required>
+              <label className="p-label" htmlFor="absence-enfant">{t('parent.absences.enfant')} <span className="requis">*</span></label>
+              <select id="absence-enfant" className="p-input" value={form.enfant_id} onChange={e => setForm(p=>({...p,enfant_id:e.target.value}))} required>
                 <option value="">{t('common.choisir')}</option>
                 {enfants.map(e => <option key={e.id} value={e.id}>{e.prenom} {e.nom}</option>)}
               </select>
@@ -170,26 +172,36 @@ const Absences = () => {
             {/* Plage de dates : min sur date_debut = aujourd'hui, min sur date_fin = date_debut */}
             <div className="p-form-row">
               <div className="p-form-groupe">
-                <label className="p-label">{t('parent.absences.du')} <span className="requis">*</span></label>
-                <input type="date" className="p-input" value={form.date_debut} min={today}
+                <label className="p-label" htmlFor="absence-debut">{t('parent.absences.du')} <span className="requis">*</span></label>
+                <input id="absence-debut" type="date" className="p-input" value={form.date_debut} min={today}
                   onChange={e => setForm(p=>({...p,date_debut:e.target.value}))} required />
               </div>
               <div className="p-form-groupe">
-                <label className="p-label">{t('parent.absences.au')} <span className="requis">*</span></label>
-                <input type="date" className="p-input" value={form.date_fin} min={form.date_debut || today}
+                <label className="p-label" htmlFor="absence-fin">{t('parent.absences.au')} <span className="requis">*</span></label>
+                <input id="absence-fin" type="date" className="p-input" value={form.date_fin} min={form.date_debut || today}
                   onChange={e => setForm(p=>({...p,date_fin:e.target.value}))} required />
               </div>
             </div>
-            {/* Motif : boutons radio en pills */}
-            <div className="p-form-groupe">
-              <label className="p-label">{t('parent.absences.motif')} <span className="requis">*</span></label>
+            {/* Aperçu des jours d'ouverture concernés (hors week-ends et fériés) */}
+            {form.date_debut && form.date_fin && form.date_fin >= form.date_debut && (
+              <p className="absence-apercu">
+                📆 {t('parent.absences.apercuJours', { count: compterJoursOuvres(form.date_debut, form.date_fin) })}
+              </p>
+            )}
+            {/* Motif : vrais boutons (accessibles), aria-pressed = choix actif */}
+            <div className="p-form-groupe" role="group" aria-labelledby="absence-motif-label">
+              <p className="p-label" id="absence-motif-label">{t('parent.absences.motif')} <span className="requis">*</span></p>
               <div className="motifs-choix">
                 {MOTIFS.map(m => (
-                  <label key={m.value} className={`motif-option ${form.motif === m.value ? 'motif-option--actif' : ''}`}>
-                    <input type="radio" name="motif" value={m.value} checked={form.motif === m.value}
-                      onChange={e => setForm(p=>({...p,motif:e.target.value}))} />
+                  <button
+                    key={m.value}
+                    type="button"
+                    className={`motif-option ${form.motif === m.value ? 'motif-option--actif' : ''}`}
+                    aria-pressed={form.motif === m.value}
+                    onClick={() => setForm(p => ({ ...p, motif: m.value }))}
+                  >
                     {libelleMotif(m.value)}
-                  </label>
+                  </button>
                 ))}
               </div>
             </div>
@@ -224,21 +236,22 @@ const Absences = () => {
               </thead>
               <tbody>
                 {absences.map(a => {
-                  const debut = new Date(a.date_debut);
-                  const fin   = new Date(a.date_fin);
-                  // Durée en jours : +1 car la fin est inclusive
-                  const duree = Math.ceil((fin - debut) / 86400000) + 1;
+                  const debut = depuisDateISO(a.date_debut);
+                  const fin   = depuisDateISO(a.date_fin);
+                  // Durée = jours d'ouverture (hors week-ends et jours fériés),
+                  // calculée par le serveur : c'est elle qui compte pour la facturation
+                  const duree = a.jours_ouvres ?? compterJoursOuvres(a.date_debut, a.date_fin);
                   const s     = statutInfo(a.statut);
                   return (
                     <tr key={a.id}>
-                      <td><strong>{a.enfant?.prenom || '—'}</strong></td>
+                      <td><strong>{a.enfant ? `${a.enfant.prenom} ${a.enfant.nom}` : '—'}</strong></td>
                       <td>
                         {debut.toLocaleDateString(getLocale(),{day:'numeric',month:'short'})}
                         {' → '}
                         {fin.toLocaleDateString(getLocale(),{day:'numeric',month:'short',year:'numeric'})}
                       </td>
                       <td style={{ fontSize:'0.85rem', color:'var(--text-gray)' }}>
-                        {t('common.jours', { count: duree })}
+                        {t('parent.absences.joursOuvres', { count: duree })}
                       </td>
                       <td style={{ fontSize:'0.9rem' }}>{libelleMotif(a.motif)}</td>
                       <td>
@@ -277,12 +290,13 @@ const Absences = () => {
               if (!date) return <div key={`empty-${i}`} className="calendrier-case calendrier-case--vide" />;
 
               const absenceJour = dateEstAbsente(date, absences);
-              const estAujourd  = date.toISOString().split('T')[0] === today;
-              const estPasse    = date < new Date(today);
+              const jourISO     = versDateISO(date);
+              const estAujourd  = jourISO === today;   // Comparaison de dates locales
+              const estPasse    = jourISO < today;
 
               return (
                 <div
-                  key={date.toISOString()}
+                  key={jourISO}
                   className={`calendrier-case
                     ${estAujourd  ? 'calendrier-case--aujourd-hui' : ''}
                     ${estPasse    ? 'calendrier-case--passe'       : ''}

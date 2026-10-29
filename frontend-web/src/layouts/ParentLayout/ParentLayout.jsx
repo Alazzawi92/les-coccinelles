@@ -93,7 +93,7 @@ const ParentLayout = () => {
               }
             >
               <span>{icone}</span>
-              <span>{t(`common.parentLayout.liens.${cle}`)}</span>
+              <span className="parent-sidebar__libelle">{t(`common.parentLayout.liens.${cle}`)}</span>
               {reserve && acces === false && (
                 <span className="parent-lien-verrou" title={t('common.accesReserve.titre')}>🔒</span>
               )}
@@ -104,7 +104,7 @@ const ParentLayout = () => {
         {/* Bouton déconnexion en bas de la sidebar */}
         <button className="parent-sidebar__deconnexion" onClick={handleDeconnexion}>
           <span>🚪</span>
-          <span>{t('common.parentLayout.seDeconnecter')}</span>
+          <span className="parent-sidebar__libelle">{t('common.parentLayout.seDeconnecter')}</span>
         </button>
       </aside>
 
@@ -183,7 +183,9 @@ const ParentLayout = () => {
 
         {/* Outlet : la page parent active s'affiche ici */}
         <main className="layout-main">
-          <Outlet />
+          {/* accesFamille : réutilisé par les pages réservées (AccesReserve),
+              pour ne pas redemander /inscriptions/acces une 2e fois */}
+          <Outlet context={{ accesFamille: acces }} />
         </main>
       </div>
 

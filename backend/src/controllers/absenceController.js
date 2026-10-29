@@ -1,4 +1,5 @@
 // Contrôleur absences — Les Coccinelles
+const { compterJoursOuvres } = require('../utils/joursOuvres'); // Jours d'ouverture (facturation)
 const { Op }               = require('sequelize');
 const { Absence, Enfant }  = require('../models');
 const { creerNotification } = require('../services/notification.service');
@@ -18,6 +19,13 @@ const estPrevuCeJour = (enfant, dateStr) => {
   return enfant.jours_presence.includes(jour);
 };
 
+// Ajoute "jours_ouvres" (lundi-vendredi hors jours fériés) à une absence :
+// c'est cette valeur qui compte pour la facturation, calculée par le serveur
+const avecJoursOuvres = (absence) => {
+  const a = absence.toJSON ? absence.toJSON() : absence;
+  return { ...a, jours_ouvres: compterJoursOuvres(a.date_debut, a.date_fin) };
+};
+
 const lister = async (req, res) => {
   try {
     const { User } = require('../models');
@@ -31,7 +39,7 @@ const lister = async (req, res) => {
       ],
       order: [['date_debut', 'DESC']]
     });
-    return succes(res, absences);
+    return succes(res, absences.map(avecJoursOuvres));
   } catch (err) { return erreur(res, 'Erreur récupération absences'); }
 };
 
@@ -46,7 +54,12 @@ const creer = async (req, res) => {
     if (req.file) donneesAbsence.justificatif = `/uploads/justificatifs/${req.file.filename}`;
 
     const absence = await Absence.create(donneesAbsence);
-    return cree(res, absence, 'Absence déclarée');
+    // On renvoie l'absence AVEC l'enfant (prénom + nom), comme dans la liste :
+    // la nouvelle ligne affiche le nom sans recharger la page
+    const complete = await Absence.findByPk(absence.id, {
+      include: [{ model: Enfant, as: 'enfant', attributes: ['id', 'prenom', 'nom'] }]
+    });
+    return cree(res, avecJoursOuvres(complete), 'Absence déclarée');
   } catch (err) { return erreur(res, 'Erreur lors de la déclaration'); }
 };
 
@@ -57,7 +70,7 @@ const getAbsence = async (req, res) => {
       : { id: req.params.id };
     const absence = await Absence.findOne({ where: filtre, include: [{ model: Enfant, as: 'enfant' }] });
     if (!absence) return erreur(res, 'Absence non trouvée', 404);
-    return succes(res, absence);
+    return succes(res, avecJoursOuvres(absence));
   } catch (err) { return erreur(res, 'Erreur lors de la récupération'); }
 };
 
@@ -84,7 +97,8 @@ const valider = async (req, res) => {
 
     // Notifier le parent
     const msg = statut === 'validee' ? 'Votre absence a été validée.' : 'Votre absence a été refusée.';
-    await creerNotification(absence.user_id, 'Absence ' + statut, msg, 'absence', '/parent/absences');
+    await creerNotification(absence.user_id, 'Absence ' + statut, msg, 'absence', '/parent/absences',
+      { code: statut === 'validee' ? 'absenceValidee' : 'absenceRefusee', params: {} });
 
     return succes(res, null, `Absence ${statut}`);
   } catch (err) { return erreur(res, 'Erreur lors de la validation'); }

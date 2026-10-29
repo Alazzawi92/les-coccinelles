@@ -55,7 +55,9 @@
         "desc": "Répondre aux parents"
       }
     },
-    "repartition": "Répartition des dossiers"
+    "repartition": "Répartition des dossiers",
+    "alerteComptes_one": "{{count}} compte parent à valider",
+    "alerteComptes_other": "{{count}} comptes parents à valider"
   },
   "absences": {
     "titre": "Gestion des <s>absences</s>",
@@ -68,7 +70,9 @@
     },
     "aucune": "Aucune absence trouvée.",
     "toastValidee": "Absence validée",
-    "toastRefusee": "Absence refusée"
+    "toastRefusee": "Absence refusée",
+    "joursOuvres_one": "{{count}} jour d'ouverture",
+    "joursOuvres_other": "{{count}} jours d'ouverture"
   },
   "actualites": {
     "titre": "Gestion des <s>actualités</s>",
@@ -208,7 +212,10 @@
       ],
       "enCours": "⏳ Suppression...",
       "confirmer": "🗑️ Oui, supprimer définitivement"
-    }
+    },
+    "emailConfirme": "✓ Email confirmé",
+    "emailNonConfirme": "✉️ Email non confirmé",
+    "activerImpossible": "Le parent doit d'abord confirmer son adresse email (lien reçu par mail)"
   },
   "rapports": {
     "titre": "Rapport <s>présence & activités</s>",
@@ -311,7 +318,8 @@
     "nouveauStatut": "Nouveau statut",
     "note": "Note interne (facultatif)",
     "notePlaceholder": "Commentaire visible uniquement par l'équipe...",
-    "valider": "✅ Valider la décision"
+    "valider": "✅ Valider la décision",
+    "erreurDocument": "Impossible d'ouvrir ce document"
   },
   "menus": {
     "titre": "Gestion des <s>menus</s>",
@@ -474,7 +482,7 @@
     "ecrire": "Écrire un message",
     "de": "De : {{nom}} · {{date}}",
     "reponsePlaceholder": "Écrire une réponse...",
-    "envoyerReponse": "Envoyer ↑",
+    "envoyerReponse": "Envoyer",
     "erreurEnvoi": "Erreur envoi",
     "erreurParents": "Impossible de charger les parents",
     "remplir": "Remplissez tous les champs",

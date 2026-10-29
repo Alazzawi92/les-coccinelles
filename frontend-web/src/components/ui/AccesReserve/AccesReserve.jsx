@@ -6,17 +6,20 @@
 //            explicatif avec un lien vers les demandes d'inscription.
 //            Le serveur bloque aussi ces routes (403) : ce composant
 //            évite seulement d'afficher une page vide ou en erreur.
+//            L'accès vient du ParentLayout (<Outlet context>) : il est déjà
+//            chargé pour le menu, on ne refait pas l'appel API.
 // ============================================================
 
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useAccesFamille from '../../../hooks/useAccesFamille';
 import Chargement from '../Chargement/Chargement';
 import './AccesReserve.css';
 
 const AccesReserve = ({ children }) => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const { acces, chargement } = useAccesFamille();
+  // null = vérification en cours (voir useAccesFamille dans ParentLayout)
+  const acces = useOutletContext()?.accesFamille ?? null;
+  const chargement = acces === null;
 
   if (chargement) return <Chargement className="p-chargement" />;
   if (acces) return children;

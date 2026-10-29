@@ -18,6 +18,7 @@ import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Messagerie.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import useFenetreModale from '../../../hooks/useFenetreModale'; // Échap + focus dans la fenêtre
 
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document
@@ -190,6 +191,9 @@ const MessagerieAdmin = () => {
     setDropdownVisible(false);
   };
 
+  // Fenêtre accessible : Échap pour fermer, focus gardé dans la fenêtre
+  const refModale = useFenetreModale(modalOuvert, fermerModal);
+
   // ── Utilitaires ──────────────────────────────────────────
   const formatDate = (d) => new Date(d).toLocaleDateString(getLocale(), { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
   // Nombre de messages non lus adressés à cet admin
@@ -307,9 +311,11 @@ const MessagerieAdmin = () => {
       {/* Clic sur l'overlay ferme la modal */}
       {modalOuvert && (
         <div className="modal-overlay" onClick={fermerModal}>
-          <div className="modal-boite modal-boite--lg" onClick={e => e.stopPropagation()}>
+          {/* ref : Échap ferme, Tab reste dans la fenêtre (useFenetreModale) */}
+          <div className="modal-boite modal-boite--lg" onClick={e => e.stopPropagation()}
+            ref={refModale} role="dialog" aria-modal="true" aria-labelledby="titre-nouveau-message-admin">
             <div className="modal-entete">
-              <h2 className="modal-titre">{t('admin.messagerie.nouveau')}</h2>
+              <h2 className="modal-titre" id="titre-nouveau-message-admin">{t('admin.messagerie.nouveau')}</h2>
               <button className="modal-fermer" onClick={fermerModal} aria-label={t('common.fermer')}>×</button>
             </div>
 

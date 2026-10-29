@@ -19,6 +19,8 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './Messages.css';
 import Chargement from '../../../components/ui/Chargement/Chargement';
+import { TAILLE_MAX_DOCUMENT_MO, documentTropLourd } from '../../../config/limites'; // Taille max partagée
+import useFenetreModale from '../../../hooks/useFenetreModale'; // Échap + focus dans la fenêtre
 
 // ── Sous-composant : affichage d'une pièce jointe ────────────
 // Vérifie l'extension pour rendre une image inline ou un lien document
@@ -58,6 +60,14 @@ const Messages = () => {
   const [form,          setForm]          = useState({ sujet: '', contenu: '', destinataire_id: '' });
   // Pièce jointe du nouveau message
   const [fichier,       setFichier]       = useState(null);
+
+  // Pièce jointe trop lourde : refusée tout de suite (même limite que le serveur)
+  const pieceValide = (f, champ) => {
+    if (!documentTropLourd(f)) return f || null;
+    toast.error(t('common.fichierTropLourd', { nom: f.name, max: TAILLE_MAX_DOCUMENT_MO }));
+    if (champ) champ.value = '';
+    return null;
+  };
   // Pièce jointe de la réponse
   const [fichierRep,    setFichierRep]    = useState(null);
   // Liste des membres de l'équipe (admins) pour le sélecteur de destinataire
@@ -121,6 +131,9 @@ const Messages = () => {
     setFichier(null);
     if (fileRef.current) fileRef.current.value = '';
   };
+
+  // Fenêtre accessible : Échap pour fermer, focus gardé dans la fenêtre
+  const refModale = useFenetreModale(nouveauMsg, fermerModal);
 
   // ── Envoyer un nouveau message ────────────────────────────
   // POST /messages avec FormData multipart (fichier optionnel)
@@ -186,10 +199,12 @@ const Messages = () => {
       {/* ── MODAL NOUVEAU MESSAGE ─────────────────────────────── */}
       {nouveauMsg && (
         <div className="modal-overlay" onClick={fermerModal}>
-          {/* stopPropagation empêche la fermeture au clic sur le contenu */}
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          {/* stopPropagation empêche la fermeture au clic sur le contenu.
+              ref : Échap ferme, Tab reste dans la fenêtre (useFenetreModale) */}
+          <div className="modal" onClick={e => e.stopPropagation()}
+            ref={refModale} role="dialog" aria-modal="true" aria-labelledby="titre-nouveau-message">
             <div className="modal__entete">
-              <h2>{t('parent.messages.nouveau')}</h2>
+              <h2 id="titre-nouveau-message">{t('parent.messages.nouveau')}</h2>
               <button className="modal__fermer" onClick={fermerModal} aria-label={t('common.fermer')}>✕</button>
             </div>
             <form className="p-form" onSubmit={envoyerNouveauMessage}>
@@ -220,14 +235,14 @@ const Messages = () => {
               </div>
               {/* Pièce jointe optionnelle : image ou PDF */}
               <div className="p-form-groupe">
-                <label className="p-label">{t('parent.messages.pieceJointe')} <span className="p-label--opt">{t('parent.messages.pieceJointeAide')}</span></label>
+                <label className="p-label">{t('parent.messages.pieceJointe')} <span className="p-label--opt">{t('parent.messages.pieceJointeAide', { max: TAILLE_MAX_DOCUMENT_MO })}</span></label>
                 <div className="pj-zone">
                   <input
                     ref={fileRef}
                     type="file"
                     accept="image/jpeg,image/png,image/webp,application/pdf"
                     className="pj-input"
-                    onChange={e => setFichier(e.target.files[0] || null)}
+                    onChange={e => setFichier(pieceValide(e.target.files[0], e.target))}
                   />
                   {fichier && (
                     <div className="pj-apercu">
@@ -361,7 +376,7 @@ const Messages = () => {
                   {/* Bouton 📎 : label cliquable pour déclencher l'input file masqué */}
                   <label className="btn btn--ghost btn--sm pj-btn" title={t('parent.messages.joindreTitre')}>
                     {t('parent.messages.joindre')}
-                    <input ref={fileRepRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="pj-input--hidden" onChange={e => setFichierRep(e.target.files[0] || null)} />
+                    <input ref={fileRepRef} type="file" accept="image/jpeg,image/png,image/webp,application/pdf" className="pj-input--hidden" onChange={e => setFichierRep(pieceValide(e.target.files[0], e.target))} />
                   </label>
                   {/* Désactivé si ni texte ni fichier */}
                   <button type="submit" className="btn btn--primary btn--sm" disabled={envoi || (!reponse.trim() && !fichierRep)}>
