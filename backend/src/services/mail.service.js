@@ -3,6 +3,12 @@ const transporteur = require('../config/mail');
 
 const MAIL_FROM = process.env.MAIL_FROM || 'noreply@lescoccinelles.fr';
 
+// Échappe le HTML d'un texte saisi (ex : commentaire de l'admin)
+// avant de l'insérer dans le corps d'un email
+const echapperHtml = (texte = '') => String(texte)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
 // Envoyer un email de vérification de compte
 const envoyerVerificationEmail = async (email, prenom, token) => {
   const lien = `${process.env.FRONTEND_URL}/verify-email/${token}`; // Lien de vérification
@@ -12,13 +18,14 @@ const envoyerVerificationEmail = async (email, prenom, token) => {
     to:      email,
     subject: 'Confirmez votre adresse email — Les Coccinelles',
     html: `
-      <h2>Bonjour ${prenom},</h2>
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
       <p>Merci de créer votre compte sur la plateforme Les Coccinelles.</p>
       <p>Cliquez sur le lien ci-dessous pour confirmer votre adresse email :</p>
       <a href="${lien}" style="background:#FF9800;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;">
         Confirmer mon email
       </a>
-      <p>Ce lien expire dans 24 heures.</p>
+      <p>Ce lien expire dans 24 heures. <strong>Sans confirmation dans ce délai, votre compte
+      sera supprimé automatiquement</strong> : il vous suffira alors d'en créer un nouveau.</p>
     `
   });
 };
@@ -32,7 +39,7 @@ const envoyerResetMotDePasse = async (email, prenom, token) => {
     to:      email,
     subject: 'Réinitialisation de votre mot de passe — Les Coccinelles',
     html: `
-      <h2>Bonjour ${prenom},</h2>
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
       <p>Vous avez demandé à réinitialiser votre mot de passe.</p>
       <p>Cliquez sur le lien ci-dessous (valable 1 heure) :</p>
       <a href="${lien}" style="background:#FF9800;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;">
@@ -42,12 +49,6 @@ const envoyerResetMotDePasse = async (email, prenom, token) => {
     `
   });
 };
-
-// Échappe le HTML d'un texte saisi (ex : commentaire de l'admin)
-// avant de l'insérer dans le corps d'un email
-const echapperHtml = (texte = '') => String(texte)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 // Envoyer un email au parent quand le statut de son inscription change.
 // commentaire : message de l'admin (optionnel), affiché en encadré.
@@ -84,8 +85,30 @@ const envoyerStatutInscription = async ({ email, prenom, prenomEnfant, statut, c
   });
 };
 
+// Envoyer un email au parent quand l'administrateur active son compte
+const envoyerCompteActive = async (email, prenom) => {
+  const lien = `${process.env.FRONTEND_URL}/connexion`;
+
+  await transporteur.sendMail({
+    from:    `"Les Coccinelles" <${MAIL_FROM}>`,
+    to:      email,
+    subject: 'Votre compte est activé — Les Coccinelles',
+    html: `
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
+      <p>Bonne nouvelle : la crèche a <strong>validé votre compte</strong>.</p>
+      <p>Vous pouvez dès maintenant vous connecter à votre espace parent pour
+      faire une demande d'inscription et suivre votre dossier.</p>
+      <a href="${lien}" style="background:#FF9800;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;">
+        Me connecter
+      </a>
+      <p style="color:#888;font-size:12px;margin-top:24px;">Crèche Les Coccinelles — Puilboreau</p>
+    `
+  });
+};
+
 module.exports = {
   envoyerVerificationEmail,
   envoyerResetMotDePasse,
-  envoyerStatutInscription
+  envoyerStatutInscription,
+  envoyerCompteActive
 };

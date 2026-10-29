@@ -96,6 +96,22 @@
 }
 .btn-toggle--activer:hover { background: var(--primary); color: var(--white); }
 
+/* Activation impossible (email non confirmé) : bouton grisé */
+.btn-toggle:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-toggle--activer:disabled:hover { background: transparent; color: var(--primary); }
+
+/* Badge sous le nom d'un compte en attente : email confirmé ou non */
+.badge-email {
+  display:       inline-block;
+  margin-top:    2px;
+  padding:       1px 8px;
+  border-radius: var(--radius-pill);
+  font-size:     0.72rem;
+  font-weight:   700;
+}
+.badge-email--ok      { background: var(--success-bg); color: var(--success-text); }
+.badge-email--attente { background: var(--warning-bg); color: var(--warning-text); }
+
 .btn-toggle--desactiver,
 .btn-supprimer {
   border: 1px solid var(--error);

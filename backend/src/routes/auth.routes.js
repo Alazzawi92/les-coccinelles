@@ -27,10 +27,13 @@ const reglesRegister = [
     .isLength({ min: 8 }).withMessage('Le mot de passe doit contenir au moins 8 caractères')
     .matches(/\d/).withMessage('Le mot de passe doit contenir au moins un chiffre')
     .matches(/[A-Z]/).withMessage('Le mot de passe doit contenir au moins une majuscule'),
+  // Prénom / nom : lettres (accents compris), espaces, apostrophe, tiret, point
   body('prenom')
-    .trim().isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères').escape(),
+    .trim().isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères')
+    .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le prénom contient des caractères non autorisés'),
   body('nom')
-    .trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères').escape(),
+    .trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères')
+    .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le nom contient des caractères non autorisés'),
   // Téléphone optionnel : chiffres, espaces, + . - ( ) — 20 caractères max
   // (taille de la colonne users.telephone)
   body('telephone')

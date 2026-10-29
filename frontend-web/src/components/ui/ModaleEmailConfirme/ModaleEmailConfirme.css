@@ -1,0 +1,68 @@
+/* ============================================================
+   FICHIER : ModaleEmailConfirme.css
+   RÔLE    : Fenêtre "email confirmé" affichée sur l'accueil après
+             le clic sur le lien de confirmation.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Fond sombre qui couvre toute la page */
+.modale-email {
+  position:        fixed;
+  inset:           0;
+  z-index:         var(--z-modal);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--space-md);
+  background:      rgba(0, 0, 0, 0.5);
+  animation:       modale-email-fondu 0.2s ease;
+}
+
+/* Carte centrée */
+.modale-email__carte {
+  width:         100%;
+  max-width:     480px;
+  padding:       var(--space-2xl) var(--space-xl);
+  text-align:    center;
+  background:    var(--surface);
+  border-top:    5px solid var(--primary);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-lg);
+  animation:     modale-email-entree 0.25s ease;
+}
+
+.modale-email__logo { width: 90px; height: auto; margin: 0 auto var(--space-md); display: block; }
+
+.modale-email__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.4rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+.modale-email__texte {
+  color:         var(--text-gray);
+  line-height:   1.6;
+  margin-bottom: var(--space-md);
+}
+
+.modale-email__texte--accent { color: var(--primary); font-weight: 700; }
+
+.modale-email__actions {
+  display:         flex;
+  gap:             var(--space-md);
+  justify-content: center;
+  flex-wrap:       wrap;
+  margin-top:      var(--space-lg);
+}
+
+@keyframes modale-email-fondu  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modale-email-entree { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* Petit mobile (≤479px) : boutons pleine largeur, padding réduit */
+@media (max-width: 479px) {
+  .modale-email__carte   { padding: var(--space-xl) var(--space-md); }
+  .modale-email__actions { flex-direction: column-reverse; }
+  .modale-email__actions .btn { width: 100%; justify-content: center; }
+}

@@ -14,8 +14,10 @@ router.get('/me', verifierToken, userController.monProfil);
 
 // PUT /api/users/me — Modifier mon profil
 router.put('/me', verifierToken,
-  [body('prenom').optional().trim().isLength({ min: 2 }).escape(),
-   body('nom').optional().trim().isLength({ min: 2 }).escape(),
+  [body('prenom').optional().trim().isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères')
+     .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le prénom contient des caractères non autorisés'),
+   body('nom').optional().trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères')
+     .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le nom contient des caractères non autorisés'),
    body('telephone').optional().isMobilePhone()],
   validerDonnees, userController.modifierProfil
 );

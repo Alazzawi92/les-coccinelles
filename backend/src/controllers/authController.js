@@ -4,6 +4,7 @@ const crypto  = require('crypto');
 const { User } = require('../models');
 const { genererAccessToken, genererRefreshToken, verifierRefreshToken } = require('../config/jwt');
 const { envoyerVerificationEmail, envoyerResetMotDePasse } = require('../services/mail.service');
+const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 const { OAuth2Client } = require('google-auth-library');
 
@@ -40,6 +41,25 @@ const repondreConnexion = async (res, user) => {
 
 // ── INSCRIPTION ─────────────────────────────────────────────────────
 // POST /api/auth/register
+// Prévient tous les admins actifs qu'un compte parent attend leur validation.
+// Appelé quand l'email est confirmé (pas à la création : on évite de déranger
+// l'équipe pour des comptes jamais confirmés — faute de frappe, robots...).
+const notifierCompteAValider = async (user) => {
+  try {
+    const admins = await User.findAll({ where: { role: ['admin', 'super_admin'], actif: true } });
+    await Promise.all(admins.map(admin => creerNotification(
+      admin.id,
+      'Nouveau compte à valider',
+      `${user.prenom} ${user.nom} (${user.email}) a créé un compte et confirmé son email`,
+      'info',
+      '/admin/familles',
+      { code: 'compteAValider', params: { parent: `${user.prenom} ${user.nom}`, email: user.email } }
+    )));
+  } catch (err) {
+    console.error('Erreur notification compte à valider :', err.message);
+  }
+};
+
 const register = async (req, res) => {
   try {
     const { email, password, prenom, nom, telephone } = req.body;
@@ -82,7 +102,7 @@ const register = async (req, res) => {
       prenom: user.prenom,
       nom:    user.nom,
       role:   user.role
-    }, 'Compte créé. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.');
+    }, 'Compte créé. Confirmez votre email sous 24 h, puis un administrateur validera votre accès.');
 
   } catch (err) {
     console.error('Erreur register :', err);
@@ -183,6 +203,7 @@ const googleLogin = async (req, res) => {
         email_verifie: true // Adresse déjà vérifiée par Google
       });
 
+      await notifierCompteAValider(user); // Email déjà vérifié par Google
       return cree(res, null, 'Compte créé avec Google. Un administrateur doit valider votre accès avant que vous puissiez vous connecter.');
     }
 
@@ -326,7 +347,8 @@ const verifyEmail = async (req, res) => {
     const user = await User.findOne({ where: { token_reset: token } });
 
     if (!user || !user.token_expire || user.token_expire < new Date()) {
-      return erreur(res, 'Lien de vérification invalide ou expiré', 400);
+      // Lien expiré : le compte non confirmé a pu être supprimé (délai de 24 h)
+      return erreur(res, 'Lien de vérification invalide ou expiré. Si plus de 24 h se sont écoulées, votre compte a été supprimé : vous pouvez en créer un nouveau.', 400);
     }
 
     // Marquer l'email comme vérifié et supprimer le token
@@ -335,6 +357,9 @@ const verifyEmail = async (req, res) => {
       token_reset:   null,
       token_expire:  null
     });
+
+    // Compte encore en attente : l'équipe peut maintenant le valider
+    if (!user.actif) await notifierCompteAValider(user);
 
     return succes(res, null, 'Email vérifié avec succès');
 

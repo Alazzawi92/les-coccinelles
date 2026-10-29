@@ -44,7 +44,7 @@ const Familles = () => {
       await api.put(`/users/${user.id}/activer`);
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, actif: !u.actif } : u));
       toast.success(user.actif ? t('admin.familles.toastDesactive') : t('admin.familles.toastActive'));
-    } catch { toast.error(t('common.erreur')); }
+    } catch (err) { toast.error(err.response?.data?.message || t('common.erreur')); }
   };
 
   // ── Supprimer un compte ──────────────────────────────────
@@ -161,7 +161,15 @@ const Familles = () => {
                   <td>
                     <div className="user-identite">
                       <div className="user-avatar">{u.prenom?.[0]}{u.nom?.[0]}</div>
-                      <div><p className="user-nom">{u.prenom} {u.nom}</p></div>
+                      <div>
+                        <p className="user-nom">{u.prenom} {u.nom}</p>
+                        {/* Compte parent en attente : l'email doit être confirmé avant activation */}
+                        {!u.actif && u.role === 'parent' && (
+                          <span className={`badge-email ${u.email_verifie ? 'badge-email--ok' : 'badge-email--attente'}`}>
+                            {u.email_verifie ? t('admin.familles.emailConfirme') : t('admin.familles.emailNonConfirme')}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td>{u.email}</td>
@@ -183,6 +191,8 @@ const Familles = () => {
                       <button
                         className={`btn-toggle ${u.actif ? 'btn-toggle--desactiver' : 'btn-toggle--activer'}`}
                         onClick={() => toggleActif(u)}
+                        disabled={!u.actif && u.role === 'parent' && !u.email_verifie}
+                        title={!u.actif && u.role === 'parent' && !u.email_verifie ? t('admin.familles.activerImpossible') : undefined}
                       >
                         {u.actif ? t('admin.familles.desactiver') : t('admin.familles.activer')}
                       </button>

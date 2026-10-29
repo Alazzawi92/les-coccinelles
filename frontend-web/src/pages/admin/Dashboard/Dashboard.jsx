@@ -38,10 +38,11 @@ const AdminDashboard = () => {
     const charger = async () => {
       try {
         // allSettled : si un appel échoue, les autres s'affichent quand même
-        const [resInscStats, resAbsences, resMessages] = await Promise.allSettled([
+        const [resInscStats, resAbsences, resMessages, resUsers] = await Promise.allSettled([
           api.get('/inscriptions/stats'),
           api.get('/absences'),
-          api.get('/messages')
+          api.get('/messages'),
+          api.get('/users')
         ]);
         const donnees = (r) => (r.status === 'fulfilled' ? r.value.data.data : null);
         setStats(donnees(resInscStats));
@@ -51,7 +52,11 @@ const AdminDashboard = () => {
         const abs = (donnees(resAbsences) || []).filter(a => a.statut === 'en_attente');
         // Messages : seulement ceux non lus ET adressés à cet admin
         const msg = (donnees(resMessages) || []).filter(m => !m.lu && m.destinataire_id === user.id);
+        // Comptes parents créés mais pas encore activés (même règle que
+        // l'onglet "En attente" de la page Familles)
+        const comptes = (donnees(resUsers) || []).filter(u => u.role === 'parent' && !u.actif);
         const al  = [];
+        if (comptes.length > 0) al.push({ type: 'compte', cle: 'alerteComptes', n: comptes.length, lien: '/admin/familles', icone: '👪' });
         if (abs.length > 0)  al.push({ type: 'absence',  cle: 'alerteAbsences', n: abs.length, lien: '/admin/absences',    icone: '📅' });
         if (msg.length > 0)  al.push({ type: 'message',  cle: 'alerteMessages', n: msg.length, lien: '/admin/messagerie',  icone: '✉️' });
         setAlertes(al);

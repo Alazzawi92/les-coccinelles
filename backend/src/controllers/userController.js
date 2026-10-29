@@ -4,6 +4,7 @@ const path    = require('path');
 const fs      = require('fs');
 const { User } = require('../models');
 const { succes, erreur } = require('../utils/response');
+const { envoyerCompteActive } = require('../services/mail.service');
 
 // GET /api/users/me — Retourner le profil de l'utilisateur connecté
 const monProfil = async (req, res) => {
@@ -119,7 +120,26 @@ const toggleActif = async (req, res) => {
     const user = await User.findByPk(req.params.id);
     if (!user) return erreur(res, 'Utilisateur non trouvé', 404);
 
-    await user.update({ actif: !user.actif });
+    const activation = !user.actif;
+
+    // Un compte parent ne peut être activé qu'une fois l'email confirmé
+    // (évite d'ouvrir un compte avec une adresse fausse ou mal saisie)
+    if (activation && user.role === 'parent' && !user.email_verifie) {
+      return erreur(res, 'Impossible d\'activer ce compte : le parent n\'a pas encore confirmé son adresse email', 400);
+    }
+
+    await user.update({ actif: activation });
+
+    // Activation : le parent est prévenu par email qu'il peut se connecter.
+    // Un échec d'envoi (SMTP indisponible) n'annule pas l'activation.
+    if (activation) {
+      try {
+        await envoyerCompteActive(user.email, user.prenom);
+      } catch (errMail) {
+        console.error('Erreur email compte activé :', errMail.message);
+      }
+    }
+
     return succes(res, null, `Compte ${user.actif ? 'activé' : 'désactivé'}`);
   } catch (err) {
     return erreur(res, 'Erreur lors de la modification');

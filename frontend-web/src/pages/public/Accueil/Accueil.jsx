@@ -8,12 +8,13 @@
 //            dynamiquement depuis l'API au montage.
 // ============================================================
 
-import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL, urlFichier } from '../../../services/api';
 import usePageCMS from '../../../hooks/usePageCMS';
 import { getLocale } from '../../../i18n';
+import ModaleEmailConfirme from '../../../components/ui/ModaleEmailConfirme/ModaleEmailConfirme';
 import './Accueil.css';
 
 // Quill produit "<p><br></p>" pour un champ vide
@@ -22,6 +23,18 @@ const quillVide = v => !v || v === '<p><br></p>';
 const Accueil = () => {
 
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Arrivée depuis le lien de confirmation d'email (/verify-email) :
+  // fenêtre "email confirmé" affichée une seule fois. L'indicateur est
+  // retiré de l'historique tout de suite pour qu'un rechargement de la
+  // page ne la réaffiche pas.
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [modaleEmail, setModaleEmail] = useState(Boolean(location.state?.emailConfirme));
+  useEffect(() => {
+    if (location.state?.emailConfirme) navigate(location.pathname, { replace: true, state: null });
+  }, [location, navigate]);
+  const fermerModaleEmail = useCallback(() => setModaleEmail(false), []);
 
   // Dernières actualités (3 maximum pour la page d'accueil)
   const [actualites, setActualites] = useState([]);
@@ -45,6 +58,9 @@ const Accueil = () => {
 
   return (
     <div className="accueil">
+      {/* Fenêtre après confirmation de l'email (voir plus haut) */}
+      {modaleEmail && <ModaleEmailConfirme onFermer={fermerModaleEmail} />}
+
 
       {/* ── HERO ────────────────────────────────────────────── */}
       {/* Section principale : slogan + boutons CTA + visuels décoratifs */}

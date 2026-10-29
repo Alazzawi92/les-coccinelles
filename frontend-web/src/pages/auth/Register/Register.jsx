@@ -18,6 +18,7 @@ import { useAuth } from '../../../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Register.css';
+import { nomPersonneValide } from '../../../utils/validation'; // Format prénom / nom
 
 // ── Vérification des critères du mot de passe ─────────────────
 // Renvoie un objet indiquant si chaque critère est respecté
@@ -59,8 +60,10 @@ const Register = () => {
   const valider = () => {
     const e = {};
     // On stocke des clés de traduction : le message suit la langue choisie
-    if (!form.prenom.trim())   e.prenom  = 'prenomRequis';
-    if (!form.nom.trim())      e.nom     = 'nomRequis';
+    if (!form.prenom.trim())                e.prenom = 'prenomRequis';
+    else if (!nomPersonneValide(form.prenom)) e.prenom = 'prenomInvalide';  // Même règle que le serveur
+    if (!form.nom.trim())                   e.nom    = 'nomRequis';
+    else if (!nomPersonneValide(form.nom))  e.nom    = 'nomInvalide';
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       e.email = 'emailInvalide';
     if (!criteres.longueur || !criteres.chiffre || !criteres.majuscule)
@@ -129,22 +132,20 @@ const Register = () => {
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
-          {/* Ligne Prénom + Nom côte à côte */}
-          <div className="form-row-double">
-            <div className="form-groupe">
-              <label htmlFor="prenom" className="form-label">{t('auth.register.prenom')} <span className="requis">*</span></label>
-              <input id="prenom" name="prenom" type="text" autoComplete="given-name"
-                className={`form-input ${erreurs.prenom ? 'form-input--erreur' : ''}`}
-                placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} autoFocus />
-              {erreurs.prenom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.prenom}`)}</p>}
-            </div>
-            <div className="form-groupe">
-              <label htmlFor="nom" className="form-label">{t('auth.register.nom')} <span className="requis">*</span></label>
-              <input id="nom" name="nom" type="text" autoComplete="family-name"
-                className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
-                placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} />
-              {erreurs.nom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.nom}`)}</p>}
-            </div>
+          {/* Prénom puis Nom, l'un sous l'autre (même largeur que les autres champs) */}
+          <div className="form-groupe">
+            <label htmlFor="prenom" className="form-label">{t('auth.register.prenom')} <span className="requis">*</span></label>
+            <input id="prenom" name="prenom" type="text" autoComplete="given-name"
+              className={`form-input ${erreurs.prenom ? 'form-input--erreur' : ''}`}
+              placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} autoFocus />
+            {erreurs.prenom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.prenom}`)}</p>}
+          </div>
+          <div className="form-groupe">
+            <label htmlFor="nom" className="form-label">{t('auth.register.nom')} <span className="requis">*</span></label>
+            <input id="nom" name="nom" type="text" autoComplete="family-name"
+              className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
+              placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} />
+            {erreurs.nom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.nom}`)}</p>}
           </div>
 
           {/* Email */}

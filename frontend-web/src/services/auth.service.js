@@ -16,6 +16,9 @@ export const logout = () => api.post('/auth/logout');
 // Renouveler le token
 export const refreshToken = (token) => api.post('/auth/refresh-token', { refreshToken: token });
 
+// Confirmer l'adresse email (lien reçu par mail après la création du compte)
+export const verifyEmail = (token) => api.get(`/auth/verify-email/${encodeURIComponent(token)}`);
+
 // Demander un reset mot de passe
 export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
 

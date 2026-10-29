@@ -15,6 +15,7 @@ import api, { urlFichier } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MonProfil.css';
+import { nomPersonneValide } from '../../../utils/validation'; // Format prénom / nom
 
 const MonProfil = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
@@ -41,13 +42,19 @@ const MonProfil = () => {
   // PUT /users/me → met à jour l'utilisateur dans le contexte Auth
   const handleProfilSubmit = async (e) => {
     e.preventDefault();
+    // Même règle que le serveur pour le prénom et le nom
+    if (!nomPersonneValide(form.prenom) || !nomPersonneValide(form.nom)) {
+      toast.error(t('parent.monProfil.nomInvalide'));
+      return;
+    }
     setSauveProfil(true);
     try {
       const res = await api.put('/users/me', form);
       majUser(res.data.data); // Propagation au contexte pour mise à jour du header
       toast.success(t('parent.monProfil.toastProfil'));
-    } catch {
-      toast.error(t('common.erreurMaj'));
+    } catch (err) {
+      // Message précis du serveur (ex : champ invalide) si disponible
+      toast.error(err.response?.data?.message || t('common.erreurMaj'));
     }
     setSauveProfil(false);
   };
