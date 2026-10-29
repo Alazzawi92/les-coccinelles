@@ -10,6 +10,7 @@ require('dotenv').config();           // Charger les variables d'environnement
 const sequelize = require('./src/config/database'); // Connexion BDD
 const routes    = require('./src/routes');           // Toutes les routes
 const { signerReponsesApi, protegerUploads } = require('./src/utils/fichiersSignes'); // Liens signés
+const { demarrerNettoyageAutomatique } = require('./src/services/nettoyage.service');  // Comptes non confirmés
 
 const app = express(); // Créer l'application Express
 
@@ -108,10 +109,28 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, protegerUploads, express.static(path.join(__dirname, 'uploads')));
 
+// Fichier demandé mais absent du disque (supprimé, jamais généré...) :
+// toujours une réponse 404 claire, et une trace dans les logs du serveur
+app.use('/uploads', (req, res) => {
+  console.warn(`⚠️  Fichier introuvable : /uploads${req.path}`);
+  res.status(404).json({ success: false, message: 'Fichier introuvable' });
+});
+
+// Erreur de lecture d'un fichier (droits, disque...) : jamais une page HTML
+// 500 sans explication — un fichier absent reste un 404, le reste un 500 JSON,
+// et l'erreur exacte est écrite dans les logs du serveur
+app.use('/uploads', (err, req, res, next) => {
+  const absent = err.code === 'ENOENT' || err.status === 404;
+  console.error(`❌ Erreur fichier /uploads${req.path} : ${err.code || err.status || ''} ${err.message}`);
+  res.status(absent ? 404 : 500).json({ success: false, message: absent ? 'Fichier introuvable' : 'Erreur de lecture du fichier' });
+});
+
 // Crée les sous-dossiers d'upload manquants au démarrage (multer ne les crée pas)
 ['avatars', 'actualites', 'documents', 'equipe', 'justificatifs', 'messages', 'photos'].forEach(d =>
   fs.mkdirSync(path.join(__dirname, 'uploads', d), { recursive: true })
 );
+// Stockage privé des pièces justificatives (jamais servi en statique)
+fs.mkdirSync(path.join(__dirname, 'stockage', 'justificatifs'), { recursive: true });
 
 // ── ROUTES API ───────────────────────────────────────────────────────
 // signerReponsesApi : ajoute une signature temporaire aux chemins de
@@ -134,6 +153,20 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
+// ── ERREURS D'UPLOAD (multer) ────────────────────────────────────────
+// Fichier trop lourd ou type refusé : réponse 400 JSON lisible (au lieu
+// d'une page HTML 500), et suppression des fichiers déjà enregistrés.
+app.use((err, req, res, next) => {
+  const estErreurUpload = err.name === 'MulterError' || err.message?.startsWith('Type de fichier non autorisé');
+  if (!estErreurUpload) return next(err);
+  const fichiers = req.files || (req.file ? [req.file] : []);
+  (Array.isArray(fichiers) ? fichiers : Object.values(fichiers).flat()).forEach(f => fs.unlink(f.path, () => {}));
+  const message = err.code === 'LIMIT_FILE_SIZE'
+    ? `Fichier trop lourd : ${require('./src/config/limites').TAILLE_MAX_DOCUMENT_MO} Mo maximum par document`
+    : err.message;
+  return res.status(400).json({ success: false, message });
+});
+
 // ── DÉMARRAGE DU SERVEUR ─────────────────────────────────────────────
 const PORT = process.env.PORT || 3001;
 // Hébergeurs mutualisés type AlwaysData imposent d'écouter sur une IP
@@ -147,6 +180,8 @@ sequelize.authenticate() // Vérifier la connexion à la BDD
     app.listen(PORT, IP, () => {
       console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
     });
+    // Suppression des comptes non confirmés sous 24 h (au démarrage puis chaque heure)
+    demarrerNettoyageAutomatique();
   })
   .catch(err => {
     console.error('❌ Erreur connexion BDD :', err.message);

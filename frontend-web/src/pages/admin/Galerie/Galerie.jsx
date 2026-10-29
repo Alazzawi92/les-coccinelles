@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import api, { urlFichier } from '../../../services/api';
+import ImageSecours from '../../../components/ui/ImageSecours/ImageSecours';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -207,7 +208,7 @@ const GalerieAdmin = () => {
               <button className="modal__fermer" onClick={() => setPhotoTag(null)} aria-label={t('common.fermer')}>✕</button>
             </div>
             {/* Aperçu de la miniature de la photo à taguer */}
-            <img src={urlFichier(photoTag.photo.chemin_miniature)} alt={t('admin.galerie.photo')} style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
+            <ImageSecours src={urlFichier(photoTag.photo.chemin_miniature)} alt={t('admin.galerie.photo')} style={{width:'100%',borderRadius:'var(--radius-lg)',marginBottom:'var(--space-lg)'}} />
             <p style={{fontSize:'0.85rem',color:'var(--text-gray)',marginBottom:'var(--space-md)'}}>
               {t('admin.galerie.tagAide')}
             </p>
@@ -252,7 +253,8 @@ const GalerieAdmin = () => {
               <div key={album.id} className="album-admin-carte">
                 {/* Couverture de l'album : image ou emoji par défaut */}
                 <div className="album-admin-couverture" onClick={() => ouvrirAlbum(album)}>
-                  {album.couverture ? <img src={album.couverture} alt={album.titre} /> : <span>📷</span>}
+                  {/* Couverture choisie, sinon 1re photo de l'album, sinon visuel de secours */}
+                  <ImageSecours src={urlFichier(album.couverture || album.apercu?.chemin_miniature)} alt={album.titre} />
                 </div>
                 <div className="album-admin-infos">
                   <h3>{album.titre}</h3>
@@ -316,7 +318,7 @@ const GalerieAdmin = () => {
                               setEnfantsUpload(prev => sel ? prev.filter(id => id !== e.id) : [...prev, e.id])
                             }/>
                             <span>{e.sexe === 'F' ? '👧' : '👦'}</span>
-                            <span>{e.prenom}</span>
+                            <span>{e.prenom} {e.nom}</span>
                           </label>
                         );
                       })}
@@ -339,7 +341,7 @@ const GalerieAdmin = () => {
             <div className="photos-admin-grille">
               {photos.map(photo => (
                 <div key={photo.id} className="photo-admin-item">
-                  <img src={urlFichier(photo.chemin_miniature)} alt={photo.legende || t('admin.galerie.photo')} loading="lazy" />
+                  <ImageSecours src={urlFichier(photo.chemin_miniature)} alt={photo.legende || t('admin.galerie.photo')} loading="lazy" />
                   {/* Overlay avec boutons : taguer enfants | supprimer */}
                   <div className="photo-admin-overlay">
                     {/* Ouvre la modal de tagging pour cette photo spécifique */}
@@ -362,7 +364,7 @@ const GalerieAdmin = () => {
                   {photo.enfants?.length > 0 && (
                     <div className="photo-enfants-tags">
                       {photo.enfants.map(e => (
-                        <span key={e.id} className="photo-enfant-tag">{e.prenom}</span>
+                        <span key={e.id} className="photo-enfant-tag">{e.prenom} {e.nom}</span>
                       ))}
                     </div>
                   )}

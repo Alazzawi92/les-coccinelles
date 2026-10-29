@@ -14,18 +14,63 @@ const {
 const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 
+// ── CONSENTEMENT : RÈGLE COMMUNE ────────────────────────────────────
+
+// Ids des enfants du parent connecté dont le consentement photo est donné
+const enfantsConsentisDuParent = async (userId) => {
+  const enfants = await Enfant.findAll({
+    where:   { user_id: userId },
+    include: [{ model: Consentement, as: 'consentement' }]
+  });
+  return new Set(enfants.filter(e => e.consentement?.consenti).map(e => e.id));
+};
+
+// Une photo est floutée pour un parent si au moins un enfant tagué
+// n'a pas de consentement photo
+const estFloue = (photo, idsConsentis) => {
+  const enfantsSurPhoto = photo.enfants || [];
+  if (enfantsSurPhoto.length === 0) return false;
+  return !enfantsSurPhoto.every(e => idsConsentis.has(e.id) || e.consentement?.consenti);
+};
+
 // ── ALBUMS ──────────────────────────────────────────────────────────
 
 const listerAlbums = async (req, res) => {
   try {
-    const filtre = req.user.role === 'parent'
-      ? { visible_parents: true }
-      : {};
+    const estParent = req.user.role === 'parent';
+    const filtre = estParent ? { visible_parents: true } : {};
     const albums = await GalerieAlbum.findAll({
       where: filtre,
-      order: [['created_at', 'DESC']]
+      include: [{
+        // Photos (champs minimum) pour choisir une couverture
+        model:      GaleriePhoto,
+        as:         'photos',
+        attributes: ['id', 'chemin_miniature', 'created_at'],
+        include: [{
+          model:      Enfant,
+          as:         'enfants',
+          attributes: ['id'],
+          through:    { attributes: [] },
+          include:    [{ model: Consentement, as: 'consentement', attributes: ['consenti'] }]
+        }]
+      }],
+      order: [['created_at', 'DESC'], [{ model: GaleriePhoto, as: 'photos' }, 'created_at', 'ASC']]
     });
-    return succes(res, albums);
+
+    // Couverture automatique : 1re photo de l'album (pour un parent, la 1re
+    // photo NON floutée — une photo sans consentement n'est jamais montrée)
+    const idsConsentis = estParent ? await enfantsConsentisDuParent(req.user.id) : null;
+    const resultat = albums.map(album => {
+      const { photos = [], ...infos } = album.toJSON();
+      const premiere = estParent ? photos.find(p => !estFloue(p, idsConsentis)) : photos[0];
+      return {
+        ...infos,
+        nb_photos: photos.length,
+        // Objet { chemin_miniature } : le chemin est signé automatiquement par l'API
+        apercu: premiere ? { chemin_miniature: premiere.chemin_miniature } : null
+      };
+    });
+    return succes(res, resultat);
   } catch (err) {
     console.error('Erreur listerAlbums :', err);
     return erreur(res, 'Erreur récupération albums');
@@ -59,30 +104,20 @@ const getAlbum = async (req, res) => {
 
     // Pour les parents : masquer les photos sans consentement ou flouter
     if (req.user.role === 'parent') {
-      // Récupérer les enfants du parent connecté avec leur consentement
-      const enfantsParent = await Enfant.findAll({
-        where:   { user_id: req.user.id },
-        include: [{ model: Consentement, as: 'consentement' }]
-      });
+      // Album non visible par les parents : même réponse qu'un album inexistant
+      if (!album.visible_parents) return erreur(res, 'Album non trouvé', 404);
 
-      const idsEnfantsConsentis = new Set(
-        enfantsParent
-          .filter(e => e.consentement?.consenti)
-          .map(e => e.id)
-      );
+      const idsEnfantsConsentis = await enfantsConsentisDuParent(req.user.id);
 
       // Marquer chaque photo : floue = au moins 1 enfant sans consentement
       const photosTraitees = album.photos.map(photo => {
-        const enfantsSurPhoto = photo.enfants || [];
-        const necessiteConsentement = enfantsSurPhoto.length > 0;
-        const tousConsentis = enfantsSurPhoto.every(e =>
-          idsEnfantsConsentis.has(e.id) || e.consentement?.consenti
-        );
-
-        const floue = necessiteConsentement && !tousConsentis;
+        const floue = estFloue(photo, idsEnfantsConsentis);
+        const { enfants, ...donneesPhoto } = photo.toJSON();   // eslint: enfants volontairement retiré
 
         return {
-          ...photo.toJSON(),
+          ...donneesPhoto,
+          // "enfants" n'est JAMAIS envoyé à un parent : il contenait la fiche
+          // complète (santé, médecin...) des autres enfants tagués
           floue,
           // Remplacer les chemins si floue
           chemin_web:       floue ? '/images/photo-floue.jpg'  : photo.chemin_web,
@@ -314,9 +349,12 @@ const supprimerFichiersPhoto = (photo) => {
 // Notifier tous les parents inscrits qu'il y a de nouvelles photos
 const notifierParentsNouvellesPhotos = async (album, nbPhotos) => {
   try {
-    // Récupérer tous les parents (enfants actifs)
+    // Parents actifs dont une inscription est ACCEPTÉE (les autres n'ont
+    // pas encore accès à la galerie : inutile de les prévenir)
+    const { Inscription } = require('../models');
+    const inscriptions = await Inscription.findAll({ where: { statut: 'accepte' }, attributes: ['user_id'] });
     const parents = await User.findAll({
-      where: { role: 'parent', actif: true }
+      where: { role: 'parent', actif: true, id: [...new Set(inscriptions.map(i => i.user_id))] }
     });
 
     const messageNotif = `${nbPhotos} nouvelle(s) photo(s) ajoutée(s) dans l'album "${album.titre}"`;
@@ -328,7 +366,8 @@ const notifierParentsNouvellesPhotos = async (album, nbPhotos) => {
         '📷 Nouvelles photos disponibles',
         messageNotif,
         'document',
-        '/parent/galerie'
+        '/parent/galerie',
+        { code: 'nouvellesPhotos', params: { count: nbPhotos, album: album.titre } }
       )
     ));
   } catch (err) {

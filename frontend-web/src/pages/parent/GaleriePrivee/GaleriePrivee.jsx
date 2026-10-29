@@ -14,6 +14,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import api, { urlFichier } from '../../../services/api';
+import ImageSecours from '../../../components/ui/ImageSecours/ImageSecours';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
@@ -132,7 +133,8 @@ const GaleriePrivee = () => {
               <button key={album.id} className="album-carte-parent" onClick={() => ouvrirAlbum(album)}>
                 {/* Couverture : image ou émoji par défaut */}
                 <div className="album-couverture-parent">
-                  {album.couverture ? <img src={album.couverture} alt={album.titre} /> : <span>📷</span>}
+                  {/* Couverture choisie, sinon 1re photo visible de l'album, sinon visuel de secours */}
+                  <ImageSecours src={urlFichier(album.couverture || album.apercu?.chemin_miniature)} alt={album.titre} />
                 </div>
                 <div className="album-infos-parent">
                   <h3>{album.titre}</h3>
@@ -169,7 +171,7 @@ const GaleriePrivee = () => {
                       // Clic désactivé sur les photos floutées
                       onClick={() => !photo.floue && setPhotoZoom(photo)}
                     >
-                      <img src={urlFichier(photo.chemin_miniature)} alt={photo.legende || t('parent.galerie.photo')} loading="lazy" />
+                      <ImageSecours src={urlFichier(photo.chemin_miniature)} alt={photo.legende || t('parent.galerie.photo')} loading="lazy" />
                       {/* Overlay sur les photos floutées : lien vers la page de consentement */}
                       {photo.floue && (
                         <div className="photo-floue-overlay">
@@ -209,7 +211,7 @@ const GaleriePrivee = () => {
           <div className="lightbox-parent__contenu" onClick={e => e.stopPropagation()}>
             <button className="lightbox-parent__fermer" onClick={() => setPhotoZoom(null)}>✕</button>
             {/* chemin_web = version 1200px compressée par Sharp */}
-            <img src={urlFichier(photoZoom.chemin_web)} alt={photoZoom.legende || t('parent.galerie.photo')} />
+            <ImageSecours src={urlFichier(photoZoom.chemin_web)} alt={photoZoom.legende || t('parent.galerie.photo')} />
             {photoZoom.legende && <p className="lightbox-parent__legende">{photoZoom.legende}</p>}
             <button className="btn btn--primary btn--sm lightbox-parent__dl" onClick={() => telecharger(photoZoom)}>
               {t('parent.galerie.telechargerBtn')}

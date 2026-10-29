@@ -22,6 +22,8 @@ backend/uploads/justificatifs/*
 backend/uploads/messages/*
 backend/uploads/actualites/*
 !backend/uploads/**/.gitkeep
+# Stockage privé des pièces justificatives (jamais versionné)
+backend/stockage/
 
 # Logs
 *.log

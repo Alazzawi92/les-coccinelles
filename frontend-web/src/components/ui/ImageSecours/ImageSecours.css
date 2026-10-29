@@ -1,0 +1,19 @@
+/* ============================================================
+   FICHIER : ImageSecours.css
+   RÔLE    : Visuel affiché à la place d'une image introuvable.
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Occupe la place de l'image (largeur / hauteur du conteneur) */
+.image-secours {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           100%;
+  height:          100%;
+  min-height:      80px;
+  background:      var(--bg-gray);
+  color:           var(--text-light);
+  font-size:       2rem;
+}
