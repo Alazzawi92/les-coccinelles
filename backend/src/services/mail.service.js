@@ -85,6 +85,24 @@ const envoyerStatutInscription = async ({ email, prenom, prenomEnfant, statut, c
   });
 };
 
+// Envoyer un email au parent quand son adresse est confirmée (lien cliqué
+// ou inscription Google) : le compte attend maintenant la validation de l'admin
+const envoyerCompteEnAttente = async (email, prenom) => {
+  await transporteur.sendMail({
+    from:    `"Les Coccinelles" <${MAIL_FROM}>`,
+    to:      email,
+    subject: 'Votre compte est en attente de validation — Les Coccinelles',
+    html: `
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
+      <p>Votre adresse email est <strong>confirmée</strong>, merci !</p>
+      <p>L'équipe de la crèche va maintenant vérifier et valider votre compte.
+      Vous recevrez un nouvel email dès que votre compte sera actif.</p>
+      <p>Vous n'avez rien d'autre à faire pour le moment.</p>
+      <p style="color:#888;font-size:12px;margin-top:24px;">Crèche Les Coccinelles — Puilboreau</p>
+    `
+  });
+};
+
 // Envoyer un email au parent quand l'administrateur active son compte
 const envoyerCompteActive = async (email, prenom) => {
   const lien = `${process.env.FRONTEND_URL}/connexion`;
@@ -110,5 +128,6 @@ module.exports = {
   envoyerVerificationEmail,
   envoyerResetMotDePasse,
   envoyerStatutInscription,
+  envoyerCompteEnAttente,
   envoyerCompteActive
 };

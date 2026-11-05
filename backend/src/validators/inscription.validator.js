@@ -110,13 +110,15 @@ const reglesCreation = [
     verifierEmployeur(pi.employeur1, 'Parent 1', true);
     verifierEmployeur(pi.employeur2, 'Parent 2', !seul);
 
-    // Numéros des justificatifs (sécurité sociale + CAF)
-    if (!nirValide(pi.numero_securite_sociale)) throw new Error('Numéro de sécurité sociale invalide (15 caractères, clé de contrôle comprise)');
-    if (!RE_CAF.test(String(pi.numero_caf || '').replace(/\s/g, ''))) throw new Error('Numéro allocataire CAF invalide (7 chiffres)');
+    // Numéros des justificatifs (sécurité sociale + CAF) : facultatifs,
+    // mais vérifiés s'ils sont remplis. On les garde sans espaces (null si vides).
+    const nir = String(pi.numero_securite_sociale || '').replace(/\s/g, '').toUpperCase();
+    const caf = String(pi.numero_caf || '').replace(/\s/g, '');
+    if (nir && !nirValide(nir)) throw new Error('Numéro de sécurité sociale invalide (15 caractères, clé de contrôle comprise)');
+    if (caf && !RE_CAF.test(caf)) throw new Error('Numéro allocataire CAF invalide (7 chiffres)');
 
-    // On garde les numéros sans espaces
-    pi.numero_securite_sociale = String(pi.numero_securite_sociale).replace(/\s/g, '').toUpperCase();
-    pi.numero_caf              = String(pi.numero_caf).replace(/\s/g, '');
+    pi.numero_securite_sociale = nir || null;
+    pi.numero_caf              = caf || null;
     req.body.preinscription = pi;                                              // Objet validé
     return true;
   })

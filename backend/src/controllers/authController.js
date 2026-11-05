@@ -3,7 +3,7 @@ const bcrypt  = require('bcryptjs');
 const crypto  = require('crypto');
 const { User } = require('../models');
 const { genererAccessToken, genererRefreshToken, verifierRefreshToken } = require('../config/jwt');
-const { envoyerVerificationEmail, envoyerResetMotDePasse } = require('../services/mail.service');
+const { envoyerVerificationEmail, envoyerResetMotDePasse, envoyerCompteEnAttente } = require('../services/mail.service');
 const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 const { OAuth2Client } = require('google-auth-library');
@@ -44,7 +44,14 @@ const repondreConnexion = async (res, user) => {
 // Prévient tous les admins actifs qu'un compte parent attend leur validation.
 // Appelé quand l'email est confirmé (pas à la création : on évite de déranger
 // l'équipe pour des comptes jamais confirmés — faute de frappe, robots...).
+// Le parent reçoit aussi un email lui indiquant que son compte attend la validation.
 const notifierCompteAValider = async (user) => {
+  try {
+    await envoyerCompteEnAttente(user.email, user.prenom);
+  } catch (errMail) {
+    console.error('Erreur email compte en attente :', errMail.message);
+  }
+
   try {
     const admins = await User.findAll({ where: { role: ['admin', 'super_admin'], actif: true } });
     await Promise.all(admins.map(admin => creerNotification(

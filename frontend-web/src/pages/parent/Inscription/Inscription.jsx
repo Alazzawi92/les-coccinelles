@@ -110,13 +110,13 @@ const validerEmployeur = (emp, obligatoire) => {
   return e;
 };
 
+// Numéros facultatifs : vérifiés seulement s'ils sont remplis
 const validerNumeros = (pi) => {
   const e = {};
-  if (!pi.numero_securite_sociale.trim())          e.numero_securite_sociale = 'nirRequis';
-  else if (!nirValide(pi.numero_securite_sociale)) e.numero_securite_sociale = 'nirInvalide';
+  if (pi.numero_securite_sociale.trim() && !nirValide(pi.numero_securite_sociale))
+    e.numero_securite_sociale = 'nirInvalide';
   const caf = pi.numero_caf.replace(/\s/g, '');
-  if (!caf)                                        e.numero_caf = 'cafRequis';
-  else if (!RE_CAF.test(caf))                      e.numero_caf = 'cafInvalide';
+  if (caf && !RE_CAF.test(caf))                    e.numero_caf = 'cafInvalide';
   return e;
 };
 
@@ -853,7 +853,7 @@ const Inscription = () => {
               <legend className="docs-employeur__titre">🔢 {t(`${I}.e4.numerosTitre`)}</legend>
               <div className="preinsc-grille">
                 <div className="p-form-groupe">
-                  <label className="p-label" htmlFor="numero-secu">{t(`${I}.e4.nir`)} <span className="requis">*</span></label>
+                  <label className="p-label" htmlFor="numero-secu">{t(`${I}.e4.nir`)}</label>
                   <input id="numero-secu" type="text" inputMode="numeric" autoComplete="off" maxLength={21}
                     className={cls(erreursNumeros, 'numero_securite_sociale')} value={pi.numero_securite_sociale}
                     onChange={e => majPITop('numero_securite_sociale', e.target.value)} placeholder={t(`${I}.e4.nirPlaceholder`)} />
@@ -861,7 +861,7 @@ const Inscription = () => {
                   <Err msg={erreursNumeros.numero_securite_sociale} />
                 </div>
                 <div className="p-form-groupe">
-                  <label className="p-label" htmlFor="numero-caf">{t(`${I}.e4.caf`)} <span className="requis">*</span></label>
+                  <label className="p-label" htmlFor="numero-caf">{t(`${I}.e4.caf`)}</label>
                   <input id="numero-caf" type="text" inputMode="numeric" autoComplete="off" maxLength={9}
                     className={cls(erreursNumeros, 'numero_caf')} value={pi.numero_caf}
                     onChange={e => majPITop('numero_caf', e.target.value)} placeholder={t(`${I}.e4.cafPlaceholder`)} />
