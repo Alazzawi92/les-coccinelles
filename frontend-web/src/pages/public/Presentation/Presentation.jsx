@@ -2,15 +2,17 @@
 // FICHIER  : Presentation.jsx
 // ROUTE    : /presentation
 // RÔLE     : Page de présentation de la crèche Les Coccinelles.
-//            Sections : Qui sommes-nous → Nos espaces →
-//            Informations pratiques → CTA contact.
-//            Page statique (pas d'appel API).
+//            Sections : Qui sommes-nous → Historique → Notre équipe →
+//            Nos espaces → Informations pratiques → Gouvernance →
+//            Travail avec les parents → CTA contact.
+//            Seul l'aperçu de l'équipe appelle l'API (il charge ses données).
 //            Textes traduits via i18n (clés public.presentation.*).
 // ============================================================
 
 import { Link } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import usePageCMS from '../../../hooks/usePageCMS';
+import ApercuEquipe from '../../../components/ui/ApercuEquipe/ApercuEquipe';
 import './Presentation.css';
 
 // Préfixe commun à toutes les clés de traduction de la page
@@ -68,7 +70,9 @@ const Presentation = () => {
           <div className="contenu-visuel">
             <div className="visuel-emoji-grand">🏡</div>
             <div className="info-bulle">
+              {/* Places fixes + places garderie (accueil occasionnel) */}
               <strong>{t(`${P}.bullePlaces`)}</strong>
+              <span className="info-bulle__detail">{t(`${P}.bulleGarderie`)}</span>
               <span>{t(`${P}.bulleAges`)}</span>
             </div>
           </div>
@@ -106,9 +110,14 @@ const Presentation = () => {
         </div>
       </section>
 
+      {/* ── NOTRE ÉQUIPE ─────────────────────────────────────── */}
+      {/* Aperçu des premiers membres + lien vers /equipe (fond blanc :
+          l'alternance blanc / gris des sections suivantes est décalée) */}
+      <ApercuEquipe />
+
       {/* ── NOS ESPACES ───────────────────────────────────────── */}
       {/* Grille de 6 cartes décrivant chaque zone de la crèche */}
-      <section className="section-blanche">
+      <section className="section-grise">
         <div className="container">
           <h2 className="titre-section text-center">{t(`${P}.espacesTitre`)}</h2>
           <div className="espaces-grille">
@@ -125,7 +134,7 @@ const Presentation = () => {
 
       {/* ── INFORMATIONS PRATIQUES ───────────────────────────── */}
       {/* 4 cartes : adresse, horaires, téléphone, email */}
-      <section className="section-grise">
+      <section className="section-blanche">
         <div className="container">
           <h2 className="titre-section text-center">{t(`${P}.infosTitre`)}</h2>
           <div className="infos-grille">
@@ -157,7 +166,7 @@ const Presentation = () => {
       {/* Fonctionnement de l'association : Assemblée générale,
           Conseil d'Administration, Bureau. Contenu statique
           (règles de gouvernance, pas de données CMS/API). */}
-      <section className="section-blanche">
+      <section className="section-grise">
         <div className="container">
           <h2 className="titre-section text-center">{t(`${P}.gouvernanceTitre`)}</h2>
           <p className="gouvernance-intro">{t(`${P}.gouvernanceIntro`)}</p>
@@ -179,7 +188,7 @@ const Presentation = () => {
       </section>
 
       {/* ── TRAVAIL MENÉ AVEC LES PARENTS ────────────────────── */}
-      <section className="section-grise">
+      <section className="section-blanche">
         <div className="container contenu-deux-colonnes">
           <div className="contenu-texte">
             <h2 className="titre-section">{t(`${P}.parentsTitre`)}</h2>

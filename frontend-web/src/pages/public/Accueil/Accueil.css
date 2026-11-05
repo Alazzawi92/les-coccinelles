@@ -4,7 +4,7 @@
    RÔLE    : Page vitrine principale du site. Contient les
              styles les plus complexes du projet :
              animations, hero full-height, chiffres clés,
-             valeurs, menus de la semaine, actualités, CTA.
+             valeurs, CTA.
 
    STRUCTURE :
      1. Import des variables
@@ -15,10 +15,9 @@
         d. Coccinelle animée
      3. Chiffres clés (4 stats)
      4. Nos valeurs (4 cartes colorées)
-     5. Menu de la semaine (5 colonnes)
-     6. Actualités (3 colonnes)
-     7. CTA final (appel à l'inscription)
-     8. Responsive
+     5. CTA final (appel à l'inscription)
+     6. Responsive
+   (Équipe : voir components/ui/ApercuEquipe, affiché sur /presentation)
    ============================================================ */
 
 /* Charge toutes les variables CSS du projet */
@@ -277,6 +276,9 @@
 /* Suffixe du chiffre : ex "+", "%" — plus petit, gris */
 .chiffre-carte__nombre span { font-size: 1rem; color: var(--text-gray); }
 
+/* Ligne facultative sous le chiffre ("+ 4 places garderie") : orange, gras */
+.chiffre-carte__detail { font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: var(--space-xs); }
+
 /* Label sous le chiffre : "ans d'expérience", "enfants accueillis"... */
 .chiffre-carte__label { font-size: 0.9rem; color: var(--text-gray); font-weight: 600; }
 
@@ -326,186 +328,7 @@
 /* Description de la valeur */
 .valeur-carte__texte { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
 
-/* ── 5. NOTRE ÉQUIPE (section accueil) ──────────────────── */
-
-.accueil-equipe {
-  background: var(--surface);
-  padding:    var(--space-3xl) 0;
-}
-
-.accueil-equipe__entete {
-  display:         flex;
-  justify-content: space-between;
-  align-items:     center;
-  margin-bottom:   var(--space-2xl);
-}
-
-/* Grille 4 colonnes (les 4 premiers membres) */
-.accueil-equipe__grille {
-  display:               grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:                   var(--space-xl);
-}
-
-/* Carte membre compacte */
-.accueil-equipe__carte {
-  text-align:    center;
-  padding:       var(--space-lg);
-  background:    var(--bg-light);
-  border-radius: var(--radius-xl);
-  transition:    var(--transition);
-}
-
-.accueil-equipe__carte:hover {
-  transform:  translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Cercle photo */
-.accueil-equipe__photo {
-  width:           90px;
-  height:          90px;
-  border-radius:   50%;
-  overflow:        hidden;
-  margin:          0 auto var(--space-md);
-  background:      var(--primary-light);
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  font-size:       1.8rem;
-  font-weight:     700;
-  color:           var(--primary);
-}
-
-.accueil-equipe__photo img {
-  width:      100%;
-  height:     100%;
-  object-fit: cover;
-}
-
-.accueil-equipe__nom   { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 4px; }
-.accueil-equipe__titre { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
-
-/* ── 6. MENU DE LA SEMAINE ──────────────────────────────── */
-
-/* Section verte clair + jaune : fond évoquant la nature et la nutrition */
-.accueil-menus {
-  background: linear-gradient(135deg, var(--success-bg) 0%, var(--yellow-bg) 100%);
-  padding:    var(--space-3xl) 0;
-}
-
-/* En-tête de la section menus : titre + lien "voir tout" */
-.accueil-menus__entete {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  margin-bottom:   var(--space-2xl);
-}
-
-/* 5 colonnes : une par jour de la semaine (lundi au vendredi) */
-.menu-semaine {
-  display:               grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap:                   var(--space-md);
-}
-
-/* Carte d'un jour de menu */
-.menu-jour {
-  background:    var(--surface);
-  border-radius: var(--radius-lg);
-  padding:       var(--space-lg);
-  box-shadow:    var(--shadow-sm);
-}
-
-/* Nom du jour (Lundi, Mardi...) : orange, séparé par une ligne */
-.menu-jour__nom {
-  font-family:    var(--font-heading);
-  font-size:      1.1rem;
-  font-weight:    700;
-  color:          var(--primary);
-  margin-bottom:  var(--space-md);
-  text-align:     center;
-  padding-bottom: var(--space-sm);
-  border-bottom:  2px solid var(--primary-light);
-}
-
-/* Repas du jour : liste verticale dense */
-.menu-jour__repas {
-  display:        flex;
-  flex-direction: column;
-  gap:            4px;
-  margin-bottom:  var(--space-sm);
-  font-size:      0.85rem;
-  color:          var(--text-dark);
-}
-
-/* Label de catégorie (Entrée, Plat, Dessert) : petit et gris */
-.menu-jour__label { font-weight: 700; color: var(--text-gray); font-size: 1.2rem; }
-
-/* Rendu HTML Quill dans le widget menu de l'accueil */
-.menu-jour__html    { font-size: 0.82rem; color: var(--text-dark); line-height: 1.4; }
-.menu-jour__html p  { margin: 0 0 2px; }
-.menu-jour__html ul,
-.menu-jour__html ol { margin: 0; padding-left: 1.1em; }
-.menu-jour__html li { margin-bottom: 1px; }
-.menu-jour__html strong { font-weight: 700; }
-
-/* État vide : affiché si aucun menu n'est publié pour la semaine */
-.menu-vide { text-align: center; padding: var(--space-2xl); background: var(--surface); border-radius: var(--radius-xl); color: var(--text-gray); }
-.menu-vide p { margin-bottom: var(--space-md); }
-
-/* ── 6. ACTUALITÉS ──────────────────────────────────────── */
-
-/* Section fond blanc avec 3 cartes d'actualités */
-.accueil-actualites {
-  padding:    var(--space-3xl) 0;
-  background: var(--surface);
-}
-
-/* En-tête : titre + lien "voir toutes les actualités" */
-.accueil-actualites__entete {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  margin-bottom:   var(--space-2xl);
-}
-
-/* Grille 3 colonnes pour les cartes d'actualités */
-.actualites-grille {
-  display:               grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:                   var(--space-xl);
-}
-
-/* Carte d'une actualité : image + corps texte */
-.actu-carte {
-  background:    var(--surface);
-  border-radius: var(--radius-xl);
-  overflow:      hidden;   /* Rogne l'image de couverture dans le coin arrondi */
-  box-shadow:    var(--shadow-sm);
-  border:        1px solid var(--bg-gray);
-  transition:    var(--transition);
-}
-
-/* Au survol : grande ombre + légère élévation */
-.actu-carte:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
-
-/* Zone image en haut de la carte : hauteur fixe, rognée */
-.actu-carte__image     { height: 180px; overflow: hidden; }
-.actu-carte__image img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
-
-/* Au survol de la carte : zoom sur l'image (effet magazine) */
-.actu-carte:hover .actu-carte__image img { transform: scale(1.05); }
-
-/* Corps de la carte : texte de l'actualité */
-.actu-carte__corps   { padding: var(--space-lg); }
-.actu-carte__date    { font-size: 0.8rem; color: var(--text-light); margin-bottom: var(--space-sm); }
-.actu-carte__titre   { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-sm); line-height: 1.3; }
-.actu-carte__extrait { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; margin-bottom: var(--space-md); }
-.actu-carte__lien    { color: var(--primary); font-weight: 700; font-size: 0.9rem; transition: var(--transition); }
-.actu-carte__lien:hover { color: var(--primary-dark); }
-
-/* ── 7. CTA FINAL ───────────────────────────────────────── */
+/* ── 5. CTA FINAL ───────────────────────────────────────── */
 
 /* Section d'appel à l'inscription : dégradé orange plein */
 .cta {
@@ -546,7 +369,7 @@
   border-color: var(--white);
 }
 
-/* ── 8. RESPONSIVE ──────────────────────────────────────── */
+/* ── 6. RESPONSIVE ──────────────────────────────────────── */
 
 /* Petit ordinateur (≤1279px) : légère transition vers le desktop plein,
    on resserre un peu les grilles avant de passer en mode tablette */
@@ -555,16 +378,12 @@
   .hero__logo-grand { width: clamp(8.5rem, 15vw, 13.5rem); }
   .hero__fond { transform: scale(0.9); }             /* Réduit tout le nuage de bulles d'un coup */
   .hero__arc-en-ciel--1 { width: clamp(420px, 60vw, 780px); }
-  .accueil-equipe__grille { gap: var(--space-lg); }
 }
 
 /* Tablette (≤1023px) :
    - Hero : texte + visuel empilés, arcs-en-ciel et bulles réduits
      pour ne pas dominer un layout devenu vertical
-   - Valeurs : 4 → 2 colonnes
-   - Menus : 5 → 3 colonnes
-   - Actualités : 3 → 2 colonnes
-   - Équipe (accueil) : 4 → 2 colonnes */
+   - Chiffres et valeurs : 4 → 2 colonnes */
 @media (max-width: 1023px) {
   .hero { min-height: auto; padding: var(--space-2xl) 0; }
   .hero__contenu  { flex-direction: column; text-align: center; }
@@ -583,9 +402,6 @@
   .hero__deco { font-size: 2rem; }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
-  .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
-  .menu-semaine      { grid-template-columns: repeat(3, 1fr); }
-  .actualites-grille { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Mobile (≤767px) : tout en 1 ou 2 colonnes, hero réduit */
@@ -596,12 +412,6 @@
   .hero__deco { font-size: 1.9rem; gap: var(--space-lg); }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
   .valeurs__grille   { grid-template-columns: 1fr; }
-  .accueil-equipe__grille { grid-template-columns: repeat(2, 1fr); }
-  .menu-semaine      { grid-template-columns: repeat(2, 1fr); }
-  .actualites-grille { grid-template-columns: 1fr; }
-  .accueil-menus__entete,
-  .accueil-actualites__entete,
-  .accueil-equipe__entete { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
   .cta__titre { font-size: 1.6rem; }
 }
 
@@ -619,8 +429,6 @@
   .hero__actions { flex-direction: column; align-items: stretch; }
   .hero__deco { font-size: 1.8rem; gap: var(--space-md); }
   .chiffres__grille  { grid-template-columns: 1fr; }
-  .accueil-equipe__grille { grid-template-columns: 1fr; }
-  .menu-semaine      { grid-template-columns: 1fr; }
   .cta__titre { font-size: 1.4rem; }
   .cta__texte { font-size: 1rem; }
   .cta__actions { flex-direction: column; align-items: stretch; }
@@ -634,12 +442,8 @@
   .hero__logo-grand { width: clamp(10rem, 16vw, 18rem); }
   .hero__fond { transform: scale(1.1); }
   .chiffres__grille,
-  .valeurs__grille,
-  .accueil-equipe__grille,
-  .menu-semaine,
-  .actualites-grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
+  .valeurs__grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
   .valeurs__grille { gap: var(--space-2xl); }
-  .actualites-grille { gap: var(--space-2xl); }
   .cta__contenu { max-width: 800px; }
 }
 

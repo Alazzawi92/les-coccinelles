@@ -1,0 +1,91 @@
+/* ============================================================
+   FICHIER : ApercuEquipe.css
+   RÔLE    : Aperçu "Notre équipe" (4 cartes membres + lien).
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+.apercu-equipe {
+  background: var(--surface);
+  padding:    var(--space-3xl) 0;
+}
+
+/* En-tête : titre + lien "voir toute l'équipe" */
+.apercu-equipe__entete {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     center;
+  margin-bottom:   var(--space-2xl);
+}
+
+/* Grille 4 colonnes (les 4 premiers membres) */
+.apercu-equipe__grille {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   var(--space-xl);
+}
+
+/* Carte membre compacte */
+.apercu-equipe__carte {
+  text-align:    center;
+  padding:       var(--space-lg);
+  background:    var(--bg-light);
+  border-radius: var(--radius-xl);
+  transition:    var(--transition);
+}
+
+.apercu-equipe__carte:hover {
+  transform:  translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cercle photo */
+.apercu-equipe__photo {
+  width:           90px;
+  height:          90px;
+  border-radius:   50%;
+  overflow:        hidden;
+  margin:          0 auto var(--space-md);
+  background:      var(--primary-light);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1.8rem;
+  font-weight:     700;
+  color:           var(--primary);
+}
+
+.apercu-equipe__photo img {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+}
+
+.apercu-equipe__nom   { font-weight: 700; font-size: 0.95rem; color: var(--text-dark); margin-bottom: 4px; }
+.apercu-equipe__titre { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+@media (max-width: 1279px) {
+  .apercu-equipe__grille { gap: var(--space-lg); }
+}
+
+/* Tablette : 4 → 2 colonnes */
+@media (max-width: 1023px) {
+  .apercu-equipe__grille { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Mobile : en-tête empilé */
+@media (max-width: 767px) {
+  .apercu-equipe__entete { flex-direction: column; gap: var(--space-md); align-items: flex-start; }
+}
+
+/* Petit mobile : 1 colonne */
+@media (max-width: 479px) {
+  .apercu-equipe__grille { grid-template-columns: 1fr; }
+}
+
+/* Grand écran : largeur limitée */
+@media (min-width: 1440px) {
+  .apercu-equipe__grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
+}

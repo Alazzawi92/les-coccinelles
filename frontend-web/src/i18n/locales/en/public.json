@@ -7,7 +7,8 @@
     "decouvrir": "Discover the nursery",
     "logoAlt": "Les Coccinelles Nursery",
     "chiffres": {
-      "placesUnite": "places",
+      "placesUnite": "permanent places",
+      "placesGarderie": "+ 4 drop-in care places",
       "placesLabel": "children cared for",
       "horairesValeur": "7:30am",
       "horairesUnite": "to 6:30pm",
@@ -59,7 +60,8 @@
       "Run by a parents' association, our nursery works hand in hand with families. We firmly believe that trust between parents and professionals is the key to a successful experience for every child.",
       "We can welcome <strong>28 children</strong>, with full-time, part-time and occasional places to meet the varied needs of families."
     ],
-    "bullePlaces": "28 places",
+    "bullePlaces": "28 permanent places",
+    "bulleGarderie": "+ 4 drop-in care places",
     "bulleAges": "children aged 0 to 3",
     "historiqueTitre": "Our history",
     "historique": [

@@ -137,6 +137,9 @@
 /* Description sous le chiffre : petit, légèrement transparent */
 .info-bulle span   { font-size: 0.85rem; opacity: 0.9; }
 
+/* Complément du chiffre (ex : "+ 4 places garderie") : plus visible */
+.info-bulle .info-bulle__detail { font-size: 1.05rem; font-weight: 700; opacity: 1; }
+
 /* ── 6. GRILLE DES ESPACES DE VIE ───────────────────────── */
 
 /* Grille de 3 cartes présentant les espaces de la crèche

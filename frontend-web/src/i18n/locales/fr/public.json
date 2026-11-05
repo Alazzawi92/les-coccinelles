@@ -7,7 +7,8 @@
     "decouvrir": "Découvrir la crèche",
     "logoAlt": "Crèche Les Coccinelles",
     "chiffres": {
-      "placesUnite": "places",
+      "placesUnite": "places fixes",
+      "placesGarderie": "+ 4 places garderie",
       "placesLabel": "enfants accueillis",
       "horairesValeur": "7h30",
       "horairesUnite": "à 18h30",
@@ -59,7 +60,8 @@
       "Gérée par une association de parents, notre crèche fonctionne en étroite collaboration avec les familles. Nous croyons fermement que la confiance entre parents et professionnels est la clé d'un accueil réussi pour chaque enfant.",
       "Notre capacité d'accueil est de <strong>28 places</strong>, réparties entre temps plein, temps partiel et accueil occasionnel, afin de répondre aux besoins variés des familles."
     ],
-    "bullePlaces": "28 places",
+    "bullePlaces": "28 places fixes",
+    "bulleGarderie": "+ 4 places garderie",
     "bulleAges": "enfants de 0 à 3 ans",
     "historiqueTitre": "Historique",
     "historique": [
