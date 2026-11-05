@@ -13,6 +13,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
+import { useParametres } from '../../../context/ParametresContext';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import toast from 'react-hot-toast';
@@ -35,6 +36,7 @@ const Login = () => {
 
   // ── Hooks de navigation ───────────────────────────────────
   const { connecter } = useAuth();
+  const { espaceParentsOuvert, creationComptesOuverte } = useParametres(); // Réglages du super admin
   const navigate      = useNavigate();
   const location      = useLocation();
 
@@ -193,21 +195,29 @@ const Login = () => {
           </button>
         </form>
 
-        <div className="auth-divider">{t('auth.ou')}</div>
+        {/* Google et création de compte : réservés aux parents,
+            masqués si l'espace parents est fermé (connexion équipe seule) */}
+        {espaceParentsOuvert && (
+          <>
+            <div className="auth-divider">{t('auth.ou')}</div>
 
-        {/* Connexion avec Google (parents uniquement) */}
-        <GoogleButton
-          texte="signin_with"
-          onConnexion={terminerConnexion}
-          onCompteCree={compteGoogleCree}
-          onErreur={erreurGoogle}
-        />
+            {/* Connexion avec Google (parents uniquement) */}
+            <GoogleButton
+              texte="signin_with"
+              onConnexion={terminerConnexion}
+              onCompteCree={compteGoogleCree}
+              onErreur={erreurGoogle}
+            />
 
-        {/* Lien vers la création de compte */}
-        <p className="auth-pied">
-          {t('auth.login.pasDeCompte')}{' '}
-          <Link to="/creer-un-compte">{t('auth.login.creerCompte')}</Link>
-        </p>
+            {/* Lien vers la création de compte (si elle est ouverte) */}
+            {creationComptesOuverte && (
+              <p className="auth-pied">
+                {t('auth.login.pasDeCompte')}{' '}
+                <Link to="/creer-un-compte">{t('auth.login.creerCompte')}</Link>
+              </p>
+            )}
+          </>
+        )}
 
         {/* Retour au site public */}
         <p className="auth-pied">

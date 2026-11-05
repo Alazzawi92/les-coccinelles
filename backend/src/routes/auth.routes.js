@@ -7,6 +7,7 @@ const authController    = require('../controllers/authController');
 const { verifierToken } = require('../middlewares/auth.middleware');
 const { validerDonnees }= require('../middlewares/validate.middleware');
 const { verifierTurnstile } = require('../middlewares/turnstile.middleware');
+const { verifierEspaceParentsOuvert, verifierCreationComptesOuverte } = require('../middlewares/parametres.middleware');
 
 const router = express.Router();
 
@@ -62,14 +63,17 @@ const reglesResetPassword = [
 
 // POST /api/auth/register — Créer un compte parent
 // Anti-robot vérifié après la validation : inutile d'interroger Cloudflare pour un formulaire déjà invalide
-router.post('/register', limiteAuth, reglesRegister, validerDonnees, verifierTurnstile, authController.register);
+// Refusé quand la création de comptes est fermée (Admin → Paramètres)
+router.post('/register', limiteAuth, verifierCreationComptesOuverte, reglesRegister, validerDonnees, verifierTurnstile, authController.register);
 
-// POST /api/auth/login — Connexion
+// POST /api/auth/login — Connexion (parents refusés quand l'espace parents est fermé)
 router.post('/login', limiteAuth, reglesLogin, validerDonnees, verifierTurnstile, authController.login);
 
 // POST /api/auth/google — Connexion / inscription avec Google (parents uniquement)
+// Refusé quand l'espace parents est fermé ; nouveau compte refusé si la création est fermée
 router.post('/google',
   limiteAuth,
+  verifierEspaceParentsOuvert,
   body('credential').isString().notEmpty().withMessage('Jeton Google manquant'),
   validerDonnees,
   authController.googleLogin

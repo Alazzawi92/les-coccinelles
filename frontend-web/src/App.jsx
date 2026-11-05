@@ -7,6 +7,7 @@
 
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
+import { ParametresProvider } from './context/ParametresContext';
 import AppRouter from './router';
 import CookieBanner from './components/ui/CookieBanner/CookieBanner';
 import './styles/global.css'; // Styles globaux (reset + variables)
@@ -15,6 +16,8 @@ const App = () => {
   return (
     // AuthProvider expose user/connecter/deconnecter dans toute l'app
     <AuthProvider>
+    {/* Réglages du super admin (espace parents, création de comptes) */}
+    <ParametresProvider>
 
       {/* Toaster : notifications visuelles en haut à droite.
           duration:4000 = disparaît après 4 secondes.
@@ -41,6 +44,7 @@ const App = () => {
       {/* Bannière RGPD de consentement aux cookies */}
       <CookieBanner />
 
+    </ParametresProvider>
     </AuthProvider>
   );
 };

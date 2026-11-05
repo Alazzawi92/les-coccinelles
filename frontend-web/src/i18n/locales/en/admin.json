@@ -430,6 +430,30 @@
     "confirmerAlbum": "Delete this album and all its photos?",
     "toastAlbumSupprime": "Album deleted"
   },
+  "parametres": {
+    "titre": "Website <s>settings</s>",
+    "intro": "These settings apply immediately to the whole website. Only the super admin can change them.",
+    "ouvert": "Open",
+    "ferme": "Closed",
+    "modifie": "Changed on {{date}} by {{nom}}",
+    "modifieSansNom": "Changed on {{date}}",
+    "enregistre": "Setting saved",
+    "erreur": "The setting could not be saved",
+    "erreurChargement": "Unable to load the settings",
+    "espace": {
+      "titre": "Parents' area",
+      "texte": "Open: parents can sign in and the “Sign in” button appears on the website. Closed: only the nursery team signs in, through the /connexion address.",
+      "confirmerOuvrir": "Open the parents' area? Parents will be able to sign in and the “Sign in” button will appear on the website.",
+      "confirmerFermer": "Close the parents' area? Signed-in parents will be signed out and will no longer be able to sign in. Account creation will also be blocked."
+    },
+    "creation": {
+      "titre": "Account creation and new enrolments",
+      "texte": "Open: families can create an account and submit an enrolment request. Closed (for example when all places are taken): families already enrolled keep their access, but no new account or new request is possible.",
+      "sansEffet": "No effect while the parents' area is closed.",
+      "confirmerOuvrir": "Open account creation and new enrolment requests?",
+      "confirmerFermer": "Close account creation and new enrolment requests? Families already enrolled keep their access."
+    }
+  },
   "cms": {
     "titre": "<s>Content</s> management (CMS)",
     "toastPage": "Page updated",

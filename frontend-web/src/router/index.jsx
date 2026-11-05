@@ -64,10 +64,14 @@ import GalerieAdmin      from '../pages/admin/Galerie/Galerie';
 import CMS               from '../pages/admin/CMS/CMS';
 import Statistiques      from '../pages/admin/Statistiques/Statistiques';
 import Rapports          from '../pages/admin/Rapports/Rapports';
+import Parametres        from '../pages/admin/Parametres/Parametres';
 
 // Garde des routes (vérifie auth + rôle)
 import ProtectedRoute from './ProtectedRoute';
 import SuperAdminRoute from './SuperAdminRoute';
+
+// Garde selon les réglages du super admin (espace parents, création de comptes)
+import ParametreRoute from './ParametreRoute';
 
 // Options "future" : adoptent dès maintenant le comportement de React Router v7
 // (et suppriment les avertissements correspondants dans la console)
@@ -101,14 +105,17 @@ const AppRouter = () => {
         {/* ── AUTHENTIFICATION ────────────────────────────────
             Pas de layout : pages plein écran centrées */}
         <Route path="/connexion"           element={<Login />} />
-        <Route path="/creer-un-compte"     element={<Register />} />
+        {/* Création de compte : renvoie à l'accueil si elle est fermée (Admin → Paramètres) */}
+        <Route path="/creer-un-compte"     element={<ParametreRoute reglage="creationComptesOuverte"><Register /></ParametreRoute>} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
         <Route path="/reset-password"      element={<ResetPassword />} /> {/* Reçoit ?token= en query */}
         <Route path="/verify-email/:token" element={<VerifyEmail />} /> {/* Lien de l'email de confirmation */}
 
         {/* ── ESPACE PARENTS ──────────────────────────────────
             Accessible aux rôles parent, admin et super_admin.
-            Admin peut accéder à l'espace parent pour tests. */}
+            Admin peut accéder à l'espace parent pour tests.
+            Espace parents fermé (Admin → Paramètres) : ses pages renvoient à l'accueil. */}
+        <Route element={<ParametreRoute reglage="espaceParentsOuvert" />}>
         <Route element={<ProtectedRoute roles={['parent', 'admin', 'super_admin']} />}>
           <Route element={<ParentLayout />}>
             <Route path="/parent/tableau-de-bord" element={<ParentDashboard />} />
@@ -123,6 +130,7 @@ const AppRouter = () => {
             <Route path="/parent/galerie"         element={<AccesReserve><GaleriePrivee /></AccesReserve>} />
             <Route path="/parent/consentement"    element={<AccesReserve><Consentement /></AccesReserve>} />
           </Route>
+        </Route>
         </Route>
 
         {/* ── ESPACE ADMIN ────────────────────────────────────
@@ -152,6 +160,7 @@ const AppRouter = () => {
               <Route path="/admin/cms"              element={<CMS />} />
               <Route path="/admin/statistiques"     element={<Statistiques />} />
               <Route path="/admin/rapports"         element={<Rapports />} />
+              <Route path="/admin/parametres"       element={<Parametres />} /> {/* Espace parents, création de comptes */}
             </Route>
           </Route>
         </Route>

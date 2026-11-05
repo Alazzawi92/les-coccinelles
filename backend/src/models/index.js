@@ -19,6 +19,7 @@ const Consentement   = require('./Consentement');
 const CmsPage        = require('./CmsPage');
 const EquipeMembre          = require('./EquipeMembre');
 const InscriptionDocument   = require('./InscriptionDocument');
+const Parametre             = require('./Parametre');
 
 // ── ASSOCIATIONS ────────────────────────────────────────────────────
 
@@ -113,8 +114,12 @@ Inscription.hasMany(InscriptionDocument, { foreignKey: 'inscription_id', as: 'pi
 InscriptionDocument.belongsTo(Inscription, { foreignKey: 'inscription_id', as: 'inscription' });
 
 // Exporter tous les modèles et l'instance sequelize
+// Parametre → dernier super admin à l'avoir modifié
+Parametre.belongsTo(User,      { foreignKey: 'modifie_par', as: 'auteur' });
+
 module.exports = {
   sequelize,
+  Parametre,
   User,
   Enfant,
   Inscription,

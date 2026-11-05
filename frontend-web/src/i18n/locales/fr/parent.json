@@ -270,6 +270,7 @@
   },
   "inscription": {
     "titre": "Dossier <s>d'inscription</s>",
+    "fermee": "Les inscriptions sont actuellement fermées : vous ne pouvez pas déposer de nouvelle demande pour le moment. Vos demandes déjà envoyées restent visibles dans « Mes enfants ». Pour toute question, contactez la crèche.",
     "etapes": [
       "Pré-inscription",
       "Enfant",

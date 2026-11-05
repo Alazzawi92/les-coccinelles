@@ -14,11 +14,13 @@ import LanguageSwitcher from '../../components/ui/LanguageSwitcher/LanguageSwitc
 import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
 import CoccinelleDefilement from '../../components/ui/CoccinelleDefilement/CoccinelleDefilement';
 import { useApparitionAuDefilement } from '../../utils/apparition';
+import { useParametres } from '../../context/ParametresContext';
 import './PublicLayout.css';
 
 const PublicLayout = () => {
 
   const { user } = useAuth(); // Utilisateur connecté (ou null)
+  const { espaceParentsOuvert } = useParametres(); // Réglage du super admin
   const { t } = useTranslation(); // Fonction de traduction FR / EN
 
   // Zone de contenu : ses sections apparaissent en douceur au défilement
@@ -74,8 +76,9 @@ const PublicLayout = () => {
           <ThemeToggle />
           <LanguageSwitcher />
 
-          {/* Si connecté : lien vers l'espace parent. Sinon : page connexion. */}
-          {user ? (
+          {/* Si connecté : lien vers l'espace parent. Sinon : page connexion.
+              Espace parents fermé : aucun bouton (l'équipe passe par /connexion). */}
+          {!espaceParentsOuvert ? null : user ? (
             <Link to="/parent/tableau-de-bord" className="btn btn--primary btn--sm">
               {t('common.nav.monEspace')}
             </Link>
@@ -123,15 +126,18 @@ const PublicLayout = () => {
             ))}
           </ul>
 
-          {/* Bouton principal en bas du menu : espace parent ou connexion */}
-          <Link
-            to={user ? '/parent/tableau-de-bord' : '/connexion'}
-            onClick={fermerMenu}
-            className="btn btn--primary public-navbar__mobile-cta"
-            style={{ '--i': liensMobile.length }}
-          >
-            {user ? t('common.nav.monEspace') : t('common.nav.seConnecter')}
-          </Link>
+          {/* Bouton principal en bas du menu : espace parent ou connexion
+              (masqué tant que l'espace parents est fermé) */}
+          {espaceParentsOuvert && (
+            <Link
+              to={user ? '/parent/tableau-de-bord' : '/connexion'}
+              onClick={fermerMenu}
+              className="btn btn--primary public-navbar__mobile-cta"
+              style={{ '--i': liensMobile.length }}
+            >
+              {user ? t('common.nav.monEspace') : t('common.nav.seConnecter')}
+            </Link>
+          )}
         </div>
       </nav>
 

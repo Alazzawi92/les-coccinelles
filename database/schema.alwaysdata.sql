@@ -364,6 +364,22 @@ CREATE TABLE IF NOT EXISTS equipe_membres (
   INDEX idx_equipe_actif (actif)
 );
 
+-- ── TABLE 17 : parametres ───────────────────────────────────
+-- Réglages du site modifiables par le super admin (Admin → Paramètres) :
+-- ouverture de l'espace parents et de la création de comptes ('1' / '0')
+CREATE TABLE IF NOT EXISTS parametres (
+  cle         VARCHAR(50)  PRIMARY KEY,                 -- Nom du réglage
+  valeur      VARCHAR(255) NOT NULL,                    -- Valeur ('1' / '0' pour un interrupteur)
+  modifie_par INT,                                      -- Dernier super admin à l'avoir changé
+  updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (modifie_par) REFERENCES users(id) ON DELETE SET NULL
+);
+
+-- INSERT IGNORE : relancer la migration ne réinitialise pas les réglages
+INSERT IGNORE INTO parametres (cle, valeur) VALUES
+('espace_parents_ouvert',    '0'),
+('creation_comptes_ouverte', '0');
+
 -- ── DONNÉES INITIALES ────────────────────────────────────────
 -- Pages CMS de base (contenu modifiable via l'admin)
 INSERT INTO cms_pages (slug, titre, meta_description) VALUES

@@ -10,6 +10,7 @@
 
 import { Link } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
+import { useParametres } from '../../../context/ParametresContext';
 import './Inscriptions.css';
 
 // Préfixe commun à toutes les clés de traduction de la page
@@ -27,6 +28,7 @@ const CRITERES = [
 
 const Inscriptions = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+  const { creationComptesOuverte } = useParametres(); // Réglage du super admin
 
   return (
     <div className="page-inscriptions">
@@ -152,9 +154,12 @@ const Inscriptions = () => {
         <div className="container cta-bas__contenu">
           <p>{t(`${P}.ctaTexte`)}</p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link to="/creer-un-compte" className="btn btn--primary btn--lg">
-              {t(`${P}.ctaCompte`)}
-            </Link>
+            {/* Création de compte masquée si elle est fermée (Admin → Paramètres) */}
+            {creationComptesOuverte && (
+              <Link to="/creer-un-compte" className="btn btn--primary btn--lg">
+                {t(`${P}.ctaCompte`)}
+              </Link>
+            )}
             <Link to="/contact" className="btn btn--outline btn--lg"
               style={{ borderColor: 'white', color: 'white' }}>
               {t(`${P}.ctaContact`)}

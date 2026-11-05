@@ -270,6 +270,7 @@
   },
   "inscription": {
     "titre": "Enrolment <s>file</s>",
+    "fermee": "Enrolment is currently closed: you cannot submit a new request for now. Requests you have already sent remain visible in “My children”. For any question, please contact the nursery.",
     "etapes": [
       "Pre-registration",
       "Child",

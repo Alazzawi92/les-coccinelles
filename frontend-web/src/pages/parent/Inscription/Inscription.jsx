@@ -19,6 +19,7 @@ import { FormulaireEnfant } from '../MesEnfants/MesEnfants';
 import BadgeInscription from '../../../components/ui/BadgeInscription/BadgeInscription';
 import { statutParEnfant, estDemandeActive } from '../../../utils/demandes';
 import { TAILLE_MAX_DOCUMENT_MO, documentTropLourd } from '../../../config/limites'; // Taille max partagée
+import { useParametres } from '../../../context/ParametresContext';
 import '../../../styles/parent.css';
 import './Inscription.css';
 
@@ -287,6 +288,7 @@ const ChampEmployeur = ({ cle, label, pi, majPI, erreurs = {}, obligatoire = tru
 
 const Inscription = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+  const { creationComptesOuverte } = useParametres(); // Réglage du super admin
   const [etape,    setEtape]    = useState(0);
   const [enfants,  setEnfants]  = useState([]);
   // Demandes déjà faites par la famille (pour bloquer une 2e demande)
@@ -576,6 +578,21 @@ const Inscription = () => {
 
   const erreursAccueil = erreurs.accueil || {};
   const erreursNumeros = erreurs.numeros || {};
+
+  // Nouvelles demandes fermées (Admin → Paramètres) : message à la place du
+  // formulaire. Le serveur refuse aussi l'envoi d'une demande.
+  if (!creationComptesOuverte) {
+    return (
+      <div className="inscription-page">
+        <div className="parent-page-header">
+          <h1 className="parent-page-titre"><Trans i18nKey="parent.inscription.titre" components={{ s: <span /> }} /></h1>
+        </div>
+        <div className="p-card inscription-contenu">
+          <p className="etape-intro">🔒 {t(`${I}.fermee`)}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="inscription-page">

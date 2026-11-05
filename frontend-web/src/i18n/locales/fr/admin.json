@@ -430,6 +430,30 @@
     "confirmerAlbum": "Supprimer cet album et toutes ses photos ?",
     "toastAlbumSupprime": "Album supprimé"
   },
+  "parametres": {
+    "titre": "<s>Paramètres</s> du site",
+    "intro": "Ces réglages s'appliquent immédiatement à tout le site. Seul le super admin peut les modifier.",
+    "ouvert": "Ouvert",
+    "ferme": "Fermé",
+    "modifie": "Modifié le {{date}} par {{nom}}",
+    "modifieSansNom": "Modifié le {{date}}",
+    "enregistre": "Réglage enregistré",
+    "erreur": "Le réglage n'a pas pu être enregistré",
+    "erreurChargement": "Impossible de charger les paramètres",
+    "espace": {
+      "titre": "Espace parents",
+      "texte": "Ouvert : les parents peuvent se connecter et le bouton « Se connecter » apparaît sur le site. Fermé : seule l'équipe de la crèche se connecte, par l'adresse /connexion.",
+      "confirmerOuvrir": "Ouvrir l'espace parents ? Les parents pourront se connecter et le bouton « Se connecter » apparaîtra sur le site.",
+      "confirmerFermer": "Fermer l'espace parents ? Les parents connectés seront déconnectés et ne pourront plus se connecter. La création de comptes sera aussi bloquée."
+    },
+    "creation": {
+      "titre": "Création de comptes et nouvelles inscriptions",
+      "texte": "Ouvert : les familles peuvent créer un compte et déposer une demande d'inscription. Fermé (par exemple quand les places sont complètes) : les familles déjà inscrites gardent leur accès, mais aucun nouveau compte ni nouvelle demande n'est possible.",
+      "sansEffet": "Sans effet tant que l'espace parents est fermé.",
+      "confirmerOuvrir": "Ouvrir la création de comptes et les nouvelles demandes d'inscription ?",
+      "confirmerFermer": "Fermer la création de comptes et les nouvelles demandes d'inscription ? Les familles déjà inscrites gardent leur accès."
+    }
+  },
   "cms": {
     "titre": "Gestion du <s>contenu</s> (CMS)",
     "toastPage": "Page mise à jour",

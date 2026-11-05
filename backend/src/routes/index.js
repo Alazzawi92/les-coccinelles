@@ -20,6 +20,7 @@ const cmsRoutes          = require('./cms.routes');
 const contactRoutes      = require('./contact.routes');
 const equipeRoutes       = require('./equipe.routes');
 const rapportRoutes      = require('./rapport.routes');
+const parametresRoutes   = require('./parametres.routes');
 
 // Enregistrer toutes les routes avec leur préfixe
 router.use('/auth',          authRoutes);
@@ -39,5 +40,6 @@ router.use('/cms',           cmsRoutes);
 router.use('/contact',       contactRoutes);
 router.use('/equipe',        equipeRoutes);
 router.use('/rapports',      rapportRoutes);
+router.use('/parametres',    parametresRoutes);
 
 module.exports = router;

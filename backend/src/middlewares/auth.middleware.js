@@ -1,6 +1,7 @@
 // Middleware de vérification du token JWT
 const { verifierAccessToken } = require('../config/jwt');
 const { User }                = require('../models');
+const { espaceParentsOuvert, MESSAGE_ESPACE_FERME } = require('../services/parametres.service');
 
 // Vérifier que l'utilisateur est connecté et que son token est valide
 const verifierToken = async (req, res, next) => {
@@ -31,6 +32,11 @@ const verifierToken = async (req, res, next) => {
         success: false,
         message: 'Utilisateur non trouvé ou compte désactivé'
       });
+    }
+
+    if (user.role === 'parent' && !(await espaceParentsOuvert())) {
+      // Espace parents fermé : un jeton parent encore valide est refusé
+      return res.status(403).json({ success: false, message: MESSAGE_ESPACE_FERME });
     }
 
     req.user = user; // Attacher l'utilisateur à la requête pour les prochains middlewares

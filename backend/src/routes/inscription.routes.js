@@ -4,6 +4,7 @@ const router  = express.Router();
 
 const { verifierToken }      = require('../middlewares/auth.middleware');
 const { verifierRole }       = require('../middlewares/role.middleware');
+const { verifierCreationComptesOuverte } = require('../middlewares/parametres.middleware');
 const { uploadDocument, verifierContenuFichiers } = require('../middlewares/upload.middleware');
 const { validerCreationInscription } = require('../validators/inscription.validator');
 const inscriptionController  = require('../controllers/inscriptionController');
@@ -26,8 +27,9 @@ router.get('/mes-documents',       verifierToken, verifierRole('parent'), inscri
 router.get('/stats',               verifierToken, verifierRole('admin', 'super_admin'), inscriptionController.stats);
 
 // POST /api/inscriptions — Créer une demande d'inscription
-// Ordre : fichiers reçus → contenu réel vérifié → champs validés → création
-router.post('/',                   verifierToken, dossierJustificatifs, uploadDocument.array('fichiers', 20),
+// Ordre : création de comptes ouverte (Admin → Paramètres) → fichiers reçus →
+// contenu réel vérifié → champs validés → création
+router.post('/',                   verifierToken, verifierCreationComptesOuverte, dossierJustificatifs, uploadDocument.array('fichiers', 20),
   verifierContenuFichiers, validerCreationInscription, inscriptionController.creer);
 
 // GET /api/inscriptions/:id — Détail d'une inscription

@@ -60,7 +60,8 @@ const GROUPES_NAV = [
     liens: [
       { to: '/admin/documents',    cle: 'documents',      icone: '📄' },
       { to: '/admin/statistiques', cle: 'statistiques',   icone: '📈' },
-      { to: '/admin/rapports',     cle: 'rapports',       icone: '🧾' }
+      { to: '/admin/rapports',     cle: 'rapports',       icone: '🧾' },
+      { to: '/admin/parametres',   cle: 'parametres',     icone: '⚙️' }
     ]
   }
 ];

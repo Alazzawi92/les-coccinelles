@@ -1,0 +1,85 @@
+/* ============================================================
+   FICHIER : Parametres.css  (espace admin)
+   PAGE    : /admin/parametres
+   RÔLE    : Cartes des réglages du site avec un interrupteur
+             ouvert / fermé à droite de chaque carte.
+   ============================================================ */
+
+@import '../../../styles/admin.css';
+
+.parametres-intro { color: var(--text-gray); margin-bottom: var(--space-xl); }
+
+.parametres-liste { display: flex; flex-direction: column; gap: var(--space-lg); max-width: 900px; }
+
+/* Carte : texte à gauche, interrupteur à droite */
+.parametre-carte {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             var(--space-xl);
+}
+
+/* Réglage sans effet (création alors que l'espace parents est fermé) */
+.parametre-carte--inactive { opacity: 0.7; }
+
+.parametre-carte__titre       { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); margin-bottom: var(--space-sm); }
+.parametre-carte__description { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }
+.parametre-carte__alerte      { font-size: 0.85rem; font-weight: 700; color: var(--warning-text); margin-top: var(--space-sm); }
+.parametre-carte__modifie     { font-size: 0.8rem; color: var(--text-light); margin-top: var(--space-sm); }
+
+/* ── INTERRUPTEUR ───────────────────────────────────────── */
+
+.parametre-switch {
+  display:     flex;
+  flex-direction: column;
+  align-items: center;
+  gap:         var(--space-xs);
+  flex-shrink: 0;
+  background:  none;
+  border:      none;
+  cursor:      pointer;
+  font-family: var(--font-body);
+}
+
+.parametre-switch:disabled { cursor: not-allowed; }
+
+/* Piste grise (fermé) qui devient verte (ouvert) */
+.parametre-switch__piste {
+  position:      relative;
+  width:         56px;
+  height:        30px;
+  border-radius: var(--radius-pill);
+  background:    var(--bg-gray);
+  border:        2px solid var(--border);
+  transition:    var(--transition);
+}
+
+/* Rond blanc qui glisse de gauche (fermé) à droite (ouvert) */
+.parametre-switch__bouton {
+  position:      absolute;
+  top:           2px;
+  left:          2px;
+  width:         22px;
+  height:        22px;
+  border-radius: 50%;
+  background:    var(--white);
+  box-shadow:    var(--shadow-sm);
+  transition:    var(--transition);
+}
+
+.parametre-switch--ouvert .parametre-switch__piste  { background: var(--success); border-color: var(--success); }
+.parametre-switch--ouvert .parametre-switch__bouton { transform: translateX(26px); }
+
+.parametre-switch:focus-visible .parametre-switch__piste { outline: 3px solid var(--primary); outline-offset: 2px; }
+
+/* Libellé sous l'interrupteur : Ouvert / Fermé */
+.parametre-switch__etat { font-size: 0.8rem; font-weight: 700; color: var(--text-gray); }
+.parametre-switch--ouvert .parametre-switch__etat { color: var(--success-text); }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Mobile : interrupteur sous le texte */
+@media (max-width: 767px) {
+  .parametre-carte { flex-direction: column; align-items: flex-start; gap: var(--space-md); }
+  .parametre-switch { flex-direction: row; gap: var(--space-sm); }
+}

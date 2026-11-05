@@ -80,7 +80,8 @@
       "cms": "CMS Pages",
       "documents": "Documents",
       "statistiques": "Statistics",
-      "rapports": "Reports"
+      "rapports": "Reports",
+      "parametres": "Settings"
     }
   },
   "notifs": {

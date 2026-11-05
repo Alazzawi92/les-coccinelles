@@ -7,6 +7,10 @@ const { envoyerVerificationEmail, envoyerResetMotDePasse, envoyerCompteEnAttente
 const { creerNotification } = require('../services/notification.service');
 const { succes, erreur, cree } = require('../utils/response');
 const { OAuth2Client } = require('google-auth-library');
+const {
+  espaceParentsOuvert, creationComptesOuverte,
+  MESSAGE_ESPACE_FERME, MESSAGE_CREATION_FERMEE
+} = require('../services/parametres.service');
 
 // Client Google utilisé uniquement pour vérifier la signature des jetons
 // reçus du bouton "Se connecter avec Google" (aucun appel à l'API Google).
@@ -146,6 +150,12 @@ const login = async (req, res) => {
       return erreur(res, 'Email ou mot de passe incorrect', 401);
     }
 
+    // Espace parents fermé : seule l'équipe (admin / super_admin) se connecte.
+    // Vérifié après le mot de passe pour ne pas révéler qu'un email existe.
+    if (user.role === 'parent' && !(await espaceParentsOuvert())) {
+      return erreur(res, MESSAGE_ESPACE_FERME, 403);
+    }
+
     return repondreConnexion(res, user);
 
   } catch (err) {
@@ -198,6 +208,11 @@ const googleLogin = async (req, res) => {
     }
 
     if (!user) {
+      // Création de comptes fermée (Admin → Paramètres) : pas de nouveau compte
+      if (!(await creationComptesOuverte())) {
+        return erreur(res, MESSAGE_CREATION_FERMEE, 403);
+      }
+
       // Aucun compte : créer un compte parent sans mot de passe,
       // bloqué jusqu'à validation par l'administrateur (comme /register)
       user = await User.create({
@@ -267,6 +282,11 @@ const refreshToken = async (req, res) => {
 
     if (!user || !user.actif) {
       return erreur(res, 'Token invalide ou compte désactivé', 403);
+    }
+
+    // Espace parents fermé : une session parent ouverte avant ne se prolonge pas
+    if (user.role === 'parent' && !(await espaceParentsOuvert())) {
+      return erreur(res, MESSAGE_ESPACE_FERME, 403);
     }
 
     // Générer un nouvel access token
