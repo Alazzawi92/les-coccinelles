@@ -6,12 +6,13 @@
 //            sinon vers la page demandée avant la redirection.
 // ============================================================
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
+import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import toast from 'react-hot-toast';
@@ -29,6 +30,8 @@ const Login = () => {
   const [erreur,  setErreur]  = useState('');      // Message d'erreur API
   const [voirMdp, setVoirMdp] = useState(false);  // Afficher/masquer le mot de passe
   const [info,    setInfo]    = useState('');      // Message d'info (ex: compte Google créé)
+  const [jeton,   setJeton]   = useState('');      // Jeton de la case anti-robot
+  const turnstileRef = useRef(null);               // Pour redemander une vérification
 
   // ── Hooks de navigation ───────────────────────────────────
   const { connecter } = useAuth();
@@ -76,12 +79,13 @@ const Login = () => {
     setEnvoi(true);
 
     try {
-      const res = await loginService(email, password);
+      const res = await loginService(email, password, jeton);
       terminerConnexion(res.data.data);
     } catch (err) {
       // Affiche le message d'erreur de l'API (ex: "Identifiants invalides")
       const msg = err.response?.data?.message || t('auth.login.erreur');
       setErreur(msg);
+      turnstileRef.current?.reset(); // Le jeton a été consommé : nouvelle vérification
     }
 
     setEnvoi(false);
@@ -178,8 +182,13 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Bouton soumission : désactivé si champs vides ou en cours d'envoi */}
-          <button type="submit" className="btn-auth" disabled={envoi || !email || !password}>
+          {/* Case anti-robot */}
+          <Turnstile ref={turnstileRef} onJeton={setJeton} />
+
+          {/* Bouton soumission : désactivé si champs vides, case anti-robot
+              non validée ou envoi en cours */}
+          <button type="submit" className="btn-auth"
+            disabled={envoi || !email || !password || (TURNSTILE_ACTIF && !jeton)}>
             {envoi ? t('auth.login.connexion') : t('auth.login.seConnecter')}
           </button>
         </form>

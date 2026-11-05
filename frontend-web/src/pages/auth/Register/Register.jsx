@@ -7,11 +7,12 @@
 //            la connexion avec un message de vérification email.
 // ============================================================
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { register as registerService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
+import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import { useAuth } from '../../../context/AuthContext';
@@ -39,8 +40,11 @@ const Register = () => {
   const [envoi,       setEnvoi]       = useState(false);  // En cours d'envoi
   const [erreur,      setErreur]      = useState('');      // Erreur globale (API)
   const [erreurs,     setErreurs]     = useState({});      // Erreurs par champ (clés de traduction)
-  const [voirMdp,     setVoirMdp]     = useState(false);  // Afficher mot de passe
+  const [touches,     setTouches]     = useState({});      // Champs déjà visités (erreur affichable)
+  const [voirMdp,    setVoirMdp]     = useState(false);  // Afficher mot de passe
   const [voirConfirm, setVoirConfirm] = useState(false);  // Afficher confirmation
+  const [jeton,       setJeton]       = useState('');      // Jeton de la case anti-robot
+  const turnstileRef = useRef(null);                       // Pour redemander une vérification
 
   const { connecter } = useAuth();
   const navigate      = useNavigate();
@@ -48,33 +52,61 @@ const Register = () => {
   // Critères de force du mot de passe, recalculés à chaque frappe
   const criteres = verifierPassword(form.password);
 
-  // ── Gestion des changements de champ ─────────────────────
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-    // Efface l'erreur du champ modifié
-    if (erreurs[name]) setErreurs(prev => ({ ...prev, [name]: '' }));
-  };
-
   // ── Validation côté client ────────────────────────────────
-  const valider = () => {
+  // Reçoit les valeurs à vérifier (pas forcément l'état courant : utile
+  // pendant la frappe, avant que React ait mis à jour "form")
+  const valider = (f) => {
     const e = {};
+    const c = verifierPassword(f.password);
     // On stocke des clés de traduction : le message suit la langue choisie
-    if (!form.prenom.trim())                e.prenom = 'prenomRequis';
-    else if (!nomPersonneValide(form.prenom)) e.prenom = 'prenomInvalide';  // Même règle que le serveur
-    if (!form.nom.trim())                   e.nom    = 'nomRequis';
-    else if (!nomPersonneValide(form.nom))  e.nom    = 'nomInvalide';
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    if (!f.prenom.trim())                e.prenom = 'prenomRequis';
+    else if (!nomPersonneValide(f.prenom)) e.prenom = 'prenomInvalide';  // Même règle que le serveur
+    if (!f.nom.trim())                   e.nom    = 'nomRequis';
+    else if (!nomPersonneValide(f.nom))  e.nom    = 'nomInvalide';
+    if (!f.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email))
       e.email = 'emailInvalide';
-    if (!criteres.longueur || !criteres.chiffre || !criteres.majuscule)
+    if (!c.longueur || !c.chiffre || !c.majuscule)
       e.password = 'mdpCriteres';
-    if (form.password !== form.confirmPassword)
+    if (f.password !== f.confirmPassword)
       e.confirmPassword = 'mdpDifferents';
     // Téléphone optionnel, mais s'il est rempli il doit être valide
     // (même règle que le serveur : 8 à 20 caractères, chiffres + espaces . - ( ) +)
-    if (form.telephone.trim() && !/^\+?[0-9 .\-()]{8,20}$/.test(form.telephone.trim()))
+    if (f.telephone.trim() && !/^\+?[0-9 .\-()]{8,20}$/.test(f.telephone.trim()))
       e.telephone = 'telInvalide';
     return e;
+  };
+
+  // N'affiche que les erreurs des champs déjà visités : un champ
+  // pas encore rempli ne doit pas être rouge dès l'ouverture de la page
+  const rafraichirErreurs = (f, vus) => {
+    const toutes = valider(f);
+    setErreurs(Object.fromEntries(Object.entries(toutes).filter(([champ]) => vus[champ])));
+  };
+
+  // ── Gestion des changements de champ ─────────────────────
+  // Revalide à chaque frappe : le rouge disparaît dès que le champ est corrigé
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    const f = { ...form, [name]: value };
+    let vus = touches;
+    // Confirmation : rouge dès qu'elle est aussi longue que le mot de passe,
+    // sans attendre que le parent quitte le champ
+    if (name === 'confirmPassword' && value.length >= f.password.length && !vus.confirmPassword) {
+      vus = { ...vus, confirmPassword: true };
+      setTouches(vus);
+    }
+    setForm(f);
+    rafraichirErreurs(f, vus);
+  };
+
+  // ── Sortie d'un champ : il devient "visité" et son erreur s'affiche ──
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    // Champ optionnel laissé vide : rien à signaler
+    if (!value && name === 'telephone') return;
+    const vus = { ...touches, [name]: true };
+    setTouches(vus);
+    rafraichirErreurs(form, vus);
   };
 
   // ── Soumission du formulaire ──────────────────────────────
@@ -82,9 +114,13 @@ const Register = () => {
     e.preventDefault();
     setErreur('');
 
-    // Valider avant d'appeler l'API
-    const e_val = valider();
-    if (Object.keys(e_val).length > 0) { setErreurs(e_val); return; }
+    // Valider avant d'appeler l'API : tous les champs deviennent "visités"
+    const e_val = valider(form);
+    if (Object.keys(e_val).length > 0) {
+      setTouches(Object.fromEntries(Object.keys(form).map(champ => [champ, true])));
+      setErreurs(e_val);
+      return;
+    }
 
     setEnvoi(true);
     try {
@@ -93,7 +129,8 @@ const Register = () => {
         nom:       form.nom,
         email:     form.email,
         password:  form.password,
-        telephone: form.telephone
+        telephone: form.telephone,
+        turnstileToken: jeton
       });
 
       toast.success(t('auth.register.toastCree'));
@@ -104,6 +141,7 @@ const Register = () => {
       // Erreur de validation serveur : on affiche le message précis du 1er champ
       const data = err.response?.data;
       setErreur(data?.erreurs?.[0]?.msg || data?.message || t('auth.register.erreur'));
+      turnstileRef.current?.reset(); // Le jeton a été consommé : nouvelle vérification
     }
     setEnvoi(false);
   };
@@ -137,14 +175,14 @@ const Register = () => {
             <label htmlFor="prenom" className="form-label">{t('auth.register.prenom')} <span className="requis">*</span></label>
             <input id="prenom" name="prenom" type="text" autoComplete="given-name"
               className={`form-input ${erreurs.prenom ? 'form-input--erreur' : ''}`}
-              placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} autoFocus />
+              placeholder={t('auth.register.prenomPlaceholder')} value={form.prenom} onChange={handleChange} onBlur={handleBlur} autoFocus />
             {erreurs.prenom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.prenom}`)}</p>}
           </div>
           <div className="form-groupe">
             <label htmlFor="nom" className="form-label">{t('auth.register.nom')} <span className="requis">*</span></label>
             <input id="nom" name="nom" type="text" autoComplete="family-name"
               className={`form-input ${erreurs.nom ? 'form-input--erreur' : ''}`}
-              placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} />
+              placeholder={t('auth.register.nomPlaceholder')} value={form.nom} onChange={handleChange} onBlur={handleBlur} />
             {erreurs.nom && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.nom}`)}</p>}
           </div>
 
@@ -153,7 +191,7 @@ const Register = () => {
             <label htmlFor="email" className="form-label">{t('auth.emailCourt')} <span className="requis">*</span></label>
             <input id="email" name="email" type="email" autoComplete="email"
               className={`form-input ${erreurs.email ? 'form-input--erreur' : ''}`}
-              placeholder={t('auth.emailPlaceholder')} value={form.email} onChange={handleChange} />
+              placeholder={t('auth.emailPlaceholder')} value={form.email} onChange={handleChange} onBlur={handleBlur} />
             {erreurs.email && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.email}`)}</p>}
           </div>
 
@@ -162,7 +200,7 @@ const Register = () => {
             <label htmlFor="telephone" className="form-label">{t('auth.register.telephone')}</label>
             <input id="telephone" name="telephone" type="tel" autoComplete="tel"
               className={`form-input ${erreurs.telephone ? 'form-input--erreur' : ''}`}
-              placeholder={t('auth.register.telephonePlaceholder')} value={form.telephone} onChange={handleChange} />
+              placeholder={t('auth.register.telephonePlaceholder')} value={form.telephone} onChange={handleChange} onBlur={handleBlur} />
             {erreurs.telephone && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.telephone}`)}</p>}
           </div>
 
@@ -172,7 +210,7 @@ const Register = () => {
             <div className="password-wrapper">
               <input id="password" name="password" type={voirMdp ? 'text' : 'password'}
                 className={`form-input ${erreurs.password ? 'form-input--erreur' : ''}`}
-                placeholder="••••••••" value={form.password} onChange={handleChange}
+                placeholder="••••••••" value={form.password} onChange={handleChange} onBlur={handleBlur}
                 autoComplete="new-password" />
               <button type="button" className="password-toggle"
                 onClick={() => setVoirMdp(v => !v)}
@@ -201,7 +239,7 @@ const Register = () => {
               <input id="confirmPassword" name="confirmPassword"
                 type={voirConfirm ? 'text' : 'password'}
                 className={`form-input ${erreurs.confirmPassword ? 'form-input--erreur' : ''}`}
-                placeholder="••••••••" value={form.confirmPassword} onChange={handleChange}
+                placeholder="••••••••" value={form.confirmPassword} onChange={handleChange} onBlur={handleBlur}
                 autoComplete="new-password" />
               <button type="button" className="password-toggle"
                 onClick={() => setVoirConfirm(v => !v)}
@@ -212,7 +250,10 @@ const Register = () => {
             {erreurs.confirmPassword && <p className="form-erreur">{t(`auth.register.erreurs.${erreurs.confirmPassword}`)}</p>}
           </div>
 
-          <button type="submit" className="btn-auth" disabled={envoi}>
+          {/* Case anti-robot : le bouton reste grisé tant qu'elle n'est pas validée */}
+          <Turnstile ref={turnstileRef} onJeton={setJeton} />
+
+          <button type="submit" className="btn-auth" disabled={envoi || (TURNSTILE_ACTIF && !jeton)}>
             {envoi ? t('auth.register.creation') : t('auth.register.creer')}
           </button>
         </form>

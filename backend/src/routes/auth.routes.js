@@ -6,6 +6,7 @@ const { body }  = require('express-validator');
 const authController    = require('../controllers/authController');
 const { verifierToken } = require('../middlewares/auth.middleware');
 const { validerDonnees }= require('../middlewares/validate.middleware');
+const { verifierTurnstile } = require('../middlewares/turnstile.middleware');
 
 const router = express.Router();
 
@@ -60,10 +61,11 @@ const reglesResetPassword = [
 // ── ROUTES ───────────────────────────────────────────────────────────
 
 // POST /api/auth/register — Créer un compte parent
-router.post('/register', limiteAuth, reglesRegister, validerDonnees, authController.register);
+// Anti-robot vérifié après la validation : inutile d'interroger Cloudflare pour un formulaire déjà invalide
+router.post('/register', limiteAuth, reglesRegister, validerDonnees, verifierTurnstile, authController.register);
 
 // POST /api/auth/login — Connexion
-router.post('/login', limiteAuth, reglesLogin, validerDonnees, authController.login);
+router.post('/login', limiteAuth, reglesLogin, validerDonnees, verifierTurnstile, authController.login);
 
 // POST /api/auth/google — Connexion / inscription avec Google (parents uniquement)
 router.post('/google',
@@ -83,6 +85,7 @@ router.post('/refresh-token', authController.refreshToken);
 router.post('/forgot-password',
   body('email').isEmail().normalizeEmail(),
   validerDonnees,
+  verifierTurnstile,
   authController.forgotPassword
 );
 

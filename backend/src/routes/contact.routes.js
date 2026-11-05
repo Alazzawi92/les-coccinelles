@@ -4,6 +4,7 @@ const { body }   = require('express-validator');
 const rateLimit  = require('express-rate-limit');
 const router     = express.Router();
 const { validerDonnees } = require('../middlewares/validate.middleware');
+const { verifierTurnstile } = require('../middlewares/turnstile.middleware');
 const { succes, erreur } = require('../utils/response');
 const transporteur       = require('../config/mail');
 
@@ -22,7 +23,7 @@ const reglesContact = [
 ];
 
 // POST /api/contact — Envoyer un message de contact
-router.post('/', limiteContact, reglesContact, validerDonnees, async (req, res) => {
+router.post('/', limiteContact, reglesContact, validerDonnees, verifierTurnstile, async (req, res) => {
   try {
     const { nom, email, telephone, sujet, message } = req.body;
 

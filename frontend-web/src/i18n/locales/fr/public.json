@@ -597,6 +597,7 @@
           "Aux membres du Conseil d'Administration et du bureau, pour les seules données nécessaires à la gestion administrative et financière ;",
           "Aux prestataires techniques hébergeant la plateforme (Vercel Inc. et Alwaysdata SAS, cf. section « Hébergement »), en qualité de sous-traitants au sens de l'article 28 du RGPD ;",
           "À Google Ireland Limited, uniquement pour les parents qui choisissent « Se connecter avec Google » : Google vérifie l'identité du parent et transmet à la crèche ses nom, prénom et adresse email. Aucune donnée de la crèche (enfants, santé, messages) n'est transmise à Google. Ce mode de connexion est facultatif : la connexion par email et mot de passe reste toujours disponible ;",
+        "À Cloudflare, Inc., pour la vérification anti-robot (Cloudflare Turnstile) des formulaires de connexion, de création de compte, de mot de passe oublié et de contact : Cloudflare reçoit l'adresse IP et des informations techniques sur le navigateur, uniquement pour distinguer un humain d'un robot. Aucune donnée saisie dans les formulaires n'est transmise à Cloudflare. Cloudflare est établie aux États-Unis et certifiée au Data Privacy Framework UE–États-Unis, qui encadre ce transfert ;",
           "Aux organismes publics compétents (CAF, PMI, communes de Puilboreau, Saint-Xandre et Esnandes) lorsque la loi ou une convention de financement l'exige."
         ],
         "apres": [
@@ -727,6 +728,7 @@
         ],
         "liste": [
           "<strong>Cookies essentiels</strong> (toujours actifs, pas de consentement requis) : mémorisation de votre choix de consentement lui-même. Durée de conservation : 6 mois.",
+        "<strong>Vérification anti-robot Cloudflare Turnstile</strong> (toujours active sur les formulaires de connexion, de création de compte, de mot de passe oublié et de contact, pas de consentement requis car elle sert uniquement à la sécurité du site) : elle n'est pas utilisée à des fins publicitaires ni pour suivre votre navigation.",
           "<strong>Cookies de mesure d'audience</strong> (facultatifs, soumis à votre accord) : statistiques de fréquentation anonymisées, permettant d'améliorer le site. Durée de conservation : 13 mois."
         ],
         "apres": [

@@ -4,8 +4,8 @@ import api from './api';
 // Créer un compte parent
 export const register = (donnees) => api.post('/auth/register', donnees);
 
-// Se connecter
-export const login = (email, password) => api.post('/auth/login', { email, password });
+// Se connecter (turnstileToken : jeton de la case anti-robot)
+export const login = (email, password, turnstileToken) => api.post('/auth/login', { email, password, turnstileToken });
 
 // Se connecter (ou créer un compte parent) avec le jeton d'identité Google
 export const googleLogin = (credential) => api.post('/auth/google', { credential });
@@ -19,8 +19,8 @@ export const refreshToken = (token) => api.post('/auth/refresh-token', { refresh
 // Confirmer l'adresse email (lien reçu par mail après la création du compte)
 export const verifyEmail = (token) => api.get(`/auth/verify-email/${encodeURIComponent(token)}`);
 
-// Demander un reset mot de passe
-export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
+// Demander un reset mot de passe (turnstileToken : jeton de la case anti-robot)
+export const forgotPassword = (email, turnstileToken) => api.post('/auth/forgot-password', { email, turnstileToken });
 
 // Réinitialiser le mot de passe
 export const resetPassword = (token, password) => api.post('/auth/reset-password', { token, password });

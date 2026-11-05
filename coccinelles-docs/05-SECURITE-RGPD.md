@@ -158,6 +158,28 @@ const limiteConnexion = rateLimit({
 router.post('/auth/login', limiteConnexion, authController.login);
 ```
 
+### Anti-robot (Cloudflare Turnstile)
+Le rate limiting freine un robot sans l'arrêter. Les 4 formulaires publics
+(connexion, création de compte, mot de passe oublié, contact) affichent donc
+une case Cloudflare Turnstile, qui fournit un jeton à usage unique.
+
+- **Frontend** : composant `components/ui/Turnstile` — le bouton d'envoi reste
+  grisé tant que la case n'est pas validée ; la case est relancée après chaque envoi.
+- **Backend** : middleware `turnstile.middleware.js` — le jeton est vérifié
+  auprès de Cloudflare côté serveur (un robot peut ignorer la case du navigateur).
+- **Configuration** : `TURNSTILE_SECRET_KEY` (backend) et
+  `REACT_APP_TURNSTILE_SITE_KEY` (frontend). Sans clé : vérification désactivée
+  en développement, formulaires bloqués (503) en production.
+
+```javascript
+// Ordre des middlewares : limite → validation → anti-robot → contrôleur
+router.post('/login', limiteAuth, reglesLogin, validerDonnees, verifierTurnstile, authController.login);
+```
+
+RGPD : Cloudflare (États-Unis, certifiée Data Privacy Framework) est mentionnée
+comme destinataire dans les mentions légales. Mesure de sécurité : pas de
+consentement requis.
+
 ### Validation des données entrantes
 ```javascript
 // Exemple de validation avec express-validator
@@ -314,6 +336,7 @@ sudo certbot renew --dry-run
 □ Tous les mots de passe hashés avec bcrypt (min 10 rounds)
 □ JWT_SECRET long et aléatoire (min 64 caractères)
 □ Rate limiting sur auth/login et auth/register
+□ Vraies clés Cloudflare Turnstile dans les .env (remplacer les clés de test)
 □ HTTPS activé sur le domaine
 □ Variables d'environnement dans .env (jamais dans le code)
 □ .env dans .gitignore (jamais versionné)

@@ -597,6 +597,7 @@
           "Members of the Board of Directors and the executive committee, only for the data needed for administrative and financial management;",
           "The technical providers hosting the platform (Vercel Inc. and Alwaysdata SAS, see the “Hosting” section), as processors within the meaning of article 28 of the GDPR;",
           "Google Ireland Limited, only for parents who choose “Sign in with Google”: Google verifies the parent's identity and sends the nursery their last name, first name and email address. No nursery data (children, health, messages) is sent to Google. This login method is optional: login by email and password always remains available;",
+        "Cloudflare, Inc., for the anti-robot check (Cloudflare Turnstile) on the login, sign-up, forgotten password and contact forms: Cloudflare receives the IP address and technical information about the browser, only to tell a human from a robot. No data entered in the forms is sent to Cloudflare. Cloudflare is based in the United States and certified under the EU–US Data Privacy Framework, which governs this transfer;",
           "The competent public bodies (CAF, PMI, the towns of Puilboreau, Saint-Xandre and Esnandes) when required by law or by a funding agreement."
         ],
         "apres": [
@@ -727,6 +728,7 @@
         ],
         "liste": [
           "<strong>Essential cookies</strong> (always active, no consent required): storing your consent choice itself. Retention period: 6 months.",
+        "<strong>Cloudflare Turnstile anti-robot check</strong> (always active on the login, sign-up, forgotten password and contact forms, no consent required as it is used only for the website's security): it is not used for advertising or to track your browsing.",
           "<strong>Audience measurement cookies</strong> (optional, subject to your agreement): anonymised visitor statistics used to improve the website. Retention period: 13 months."
         ],
         "apres": [

@@ -157,6 +157,9 @@
     "erreurConnexion": "Error while signing in with Google",
     "erreurChargement": "Unable to load Google sign-in"
   },
+  "turnstile": {
+    "libelle": "Anti-robot check"
+  },
   "jours": {
     "lundi": "Monday",
     "mardi": "Tuesday",

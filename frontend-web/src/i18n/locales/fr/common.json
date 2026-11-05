@@ -157,6 +157,9 @@
     "erreurConnexion": "Erreur lors de la connexion avec Google",
     "erreurChargement": "Impossible de charger la connexion Google"
   },
+  "turnstile": {
+    "libelle": "Vérification anti-robot"
+  },
   "jours": {
     "lundi": "Lundi",
     "mardi": "Mardi",

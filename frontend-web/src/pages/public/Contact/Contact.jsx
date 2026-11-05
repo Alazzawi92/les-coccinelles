@@ -7,9 +7,10 @@
 //            Affiche un écran de confirmation après envoi.
 // ============================================================
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
+import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import toast from 'react-hot-toast';
 import './Contact.css';
 
@@ -26,6 +27,8 @@ const Contact = () => {
   // Erreurs de validation par champ : on stocke la CLÉ de traduction (et non le
   // texte) pour que le message suive la langue si l'utilisateur en change
   const [erreurs, setErreurs] = useState({});
+  const [jeton,   setJeton]   = useState('');     // Jeton de la case anti-robot
+  const turnstileRef = useRef(null);              // Pour redemander une vérification
 
   // ── Validation côté client ────────────────────────────────
   const valider = () => {
@@ -58,11 +61,12 @@ const Contact = () => {
 
     setEnvoi(true);
     try {
-      await api.post('/contact', formData); // POST vers le backend
+      await api.post('/contact', { ...formData, turnstileToken: jeton }); // POST vers le backend
       setEnvoye(true);
       toast.success(t('public.contact.toastSucces'));
     } catch {
       toast.error(t('public.contact.toastErreur'));
+      turnstileRef.current?.reset(); // Le jeton a été consommé : nouvelle vérification
     }
     setEnvoi(false);
   };
@@ -165,7 +169,10 @@ const Contact = () => {
                   <p className="form-aide">{t('public.contact.caracteres', { n: formData.message.length })}</p>
                 </div>
 
-                <button type="submit" className="btn btn--primary btn--lg" disabled={envoi}>
+                {/* Case anti-robot : le bouton reste grisé tant qu'elle n'est pas validée */}
+                <Turnstile ref={turnstileRef} onJeton={setJeton} />
+
+                <button type="submit" className="btn btn--primary btn--lg" disabled={envoi || (TURNSTILE_ACTIF && !jeton)}>
                   {envoi ? t('public.contact.envoi') : t('public.contact.envoyer')}
                 </button>
               </form>

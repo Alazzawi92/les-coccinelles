@@ -7,10 +7,11 @@
 //            éviter l'énumération d'emails (sécurité RGPD).
 // ============================================================
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { forgotPassword } from '../../../services/auth.service';
+import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import '../../../styles/auth.css';
@@ -22,16 +23,29 @@ const ForgotPassword = () => {
   const [email,  setEmail]  = useState('');
   const [envoi,  setEnvoi]  = useState(false);   // Désactive le bouton pendant l'envoi
   const [envoye, setEnvoye] = useState(false);   // Affiche l'écran de confirmation
+  const [erreur, setErreur] = useState('');      // Erreur anti-robot ou email mal saisi
+  const [jeton,  setJeton]  = useState('');      // Jeton de la case anti-robot
+  const turnstileRef = useRef(null);             // Pour redemander une vérification
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErreur('');
     setEnvoi(true);
 
     try {
-      await forgotPassword(email);
-    } catch {
-      // On ignore l'erreur : qu'il y ait un compte ou non, on affiche le même
-      // message de succès. Cela empêche de deviner si un email est inscrit.
+      await forgotPassword(email, jeton);
+    } catch (err) {
+      // 400 (anti-robot échoué, email mal formé) et 503 (vérification indisponible) :
+      // la demande n'est pas partie, il faut le dire. Ces erreurs ne révèlent pas
+      // si un compte existe. Les autres erreurs sont ignorées : qu'il y ait un compte
+      // ou non, on affiche le même message de succès (anti-énumération des emails).
+      const status = err.response?.status;
+      if (status === 400 || status === 503) {
+        setErreur(err.response.data?.message || t('auth.forgot.erreur'));
+        turnstileRef.current?.reset();
+        setEnvoi(false);
+        return;
+      }
     }
 
     // Passer à l'écran de confirmation dans tous les cas
@@ -71,6 +85,8 @@ const ForgotPassword = () => {
               {t('auth.forgot.sousTitre')}
             </p>
 
+            {erreur && <div className="auth-alerte" role="alert"><span>⚠️</span><span>{erreur}</span></div>}
+
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="form-groupe">
                 <label htmlFor="email" className="form-label">
@@ -88,8 +104,11 @@ const ForgotPassword = () => {
                 />
               </div>
 
-              {/* Désactivé si champ vide ou envoi en cours */}
-              <button type="submit" className="btn-auth" disabled={envoi || !email}>
+              {/* Case anti-robot */}
+              <Turnstile ref={turnstileRef} onJeton={setJeton} />
+
+              {/* Désactivé si champ vide, case anti-robot non validée ou envoi en cours */}
+              <button type="submit" className="btn-auth" disabled={envoi || !email || (TURNSTILE_ACTIF && !jeton)}>
                 {envoi ? t('auth.forgot.envoi') : t('auth.forgot.envoyer')}
               </button>
             </form>

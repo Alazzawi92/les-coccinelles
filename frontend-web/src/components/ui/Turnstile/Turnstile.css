@@ -1,0 +1,7 @@
+/* Case anti-robot Cloudflare : centrée, hauteur réservée (65px = taille
+   du widget) pour que le formulaire ne "saute" pas à son apparition */
+.turnstile {
+  display:         flex;
+  justify-content: center;
+  min-height:      65px;
+}
