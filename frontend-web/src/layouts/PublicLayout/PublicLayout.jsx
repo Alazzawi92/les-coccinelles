@@ -15,6 +15,7 @@ import ThemeToggle from '../../components/ui/ThemeToggle/ThemeToggle';
 import CoccinelleDefilement from '../../components/ui/CoccinelleDefilement/CoccinelleDefilement';
 import { useApparitionAuDefilement } from '../../utils/apparition';
 import { useParametres } from '../../context/ParametresContext';
+import { VERSION_APPLICATION } from '../../config/version';
 import './PublicLayout.css';
 
 const PublicLayout = () => {
@@ -196,7 +197,8 @@ const PublicLayout = () => {
 
           {/* Bande basse : copyright + mentions légales */}
           <div className="public-footer__bas">
-            <p>© {new Date().getFullYear()} Les Coccinelles</p>
+            {/* Copyright + numéro de version (utile pour vérifier les mises à jour) */}
+            <p>© {new Date().getFullYear()} Les Coccinelles · v{VERSION_APPLICATION}</p>
             {/* Lien légal bien visible (pastille) plutôt que noyé dans le copyright */}
             <Link to="/mentions-legales" className="public-footer__lien-legal">
               ⚖️ {t('common.footer.mentionsLegales')}
