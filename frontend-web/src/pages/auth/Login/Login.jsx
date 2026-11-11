@@ -9,14 +9,12 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../../context/AuthContext';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import { useParametres } from '../../../context/ParametresContext';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
-import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Login.css';
 
@@ -35,7 +33,6 @@ const Login = () => {
   const turnstileRef = useRef(null);               // Pour redemander une vérification
 
   // ── Hooks de navigation ───────────────────────────────────
-  const { connecter } = useAuth();
   const { espaceParentsOuvert, creationComptesOuverte } = useParametres(); // Réglages du super admin
   const navigate      = useNavigate();
   const location      = useLocation();
@@ -43,22 +40,11 @@ const Login = () => {
   // Destination après connexion : page demandée avant la redirection (ou dashboard)
   const destination = location.state?.from?.pathname || '/parent/tableau-de-bord';
 
-  // ── Après une connexion réussie (mot de passe ou Google) ──
-  const terminerConnexion = (data) => {
-    // Sauvegarde les tokens et l'utilisateur dans le contexte
-    connecter(data.user, data.accessToken, data.refreshToken);
-    toast.success(t('auth.bienvenue', { prenom: data.user.prenom }));
-
-    // Rediriger admin/super_admin vers leur page d'accueil dédiée.
-    // L'admin simple n'a pas accès au dashboard (réservé au super_admin,
-    // voir SuperAdminRoute) : il part directement sur l'émargement.
-    if (data.user.role === 'super_admin') {
-      navigate('/admin/tableau-de-bord', { replace: true });
-    } else if (data.user.role === 'admin') {
-      navigate('/admin/emargement', { replace: true });
-    } else {
-      navigate(destination, { replace: true }); // Retour à la page demandée
-    }
+  // ── Identité confirmée (mot de passe ou Google) : saisie du code reçu par email ──
+  const demanderCode = (data) => {
+    navigate('/connexion/verification', {
+      state: { jeton: data.jeton_2fa, emailMasque: data.email_masque, emailEnvoye: data.email_envoye, destination }
+    });
   };
 
   // ── Connexion Google : nouveau compte en attente de validation ──
@@ -82,7 +68,7 @@ const Login = () => {
 
     try {
       const res = await loginService(email, password, jeton);
-      terminerConnexion(res.data.data);
+      demanderCode(res.data.data);
     } catch (err) {
       // Affiche le message d'erreur de l'API (ex: "Identifiants invalides")
       const msg = err.response?.data?.message || t('auth.login.erreur');
@@ -204,7 +190,7 @@ const Login = () => {
             {/* Connexion avec Google (parents uniquement) */}
             <GoogleButton
               texte="signin_with"
-              onConnexion={terminerConnexion}
+              onConnexion={demanderCode}
               onCompteCree={compteGoogleCree}
               onErreur={erreurGoogle}
             />

@@ -138,6 +138,12 @@
 /* Boutons d'action côte à côte : inscription + visite */
 .hero__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 
+/* Bouton d'inscription : plus grand que les boutons habituels, adapté à la largeur de l'écran */
+.hero__actions .hero__inscrire {
+  padding:   var(--space-lg) var(--space-2xl);
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+}
+
 /* Colonne visuelle : ne rétrécit jamais, centrée.
    position:relative pour ancrer l'arc-en-ciel derrière la coccinelle. */
 .hero__visuel { position: relative; flex-shrink: 0; text-align: center; }

@@ -4,7 +4,6 @@
     "titre": "A joyful place to grow<br/>for your <s>little ones</s>",
     "description": "Welcome to Les Coccinelles! We care for children aged 0 to 3 in a warm, safe and stimulating environment, Monday to Friday.",
     "inscrire": "Enrol my child",
-    "decouvrir": "Discover the nursery",
     "logoAlt": "Les Coccinelles Nursery",
     "chiffres": {
       "placesUnite": "permanent places",
@@ -327,54 +326,14 @@
     "tag": "Enrolment",
     "titre": "Enrolment <s>conditions</s>",
     "sousTitre": "Everything you need to know to enrol your child at Les Coccinelles nursery",
-    "conditionsTitre": "Enrolment conditions",
+    "conditionsTitre": "How to enrol your child",
     "conditions": [
-      "Priority is given to children living in Puilboreau, Saint-Xandre or Esnandes.",
-      "To pre-register your child at the nursery, please send us the pre-registration form below.",
-      "For regular or occasional care, a complete enrolment file is required. Parents must respect the child's planned start date.",
-      "Where applicable, days of absence will be charged as if the child were present at the nursery.",
-      "To do this, families wishing to enrol their child must complete the pre-registration form.",
-      "The child's place is only reserved once the contract has been signed and the child is registered on the nursery's “Pirouette” website."
+      "Priority is given to families living in Puilboreau, Saint-Xandre or Esnandes.",
+      "All the steps are set out in our enrolment guide (in French): the process to follow, the documents to provide, the settling-in period and the pre-registration form to complete.",
+      "The child's place is only reserved once the contract has been signed and the child is registered on the “Pirouette” website."
     ],
-    "pirouette": "Click here to go to Pirouette",
-    "handicapTitre": "Welcoming children with disabilities",
-    "handicapTexte": "The nursery runs a project for the inclusion of children with disabilities. A specific plan will be drawn up with the director, the childcare team, the health advisor and the various partners supporting the child and their family.",
-    "handicapConditions": "The enrolment conditions are the same.",
-    "documentsTitre": "Required documents",
-    "documents": [
-      "Social security number covering the child + supporting photocopy",
-      "Occupation and employer's name for each parent",
-      "Family allowance number (CAF PRO) + supporting photocopy",
-      "Child's health record: compulsory vaccinations up to date",
-      "Name and contact details of the family doctor",
-      "Certificate of fitness for group childcare",
-      "Up-to-date civil liability insurance certificate",
-      "Name, address and phone number of the people authorised to collect the child",
-      "The various protocols to be signed"
-    ],
-    "ficheTitre": "Pre-registration form",
-    "ficheIntro": "Download the pre-registration form below and return it completed to the nursery.",
-    "ficheAlt": "Les Coccinelles pre-registration form",
-    "ficheTelecharger": "Download the form (PDF)",
-    "ficheHint": "Fill in the form and send it by email to <lien></lien> or drop it off at the nursery.",
-    "criteresTitre": "Admission criteria",
-    "criteres": {
-      "age": {
-        "titre": "Age",
-        "texte": "Children from 10 weeks to 3 years old (until they start pre-school)."
-      },
-      "residence": {
-        "titre": "Residence",
-        "texte": "Priority for residents of Puilboreau, Saint-Xandre and Esnandes."
-      },
-      "priorites": {
-        "titre": "Priorities",
-        "texte": "According to CAF rules: children with disabilities, parents returning to work, siblings."
-      }
-    },
-    "ctaTexte": "Ready to enrol your child?",
-    "ctaCompte": "Create a parent account",
-    "ctaContact": "Contact us first"
+    "guideTelecharger": "Download the enrolment guide (PDF)",
+    "pirouette": "Click here to go to Pirouette"
   },
   "actualites": {
     "tag": "News",
@@ -396,6 +355,9 @@
     "suivante": "Next week →",
     "semaineDu": "Week of {{periode}}",
     "chargement": "Loading menu...",
+    "telecharger": "Download the menu (PDF)",
+    "pdfTitre": "Les Coccinelles nursery menu",
+    "erreurTelechargement": "The download failed. Please try again.",
     "dejeuner": "Lunch",
     "gouter": "Snack",
     "nonRenseigne": "Not specified",

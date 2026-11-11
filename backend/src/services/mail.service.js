@@ -103,6 +103,23 @@ const envoyerCompteEnAttente = async (email, prenom) => {
   });
 };
 
+// Envoyer le code de connexion à 6 chiffres (double authentification)
+const envoyerCodeConnexion = async (email, prenom, code) => {
+  await transporteur.sendMail({
+    from:    `"Les Coccinelles" <${MAIL_FROM}>`,
+    to:      email,
+    subject: 'Votre code de connexion — Les Coccinelles',
+    html: `
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
+      <p>Voici votre code de connexion, valable 10 minutes :</p>
+      <p style="font-size:28px;font-weight:bold;letter-spacing:6px;">${code}</p>
+      <p>Ne le communiquez à personne : la crèche ne vous le demandera jamais.</p>
+      <p><strong>Si vous n'essayez pas de vous connecter</strong>, quelqu'un connaît peut-être votre mot de passe : changez-le.</p>
+      <p style="color:#888;font-size:12px;margin-top:24px;">Crèche Les Coccinelles — Puilboreau</p>
+    `
+  });
+};
+
 // Envoyer un email au parent quand l'administrateur active son compte
 const envoyerCompteActive = async (email, prenom) => {
   const lien = `${process.env.FRONTEND_URL}/connexion`;
@@ -125,6 +142,7 @@ const envoyerCompteActive = async (email, prenom) => {
 };
 
 module.exports = {
+  envoyerCodeConnexion,
   envoyerVerificationEmail,
   envoyerResetMotDePasse,
   envoyerStatutInscription,

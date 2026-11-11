@@ -8,10 +8,13 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
+import toast from 'react-hot-toast';
 import api from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import './Menus.css';
 import { versDateISO, depuisDateISO, lundiDeLaSemaine } from '../../../utils/dates'; // Dates en heure locale
+import { telechargerMenuPdf } from '../../../utils/menuPdf';
+import { menuEnTexte } from '../../../hooks/useMenuDuJour'; // HTML de l'éditeur → texte simple
 
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
 
@@ -28,6 +31,7 @@ const Menus = () => {
   const [menu,       setMenu]       = useState(null);             // Données du menu courant
   const [chargement, setChargement] = useState(true);            // Indicateur de chargement
   const [semaine,    setSemaine]    = useState(getLundiSemaine()); // Date du lundi courant
+  const [telechargement, setTelechargement] = useState(false);     // PDF en cours de création
 
   // ── Chargement du menu à chaque changement de semaine ─────
   useEffect(() => {
@@ -61,6 +65,31 @@ const Menus = () => {
     return `${lundi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' })}`;
   };
 
+  // ── Téléchargement du menu affiché, au format PDF ─────────
+  const telecharger = async () => {
+    setTelechargement(true);
+    try {
+      await telechargerMenuPdf({
+        titre:      t('public.menus.pdfTitre'),
+        sousTitre:  t('public.menus.semaineDu', { periode: formaterSemaine(semaine) }),
+        jours:      JOURS.map(jour => ({
+          nom:    t(`common.jours.${jour}`),
+          midi:   menuEnTexte(menu[`${jour}_midi`]),
+          gouter: menuEnTexte(menu[`${jour}_gouter`])
+        })),
+        labels: {
+          dejeuner:     t('public.menus.dejeuner'),
+          gouter:       t('public.menus.gouter'),
+          nonRenseigne: t('public.menus.nonRenseigne')
+        },
+        nomFichier: `menu-coccinelles-${semaine}.pdf`
+      });
+    } catch {
+      toast.error(t('public.menus.erreurTelechargement'));
+    }
+    setTelechargement(false);
+  };
+
   return (
     <div className="menus-page">
 
@@ -88,6 +117,15 @@ const Menus = () => {
               {t('public.menus.suivante')}
             </button>
           </div>
+
+          {/* Bouton visible seulement quand un menu est affiché */}
+          {!chargement && menu && (
+            <div className="menu-telecharger">
+              <button className="btn btn--primary btn--sm" onClick={telecharger} disabled={telechargement}>
+                📄 {t('public.menus.telecharger')}
+              </button>
+            </div>
+          )}
 
           {/* ── État de chargement ────────────────────────────── */}
           {chargement ? (

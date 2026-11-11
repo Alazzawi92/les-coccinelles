@@ -1,0 +1,24 @@
+/* ============================================================
+   FICHIER : DeuxFacteurs.css
+   PAGE    : /connexion/verification
+   RÔLE    : Saisie du code reçu par email et bouton de renvoi.
+   ============================================================ */
+
+/* Chiffres du code bien espacés */
+.deux-facteurs__saisie { text-align: center; font-size: 1.2rem; letter-spacing: 0.15em; }
+
+/* Bouton discret pour redemander un code */
+.deux-facteurs__renvoyer {
+  display:     block;
+  width:       100%;
+  background:  none;
+  border:      none;
+  color:       var(--primary);
+  font-weight: 700;
+  font-size:   0.9rem;
+  cursor:      pointer;
+  padding:     var(--space-sm);
+  margin-top:  var(--space-md);
+}
+
+.deux-facteurs__renvoyer:disabled { color: var(--text-gray); cursor: not-allowed; }

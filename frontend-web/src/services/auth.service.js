@@ -10,6 +10,10 @@ export const login = (email, password, turnstileToken) => api.post('/auth/login'
 // Se connecter (ou créer un compte parent) avec le jeton d'identité Google
 export const googleLogin = (credential) => api.post('/auth/google', { credential });
 
+// Double authentification : vérifier le code reçu par email, ou en demander un nouveau
+export const verifier2fa = (jeton, code) => api.post('/auth/2fa/verifier', { jeton, code });
+export const renvoyer2fa = (jeton)       => api.post('/auth/2fa/renvoyer', { jeton });
+
 // Se déconnecter
 export const logout = () => api.post('/auth/logout');
 

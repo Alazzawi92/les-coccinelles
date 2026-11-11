@@ -27,6 +27,10 @@
 .parametre-carte__alerte      { font-size: 0.85rem; font-weight: 700; color: var(--warning-text); margin-top: var(--space-sm); }
 .parametre-carte__modifie     { font-size: 0.8rem; color: var(--text-light); margin-top: var(--space-sm); }
 
+/* Guide d'inscription : lien vers le document actuel et bouton de remplacement */
+.parametre-guide__lien   { display: inline-block; font-size: 0.9rem; color: var(--primary); text-decoration: underline; margin-top: var(--space-sm); }
+.parametre-guide__bouton { flex-shrink: 0; }
+
 /* ── INTERRUPTEUR ───────────────────────────────────────── */
 
 .parametre-switch {

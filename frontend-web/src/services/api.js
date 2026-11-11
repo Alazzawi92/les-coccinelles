@@ -21,6 +21,9 @@ const API_URL = (() => {
 // ou Docker, où le port du backend n'est pas le même).
 export const BACKEND_URL = API_URL.replace(/\/api\/?$/, '');
 
+// Téléchargement du guide d'inscription (page publique et Paramètres admin)
+export const URL_GUIDE_INSCRIPTION = `${API_URL}/parametres/guide-inscription`;
+
 // Adresse complète d'un fichier servi par le backend (/uploads/...).
 // Les chemins privés arrivent déjà signés par l'API (?exp=...&sig=...).
 // Les autres chemins (ex : /images/photo-floue.jpg, fichiers du frontend)

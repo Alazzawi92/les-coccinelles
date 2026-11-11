@@ -138,6 +138,8 @@ sequelize.sync({ alter: false }) // Synchroniser les modèles avec la BDD
 ```
 POST   /api/auth/register          Créer un compte parent
 POST   /api/auth/login             Connexion
+POST   /api/auth/2fa/verifier      Code à 6 chiffres reçu par email, ouvre la session
+POST   /api/auth/2fa/renvoyer      Envoie un nouveau code (un par minute au maximum)
 POST   /api/auth/logout            Déconnexion
 POST   /api/auth/refresh-token     Renouveler le token JWT
 POST   /api/auth/forgot-password   Demander reset mot de passe
@@ -225,9 +227,9 @@ DELETE /api/actualites/:id         Supprimer (admin)
 ```
 GET    /api/menus                  Menus de la semaine (public)
 GET    /api/menus/:semaine         Menu d'une semaine précise (public)
-POST   /api/menus                  Créer un menu (admin)
-PUT    /api/menus/:id              Modifier un menu (admin)
-DELETE /api/menus/:id              Supprimer un menu (admin)
+GET    /api/menus/jour/:date       Déjeuner et goûter d'un jour (public)
+GET    /api/menus/cycle            Les 4 menus du cycle (super admin)
+PUT    /api/menus/cycle/:numero    Saisir le menu de la semaine 1 à 4 (super admin)
 ```
 
 ### Notifications — /api/notifications

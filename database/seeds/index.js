@@ -73,12 +73,9 @@ const ACTUALITES = [
   }
 ];
 
-// Menu de la semaine courante
-const lundi = new Date();
-lundi.setDate(lundi.getDate() - lundi.getDay() + 1); // Lundi de la semaine
-
+// Menu de démonstration : Semaine 1 du cycle de 4 menus (voir menuController.js)
 const MENU = {
-  semaine_debut: lundi.toISOString().split('T')[0],
+  semaine_debut: '2000-01-01',
   lundi_midi:    'Poulet rôti, haricots verts, purée de pommes de terre',
   lundi_gouter:  'Compote de pommes',
   mardi_midi:    'Gratin de courgettes, riz complet',

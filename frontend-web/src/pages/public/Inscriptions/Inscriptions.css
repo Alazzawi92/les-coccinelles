@@ -84,8 +84,16 @@
   border-left:  3px solid var(--primary-light);
 }
 
-/* Bouton Pirouette : turquoise, centré sous les paragraphes */
-.insc-pirouette { margin-top: var(--space-xl); }
+/* Guide à télécharger et Pirouette, sous les paragraphes */
+.insc-actions {
+  display:     flex;
+  flex-wrap:   wrap;
+  align-items: center;
+  gap:         var(--space-md);
+  margin-top:  var(--space-xl);
+}
+
+/* Bouton Pirouette : turquoise */
 .btn-pirouette {
   display:         inline-block;
   background:      var(--teal);
@@ -99,68 +107,6 @@
 }
 .btn-pirouette:hover { background: var(--teal-dark); transform: translateY(-2px); }
 
-/* ── BLOC INCLUSION HANDICAP ────────────────────────────── */
-
-/* Carte horizontale : icône + texte */
-.insc-handicap {
-  display:       flex;
-  align-items:   flex-start;
-  gap:           var(--space-xl);
-  background:    var(--surface);
-  border-radius: var(--radius-xl);
-  padding:       var(--space-xl);
-  box-shadow:    var(--shadow-sm);
-  border-left:   5px solid var(--teal);
-  max-width:     800px;
-}
-.insc-handicap__icone {
-  font-size:   2.5rem;
-  flex-shrink: 0;
-  margin-top:  4px;
-}
-.insc-handicap__titre {
-  font-family:   var(--font-heading);
-  font-size:     1.1rem;
-  color:         var(--text-dark);
-  margin-bottom: var(--space-sm);
-}
-.insc-handicap p { font-size: 0.95rem; color: var(--text-gray); line-height: 1.7; }
-
-/* ── FICHE PRÉ-INSCRIPTION ──────────────────────────────── */
-
-/* Deux colonnes : aperçu image + bouton téléchargement */
-.insc-fiche {
-  display:               grid;
-  grid-template-columns: 1fr 1fr;
-  gap:                   var(--space-xl);
-  align-items:           center;
-  max-width:             900px;
-  margin:                0 auto;
-}
-
-/* Aperçu de la fiche : image avec ombre */
-.insc-fiche__apercu {
-  border-radius: var(--radius-xl);
-  overflow:      hidden;
-  box-shadow:    var(--shadow-md);
-  border:        1px solid var(--tint);
-}
-.insc-fiche__img { width: 100%; display: block; }
-
-/* Colonne droite : bouton + note */
-.insc-fiche__actions {
-  display:        flex;
-  flex-direction: column;
-  gap:            var(--space-lg);
-  align-items:    flex-start;
-}
-.insc-fiche__hint {
-  font-size: 0.9rem;
-  color:     var(--text-gray);
-  line-height: 1.6;
-}
-.insc-fiche__hint a { color: var(--primary); text-decoration: underline; }
-
 /* ── 5. LISTE DES DOCUMENTS ─────────────────────────────── */
 
 /* Liste verticale centrée des documents requis.
@@ -173,28 +119,6 @@
   margin:         var(--space-2xl) auto 0;
 }
 
-/* Chaque document requis : icône + texte, dans une ligne
-   avec une barre orange à gauche pour l'identifier visuellement. */
-.document-item {
-  display:       flex;
-  align-items:   center;
-  gap:           var(--space-md);
-  padding:       var(--space-md) var(--space-lg);
-  background:    var(--surface);
-  border-radius: var(--radius-md);
-  box-shadow:    var(--shadow-sm);
-  font-size:     0.95rem;
-  color:         var(--text-dark);
-  border-left:   4px solid var(--primary);
-  transition:    var(--transition);
-}
-
-/* Au survol : légère translation vers la droite (effet "sélection") */
-.document-item:hover { transform: translateX(4px); }
-
-/* Icône du document : grande, ne rétrécit pas */
-.document-item span:first-child { font-size: 1.5rem; flex-shrink: 0; }
-
 /* ── 5. RESPONSIVE ──────────────────────────────────────── */
 /* Ordre du + large au + étroit : une règle @media (max-width) plus
    étroite doit apparaître APRÈS une règle plus large pour bien la
@@ -203,7 +127,6 @@
 /* Petit ordinateur (≤1279px) : transition douce vers le desktop plein */
 @media (max-width: 1279px) {
   .etapes-grille   { grid-template-columns: repeat(2, 1fr); gap: var(--space-lg); }
-  .insc-fiche      { max-width: 700px; }
 }
 
 /* Tablette (≤1023px) : 4 étapes → 2 colonnes */
@@ -214,9 +137,6 @@
 /* Mobile (480-767px) : étapes en 1 colonne, un peu plus d'air */
 @media (max-width: 767px) {
   .etapes-grille   { grid-template-columns: 1fr; }
-  .insc-fiche      { grid-template-columns: 1fr; }
-  .insc-fiche__actions { align-items: center; text-align: center; }
-  .insc-handicap   { flex-direction: column; gap: var(--space-md); }
 }
 
 /* Petit mobile (≤479px) : tout en 1 colonne, espacements resserrés */
@@ -228,12 +148,8 @@
   .etape-texte     { font-size: 0.8rem; }
   .insc-paragraphes { gap: var(--space-sm); margin-top: var(--space-lg); }
   .insc-paragraphes p { font-size: 0.9rem; padding-left: var(--space-sm); }
-  .insc-handicap   { flex-direction: column; gap: var(--space-sm); padding: var(--space-md); }
-  .insc-handicap__icone { font-size: 2rem; }
-  .insc-fiche      { grid-template-columns: 1fr; gap: var(--space-md); }
-  .insc-fiche__actions { align-items: center; text-align: center; }
   .documents-liste { gap: var(--space-sm); margin-top: var(--space-lg); }
-  .document-item   { padding: var(--space-sm) var(--space-md); font-size: 0.85rem; }
+  .insc-actions .btn { width: 100%; text-align: center; }
   .btn-pirouette   { width: 100%; text-align: center; padding: var(--space-md); }
 }
 
@@ -241,7 +157,5 @@
 @media (min-width: 1440px) {
   .etapes-grille    { gap: var(--space-2xl); max-width: 1600px; margin-left: auto; margin-right: auto; }
   .insc-paragraphes { max-width: 800px; }
-  .insc-handicap    { max-width: 900px; }
-  .insc-fiche       { max-width: 1000px; }
   .documents-liste  { max-width: 800px; }
 }

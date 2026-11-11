@@ -78,11 +78,8 @@ const Accueil = () => {
               {t('public.accueil.description')}
             </p>
             <div className="hero__actions">
-              <Link to="/conditions-inscription" className="btn btn--primary btn--lg">
+              <Link to="/conditions-inscription" className="btn btn--primary btn--lg hero__inscrire">
                 {t('public.accueil.inscrire')}
-              </Link>
-              <Link to="/presentation" className="btn btn--outline btn--lg">
-                {t('public.accueil.decouvrir')}
               </Link>
             </div>
           </div>

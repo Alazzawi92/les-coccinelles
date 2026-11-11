@@ -4,7 +4,6 @@
     "titre": "Un lieu de vie joyeux<br/>pour vos <s>tout-petits</s>",
     "description": "Bienvenue aux Coccinelles ! Nous accueillons vos enfants de 0 à 3 ans dans un environnement chaleureux, sécurisé et stimulant, du lundi au vendredi.",
     "inscrire": "Inscrire mon enfant",
-    "decouvrir": "Découvrir la crèche",
     "logoAlt": "Crèche Les Coccinelles",
     "chiffres": {
       "placesUnite": "places fixes",
@@ -327,54 +326,14 @@
     "tag": "Inscription",
     "titre": "Conditions <s>d'inscription</s>",
     "sousTitre": "Tout ce que vous devez savoir pour inscrire votre enfant à la crèche Les Coccinelles",
-    "conditionsTitre": "Les conditions d'inscription",
+    "conditionsTitre": "Comment inscrire votre enfant ?",
     "conditions": [
-      "Les enfants accueillis doivent habiter prioritairement les communes de Puilboreau, Saint-Xandre ou Esnandes.",
-      "Afin de pré inscrire votre enfant à la crèche, veuillez nous envoyer la fiche de pré inscription ci-dessous.",
-      "Pour l'accueil régulier ou occasionnel, un dossier d'inscription complet est obligatoire. Les parents doivent respecter la date prévue d'entrée de l'enfant.",
-      "Le cas échéant, les jours d'absence seront facturés comme si l'enfant était présent dans la structure.",
-      "Pour ce faire, les familles souhaitant inscrire leur enfant au multi accueil doivent compléter la fiche de préinscription.",
-      "La place de l'enfant n'est réservée qu'après la signature du contrat et de l'inscription sur le site de la crèche « Pirouette »."
+      "Les familles résidant à Puilboreau, Saint-Xandre ou Esnandes sont prioritaires.",
+      "Toutes les démarches sont réunies dans notre guide d'inscription : le parcours à suivre, les pièces à fournir, la période d'adaptation et la fiche de préinscription à compléter.",
+      "La place de l'enfant n'est réservée qu'après la signature du contrat et l'inscription sur le site « Pirouette »."
     ],
-    "pirouette": "Cliquez ici pour accéder à Pirouette",
-    "handicapTitre": "Accueil des enfants en situation de handicap",
-    "handicapTexte": "L'établissement met en œuvre un projet autour de l'inclusion d'enfants en situation de handicap. Un projet spécifique sera réalisé avec la directrice, l'équipe éducative, le référent santé et les différents partenaires accompagnant l'enfant et sa famille.",
-    "handicapConditions": "Les conditions d'inscription seront les mêmes.",
-    "documentsTitre": "Documents nécessaires",
-    "documents": [
-      "Numéro d'assuré social dont dépend l'enfant + photocopie justificative",
-      "Profession et nom de l'employeur de chacun des parents",
-      "Numéro d'Allocations Familiales (CAF PRO) + photocopie justificative",
-      "Carnet de santé de l'enfant : vaccinations obligatoires et à jour",
-      "Nom et coordonnées du médecin traitant",
-      "Certificat d'aptitude à la vie en collectivité",
-      "Attestation de responsabilité civile à jour",
-      "Nom, prénom, adresse et téléphone des personnes susceptibles de reprendre l'enfant",
-      "Les différents protocoles à signer"
-    ],
-    "ficheTitre": "Fiche de pré-inscription",
-    "ficheIntro": "Téléchargez ci-dessous la fiche de pré-inscription et retournez-la complétée à la crèche.",
-    "ficheAlt": "Fiche de pré-inscription Les Coccinelles",
-    "ficheTelecharger": "Télécharger la fiche (PDF)",
-    "ficheHint": "Complétez la fiche et envoyez-la par email à <lien></lien> ou déposez-la directement à la crèche.",
-    "criteresTitre": "Critères d'admission",
-    "criteres": {
-      "age": {
-        "titre": "Âge",
-        "texte": "Enfants de 10 semaines à 3 ans (jusqu'à l'entrée en maternelle)."
-      },
-      "residence": {
-        "titre": "Résidence",
-        "texte": "Priorité aux habitants de Puilboreau, Saint-Xandre et Esnandes."
-      },
-      "priorites": {
-        "titre": "Priorités",
-        "texte": "Selon le règlement CAF : enfant en situation de handicap, parents en insertion professionnelle, fratrie."
-      }
-    },
-    "ctaTexte": "Prêt(e) à inscrire votre enfant ?",
-    "ctaCompte": "Créer un compte parent",
-    "ctaContact": "Nous contacter d'abord"
+    "guideTelecharger": "Télécharger le guide d'inscription (PDF)",
+    "pirouette": "Cliquez ici pour accéder à Pirouette"
   },
   "actualites": {
     "tag": "Actualités",
@@ -396,6 +355,9 @@
     "suivante": "Semaine suivante →",
     "semaineDu": "Semaine du {{periode}}",
     "chargement": "Chargement du menu...",
+    "telecharger": "Télécharger le menu (PDF)",
+    "pdfTitre": "Menu de la crèche Les Coccinelles",
+    "erreurTelechargement": "Le téléchargement a échoué. Veuillez réessayer.",
     "dejeuner": "Déjeuner",
     "gouter": "Goûter",
     "nonRenseigne": "Non renseigné",

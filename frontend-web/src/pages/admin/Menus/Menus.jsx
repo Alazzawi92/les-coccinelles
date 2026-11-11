@@ -1,25 +1,22 @@
 // ============================================================
 // FICHIER  : Menus.jsx (admin)
 // ROUTE    : /admin/menus
-// RÔLE     : Gestion des menus de la crèche.
-//            Deux modes :
-//            - "Menu par défaut" : template répété toutes les semaines
-//            - "Par semaine"     : personnalisation d'une semaine précise
+// RÔLE     : Saisie des 4 menus du cycle (Semaine 1 à 4) qui se
+//            répète toute l'année. Un onglet par semaine.
 //            Chaque champ jour (déjeuner + goûter) est édité via Quill.
 // ============================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
-import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './Menus.css';
-import { lundiDeLaSemaine } from '../../../utils/dates'; // Dates en heure locale
 
-const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+const JOURS    = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+const NUMEROS  = [1, 2, 3, 4]; // Les 4 semaines du cycle
 
 // Toolbar minimale adaptée à la saisie d'un menu (pas besoin de titres ni couleurs)
 const QUILL_MODULES_MENU = {
@@ -31,28 +28,9 @@ const QUILL_MODULES_MENU = {
 };
 const QUILL_FORMATS_MENU = ['bold', 'italic', 'list'];
 
-const FORM_VIDE = () => {
-  const f = {};
-  JOURS.forEach(j => { f[`${j}_midi`] = ''; f[`${j}_gouter`] = ''; });
-  return f;
-};
-
-// Lundi de la semaine courante (+ offset semaines), en heure locale
-const getLundiSemaine = (offset = 0) => lundiDeLaSemaine(new Date(), offset);
-
-const extraireForm = (menu) => {
-  const f = {};
-  JOURS.forEach(j => {
-    f[`${j}_midi`]   = menu[`${j}_midi`]   || '';
-    f[`${j}_gouter`] = menu[`${j}_gouter`] || '';
-  });
-  return f;
-};
-
-// Détecte si le contenu HTML Quill est vide (<p><br></p> ou chaîne vide)
-const quillVide = (val) => !val || val === '<p><br></p>';
-
 // ── Formulaire 5 jours avec Quill ────────────────────────────
+// form     : contenu de la semaine affichée
+// onChange : (champ, valeur, source) — source = 'user' si c'est une frappe au clavier
 const FormulaireMenu = ({ form, onChange }) => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
   return (
@@ -68,7 +46,7 @@ const FormulaireMenu = ({ form, onChange }) => {
             <ReactQuill
               theme="snow"
               value={form[`${jour}_midi`] || ''}
-              onChange={val => onChange(`${jour}_midi`, val)}
+              onChange={(val, _delta, source) => onChange(`${jour}_midi`, val, source)}
               modules={QUILL_MODULES_MENU}
               formats={QUILL_FORMATS_MENU}
               placeholder={t('admin.menus.dejeunerPlaceholder')}
@@ -83,7 +61,7 @@ const FormulaireMenu = ({ form, onChange }) => {
             <ReactQuill
               theme="snow"
               value={form[`${jour}_gouter`] || ''}
-              onChange={val => onChange(`${jour}_gouter`, val)}
+              onChange={(val, _delta, source) => onChange(`${jour}_gouter`, val, source)}
               modules={QUILL_MODULES_MENU}
               formats={QUILL_FORMATS_MENU}
               placeholder={t('admin.menus.gouterPlaceholder')}
@@ -96,249 +74,95 @@ const FormulaireMenu = ({ form, onChange }) => {
   );
 };
 
-// ── Aperçu lecture seule (affiche le HTML Quill) ─────────────
-const ApercuMenu = ({ form }) => {
+// ── Composant principal ───────────────────────────────────────
+const MenusAdmin = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
-  return (
-  <div className="menus-admin-grille">
-    {JOURS.map(jour => (
-      <div key={jour} className="menu-admin-col menu-admin-col--apercu">
-        <h3 className="menu-admin-jour">{t(`common.jours.${jour}`)}</h3>
-        <p className="apercu-label">🍽️</p>
-        {quillVide(form[`${jour}_midi`])
-          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>{t('admin.menus.nonRenseigne')}</em>
-          : <div className="menu-apercu-html" dangerouslySetInnerHTML={{ __html: form[`${jour}_midi`] }} />
-        }
-        <p className="apercu-label" style={{ marginTop: 'var(--space-sm)' }}>🍪</p>
-        {quillVide(form[`${jour}_gouter`])
-          ? <em style={{ color: 'var(--text-gray)', fontSize: '0.85rem' }}>{t('admin.menus.nonRenseigne')}</em>
-          : <div className="menu-apercu-html" dangerouslySetInnerHTML={{ __html: form[`${jour}_gouter`] }} />
-        }
-      </div>
-    ))}
-  </div>
-  );
-};
-
-// ── Mode "Menu par défaut" ────────────────────────────────────
-const SectionMenuDefaut = () => {
-  const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const [menu,  setMenu]  = useState(null);
-  const [form,  setForm]  = useState(FORM_VIDE());
-  const [envoi, setEnvoi] = useState(false);
-  const [modif, setModif] = useState(false);
+  const [semaines,      setSemaines]      = useState(null);  // { 1: {...}, 2: {...}, 3: {...}, 4: {...} }
+  const [numero,        setNumero]        = useState(1);     // Onglet affiché
+  const [numeroCourant, setNumeroCourant] = useState(null);  // Semaine du cycle en cours
+  const [nonSauvees,    setNonSauvees]    = useState([]);    // Semaines modifiées mais pas enregistrées
+  const [echec,         setEchec]         = useState(false); // Chargement impossible
+  const [envoi,         setEnvoi]         = useState(false);
 
   useEffect(() => {
-    api.get('/menus/defaut')
+    api.get('/menus/cycle')
       .then(r => {
-        const m = r.data.data;
-        setMenu(m);
-        if (m) setForm(extraireForm(m));
+        const { numero_courant, semaines: liste } = r.data.data;
+        setSemaines(Object.fromEntries(liste.map(s => [s.numero, s])));
+        setNumeroCourant(numero_courant);
+        setNumero(numero_courant); // Ouvre directement la semaine en cours
       })
-      .catch(() => {});
+      .catch(() => setEchec(true)); // Pas de formulaire vide : il écraserait les vrais menus
   }, []);
 
-  const handleChange = (cle, val) => setForm(p => ({ ...p, [cle]: val }));
+  const handleChange = (champ, valeur, source) => {
+    setSemaines(p => ({ ...p, [numero]: { ...p[numero], [champ]: valeur } }));
+    // Quill signale aussi ses reformatages au chargement : seule la frappe compte
+    if (source === 'user') setNonSauvees(p => (p.includes(numero) ? p : [...p, numero]));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const numeroEnvoye = numero; // L'onglet peut changer pendant l'envoi
     setEnvoi(true);
     try {
-      const res = await api.post('/menus/defaut', form);
-      setMenu(res.data.data);
-      setModif(false);
-      toast.success(t('admin.menus.toastDefaut'));
+      // Le champ "numero" est ignoré par le serveur : seuls les champs de menu sont gardés
+      await api.put(`/menus/cycle/${numeroEnvoye}`, semaines[numeroEnvoye]);
+      setNonSauvees(p => p.filter(n => n !== numeroEnvoye));
+      toast.success(t('admin.menus.toastEnregistre', { numero: numeroEnvoye }));
     } catch { toast.error(t('admin.menus.erreurSauvegarde')); }
     setEnvoi(false);
   };
 
   return (
-    <div className="a-card" style={{ marginBottom: 'var(--space-xl)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
-        <div>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>📋 {t('admin.menus.defautTitre')}</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', margin: '4px 0 0' }}>
-            {t('admin.menus.defautAide')}
-          </p>
-        </div>
-        {!modif && (
-          <button className="btn btn--primary btn--sm" onClick={() => setModif(true)}>
-            ✏️ {menu ? t('admin.menus.modifier') : t('admin.menus.creerDefaut')}
-          </button>
-        )}
-      </div>
-
-      {modif ? (
-        <form onSubmit={handleSubmit}>
-          <FormulaireMenu form={form} onChange={handleChange} />
-          <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end', marginTop: 'var(--space-xl)' }}>
-            <button type="button" className="btn btn--ghost" onClick={() => { setModif(false); if (menu) setForm(extraireForm(menu)); }}>
-              {t('common.annuler')}
-            </button>
-            <button type="submit" className="btn btn--primary" disabled={envoi}>
-              {envoi ? t('common.enregistrement') : t('admin.menus.sauverDefaut')}
-            </button>
-          </div>
-        </form>
-      ) : menu ? (
-        <ApercuMenu form={form} />
-      ) : (
-        <div className="a-vide">
-          <span className="a-vide__icone">📋</span>
-          <p>{t('admin.menus.aucunDefaut')}</p>
-        </div>
-      )}
-    </div>
-  );
-};
-
-// ── Mode "Menu par semaine" ───────────────────────────────────
-const SectionMenuSemaine = () => {
-  const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const [offset,    setOffset]    = useState(0);
-  const [semaine,   setSemaine]   = useState(getLundiSemaine());
-  const [menu,      setMenu]      = useState(null);
-  const [estDefaut, setEstDefaut] = useState(false);
-  const [form,      setForm]      = useState(FORM_VIDE());
-  const [envoi,     setEnvoi]     = useState(false);
-  const [modif,     setModif]     = useState(false);
-
-  useEffect(() => { setSemaine(getLundiSemaine(offset)); }, [offset]);
-
-  const charger = useCallback(() => {
-    setModif(false);
-    api.get(`/menus/${semaine}`)
-      .then(r => {
-        const m = r.data.data;
-        setMenu(m);
-        setEstDefaut(m?.est_defaut ?? false);
-        setForm(m ? extraireForm(m) : FORM_VIDE());
-      })
-      .catch(() => { setMenu(null); setEstDefaut(false); setForm(FORM_VIDE()); });
-  }, [semaine]);
-
-  useEffect(() => { charger(); }, [charger]);
-
-  const handleChange = (cle, val) => setForm(p => ({ ...p, [cle]: val }));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setEnvoi(true);
-    try {
-      if (menu && !estDefaut) {
-        await api.put(`/menus/${menu.id}`, { ...form, publie: menu.publie });
-        toast.success(t('admin.menus.toastMaj'));
-        charger();
-      } else {
-        const res = await api.post('/menus', { ...form, semaine_debut: semaine, publie: false });
-        setMenu(res.data.data);
-        setEstDefaut(false);
-        setModif(false);
-        toast.success(t('admin.menus.toastCree'));
-      }
-    } catch (err) { toast.error(err.response?.data?.message || t('common.erreur')); }
-    setEnvoi(false);
-  };
-
-  const togglePublier = async () => {
-    if (!menu || estDefaut) return;
-    try {
-      await api.put(`/menus/${menu.id}`, { ...form, publie: !menu.publie });
-      setMenu(prev => ({ ...prev, publie: !prev.publie }));
-      toast.success(menu.publie ? t('admin.menus.toastDepublie') : t('admin.menus.toastPublie'));
-    } catch { toast.error(t('common.erreur')); }
-  };
-
-  const supprimerPerso = async () => {
-    if (!menu || estDefaut) return;
-    if (!window.confirm(t('admin.menus.confirmerSuppression'))) return;
-    try {
-      await api.delete(`/menus/${menu.id}`);
-      toast.success(t('admin.menus.toastSupprime'));
-      charger();
-    } catch { toast.error(t('common.erreur')); }
-  };
-
-  const formatSemaine = (d) => {
-    const lundi    = new Date(d);
-    const vendredi = new Date(d);
-    vendredi.setDate(lundi.getDate() + 4);
-    return `${lundi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' })}`;
-  };
-
-  return (
-    <div className="a-card">
-      {/* Navigation semaine */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-lg)' }}>
-        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o - 1)}>{t('admin.menus.precedente')}</button>
-        <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>📅 {formatSemaine(semaine)}</span>
-        <button className="btn btn--ghost btn--sm" onClick={() => setOffset(o => o + 1)}>{t('admin.menus.suivante')}</button>
-      </div>
-
-      {/* Bandeau statut */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', marginBottom: 'var(--space-lg)', flexWrap: 'wrap' }}>
-        {estDefaut ? (
-          <>
-            <span className="s-badge s-badge--en_attente">{t('admin.menus.defautApplique')}</span>
-            <button className="btn btn--primary btn--sm" onClick={() => setModif(true)}>
-              {t('admin.menus.personnaliser')}
-            </button>
-          </>
-        ) : menu ? (
-          <>
-            <span className={`s-badge ${menu.publie ? 's-badge--accepte' : 's-badge--en_attente'}`}>
-              {menu.publie ? t('admin.menus.publie') : t('admin.menus.brouillon')}
-            </span>
-            <button className={`btn btn--sm ${menu.publie ? 'btn--outline' : 'btn--primary'}`} onClick={togglePublier}>
-              {menu.publie ? t('admin.menus.depublier') : t('admin.menus.publier')}
-            </button>
-            <button className="btn btn--sm btn--ghost" onClick={supprimerPerso} style={{ color: 'var(--error)' }}>
-              {t('admin.menus.retourDefaut')}
-            </button>
-          </>
-        ) : (
-          <span className="s-badge s-badge--en_attente">{t('admin.menus.aucunMenu')}</span>
-        )}
-      </div>
-
-      {/* Formulaire ou aperçu */}
-      {modif || (!estDefaut && menu) ? (
-        <form onSubmit={handleSubmit}>
-          <FormulaireMenu form={form} onChange={handleChange} />
-          <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end', marginTop: 'var(--space-xl)' }}>
-            {modif && estDefaut && (
-              <button type="button" className="btn btn--ghost" onClick={() => setModif(false)}>{t('common.annuler')}</button>
-            )}
-            <button type="submit" className="btn btn--primary" disabled={envoi}>
-              {envoi ? t('common.enregistrement') : menu && !estDefaut ? t('admin.menus.mettreAJour') : t('admin.menus.creerPerso')}
-            </button>
-          </div>
-        </form>
-      ) : estDefaut && !modif ? (
-        <ApercuMenu form={form} />
-      ) : null}
-    </div>
-  );
-};
-
-// ── Composant principal ───────────────────────────────────────
-const MenusAdmin = () => {
-  const { t } = useTranslation(); // Fonction de traduction FR / EN
-  return (
   <div>
     <div className="admin-page-entete">
       <h1 className="admin-page-titre"><Trans i18nKey="admin.menus.titre" components={{ s: <span /> }} /></h1>
     </div>
-    <SectionMenuDefaut />
-    <div style={{ marginBottom: 'var(--space-md)' }}>
-      <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 'var(--space-sm)' }}>
-        📅 {t('admin.menus.semaineTitre')}
-      </h2>
-      <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>
-        {t('admin.menus.semaineAide')}
-      </p>
+
+    <div className="a-card">
+      <p className="menus-cycle-aide">{t('admin.menus.aide')}</p>
+
+      {echec ? (
+        <div className="a-vide"><p>{t('admin.menus.erreurChargement')}</p></div>
+      ) : !semaines ? (
+        <div className="a-vide"><p>{t('admin.menus.chargement')}</p></div>
+      ) : (
+        <>
+          {/* Un onglet par semaine du cycle */}
+          <div className="menus-onglets" role="tablist">
+            {NUMEROS.map(n => (
+              <button
+                key={n}
+                type="button"
+                role="tab"
+                aria-selected={n === numero}
+                className={`menus-onglet ${n === numero ? 'menus-onglet--actif' : ''}`}
+                onClick={() => setNumero(n)}
+              >
+                {t('admin.menus.semaine', { numero: n })}
+                {/* Point visible tant que la semaine n'est pas enregistrée */}
+                {nonSauvees.includes(n) && (
+                  <span className="menus-onglet__point" title={t('admin.menus.nonEnregistre')} aria-label={t('admin.menus.nonEnregistre')}>●</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <p className="menus-cycle-courant">📅 {t('admin.menus.enCours', { numero: numeroCourant })}</p>
+
+          <form onSubmit={handleSubmit}>
+            {/* key : recrée les éditeurs Quill à chaque changement d'onglet */}
+            <FormulaireMenu key={numero} form={semaines[numero]} onChange={handleChange} />
+            <div className="menus-cycle-actions">
+              <button type="submit" className="btn btn--primary" disabled={envoi}>
+                {envoi ? t('common.enregistrement') : t('admin.menus.enregistrer', { numero })}
+              </button>
+            </div>
+          </form>
+        </>
+      )}
     </div>
-    <SectionMenuSemaine />
   </div>
   );
 };

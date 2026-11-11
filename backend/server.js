@@ -131,6 +131,7 @@ app.use('/uploads', (err, req, res, next) => {
 );
 // Stockage privé des pièces justificatives (jamais servi en statique)
 fs.mkdirSync(path.join(__dirname, 'stockage', 'justificatifs'), { recursive: true });
+fs.mkdirSync(path.join(__dirname, 'stockage', 'guide'), { recursive: true }); // Guide d'inscription envoyé par le super admin
 
 // ── ROUTES API ───────────────────────────────────────────────────────
 // signerReponsesApi : ajoute une signature temporaire aux chemins de

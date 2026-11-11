@@ -5,14 +5,15 @@
 //             1. Espace parents : connexion des parents
 //             2. Création de comptes et nouvelles inscriptions
 //                (sans effet si l'espace parents est fermé)
+//            Et le guide d'inscription (PDF) à remplacer.
 //            Chaque changement demande une confirmation, puis le
 //            site public est mis à jour sans recharger la page.
 // ============================================================
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
 import toast from 'react-hot-toast';
-import api from '../../../services/api';
+import api, { URL_GUIDE_INSCRIPTION } from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import { useParametres } from '../../../context/ParametresContext';
 import Chargement from '../../../components/ui/Chargement/Chargement';
@@ -35,6 +36,8 @@ const Parametres = () => {
   // reglages : { cle: { ouvert, modifie_le, modifie_par } } ; null = chargement
   const [reglages, setReglages] = useState(null);
   const [envoi,    setEnvoi]    = useState(null); // Clé en cours d'enregistrement
+  const [envoiGuide, setEnvoiGuide] = useState(false); // Guide d'inscription en cours d'envoi
+  const champGuide = useRef(null);                     // Sélecteur de fichier caché
 
   const charger = useCallback(() => {
     api.get('/parametres')
@@ -60,6 +63,25 @@ const Parametres = () => {
       toast.error(err.response?.data?.message || t(`${P}.erreur`));
     }
     setEnvoi(null);
+  };
+
+  // Remplace le guide d'inscription par le PDF choisi, après confirmation
+  const remplacerGuide = async (e) => {
+    const fichier = e.target.files[0];
+    e.target.value = ''; // Permet de choisir à nouveau le même fichier
+    if (!fichier || !window.confirm(t(`${P}.guide.confirmer`, { nom: fichier.name }))) return;
+
+    const donnees = new FormData();
+    donnees.append('fichier', fichier);
+    setEnvoiGuide(true);
+    try {
+      await api.post('/parametres/guide-inscription', donnees, { headers: { 'Content-Type': 'multipart/form-data' } });
+      toast.success(t(`${P}.guide.remplace`));
+      charger(); // Date du remplacement
+    } catch (err) {
+      toast.error(err.response?.data?.message || t(`${P}.erreur`));
+    }
+    setEnvoiGuide(false);
   };
 
   if (!reglages) return <Chargement />;
@@ -114,6 +136,32 @@ const Parametres = () => {
             </div>
           );
         })}
+
+        {/* Guide d'inscription téléchargé par les familles */}
+        <div className="a-card parametre-carte">
+          <div className="parametre-carte__texte">
+            <h2 className="parametre-carte__titre">📄 {t(`${P}.guide.titre`)}</h2>
+            <p className="parametre-carte__description">{t(`${P}.guide.texte`)}</p>
+            {reglages.guide_inscription?.modifie_le && (
+              <p className="parametre-carte__modifie">
+                {t(`${P}.modifieSansNom`, {
+                  date: new Date(reglages.guide_inscription.modifie_le).toLocaleString(getLocale(), { dateStyle: 'long', timeStyle: 'short' })
+                })}
+              </p>
+            )}
+            <a href={URL_GUIDE_INSCRIPTION} className="parametre-guide__lien">{t(`${P}.guide.voir`)}</a>
+          </div>
+
+          <input ref={champGuide} type="file" accept="application/pdf" hidden onChange={remplacerGuide} />
+          <button
+            type="button"
+            className="btn btn--primary btn--sm parametre-guide__bouton"
+            onClick={() => champGuide.current.click()}
+            disabled={envoiGuide}
+          >
+            {envoiGuide ? t('common.enregistrement') : t(`${P}.guide.remplacer`)}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -2,8 +2,8 @@
    FICHIER : Menus.css  (espace admin)
    PAGE    : /admin/menus
    RÔLE    : Styles de la page de gestion des menus de la semaine.
-             Affiche les 5 jours en colonnes côte à côte,
-             chaque colonne contenant midi + goûter.
+             Affiche les 5 jours en cartes empilées (lundi en haut),
+             chaque carte contenant midi + goûter.
 
    STRUCTURE :
      1. Import admin global
@@ -18,10 +18,8 @@
 
 /* ── GRILLE DES 5 JOURS ─────────────────────────────────── */
 
-/* Affiche lundi→vendredi en 5 colonnes égales sur ordinateur.
-   Sur petit ordinateur (≤1279px) → 3 colonnes, sur tablette (≤1023px)
-   → 2 colonnes, sur mobile (≤767px) → 1 colonne. */
-.menus-admin-grille { display:grid; grid-template-columns:repeat(5, 1fr); gap:var(--space-md); }
+/* Cartes empilées de lundi à vendredi, sur toutes les tailles d'écran */
+.menus-admin-grille { display:grid; grid-template-columns:1fr; gap:var(--space-md); }
 
 /* ── COLONNE D'UN JOUR ──────────────────────────────────── */
 
@@ -33,14 +31,23 @@
    bordure orange en bas pour séparer visuellement du contenu. */
 .menu-admin-jour { font-family:var(--font-heading); font-size:1.1rem; color:var(--primary); padding-bottom:var(--space-sm); border-bottom:2px solid var(--primary-light); margin-bottom:var(--space-sm); }
 
-/* ── APERÇU LECTURE SEULE ───────────────────────────────── */
+/* ── CYCLE DE 4 SEMAINES ────────────────────────────────── */
 
-/* Colonne en mode aperçu (pas de champs, juste du texte) :
-   fond légèrement grisé pour distinguer du mode édition. */
-.menu-admin-col--apercu { background:var(--bg-light); }
+.menus-cycle-aide { font-size:0.85rem; color:var(--text-gray); margin:0 0 var(--space-lg); }
 
-/* Ligne de texte dans l'aperçu (midi ou goûter) */
-.apercu-label { font-size:0.88rem; color:var(--text-dark); margin:0 0 var(--space-sm); line-height:1.5; }
+/* Rangée d'onglets Semaine 1 à 4 (passe à la ligne sur mobile) */
+.menus-onglets { display:flex; flex-wrap:wrap; gap:var(--space-sm); border-bottom:1px solid var(--border); padding-bottom:var(--space-sm); margin-bottom:var(--space-md); }
+
+.menus-onglet { background:none; border:none; border-radius:var(--radius-md); padding:var(--space-sm) var(--space-md); font-weight:700; color:var(--text-gray); cursor:pointer; }
+.menus-onglet:hover { color:var(--primary); }
+.menus-onglet--actif { background:var(--primary-light); color:var(--primary); }
+
+/* Point signalant une semaine modifiée mais pas enregistrée */
+.menus-onglet__point { margin-left:var(--space-xs); color:var(--error); }
+
+.menus-cycle-courant { font-size:0.85rem; font-weight:700; margin:0 0 var(--space-lg); }
+
+.menus-cycle-actions { display:flex; justify-content:flex-end; margin-top:var(--space-xl); }
 
 /* ── ÉDITEURS QUILL DANS LES MENUS ─────────────────────── */
 
@@ -86,38 +93,15 @@
   font-style: normal;
 }
 
-/* Affichage HTML dans l'aperçu lecture seule */
-.menu-apercu-html {
-  font-size:   0.88rem;
-  color:       var(--text-dark);
-  line-height: 1.5;
-  margin-bottom: var(--space-sm);
-}
-
-.menu-apercu-html p    { margin: 0 0 4px; }
-.menu-apercu-html ul,
-.menu-apercu-html ol   { margin: 0; padding-left: var(--space-lg); }
-.menu-apercu-html li   { margin-bottom: 2px; }
-.menu-apercu-html strong { font-weight: 700; }
-.menu-apercu-html em   { font-style: italic; }
-
-
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 
-/* Petit ordinateur (≤1279px) : 3 colonnes (2 lignes : 3 jours puis 2) */
+/* Petit ordinateur (≤1279px) : cartes un peu moins aérées */
 @media (max-width: 1279px) {
-  .menus-admin-grille { grid-template-columns: repeat(3, 1fr); }
   .menu-admin-col { padding: var(--space-lg); }
 }
 
-/* Tablette (≤1023px) : 2 colonnes */
-@media (max-width: 1023px) {
-  .menus-admin-grille { grid-template-columns: repeat(2, 1fr); }
-}
-
-/* Mobile (≤767px) : 1 colonne, chaque jour occupe toute la largeur */
+/* Mobile (≤767px) : espacements et éditeurs réduits */
 @media (max-width: 767px) {
-  .menus-admin-grille { grid-template-columns: 1fr; }
   .menu-admin-col { padding: var(--space-md); }
   .menu-quill-wrapper .ql-editor { min-height: 80px; }
 }
@@ -132,9 +116,8 @@
   .menu-quill-wrapper--petit .ql-editor { min-height: 44px; }
 }
 
-/* Grand écran (≥1440px) : les 5 jours restent côte à côte avec
-   davantage d'espace entre les colonnes */
+/* Grand écran (≥1440px) : davantage d'espace entre les cartes */
 @media (min-width: 1440px) {
-  .menus-admin-grille { grid-template-columns: repeat(5, 1fr); gap: var(--space-lg); }
+  .menus-admin-grille { gap: var(--space-lg); }
 }
 

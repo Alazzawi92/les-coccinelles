@@ -4,6 +4,7 @@ const rateLimit = require('express-rate-limit');
 const { body }  = require('express-validator');
 
 const authController    = require('../controllers/authController');
+const deuxFacteurs      = require('../controllers/deuxFacteursController');
 const { verifierToken } = require('../middlewares/auth.middleware');
 const { validerDonnees }= require('../middlewares/validate.middleware');
 const { verifierTurnstile } = require('../middlewares/turnstile.middleware');
@@ -78,6 +79,22 @@ router.post('/google',
   validerDonnees,
   authController.googleLogin
 );
+
+// ── DOUBLE AUTHENTIFICATION ──────────────────────────────────────────
+// Code reçu par email. Limite par adresse IP, large car l'équipe partage
+// la même connexion ; chaque compte est en plus bloqué après 5 codes faux.
+const limite2fa = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max:      30,
+  message:  { success: false, message: 'Trop de tentatives. Réessayez dans 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders:   false
+});
+const regleJeton = body('jeton').isString().notEmpty().withMessage('Reconnectez-vous');
+const regleCode  = body('code').isString().matches(/^\d{6}$/).withMessage('Le code contient 6 chiffres');
+
+router.post('/2fa/verifier', limite2fa, regleJeton, regleCode, validerDonnees, deuxFacteurs.verifierJetonEtape, deuxFacteurs.verifier);
+router.post('/2fa/renvoyer', limite2fa, regleJeton, validerDonnees, deuxFacteurs.verifierJetonEtape, deuxFacteurs.renvoyer);
 
 // POST /api/auth/logout — Déconnexion (token requis)
 router.post('/logout', verifierToken, authController.logout);

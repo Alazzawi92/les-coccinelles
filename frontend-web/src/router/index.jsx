@@ -28,6 +28,7 @@ import MentionsLegales   from '../pages/public/MentionsLegales/MentionsLegales';
 
 // ── Pages authentification ────────────────────────────────────
 import Login          from '../pages/auth/Login/Login';
+import DeuxFacteurs   from '../pages/auth/DeuxFacteurs/DeuxFacteurs';
 import Register       from '../pages/auth/Register/Register';
 import ForgotPassword from '../pages/auth/ForgotPassword/ForgotPassword';
 import ResetPassword  from '../pages/auth/ResetPassword/ResetPassword';
@@ -105,6 +106,7 @@ const AppRouter = () => {
         {/* ── AUTHENTIFICATION ────────────────────────────────
             Pas de layout : pages plein écran centrées */}
         <Route path="/connexion"           element={<Login />} />
+        <Route path="/connexion/verification" element={<DeuxFacteurs />} /> {/* Double authentification */}
         {/* Création de compte : renvoie à l'accueil si elle est fermée (Admin → Paramètres) */}
         <Route path="/creer-un-compte"     element={<ParametreRoute reglage="creationComptesOuverte"><Register /></ParametreRoute>} />
         <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />

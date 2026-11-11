@@ -5,6 +5,7 @@ const { User } = require('../models');
 const { genererAccessToken, genererRefreshToken, verifierRefreshToken } = require('../config/jwt');
 const { envoyerVerificationEmail, envoyerResetMotDePasse, envoyerCompteEnAttente } = require('../services/mail.service');
 const { creerNotification } = require('../services/notification.service');
+const { etapeDeuxFacteurs } = require('../services/deuxFacteurs.service');
 const { succes, erreur, cree } = require('../utils/response');
 const { OAuth2Client } = require('google-auth-library');
 const {
@@ -16,10 +17,10 @@ const {
 // reçus du bouton "Se connecter avec Google" (aucun appel à l'API Google).
 const clientGoogle = new OAuth2Client();
 
-// ── RÉPONSE DE CONNEXION COMMUNE ────────────────────────────────────
-// Génère les tokens JWT et renvoie le profil, pour la connexion
-// classique (email + mot de passe) comme pour la connexion Google.
-const repondreConnexion = async (res, user) => {
+// ── OUVERTURE DE SESSION ────────────────────────────────────────────
+// Génère les tokens JWT et renvoie le profil. Appelé uniquement après
+// la validation du code de double authentification.
+const creerSession = async (user) => {
   // Générer les deux tokens JWT
   const accessToken  = genererAccessToken(user.id, user.role);
   const refreshToken = genererRefreshToken(user.id);
@@ -28,7 +29,7 @@ const repondreConnexion = async (res, user) => {
   await user.update({ refresh_token: refreshToken });
 
   // Retourner les tokens et les infos utilisateur (sans données sensibles)
-  return succes(res, {
+  return {
     accessToken,
     refreshToken,
     user: {
@@ -40,7 +41,14 @@ const repondreConnexion = async (res, user) => {
       avatar:        user.avatar,
       email_verifie: user.email_verifie
     }
-  }, 'Connexion réussie');
+  };
+};
+
+// Mot de passe ou compte Google valide : il reste à donner le code reçu par email
+const demanderDeuxFacteurs = async (res, user) => {
+  const etape = await etapeDeuxFacteurs(user);
+  if (etape.bloque) return erreur(res, 'Trop de codes incorrects. Réessayez dans 15 minutes.', 429);
+  return succes(res, etape, 'Code de vérification requis');
 };
 
 // ── INSCRIPTION ─────────────────────────────────────────────────────
@@ -156,7 +164,7 @@ const login = async (req, res) => {
       return erreur(res, MESSAGE_ESPACE_FERME, 403);
     }
 
-    return repondreConnexion(res, user);
+    return demanderDeuxFacteurs(res, user);
 
   } catch (err) {
     console.error('Erreur login :', err);
@@ -239,7 +247,7 @@ const googleLogin = async (req, res) => {
       return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
     }
 
-    return repondreConnexion(res, user);
+    return demanderDeuxFacteurs(res, user);
 
   } catch (err) {
     console.error('Erreur connexion Google :', err);
@@ -397,6 +405,7 @@ const verifyEmail = async (req, res) => {
 };
 
 module.exports = {
+  creerSession,
   register,
   login,
   googleLogin,

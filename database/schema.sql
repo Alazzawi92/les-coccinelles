@@ -371,6 +371,20 @@ CREATE TABLE IF NOT EXISTS equipe_membres (
   INDEX idx_equipe_actif (actif)
 );
 
+-- ── TABLE 18 : deux_facteurs ─────────────────────────────────
+-- Code de connexion envoyé par email, à part de users pour ne jamais être exposé
+CREATE TABLE IF NOT EXISTS deux_facteurs (
+  user_id        INT PRIMARY KEY,                       -- Compte concerné
+  code_empreinte CHAR(64),                              -- Empreinte du code en cours (jamais le code lui-même)
+  expire_le      DATETIME,                              -- Fin de validité du code
+  envoye_le      DATETIME,                              -- Dernier envoi (limite les renvois)
+  tentatives     INT NOT NULL DEFAULT 0,                -- Codes faux pour le code en cours
+  bloque_jusqu   DATETIME,                              -- Blocage temporaire après trop d'erreurs
+  created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- ── TABLE 17 : parametres ───────────────────────────────────
 -- Réglages du site modifiables par le super admin (Admin → Paramètres) :
 -- ouverture de l'espace parents et de la création de comptes ('1' / '0')

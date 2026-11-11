@@ -12,6 +12,7 @@ const Document       = require('./Document');
 const Message        = require('./Message');
 const Actualite      = require('./Actualite');
 const Menu           = require('./Menu');
+const DeuxFacteurs   = require('./DeuxFacteurs');
 const Notification   = require('./Notification');
 const GalerieAlbum   = require('./GalerieAlbum');
 const GaleriePhoto   = require('./GaleriePhoto');
@@ -130,6 +131,7 @@ module.exports = {
   Message,
   Actualite,
   Menu,
+  DeuxFacteurs,
   Notification,
   GalerieAlbum,
   GaleriePhoto,

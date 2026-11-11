@@ -15,7 +15,6 @@ import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
 import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
-import { useAuth } from '../../../context/AuthContext';
 import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Register.css';
@@ -46,7 +45,6 @@ const Register = () => {
   const [jeton,       setJeton]       = useState('');      // Jeton de la case anti-robot
   const turnstileRef = useRef(null);                       // Pour redemander une vérification
 
-  const { connecter } = useAuth();
   const navigate      = useNavigate();
 
   // Critères de force du mot de passe, recalculés à chaque frappe
@@ -264,10 +262,10 @@ const Register = () => {
         <GoogleButton
           texte="signup_with"
           onConnexion={(data) => {
-            // Compte Google déjà existant et validé : connexion directe
-            connecter(data.user, data.accessToken, data.refreshToken);
-            toast.success(t('auth.bienvenue', { prenom: data.user.prenom }));
-            navigate('/parent/tableau-de-bord', { replace: true });
+            // Compte Google déjà existant et validé : saisie du code reçu par email
+            navigate('/connexion/verification', {
+              state: { jeton: data.jeton_2fa, emailMasque: data.email_masque, emailEnvoye: data.email_envoye }
+            });
           }}
           onCompteCree={(message) => navigate('/connexion', { state: { message } })}
           onErreur={setErreur}

@@ -43,7 +43,7 @@ const chargerScriptGoogle = () => {
  * Props :
  * - texte        : libellé Google, 'signin_with' (Se connecter avec Google)
  *                  ou 'signup_with' (S'inscrire avec Google)
- * - onConnexion  : appelé avec { user, accessToken, refreshToken } si la connexion réussit
+ * - onConnexion  : appelé avec { jeton_2fa, email_masque, email_envoye } si Google confirme l'identité
  * - onCompteCree : appelé avec le message de l'API si un compte vient d'être créé
  *                  (il doit encore être validé par un administrateur)
  * - onErreur     : appelé avec un message d'erreur à afficher
