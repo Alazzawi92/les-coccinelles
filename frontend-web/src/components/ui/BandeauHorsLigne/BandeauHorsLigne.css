@@ -1,0 +1,22 @@
+/* ============================================================
+   FICHIER : BandeauHorsLigne.css
+   RÔLE    : Bandeau « Vous êtes hors ligne », fixé en haut de
+             l'écran, au-dessus de tout le contenu.
+   ============================================================ */
+
+.bandeau-hors-ligne {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-toast);
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  border-bottom: 2px solid var(--warning-border);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-sm) var(--space-md);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}

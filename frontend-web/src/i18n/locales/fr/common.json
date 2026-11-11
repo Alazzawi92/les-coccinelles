@@ -290,5 +290,13 @@
     "incomplet": "⚠️ Dossier incomplet",
     "liste_attente": "🕒 Liste d'attente",
     "refuse": "❌ Demande refusée"
+  },
+  "horsLigne": {
+    "message": "Vous êtes hors ligne. Les informations s'afficheront dès le retour de la connexion."
+  },
+  "miseAJour": {
+    "message": "Une nouvelle version de l'application est disponible.",
+    "mettreAJour": "Mettre à jour",
+    "plusTard": "Plus tard"
   }
 }

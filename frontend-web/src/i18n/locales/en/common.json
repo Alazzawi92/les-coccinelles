@@ -290,5 +290,13 @@
     "incomplet": "⚠️ Incomplete file",
     "liste_attente": "🕒 Waiting list",
     "refuse": "❌ Request declined"
+  },
+  "horsLigne": {
+    "message": "You are offline. Information will appear as soon as the connection is back."
+  },
+  "miseAJour": {
+    "message": "A new version of the app is available.",
+    "mettreAJour": "Update",
+    "plusTard": "Later"
   }
 }

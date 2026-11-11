@@ -1,0 +1,52 @@
+/* ============================================================
+   FICHIER : BandeauMiseAJour.css
+   RÔLE    : Bandeau « Nouvelle version disponible » de la PWA.
+             Carte flottante en bas de l'écran (au-dessus de la
+             bannière cookies), pleine largeur sur mobile.
+   ============================================================ */
+
+.bandeau-maj {
+  position: fixed;
+  right: var(--space-lg);
+  bottom: var(--space-lg);
+  z-index: var(--z-toast);
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  background: var(--surface);
+  border: 2px solid var(--primary-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.bandeau-maj__texte {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.bandeau-maj__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* Mobile : le bandeau prend toute la largeur, boutons côte à côte */
+@media (max-width: 767px) {
+  .bandeau-maj {
+    left: var(--space-md);
+    right: var(--space-md);
+    bottom: var(--space-md);
+    max-width: none;
+  }
+
+  .bandeau-maj__actions .btn {
+    flex: 1;
+  }
+}

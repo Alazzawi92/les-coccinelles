@@ -10,6 +10,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ParametresProvider } from './context/ParametresContext';
 import AppRouter from './router';
 import CookieBanner from './components/ui/CookieBanner/CookieBanner';
+import BandeauHorsLigne from './components/ui/BandeauHorsLigne/BandeauHorsLigne';
+import BandeauMiseAJour from './components/ui/BandeauMiseAJour/BandeauMiseAJour';
 import './styles/global.css'; // Styles globaux (reset + variables)
 
 const App = () => {
@@ -43,6 +45,12 @@ const App = () => {
 
       {/* Bannière RGPD de consentement aux cookies */}
       <CookieBanner />
+
+      {/* PWA : prévient quand la connexion internet est perdue */}
+      <BandeauHorsLigne />
+
+      {/* PWA : propose de passer à la nouvelle version après un déploiement */}
+      <BandeauMiseAJour />
 
     </ParametresProvider>
     </AuthProvider>
