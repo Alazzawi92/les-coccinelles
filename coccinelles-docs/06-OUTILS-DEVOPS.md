@@ -208,7 +208,6 @@ backend/uploads/*
 .DS_Store
 dist/
 build/
-.expo/
 
 # Logs
 *.log
@@ -264,5 +263,6 @@ docker-compose up -d
 
 # 5. Installer les dépendances frontend
 cd frontend-web && npm install
-cd ../frontend-mobile && npm install
+# (pas d'application mobile séparée : la version mobile est la PWA
+#  générée par frontend-web, voir 04-FRONTEND-MOBILE.md)
 ```

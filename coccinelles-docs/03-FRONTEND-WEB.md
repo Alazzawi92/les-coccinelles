@@ -9,113 +9,119 @@
 
 ```
 frontend-web/
+├── public/
+│   ├── index.html              # Page HTML unique (+ lien manifest PWA, balises iPhone)
+│   ├── manifest.json           # PWA : nom, couleurs, icônes (voir 04-FRONTEND-MOBILE.md)
+│   ├── icons/                  # PWA : icônes 192 / 512 / maskable / iPhone
+│   ├── images/                 # Logo, photo floutée de remplacement
+│   ├── theme-init.js           # Thème clair / sombre appliqué avant React
+│   └── fiche-preinscription.pdf
+├── vercel.json                 # Hébergement : réécritures, CSP, en-têtes de sécurité
 └── src/
-    ├── assets/
-    │   ├── images/             # Images du projet
-    │   ├── svg/                # SVG coccinelles, illustrations
-    │   └── fonts/              # Fonts locales si besoin
     ├── components/
-    │   ├── common/             # Composants réutilisables partout
-    │   │   ├── Button/
-    │   │   │   ├── Button.jsx
-    │   │   │   └── Button.css
-    │   │   ├── Input/
-    │   │   ├── Card/
-    │   │   ├── Modal/
-    │   │   ├── Badge/
-    │   │   ├── Alert/
-    │   │   ├── Loader/
-    │   │   └── Avatar/
-    │   ├── forms/              # Formulaires spécifiques au projet
-    │   │   ├── LoginForm/
-    │   │   ├── RegisterForm/
-    │   │   ├── InscriptionForm/
-    │   │   └── AbsenceForm/
-    │   └── ui/                 # Composants design system
-    │       ├── Navbar/
-    │       ├── Sidebar/
-    │       ├── Footer/
-    │       └── Notification/
+    │   ├── NotifCloche/        # Cloche de notifications (layouts parent et admin)
+    │   └── ui/                 # Composants réutilisables (1 dossier = .jsx + .css)
+    │       ├── AccesReserve/
+    │       ├── ApercuEquipe/
+    │       ├── BadgeInscription/
+    │       ├── BandeauHorsLigne/
+    │       ├── BandeauMiseAJour/
+    │       ├── Chargement/
+    │       ├── CoccinelleDefilement/
+    │       ├── CoccinelleSvg/
+    │       ├── CookieBanner/
+    │       ├── GoogleButton/
+    │       ├── ImageSecours/
+    │       ├── LanguageSwitcher/
+    │       ├── ModaleEmailConfirme/
+    │       ├── ModaleInstallation/
+    │       ├── ThemeToggle/
+    │       └── Turnstile/
     ├── pages/
     │   ├── public/             # Accessibles sans connexion
     │   │   ├── Accueil/
-    │   │   ├── Presentation/
-    │   │   ├── Equipe/
-    │   │   ├── ProjetPedagogique/
-    │   │   ├── Horaires/
-    │   │   ├── Tarifs/
-    │   │   ├── Inscriptions/
     │   │   ├── Actualites/
-    │   │   ├── Menus/
-    │   │   ├── Galerie/
     │   │   ├── Contact/
-    │   │   └── MentionsLegales/
-    │   ├── parent/             # Espace parents (auth requis)
-    │   │   ├── Dashboard/
-    │   │   ├── MonProfil/
-    │   │   ├── MesEnfants/
-    │   │   ├── Inscription/
-    │   │   ├── Suivi/
-    │   │   ├── Absences/
-    │   │   ├── Documents/
-    │   │   ├── Messages/
-    │   │   ├── GaleriePrivee/
-    │   │   └── Consentement/
-    │   ├── admin/              # Espace admin (auth + rôle admin)
-    │   │   ├── Dashboard/
-    │   │   ├── Familles/
+    │   │   ├── Equipe/
+    │   │   ├── Horaires/
     │   │   ├── Inscriptions/
-    │   │   ├── Enfants/
-    │   │   ├── SuiviAdmin/
-    │   │   ├── Absences/
-    │   │   ├── Messagerie/
-    │   │   ├── Actualites/
+    │   │   ├── MentionsLegales/
     │   │   ├── Menus/
+    │   │   ├── Presentation/
+    │   │   ├── ProjetPedagogique/
+    │   │   └── Tarifs/
+    │   ├── parent/             # Espace parents (auth requis)
+    │   │   ├── Absences/
+    │   │   ├── Consentement/
+    │   │   ├── Dashboard/
     │   │   ├── Documents/
-    │   │   ├── Galerie/
+    │   │   ├── GaleriePrivee/
+    │   │   ├── Inscription/
+    │   │   ├── MesEnfants/
+    │   │   ├── Messages/
+    │   │   ├── MonProfil/
+    │   │   └── Suivi/
+    │   ├── admin/              # Espace admin (auth + rôle admin / super_admin)
+    │   │   ├── Absences/
+    │   │   ├── Actualites/
     │   │   ├── CMS/
-    │   │   └── Statistiques/
-    │   └── auth/
+    │   │   ├── Calendrier/
+    │   │   ├── Dashboard/
+    │   │   ├── Documents/
+    │   │   ├── Emargement/
+    │   │   ├── Enfants/
+    │   │   ├── Familles/
+    │   │   ├── Galerie/
+    │   │   ├── Inscriptions/
+    │   │   ├── Menus/
+    │   │   ├── Messagerie/
+    │   │   ├── Parametres/
+    │   │   ├── Rapports/
+    │   │   ├── Statistiques/
+    │   │   └── SuiviAdmin/
+    │   └── auth/               # Connexion, compte, double authentification
+    │       ├── DeuxFacteurs/
+    │       ├── ForgotPassword/
     │       ├── Login/
     │       ├── Register/
-    │       ├── ForgotPassword/
-    │       └── ResetPassword/
-    ├── layouts/
-    │   ├── PublicLayout/
-    │   │   ├── PublicLayout.jsx  # Layout site public
-    │   │   └── PublicLayout.css  # Styles propres au layout public
-    │   ├── ParentLayout/
-    │   │   ├── ParentLayout.jsx  # Layout espace parents
-    │   │   └── ParentLayout.css  # Styles propres au layout parent
-    │   └── AdminLayout/
-    │       ├── AdminLayout.jsx   # Layout espace admin
-    │       └── AdminLayout.css   # Styles propres au layout admin
-    ├── hooks/
-    │   ├── useAuth.js            # Hook authentification
-    │   ├── useApi.js             # Hook appels API
-    │   └── useNotifications.js   # Hook notifications
+    │       ├── ResetPassword/
+    │       └── VerifyEmail/
+    ├── layouts/                # Chaque layout a son propre CSS (navbar, footer, sidebar inclus)
+    │   ├── PublicLayout/       # Site public (barre de navigation + pied de page)
+    │   ├── ParentLayout/       # Espace parents (sidebar)
+    │   └── AdminLayout/        # Espace admin (sidebar)
     ├── context/
-    │   ├── AuthContext.jsx       # Contexte authentification global
-    │   └── NotifContext.jsx      # Contexte notifications
+    │   ├── AuthContext.jsx     # Utilisateur connecté, connexion / déconnexion
+    │   └── ParametresContext.jsx  # Réglages du super admin (espace parents, comptes)
+    ├── hooks/
+    │   ├── useAccesFamille.js
+    │   ├── useFenetreModale.js
+    │   ├── useInstallationPossible.js  # PWA : installation possible ?
+    │   ├── useMenuDuJour.js
+    │   └── usePageCMS.js
     ├── services/
-    │   ├── api.js                # Instance Axios configurée
-    │   ├── auth.service.js       # Appels API auth
-    │   ├── enfant.service.js     # Appels API enfants
-    │   ├── inscription.service.js
-    │   ├── absence.service.js
-    │   ├── message.service.js
-    │   └── galerie.service.js
+    │   ├── api.js              # Instance Axios (jeton JWT, rafraîchissement, langue)
+    │   └── auth.service.js     # Appels API d'authentification (dont 2FA)
+    ├── utils/                  # Fonctions utilitaires (dates, âge, validation,
+    │                           #   PDF des menus, installation PWA…)
+    ├── config/
+    │   ├── limites.js          # Tailles maximales des fichiers envoyés
+    │   └── version.js          # Numéro de version affiché en pied de page
+    ├── i18n/                   # Traductions FR / EN (common, public, auth, parent, admin)
     ├── styles/
-    │   ├── variables.css         # Variables CSS design system
-    │   ├── global.css            # Styles globaux
-    │   └── reset.css             # Reset CSS
-    ├── utils/
-    │   ├── formatDate.js         # Formater les dates en français
-    │   ├── validators.js         # Fonctions de validation
-    │   └── constants.js          # Constantes du projet
+    │   ├── variables.css       # Variables CSS design system (thème clair / sombre)
+    │   ├── reset.css           # Reset CSS
+    │   ├── global.css          # Styles globaux (boutons, formulaires…)
+    │   ├── pages-publiques.css # Styles communs des pages publiques
+    │   ├── auth.css            # Styles des pages de connexion / compte
+    │   ├── parent.css          # Styles communs de l'espace parents
+    │   └── admin.css           # Styles communs de l'espace admin
     ├── router/
-    │   └── index.jsx             # React Router — toutes les routes
-    └── App.jsx                   # Composant racine
+    │   └── index.jsx           # React Router — toutes les routes
+    ├── service-worker.js       # PWA : cache de l'interface (jamais l'API)
+    ├── serviceWorkerRegistration.js  # PWA : enregistrement + mises à jour
+    ├── App.jsx                 # Composant racine (contextes, toasts, bandeaux)
+    └── index.js                # Point d'entrée React
 ```
 
 ---

@@ -31,7 +31,7 @@ projet-coccinelles/
 │   ├── 01-BASE-DE-DONNEES.md     # Schéma SQL + relations
 │   ├── 02-BACKEND-API.md         # Routes Express + middlewares
 │   ├── 03-FRONTEND-WEB.md        # Architecture React web
-│   ├── 04-FRONTEND-MOBILE.md     # React Native Expo
+│   ├── 04-FRONTEND-MOBILE.md     # Version mobile : PWA installable
 │   ├── 05-SECURITE-RGPD.md       # Sécurité + RGPD
 │   ├── 06-OUTILS-DEVOPS.md       # Docker, Git, Trello
 │   ├── 07-COMPOSANTS-UI.md       # Design System + composants
@@ -87,11 +87,8 @@ projet-coccinelles/
 │       ├── router/               # React Router configuration
 │       └── App.jsx               # Composant racine
 │
-├── 📱 frontend-mobile/           # React Native Expo
-│   └── app/
-│       ├── (tabs)/               # Navigation par onglets
-│       ├── auth/                 # Écrans authentification
-│       └── _layout.jsx           # Layout principal Expo Router
+│   (📱 version mobile = PWA générée par frontend-web : manifest,
+│    icônes et service worker — voir 04-FRONTEND-MOBILE.md)
 │
 ├── 🐳 docker-compose.yml         # Orchestration containers
 ├── 🤖 CLAUDE.md                  # Guide pour Claude Code
@@ -147,7 +144,7 @@ projet-coccinelles/
 | Frontend Web | React | 18.x |
 | Routing Web | React Router | 6.x |
 | Styles | CSS Modules + variables CSS | — |
-| Frontend Mobile | React Native + Expo | SDK 51+ |
+| Frontend Mobile | PWA (manifest + service worker Workbox) | Workbox 6.x |
 | Backend | Node.js + Express | 20.x LTS |
 | ORM | Sequelize | 6.x |
 | Base de données | MySQL / MariaDB | 8.x |
@@ -273,10 +270,10 @@ cd frontend-web
 npm install
 npm start
 
-# 5. Lancer l'app mobile
-cd frontend-mobile
-npm install
-npx expo start
+# 5. Tester la version mobile (PWA) : uniquement sur le build de production
+cd frontend-web
+npm run build
+npx serve -s build
 ```
 
 ---

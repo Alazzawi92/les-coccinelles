@@ -7,12 +7,9 @@
 node_modules/
 backend/node_modules/
 frontend-web/node_modules/
-frontend-mobile/node_modules/
 
-# Build
+# Build (la version mobile est la PWA générée dans ce même build)
 frontend-web/build/
-frontend-mobile/.expo/
-frontend-mobile/dist/
 
 # Uploads (garder le dossier mais pas les fichiers)
 backend/uploads/avatars/*
@@ -21,6 +18,7 @@ backend/uploads/photos/*
 backend/uploads/justificatifs/*
 backend/uploads/messages/*
 backend/uploads/actualites/*
+backend/uploads/equipe/*
 !backend/uploads/**/.gitkeep
 # Stockage privé des pièces justificatives (jamais versionné)
 backend/stockage/

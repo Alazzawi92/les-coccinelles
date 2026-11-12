@@ -1,449 +1,220 @@
-# 📱 04 — FRONTEND MOBILE (React Native Expo)
+# 📱 04 — FRONTEND MOBILE (Progressive Web App)
 # Fichier : 04-FRONTEND-MOBILE.md
-# Description : Architecture de l'application mobile React Native avec Expo
-# iOS + Android depuis un seul code
+# Description : Version mobile de la plateforme sous forme de PWA
+# (application installable construite à partir du site React)
 
 ---
 
 ## 🎯 OBJECTIF
 
-Application mobile complémentaire à la plateforme web.
-Les parents peuvent :
-- Consulter le suivi quotidien de leur enfant
-- Déclarer une absence rapidement
-- Recevoir des notifications push
-- Envoyer et recevoir des messages
-- Voir la galerie photos
+Donner aux parents une **application sur leur téléphone** (icône sur l'écran
+d'accueil, ouverture plein écran) pour :
+- consulter le suivi quotidien de leur enfant ;
+- déclarer une absence rapidement ;
+- envoyer et recevoir des messages ;
+- voir la galerie photos ;
+- recevoir des notifications (étape 3, prévue après mars 2027).
 
 ---
 
-## 📁 STRUCTURE DE L'APPLICATION
+## 🔀 CHOIX TECHNIQUE : PWA AU LIEU DE REACT NATIVE / EXPO
+
+Le cahier des charges prévoyait au départ une application **React Native +
+Expo** séparée (dossier `frontend-mobile/`). Elle a été remplacée par une
+**Progressive Web App (PWA)** construite directement à partir de
+`frontend-web/`. Le dossier `frontend-mobile/` n'existe donc pas.
+
+| Critère | Application Expo | PWA (retenue) |
+|---|---|---|
+| Code à maintenir | 2 applications (web + mobile) | **1 seule** (le site React) |
+| Fonctionnalités parents | à recoder écran par écran | **toutes déjà présentes** |
+| Installation | App Store / Google Play | **depuis le navigateur**, sans store |
+| Coût | compte Apple 99 $/an + Google 25 $ | **gratuit** |
+| Mises à jour | validation des stores, téléchargement | **immédiates** à chaque déploiement Vercel |
+| Notifications push | Expo Notifications | Web Push (Android, iPhone ≥ iOS 16.4 si installée) |
+| Accès matériel (Bluetooth, NFC…) | oui | limité — **inutile pour une crèche** |
+
+**Conclusion :** pour une crèche de 28 places, la PWA couvre tous les besoins
+avec une seule base de code, sans frais et sans délai de publication.
+
+---
+
+## 📁 FICHIERS DE LA PWA
 
 ```
-frontend-mobile/
-├── app/                         # Expo Router (navigation basée sur les fichiers)
-│   ├── _layout.jsx              # Layout racine (providers globaux)
-│   ├── index.jsx                # Page d'accueil / redirection
-│   ├── auth/
-│   │   ├── _layout.jsx          # Layout des pages auth
-│   │   ├── connexion.jsx        # Page connexion
-│   │   └── mot-de-passe.jsx     # Page réinitialisation mot de passe
-│   └── (tabs)/                  # Navigation par onglets (connecté)
-│       ├── _layout.jsx          # Configuration des onglets
-│       ├── index.jsx            # Accueil / tableau de bord
-│       ├── suivi.jsx            # Suivi quotidien enfant
-│       ├── absences.jsx         # Gestion absences
-│       ├── messages.jsx         # Messagerie
-│       ├── galerie.jsx          # Galerie photos
-│       └── profil.jsx           # Mon profil
-├── components/
-│   ├── common/
-│   │   ├── Button.jsx           # Bouton réutilisable
-│   │   ├── Input.jsx            # Champ texte
-│   │   ├── Card.jsx             # Carte
-│   │   ├── Badge.jsx            # Badge statut
-│   │   └── Avatar.jsx           # Photo de profil
-│   └── screens/                 # Composants spécifiques aux écrans
-│       ├── SuiviCard.jsx        # Carte suivi journalier
-│       ├── AbsenceItem.jsx      # Ligne d'absence
-│       └── MessageBubble.jsx    # Bulle de message
-├── hooks/
-│   ├── useAuth.js               # Authentification
-│   └── useApi.js                # Appels API
-├── services/
-│   └── api.js                   # Axios configuré pour mobile
-├── context/
-│   └── AuthContext.jsx          # Contexte auth global
-├── constants/
-│   ├── colors.js                # Palette de couleurs (design system)
-│   ├── fonts.js                 # Polices
-│   └── api.js                   # URLs de l'API
-├── assets/
-│   ├── images/
-│   ├── fonts/
+frontend-web/
+├── public/
+│   ├── manifest.json                  # Nom, couleurs, icônes, mode plein écran
+│   ├── index.html                     # Lien vers le manifest + balises iPhone
 │   └── icons/
-├── app.json                     # Configuration Expo
-└── package.json
+│       ├── icon-192.png               # Icône Android
+│       ├── icon-512.png               # Icône Android haute définition / écran de démarrage
+│       ├── icon-maskable-512.png      # Icône avec marge (formes rondes Android)
+│       └── apple-touch-icon.png       # Icône iPhone / iPad (180 px)
+├── src/
+│   ├── service-worker.js              # Cache de l'interface (Workbox) — règle RGPD
+│   ├── serviceWorkerRegistration.js   # Enregistrement + détection des mises à jour
+│   ├── utils/installationPwa.js       # Logique « installer l'application »
+│   ├── hooks/useInstallationPossible.js  # Hook : l'installation est-elle possible ?
+│   ├── config/version.js              # Numéro de version affiché en pied de page
+│   └── components/ui/
+│       ├── BandeauHorsLigne/          # « Vous êtes hors ligne »
+│       ├── BandeauMiseAJour/          # « Nouvelle version disponible »
+│       └── ModaleInstallation/        # Fenêtre « Installez l'application »
+└── vercel.json                        # En-têtes : pas de cache sur le service worker, CSP
 ```
 
 ---
 
-## ⚙️ CONFIGURATION EXPO (app.json)
+## ⚙️ MANIFESTE (public/manifest.json)
 
-```json
-{
-  "expo": {
-    "name": "Les Coccinelles",
-    "slug": "les-coccinelles",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "coccinelles",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#FF9800"
-    },
-    "ios": {
-      "bundleIdentifier": "fr.lescoccinelles.app",
-      "supportsTablet": false
-    },
-    "android": {
-      "package": "fr.lescoccinelles.app",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FF9800"
-      }
-    },
-    "plugins": [
-      "expo-router",
-      "expo-notifications",
-      [
-        "expo-font",
-        {
-          "fonts": [
-            "./assets/fonts/Fredoka-Regular.ttf",
-            "./assets/fonts/Nunito-Regular.ttf",
-            "./assets/fonts/Nunito-Bold.ttf"
-          ]
-        }
-      ]
-    ]
-  }
-}
-```
+Décrit l'application installée :
+
+| Clé | Valeur | Rôle |
+|---|---|---|
+| `name` / `short_name` | Les Coccinelles — Crèche à Puilboreau / Coccinelles | Nom complet / nom sous l'icône |
+| `display` | `standalone` | Ouverture plein écran, sans barre d'adresse |
+| `start_url` / `scope` | `/` | Page d'ouverture et pages couvertes |
+| `theme_color` | `#FF7A45` | Couleur de la barre du téléphone (orange Coccinelles) |
+| `background_color` | `#FFFDF7` | Fond de l'écran de démarrage |
+| `icons` | 192, 512, maskable 512 | Icônes générées depuis le logo, sur fond crème |
 
 ---
 
-## 🎨 CONSTANTES DESIGN (constants/colors.js)
+## 🛡️ SERVICE WORKER ET RÈGLE RGPD
 
-```javascript
-// Palette de couleurs du design system Les Coccinelles
-// Identique au frontend web pour cohérence visuelle
+Le service worker (`src/service-worker.js`) est compilé automatiquement par
+`react-scripts build` (Workbox *InjectManifest*). Il n'est **actif qu'en
+production** : en développement (`npm start`), rien n'est mis en cache.
 
-export const COLORS = {
-  // Couleurs principales
-  primary:      '#FF9800',   // Orange principal
-  primaryDark:  '#E65100',   // Orange foncé
-  primaryLight: '#FFF3E0',   // Orange très clair
-  secondary:    '#66BB6A',   // Vert nature
-  accent1:      '#4FC3F7',   // Bleu ciel
-  accent2:      '#F06292',   // Rose doux
-  accent3:      '#BA68C8',   // Violet tendre
-  accent4:      '#FFEB3B',   // Jaune soleil
+### Ce qui est mis en cache
+| Contenu | Stratégie | Pourquoi |
+|---|---|---|
+| JS, CSS, `index.html` du build | **Pré-cache** (versionné par empreinte) | L'interface s'ouvre instantanément, même hors ligne |
+| Navigation (`/parent/suivi`, …) | `index.html` depuis le cache | React Router affiche ensuite la bonne page |
+| Fichiers de `/public` (logo, icônes, `theme-init.js`) | *Stale-while-revalidate*, 60 fichiers / 30 jours max | Rapide, mis à jour en arrière-plan |
 
-  // Textes et fonds
-  bgLight:   '#FFFDF7',      // Fond blanc chaud
-  bgGray:    '#F5F5F5',      // Fond gris clair
-  textDark:  '#2D3436',      // Texte principal
-  textGray:  '#636e72',      // Texte secondaire
-  white:     '#FFFFFF',
+### Ce qui n'est JAMAIS mis en cache (règle non négociable)
+- **Toutes les réponses de l'API** (suivi, messages, absences, profils…) ;
+- **Les photos d'enfants, documents et justificatifs** (`/uploads`).
 
-  // États
-  error:   '#E53935',        // Rouge erreur
-  success: '#43A047',        // Vert succès
-  warning: '#FB8C00'         // Orange avertissement
-};
-```
+Trois protections :
+1. l'API est sur un autre domaine (Alwaysdata) : les routes du service worker
+   sont limitées au domaine du site ;
+2. les chemins `/api` et `/uploads` sont en plus exclus explicitement ;
+3. aucune route ne vise les requêtes `fetch` / XHR de l'application.
+
+**Conséquence :** un téléphone perdu ou partagé ne contient **aucune donnée
+personnelle** dans le cache. Hors ligne, l'interface s'ouvre mais les données
+ne s'affichent pas : le bandeau « Vous êtes hors ligne » l'explique.
 
 ---
 
-## 📱 ÉCRANS PRINCIPAUX
+## 🔄 MISES À JOUR DE L'APPLICATION
 
-### 1. Layout racine (app/_layout.jsx)
-```jsx
-// Layout principal — enveloppe toute l'application
-import { Stack } from 'expo-router';            // Navigation Expo Router
-import { useFonts } from 'expo-font';           // Chargement des fonts
-import { AuthProvider } from '../context/AuthContext'; // Contexte auth
-import * as SplashScreen from 'expo-splash-screen'; // Écran de démarrage
-import { useEffect } from 'react';
+Problème classique des PWA : un service worker mal réglé garde les
+utilisateurs sur une ancienne version. Solution mise en place :
 
-// Garder le splash screen visible pendant le chargement
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  // Charger les fonts Google
-  const [fontsLoaded] = useFonts({
-    'Fredoka': require('../assets/fonts/Fredoka-Regular.ttf'),
-    'Nunito':  require('../assets/fonts/Nunito-Regular.ttf'),
-    'Nunito-Bold': require('../assets/fonts/Nunito-Bold.ttf')
-  });
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync(); // Cacher le splash quand fonts chargées
-    }
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) return null; // Attendre les fonts
-
-  return (
-    // Envelopper dans le provider d'authentification
-    <AuthProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />           {/* Accueil / redirection */}
-        <Stack.Screen name="auth" />            {/* Pages connexion */}
-        <Stack.Screen name="(tabs)" />          {/* Onglets principal */}
-      </Stack>
-    </AuthProvider>
-  );
-}
-```
-
-### 2. Navigation onglets (app/(tabs)/_layout.jsx)
-```jsx
-// Configuration de la navigation par onglets
-import { Tabs } from 'expo-router';         // Navigation onglets
-import { COLORS } from '../../constants/colors'; // Couleurs
-
-export default function TabsLayout() {
-  return (
-    <Tabs screenOptions={{
-      tabBarActiveTintColor:   COLORS.primary,   // Onglet actif en orange
-      tabBarInactiveTintColor: COLORS.textGray,  // Onglet inactif gris
-      tabBarStyle: {
-        backgroundColor: COLORS.white,
-        borderTopWidth: 0,
-        elevation: 10,                           // Ombre Android
-        shadowOpacity: 0.1,                      // Ombre iOS
-        height: 65,                              // Hauteur de la barre
-        paddingBottom: 10
-      },
-      tabBarLabelStyle: {
-        fontFamily: 'Nunito-Bold',               // Police des labels
-        fontSize: 11
-      },
-      headerShown: false                         // Pas de header par défaut
-    }}>
-      {/* Onglet Accueil */}
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Accueil',
-          tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />
-        }}
-      />
-
-      {/* Onglet Suivi */}
-      <Tabs.Screen
-        name="suivi"
-        options={{
-          title: 'Mon enfant',
-          tabBarIcon: ({ color }) => <TabIcon name="child" color={color} />
-        }}
-      />
-
-      {/* Onglet Messages */}
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: 'Messages',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIconWithBadge name="message" color={color} />
-          )
-        }}
-      />
-
-      {/* Onglet Galerie */}
-      <Tabs.Screen
-        name="galerie"
-        options={{
-          title: 'Photos',
-          tabBarIcon: ({ color }) => <TabIcon name="photo" color={color} />
-        }}
-      />
-
-      {/* Onglet Profil */}
-      <Tabs.Screen
-        name="profil"
-        options={{
-          title: 'Profil',
-          tabBarIcon: ({ color }) => <TabIcon name="person" color={color} />
-        }}
-      />
-    </Tabs>
-  );
-}
-```
-
-### 3. Tableau de bord (app/(tabs)/index.jsx)
-```jsx
-// Écran d'accueil : résumé pour le parent
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { COLORS } from '../../constants/colors'; // Palette couleurs
-import { useAuth } from '../../hooks/useAuth';   // Hook auth
-
-export default function AccueilScreen() {
-  const { user } = useAuth(); // Récupérer l'utilisateur connecté
-
-  return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-
-      {/* En-tête avec bonjour */}
-      <View style={styles.header}>
-        <Text style={styles.bonjour}>
-          Bonjour {user?.prenom} ! 👋
-        </Text>
-        <Text style={styles.sousTitre}>
-          Que souhaitez-vous faire aujourd'hui ?
-        </Text>
-      </View>
-
-      {/* Cartes d'accès rapide */}
-      <View style={styles.cartes}>
-        <CarteAcces
-          icon="🍽️"
-          titre="Suivi du jour"
-          sousTitre="Repas, sieste, activités"
-          couleur={COLORS.primary}
-          route="/(tabs)/suivi"
-        />
-        <CarteAcces
-          icon="📅"
-          titre="Absences"
-          sousTitre="Déclarer une absence"
-          couleur={COLORS.secondary}
-          route="/(tabs)/absences"
-        />
-        <CarteAcces
-          icon="💬"
-          titre="Messages"
-          sousTitre="Contacter la crèche"
-          couleur={COLORS.accent1}
-          route="/(tabs)/messages"
-        />
-        <CarteAcces
-          icon="📸"
-          titre="Photos"
-          sousTitre="Galerie de mon enfant"
-          couleur={COLORS.accent2}
-          route="/(tabs)/galerie"
-        />
-      </View>
-
-    </ScrollView>
-  );
-}
-
-// Styles avec StyleSheet (obligatoire React Native)
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bgLight  // Fond blanc chaud
-  },
-  header: {
-    padding: 24,
-    backgroundColor: COLORS.primary, // Bandeau orange en haut
-    paddingTop: 60                    // Espace pour la barre de statut
-  },
-  bonjour: {
-    fontFamily: 'Fredoka',
-    fontSize: 28,
-    color: COLORS.white
-  },
-  sousTitre: {
-    fontFamily: 'Nunito',
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: 4
-  },
-  cartes: {
-    padding: 16,
-    flexDirection: 'row',            // En ligne
-    flexWrap: 'wrap',                // Retour à la ligne si besoin
-    gap: 12
-  }
-});
-```
+1. `vercel.json` sert `/service-worker.js` avec `Cache-Control: no-cache` :
+   le navigateur vérifie toujours s'il a changé ;
+2. `serviceWorkerRegistration.js` recherche une nouvelle version **toutes les
+   heures** et **à chaque retour sur l'application** ;
+3. quand une nouvelle version est prête, le **bandeau « Nouvelle version
+   disponible »** s'affiche :
+   - **Mettre à jour** → message `SKIP_WAITING` au service worker, puis
+     rechargement unique de la page ;
+   - **Plus tard** → la nouvelle version s'appliquera à la prochaine ouverture.
+4. Le numéro de version (`src/config/version.js`) est affiché en pied de page
+   pour vérifier quelle version tourne sur un téléphone.
+   ➜ **À augmenter à chaque mise en ligne**, avec `version` dans `package.json`.
 
 ---
 
-## 🔔 NOTIFICATIONS PUSH
+## 📲 PROPOSER L'INSTALLATION (ModaleInstallation)
 
-```javascript
-// Configuration des notifications push avec Expo
-import * as Notifications from 'expo-notifications'; // Module notifications
-import * as Device from 'expo-device';               // Vérifier si c'est un appareil
+Une fenêtre « 📱 Installez l'application Les Coccinelles » s'ouvre **à
+l'arrivée sur le site** :
 
-// Configurer le comportement des notifications reçues
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,  // Afficher une alerte même si l'app est ouverte
-    shouldPlaySound: true,  // Jouer un son
-    shouldSetBadge: true    // Mettre à jour le badge de l'icône
-  })
-});
+| Appareil | Contenu de la fenêtre |
+|---|---|
+| Android / Chrome / Edge | Bouton **Installer** → fenêtre d'installation officielle du navigateur (événement `beforeinstallprompt`, capté dès le chargement dans `installationPwa.js`) |
+| iPhone / iPad | Apple n'autorise pas de bouton : la fenêtre montre les 2 étapes **Partager → Sur l'écran d'accueil** |
+| Firefox ordinateur | Rien (pas d'installation possible) |
 
-// Enregistrer l'appareil pour les notifications push
-export const enregistrerNotifications = async () => {
-  if (!Device.isDevice) {
-    // Les notifications push ne marchent pas sur émulateur
-    console.log('Utilisez un vrai appareil pour les notifications');
-    return null;
-  }
-
-  // Demander la permission à l'utilisateur
-  const { status } = await Notifications.requestPermissionsAsync();
-  if (status !== 'granted') {
-    console.log('Permission notifications refusée');
-    return null;
-  }
-
-  // Récupérer le token unique de l'appareil
-  const token = await Notifications.getExpoPushTokenAsync();
-  return token.data; // Ce token est envoyé au backend pour cibler l'appareil
-};
-```
+Règles pour ne pas gêner le visiteur :
+- elle s'ouvre **après le choix des cookies** (RGPD d'abord) ;
+- **jamais** si l'application est déjà installée (`display-mode: standalone`) ;
+- **jamais** dans l'espace admin ni sur les pages de connexion / création de compte ;
+- **« Plus tard »** (ou Échap, ou clic sur le fond) : pas de nouvelle proposition
+  pendant **7 jours** (date gardée dans `localStorage`, aucune donnée personnelle) ;
+- un bouton **« 📱 Installer l'application »** dans le pied de page la rouvre à
+  tout moment (visible seulement si l'installation est possible).
 
 ---
 
-## 📦 DÉPENDANCES NPM
+## 🔒 SÉCURITÉ (vercel.json)
 
-```json
-{
-  "dependencies": {
-    "expo":                     "~51.0.0",
-    "expo-router":              "~3.5.0",
-    "expo-font":                "~12.0.0",
-    "expo-notifications":       "~0.28.0",
-    "expo-splash-screen":       "~0.27.0",
-    "expo-status-bar":          "~1.12.0",
-    "react":                    "18.2.0",
-    "react-native":             "0.74.0",
-    "axios":                    "^1.4.0",
-    "@react-native-async-storage/async-storage": "^1.21.0"
-  }
-}
-```
+- `Content-Security-Policy` : ajout de `worker-src 'self'` et `manifest-src 'self'`
+  (service worker et manifeste uniquement depuis le site lui-même) ;
+- `/service-worker.js` : `Cache-Control: no-cache, no-store, must-revalidate` ;
+- `/manifest.json` : `Content-Type: application/manifest+json`.
+
+Les jetons de connexion restent gérés comme sur le site (voir
+`05-SECURITE-RGPD.md`) : la PWA ne change rien à l'authentification ni à la
+double authentification par email.
 
 ---
 
-## 🚀 COMMANDES UTILES
+## 🧪 TESTER LA PWA
 
+### Sur ordinateur
 ```bash
-# Démarrer l'application
-npx expo start
-
-# Démarrer avec tunnel (si problème réseau)
-npx expo start --tunnel
-
-# Build APK Android (pour tester)
-eas build --platform android --profile preview
-
-# Build iOS (nécessite compte Apple Developer)
-eas build --platform ios --profile preview
+cd frontend-web
+npm run build          # Le service worker n'existe qu'en production
+npx serve -s build     # Sert le build sur http://localhost:3000
 ```
+Puis Chrome → F12 → onglet **Application** :
+- **Manifest** : aucune erreur, icônes visibles ;
+- **Service workers** : `service-worker.js` actif ;
+- **Cache storage** : vérifier qu'aucune réponse d'API n'y figure (RGPD).
+
+### Sur téléphone (site Vercel en HTTPS)
+| Test | Résultat attendu |
+|---|---|
+| Ouvrir le site (navigation privée) | Bannière cookies, puis fenêtre « Installez l'application » |
+| Android : **Installer** | Icône « Coccinelles » sur l'écran d'accueil, ouverture plein écran |
+| iPhone : Partager → Sur l'écran d'accueil | Idem |
+| Mode avion dans l'application | Bandeau « Vous êtes hors ligne », interface toujours visible |
+| Nouveau déploiement puis retour dans l'app | Bandeau « Nouvelle version disponible » → version à jour en pied de page |
 
 ---
 
-## 📌 RÈGLES MOBILE IMPORTANTES
+## 🗺️ ÉTAPES ET SUITE
 
-1. **StyleSheet.create()** toujours — jamais de styles inline
-2. **COLORS** : toujours utiliser les constantes, pas de valeurs en dur
-3. **ScrollView** sur tous les écrans avec contenu long
-4. **KeyboardAvoidingView** sur les formulaires (évite le clavier qui cache)
-5. **SafeAreaView** pour les appareils avec encoche (iPhone X+)
-6. **AsyncStorage** pour stocker le token JWT localement
-7. **Tester sur vrai appareil** pour les notifications push
+| Étape | Contenu | État |
+|---|---|---|
+| 1 | Manifest, icônes, service worker, bandeau hors ligne | ✅ v1.0 |
+| 2 | Bandeau « Nouvelle version », version en pied de page | ✅ v1.1 |
+| — | Fenêtre « Installez l'application » | ✅ v1.3 |
+| 3 | **Notifications Web Push** (nouveau message, absence reçue, nouvelles photos) | ⏳ après mars 2027 |
+
+### Étape 3 prévue — notifications Web Push
+- clés **VAPID** dans le `.env` du backend + librairie `web-push` (Node) ;
+- table `abonnements_push` (migration) : un abonnement par appareil et par parent ;
+- accord demandé **dans le profil parent**, jamais à l'ouverture de l'app ;
+- envoi branché sur les notifications existantes (table `notifications`) ;
+- contenu **sans donnée sensible** dans la notification (ex. « Nouveau message
+  de la crèche »), le détail s'affiche après ouverture de l'app connectée ;
+- limite iPhone : fonctionne uniquement si la PWA est **installée** (iOS ≥ 16.4).
+
+---
+
+## 📌 RÈGLES PWA IMPORTANTES
+
+1. **Ne jamais mettre en cache une réponse d'API ou un fichier `/uploads`** (RGPD).
+2. **Augmenter `VERSION_APPLICATION`** à chaque mise en ligne.
+3. **Ne pas tester le service worker avec `npm start`** : utiliser `npm run build`.
+4. Toute nouvelle route privée côté site doit rester sous `/api` ou `/uploads`
+   pour bénéficier des exclusions du service worker.
+5. Les textes des bandeaux et de la fenêtre sont dans `common.json`
+   (`common.horsLigne`, `common.miseAJour`, `common.installation`) en FR et EN.

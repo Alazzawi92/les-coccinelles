@@ -13,7 +13,7 @@ Phase 2 — Site Public        (3 semaines) ████████████
 Phase 3 — Espace Parents     (4 semaines) ████████████████
 Phase 4 — Espace Admin       (3 semaines) ████████████
 Phase 5 — Galerie & Absences (2 semaines) ████████
-Phase 6 — App Mobile         (4 semaines) ████████████████
+Phase 6 — App Mobile (PWA)   (4 semaines) ████████████████
 Phase 7 — Finalisation       (2 semaines) ████████
                                           ─────────────────
 TOTAL                                     21 semaines (~5 mois)
@@ -36,7 +36,6 @@ Mettre en place toute l'infrastructure du projet.
 □ Configurer les variables d'environnement
 □ Initialiser le backend Node.js + Express
 □ Initialiser le frontend React
-□ Initialiser Expo (mobile)
 ```
 
 #### Base de données
@@ -259,32 +258,36 @@ Finaliser les fonctionnalités galerie et absences.
 
 ---
 
-## 📱 PHASE 6 — APPLICATION MOBILE (4 semaines)
+## 📱 PHASE 6 — APPLICATION MOBILE : PWA (4 semaines)
 
 ### Objectif
-Créer l'application mobile React Native.
+Offrir une application installable sur téléphone (Android et iPhone).
+
+> **Changement de choix technique (novembre 2026)** : l'application React
+> Native / Expo prévue au départ est remplacée par une **Progressive Web App**
+> construite à partir du site React. Une seule base de code, pas de store,
+> pas de frais, mises à jour immédiates, et toutes les fonctionnalités parents
+> (suivi, absences, messages, galerie) sont déjà disponibles.
+> Détails et justification : voir `04-FRONTEND-MOBILE.md`.
 
 ### Tâches
 ```
-□ Setup Expo + Expo Router
-□ Navigation par onglets
-□ Écran connexion
-□ Tableau de bord mobile
-□ Écran suivi quotidien
-□ Écran déclaration absence
-□ Écran messagerie
-□ Écran galerie photos
-□ Écran profil
-□ Notifications push (Expo Notifications)
-□ Stockage token (AsyncStorage)
-□ Build APK Android (test)
+✅ Manifest + icônes (192, 512, maskable, iPhone)
+✅ Service worker Workbox : cache de l'interface uniquement (jamais l'API — RGPD)
+✅ Bandeau « Vous êtes hors ligne »
+✅ Bandeau « Nouvelle version disponible » + numéro de version en pied de page
+✅ Fenêtre « Installez l'application » (Android : bouton, iPhone : étapes)
+✅ En-têtes Vercel (pas de cache du service worker, CSP worker / manifest)
+□ Notifications Web Push (VAPID + web-push) — après mars 2027
+□ Tests d'installation sur plusieurs téléphones Android / iPhone
 ```
 
 ### ✅ Critères de fin de phase 6
-- [ ] Application installable sur Android
-- [ ] Connexion + navigation fonctionnelle
+- [x] Application installable sur Android et iPhone
+- [x] Connexion + navigation fonctionnelle (même code que le site)
+- [x] Consultation du suivi enfant (même code que le site)
+- [x] Aucune donnée personnelle gardée en cache sur le téléphone
 - [ ] Réception des notifications push
-- [ ] Consultation du suivi enfant
 
 ---
 
@@ -326,6 +329,6 @@ Tests, corrections, déploiement, soutenance.
 | Phase 3 — Espace Parents | 4 semaines | ⏳ À faire |
 | Phase 4 — Espace Admin | 3 semaines | ⏳ À faire |
 | Phase 5 — Galerie & Absences | 2 semaines | ⏳ À faire |
-| Phase 6 — App Mobile | 4 semaines | ⏳ À faire |
+| Phase 6 — App Mobile (PWA) | 4 semaines | 🟡 En cours (push après mars 2027) |
 | Phase 7 — Finalisation | 2 semaines | ⏳ À faire |
 | **TOTAL** | **21 semaines** | |
