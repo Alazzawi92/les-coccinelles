@@ -31,18 +31,30 @@ const empreinteCode = (userId, code) =>
 // Compare deux empreintes en temps constant
 const memeEmpreinte = (a, b) => crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
 
-// Crée un nouveau code pour le compte (remplace le précédent) et le renvoie
+// Crée un nouveau code pour le compte (remplace le précédent) et le renvoie.
+// SÉCURITÉ : le compteur d'erreurs (tentatives) et le blocage NE SONT PAS
+// remis à zéro ici. Ils comptent les erreurs du COMPTE, pas du code : sinon
+// demander un nouveau code chaque minute redonnerait 5 essais à chaque fois,
+// et on pourrait essayer des codes sans jamais être bloqué.
+// Seuls un code juste ou la fin d'un blocage remettent le compteur à zéro
+// (voir deuxFacteursController.verifier).
 const creerCode = async (userId) => {
   const code = String(crypto.randomInt(1000000)).padStart(6, '0');
   const maintenant = Date.now();
-  await DeuxFacteurs.upsert({
-    user_id:        userId,
+
+  // Uniquement les informations du nouveau code
+  const nouveauCode = {
     code_empreinte: empreinteCode(userId, code),
     expire_le:      new Date(maintenant + DUREE_CODE_MS),
-    envoye_le:      new Date(maintenant),
-    tentatives:     0,
-    bloque_jusqu:   null
-  });
+    envoye_le:      new Date(maintenant)
+  };
+
+  const ligne = await DeuxFacteurs.findByPk(userId);
+  if (ligne) {
+    await ligne.update(nouveauCode);                            // Compteur conservé
+  } else {
+    await DeuxFacteurs.create({ user_id: userId, ...nouveauCode }); // Première connexion : compteur à 0
+  }
   return code;
 };
 

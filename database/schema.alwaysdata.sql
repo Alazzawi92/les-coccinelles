@@ -371,7 +371,7 @@ CREATE TABLE IF NOT EXISTS deux_facteurs (
   code_empreinte CHAR(64),                              -- Empreinte du code en cours (jamais le code lui-même)
   expire_le      DATETIME,                              -- Fin de validité du code
   envoye_le      DATETIME,                              -- Dernier envoi (limite les renvois)
-  tentatives     INT NOT NULL DEFAULT 0,                -- Codes faux pour le code en cours
+  tentatives     INT NOT NULL DEFAULT 0,                -- Codes faux sur le compte depuis la dernière réussite ou le dernier blocage
   bloque_jusqu   DATETIME,                              -- Blocage temporaire après trop d'erreurs
   created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at     DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

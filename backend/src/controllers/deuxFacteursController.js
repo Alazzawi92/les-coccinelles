@@ -6,7 +6,9 @@ const { succes, erreur } = require('../utils/response');
 const { espaceParentsOuvert, MESSAGE_ESPACE_FERME } = require('../services/parametres.service');
 const { lireJetonEtape, empreinteCode, memeEmpreinte, envoyerNouveauCode } = require('../services/deuxFacteurs.service');
 
-const MAX_TENTATIVES   = 5;               // Codes faux avant annulation du code
+// Le compteur d'erreurs est propre au COMPTE (il n'est pas remis à zéro quand
+// un nouveau code est envoyé) : au maximum 5 codes faux par tranche de 15 minutes.
+const MAX_TENTATIVES   = 5;               // Codes faux (tous codes confondus) avant blocage
 const DUREE_BLOCAGE_MS = 15 * 60 * 1000;  // 15 minutes sans nouveau code ensuite
 
 const MESSAGE_BLOQUE      = 'Trop de codes incorrects. Réessayez dans 15 minutes.';
@@ -55,7 +57,8 @@ const verifier = async (req, res) => {
         return 'ok';
       }
 
-      // Code faux : au bout de 5 essais, le code est annulé et le compte bloqué
+      // Code faux : au bout de 5 erreurs sur le compte, le code est annulé et
+      // le compte bloqué 15 minutes (le compteur repart ensuite de zéro)
       const tentatives = ligne.tentatives + 1;
       if (tentatives >= MAX_TENTATIVES) {
         await ligne.update({
