@@ -1,350 +1,204 @@
 # 🔐 05 — SÉCURITÉ & RGPD
 # Fichier : 05-SECURITE-RGPD.md
-# Description : Règles de sécurité, authentification JWT, conformité RGPD
-# Obligatoire car données d'enfants et de familles
+# Description : Mesures de sécurité réellement en place, correspondance avec
+# l'OWASP Top 10, conformité RGPD, limites connues
 
 ---
 
 ## 🎯 POURQUOI C'EST CRITIQUE
 
-La plateforme gère des données sensibles :
-- **Données d'enfants mineurs** (santé, allergies, photos)
-- **Données de familles** (adresses, finances, documents)
-- **Communications privées** (messages parents/crèche)
-
-Le non-respect du RGPD est une infraction légale.
-Une faille de sécurité peut exposer des données d'enfants.
+La plateforme traite des **données de mineurs** : identité, santé (allergies,
+médicaments, médecin), photos, présence quotidienne, échanges avec les familles.
+Pour le RGPD, les données de santé sont des **données sensibles** (article 9).
+Une fuite toucherait des enfants : la sécurité est donc traitée à **chaque
+couche** (navigateur, réseau, API, base de données, fichiers, téléphone).
 
 ---
 
-## 🔑 AUTHENTIFICATION JWT
+## 🔑 AUTHENTIFICATION
 
-### Fonctionnement des tokens
+### Connexion en deux étapes (obligatoire pour tous)
 ```
-1. Login → Backend génère 2 tokens :
-   - Access Token  : valide 15 minutes (utilisé dans chaque requête)
-   - Refresh Token : valide 7 jours (renouveler l'access token)
-
-2. Chaque requête API envoie l'access token dans le header :
-   Authorization: Bearer <access_token>
-
-3. Quand l'access token expire (15 min) :
-   - Frontend envoie le refresh token
-   - Backend génère un nouvel access token
-   - Sans reconnexion pour l'utilisateur
-
-4. Déconnexion ou refresh token expiré :
-   - Supprimer les deux tokens côté client
-   - Rediriger vers la page de connexion
+Étape 1 : email + mot de passe (bcrypt)   ou   compte Google (jeton vérifié par le serveur)
+          → aucune session ouverte ; code à 6 chiffres envoyé par email
+          → jeton d'étape signé avec une clé dédiée, valable 20 min
+Étape 2 : saisie du code → session ouverte (accessToken + refreshToken)
 ```
+| Mesure | Détail |
+|---|---|
+| Code 2FA | Tiré par `crypto.randomInt`, valable **10 min**, un seul renvoi par minute |
+| Stockage du code | **Empreinte HMAC-SHA256** (clé dérivée de `JWT_SECRET` par HKDF) ; jamais le code en clair |
+| Comparaison | `crypto.timingSafeEqual` (temps constant) dans une **transaction avec verrou** : un code ne sert qu'une fois, pas de contournement par requêtes parallèles |
+| Anti force brute | **5 codes faux sur le compte = blocage 15 min** ; le compteur n'est **pas** remis à zéro par l'envoi d'un nouveau code |
+| Table dédiée | `deux_facteurs`, séparée de `users` |
+| Secours | Script `code-secours-connexion.js` (accès serveur requis) si les emails ne partent plus |
 
-### Configuration JWT (config/jwt.js)
-```javascript
-// Configuration des tokens JWT du projet
-const jwt = require('jsonwebtoken'); // Librairie JWT
+### Jetons JWT
+| Jeton | Durée | Rôle |
+|---|---|---|
+| accessToken | **15 min** | Envoyé à chaque requête (`Authorization: Bearer`) |
+| refreshToken | **7 jours** | Renouvelle l'accessToken ; **stocké en base** pour pouvoir le révoquer |
+| Jeton d'étape 2FA | 20 min | Clé séparée : jamais accepté comme jeton de session, et inversement |
 
-// Générer un Access Token (courte durée)
-const genererAccessToken = (userId, role) => {
-  return jwt.sign(
-    { id: userId, role },              // Données encodées dans le token
-    process.env.JWT_SECRET,            // Clé secrète (à garder secrète !)
-    { expiresIn: '15m' }               // Expiration dans 15 minutes
-  );
-};
+- Déconnexion → refreshToken effacé en base.
+- Réinitialisation du mot de passe → **toutes les sessions** sont fermées.
+- `verifierToken` recharge l'utilisateur à chaque requête : un compte désactivé
+  ou supprimé perd l'accès immédiatement, même avec un jeton encore valide.
 
-// Générer un Refresh Token (longue durée)
-const genererRefreshToken = (userId) => {
-  return jwt.sign(
-    { id: userId },                    // Seulement l'ID dans le refresh
-    process.env.JWT_REFRESH_SECRET,    // Clé secrète différente
-    { expiresIn: '7d' }                // Expiration dans 7 jours
-  );
-};
+### Mots de passe
+- **bcrypt, coût 12**.
+- Règles : 8 caractères minimum, au moins **une majuscule** et **un chiffre**
+  (vérifiées côté serveur ; affichées en temps réel côté client).
+- « Mot de passe oublié » : **même réponse** que l'email existe ou non (pas
+  d'énumération des comptes) ; lien de réinitialisation à durée limitée.
 
-// Vérifier un token et retourner les données
-const verifierToken = (token, secret) => {
-  return jwt.verify(token, secret);   // Lance une erreur si invalide
-};
-
-module.exports = { genererAccessToken, genererRefreshToken, verifierToken };
-```
+### Création de compte
+- Anti-robot **Cloudflare Turnstile** vérifié côté serveur.
+- Email de confirmation valable **24 h** ; compte non confirmé **supprimé
+  automatiquement** après 24 h (tâche planifiée toutes les heures).
+- Activation du compte par l'équipe avant l'accès à l'espace parents.
 
 ---
 
-## 🔒 HASHAGE DES MOTS DE PASSE
+## 🚦 AUTORISATIONS (RÔLES ET PROPRIÉTÉ DES DONNÉES)
 
-```javascript
-// Hashage avec bcrypt — JAMAIS stocker en clair
-const bcrypt = require('bcryptjs');
+| Rôle | Accès |
+|---|---|
+| `parent` | Son profil, **ses** enfants, **ses** inscriptions, documents, absences, messages ; suivi / galerie / absences seulement si un enfant est inscrit |
+| `admin` | Partie « Quotidien » : émargement, suivi, absences, calendrier, messagerie |
+| `super_admin` | Tout : familles, inscriptions, contenus du site, galerie, statistiques, rapports, paramètres |
 
-// Lors de l'inscription ou changement de mot de passe
-const hasherMotDePasse = async (motDePasse) => {
-  const saltRounds = 12;                          // 12 = sécurisé (plus = plus lent)
-  const hash = await bcrypt.hash(motDePasse, saltRounds); // Hacher
-  return hash;                                    // Stocker ce hash en BDD
-};
-
-// Lors de la connexion
-const verifierMotDePasse = async (motDePasse, hash) => {
-  const valide = await bcrypt.compare(motDePasse, hash); // Comparer
-  return valide;                                  // true si correct, false sinon
-};
-```
+Trois niveaux de contrôle :
+1. **Route** : `verifierToken` puis `verifierRole(...)` (refus 401 / 403).
+2. **Contrôleur** : filtre systématique par `req.user.id` → un parent ne peut pas
+   lire les données d'un autre en changeant un identifiant dans l'URL
+   (protection contre l'**IDOR**).
+3. **Interface** : gardes de routes React (confort uniquement, jamais la seule barrière).
 
 ---
 
-## 🚦 SYSTÈME DE RÔLES
+## 🛡️ PROTECTIONS TECHNIQUES
 
-| Rôle | Pages accessibles | Actions autorisées |
-|------|------------------|-------------------|
-| **Public** | Site public uniquement | Lecture, formulaire contact |
-| **Parent** | Site public + espace parent | CRUD ses propres données |
-| **Admin** | Tout sauf config système | Gérer familles, publier contenu |
-| **Super Admin** | Tout | Config, créer comptes admin, RGPD |
+| Menace | Protection en place |
+|---|---|
+| Force brute sur la connexion | Rate limiting : 10 tentatives / 15 min (connexion, Google, création de compte) ; 30 / 15 min sur le code 2FA ; blocage du compte après 5 codes faux |
+| Robots / spam | Turnstile sur connexion, création de compte, mot de passe oublié, contact ; contact limité à 5 messages / heure |
+| Injection SQL | ORM Sequelize : requêtes **paramétrées** uniquement |
+| XSS | React échappe tout l'affichage ; **CSP** stricte sur le site (Vercel) et sur l'API (helmet) ; validation et nettoyage des entrées (express-validator) |
+| Clickjacking | `frame-ancestors 'none'` + `X-Frame-Options: DENY` |
+| Fuite par cache | `Cache-Control: no-store` sur toute l'API ; la PWA ne met **jamais** l'API ni les fichiers privés en cache |
+| CORS | Seule l'adresse du site est autorisée à appeler l'API |
+| Transport | **HTTPS** partout (Vercel, Alwaysdata) + **HSTS** 1 an |
+| En-têtes | helmet : `nosniff`, `X-Powered-By` retiré, `Referrer-Policy`, `Permissions-Policy` (caméra, micro, géolocalisation désactivés) |
+| Fichiers envoyés | Liste blanche de types **MIME**, tailles max (documents 5 Mo, photos 10 Mo, avatars 2 Mo), **nom aléatoire**, extension déduite du type (jamais du nom fourni) |
+| Accès direct aux fichiers privés | **Liens signés HMAC-SHA256 à durée limitée** pour photos, documents, messages, justificatifs ; pièces justificatives dans un dossier **jamais servi** en statique |
+| Secrets | Variables d'environnement (`.env` jamais versionné) |
+| Erreurs | Message générique au client, détail uniquement dans les logs serveur |
 
-### Hiérarchie des rôles
-```
-Super Admin > Admin > Parent > Public
-```
+### Liens signés (utils/fichiersSignes.js)
+Une balise `<img>` ne peut pas envoyer de jeton JWT. Les fichiers privés sont
+donc protégés autrement :
+1. quand l'API renvoie un chemin de fichier privé à un utilisateur qui a le
+   droit de le voir, elle ajoute `?exp=<expiration>&sig=<signature>` ;
+2. le serveur de fichiers refuse toute demande sans signature valide ou expirée ;
+3. **liste blanche** des dossiers publics (`equipe`, `actualites`, `avatars`) :
+   tout autre dossier est privé par défaut.
 
-### Règle d'or
-```
-Un parent ne peut accéder QU'AUX données de SES enfants.
-Jamais aux données d'autres familles.
-```
-
----
-
-## 🛡️ PROTECTION DES ROUTES API
-
-```javascript
-// Exemple de protection d'une route par rôle
-const router = require('express').Router();
-const { verifierToken } = require('../middlewares/auth.middleware');
-const { verifierRole }  = require('../middlewares/role.middleware');
-
-// Route publique (pas de protection)
-router.get('/actualites', controller.lister);
-
-// Route pour parents connectés
-router.get('/suivi/:id', verifierToken, controller.getSuivi);
-
-// Route admin seulement
-router.post('/menus', verifierToken, verifierRole('admin', 'super_admin'), controller.creer);
-
-// Route super admin seulement
-router.delete('/users/:id', verifierToken, verifierRole('super_admin'), controller.supprimer);
-```
+### Audit OWASP ZAP
+Un scan **OWASP ZAP** a été réalisé ; ses alertes ont été corrigées dans
+`server.js` (HSTS, CSP stricte, `nosniff`, suppression de `X-Powered-By`,
+`Cache-Control` sur l'API).
 
 ---
 
-## 🔐 PROTECTION CONTRE LES ATTAQUES
+## 📊 CORRESPONDANCE OWASP TOP 10 (2021)
 
-### Rate Limiting (anti-bruteforce)
-```javascript
-// Limiter les tentatives de connexion
-const rateLimit = require('express-rate-limit');
-
-// Maximum 10 tentatives de connexion par 15 minutes
-const limiteConnexion = rateLimit({
-  windowMs: 15 * 60 * 1000, // Fenêtre de 15 minutes
-  max:      10,              // Maximum 10 requêtes
-  message:  'Trop de tentatives de connexion. Réessayez dans 15 minutes.',
-  standardHeaders: true,
-  legacyHeaders:   false
-});
-
-// Appliquer sur la route de connexion
-router.post('/auth/login', limiteConnexion, authController.login);
-```
-
-### Anti-robot (Cloudflare Turnstile)
-Le rate limiting freine un robot sans l'arrêter. Les 4 formulaires publics
-(connexion, création de compte, mot de passe oublié, contact) affichent donc
-une case Cloudflare Turnstile, qui fournit un jeton à usage unique.
-
-- **Frontend** : composant `components/ui/Turnstile` — le bouton d'envoi reste
-  grisé tant que la case n'est pas validée ; la case est relancée après chaque envoi.
-- **Backend** : middleware `turnstile.middleware.js` — le jeton est vérifié
-  auprès de Cloudflare côté serveur (un robot peut ignorer la case du navigateur).
-- **Configuration** : `TURNSTILE_SECRET_KEY` (backend) et
-  `REACT_APP_TURNSTILE_SITE_KEY` (frontend). Sans clé : vérification désactivée
-  en développement, formulaires bloqués (503) en production.
-
-```javascript
-// Ordre des middlewares : limite → validation → anti-robot → contrôleur
-router.post('/login', limiteAuth, reglesLogin, validerDonnees, verifierTurnstile, authController.login);
-```
-
-RGPD : Cloudflare (États-Unis, certifiée Data Privacy Framework) est mentionnée
-comme destinataire dans les mentions légales. Mesure de sécurité : pas de
-consentement requis.
-
-### Validation des données entrantes
-```javascript
-// Exemple de validation avec express-validator
-const { body, validationResult } = require('express-validator');
-
-// Règles de validation pour l'inscription
-const reglesInscription = [
-  body('email')
-    .isEmail().withMessage('Email invalide')
-    .normalizeEmail(),                          // Normaliser l'email
-
-  body('password')
-    .isLength({ min: 8 }).withMessage('8 caractères minimum')
-    .matches(/\d/).withMessage('Au moins un chiffre')
-    .matches(/[A-Z]/).withMessage('Au moins une majuscule'),
-
-  body('prenom')
-    .trim()                                     // Supprimer espaces début/fin
-    .isLength({ min: 2 }).withMessage('2 caractères minimum')
-    .escape()                                   // Échapper les caractères HTML
-];
-
-// Middleware pour vérifier les erreurs de validation
-const validerDonnees = (req, res, next) => {
-  const erreurs = validationResult(req);
-  if (!erreurs.isEmpty()) {
-    // Retourner les erreurs si validation échouée
-    return res.status(400).json({ erreurs: erreurs.array() });
-  }
-  next(); // Données valides, continuer
-};
-```
-
-### Upload sécurisé
-```javascript
-// Vérification stricte des fichiers uploadés
-const verifierFichier = (req, res, next) => {
-  const fichier = req.file;
-  
-  if (!fichier) {
-    return res.status(400).json({ message: 'Aucun fichier envoyé' });
-  }
-
-  // Types autorisés (PDF + images)
-  const typesAutorises = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
-  
-  if (!typesAutorises.includes(fichier.mimetype)) {
-    // Supprimer le fichier non autorisé
-    fs.unlinkSync(fichier.path);
-    return res.status(400).json({ message: 'Type de fichier non autorisé' });
-  }
-
-  // Taille maximum : 5 MB
-  if (fichier.size > 5 * 1024 * 1024) {
-    fs.unlinkSync(fichier.path);
-    return res.status(400).json({ message: 'Fichier trop volumineux (max 5 MB)' });
-  }
-
-  next(); // Fichier valide
-};
-```
+| Risque OWASP | Réponse dans le projet |
+|---|---|
+| A01 — Contrôle d'accès défaillant | Rôles vérifiés sur chaque route, filtre par propriétaire dans les contrôleurs, liens signés pour les fichiers |
+| A02 — Défaillances cryptographiques | bcrypt 12, HMAC-SHA256, HTTPS + HSTS, secrets hors du code |
+| A03 — Injection | Sequelize paramétré, express-validator, React (échappement) |
+| A04 — Conception non sécurisée | 2FA obligatoire, séparation des rôles, données minimales, lancement en deux temps |
+| A05 — Mauvaise configuration | helmet, CSP, CORS restreint, scan ZAP, messages d'erreur génériques |
+| A06 — Composants vulnérables | Dépendances maintenues (`npm audit` à surveiller) |
+| A07 — Identification et authentification | 2FA, rate limiting, blocage, révocation des sessions, pas d'énumération des comptes |
+| A08 — Intégrité des données | Jetons signés (JWT, liens de fichiers), vérification serveur des jetons Google et Turnstile |
+| A09 — Journalisation | Logs serveur (morgan + erreurs) ; journal d'audit des actions sensibles : **à améliorer** |
+| A10 — SSRF | L'API n'appelle que des adresses fixes (Google, Cloudflare) |
 
 ---
 
-## 📋 RGPD — RÈGLEMENT GÉNÉRAL DE PROTECTION DES DONNÉES
+## 📋 RGPD
 
-### Données collectées et justification
+### Données collectées et finalité
+*(Bases légales proposées, à valider avec la direction de la crèche, responsable de traitement.)*
 
-| Donnée | Pourquoi | Durée conservation |
-|--------|----------|-------------------|
-| Email parent | Connexion + communication | Durée inscription + 1 an |
-| Nom/prénom | Identification | Durée inscription + 1 an |
-| Données enfant | Accueil à la crèche | Durée inscription + 1 an |
-| Données santé | Sécurité de l'enfant | Durée inscription + 1 an |
-| Photos enfants | Partage familial | Jusqu'à retrait consentement |
-| Messages | Communication | 2 ans |
+| Donnée | Finalité | Base légale |
+|---|---|---|
+| Identité et contact du parent | Compte, communication avec la crèche | Exécution du contrat d'accueil |
+| Identité de l'enfant, jours de présence | Accueil, organisation, facturation | Contrat |
+| Santé de l'enfant (allergies, médicaments, médecin) | Sécurité de l'enfant | Intérêt vital / consentement du parent |
+| Suivi quotidien, émargement | Information des parents, obligations de la crèche | Contrat |
+| Photos | Partage avec les familles | **Consentement** explicite, par enfant |
+| Messages, documents | Échanges et dossier d'inscription | Contrat |
 
-### Droits des utilisateurs (RGPD Article 12-23)
+### Principes appliqués
+- **Minimisation** : comptes non confirmés supprimés après 24 h ; le code 2FA
+  n'est jamais stocké en clair ; aucune donnée personnelle dans le cache du
+  téléphone (PWA) ni dans les notifications.
+- **Consentement photo** par enfant (page « Consentement » de l'espace parents),
+  enregistré avec **date et adresse IP** comme preuve, retirable à tout moment.
+  Sans consentement, l'API **remplace l'adresse de la photo** par une image
+  floutée : la vraie photo n'est jamais envoyée au navigateur.
+- **Cookies** : bannière de consentement (tout accepter / tout refuser /
+  personnaliser) ; seuls les cookies et stockages essentiels sans accord.
+- **Effacement** : la suppression d'un compte supprime en cascade enfants,
+  messages, notifications et données liées.
+- **Mentions légales** : page dédiée (responsable de traitement, finalités,
+  durées, droits, cookies), modifiable par le CMS.
 
-```
-✅ Droit d'accès       → Consulter toutes ses données
-✅ Droit de rectification → Modifier ses données
-✅ Droit à l'effacement  → Supprimer son compte et données
-✅ Droit d'opposition    → Refuser le traitement (photos)
-✅ Droit à la portabilité → Export de ses données
-```
-
-### Consentement pour les photos
-```javascript
-// Le consentement pour les photos est OBLIGATOIRE et explicite
-// Sans consentement = photo non visible même si uploadée
-
-// Vérifier le consentement avant d'afficher une photo
-const afficherPhoto = async (req, res) => {
-  const { photoId } = req.params;
-  const userId      = req.user.id;
-
-  // Récupérer la photo
-  const photo = await GaleriePhoto.findByPk(photoId, {
-    include: [{ model: PhotoEnfant, include: [Enfant] }]
-  });
-
-  // Vérifier le consentement pour chaque enfant sur la photo
-  for (const enfant of photo.enfants) {
-    const consentement = await Consentement.findOne({
-      where: { enfant_id: enfant.id }
-    });
-
-    if (!consentement?.consenti) {
-      // Pas de consentement → flouter ou masquer la photo
-      return res.json({ url: '/images/photo-floue.jpg', floue: true });
-    }
-  }
-
-  return res.json({ url: photo.chemin_web, floue: false });
-};
-```
-
-### Page mentions légales obligatoires
-```
-La plateforme doit afficher :
-✅ Nom du responsable de traitement (directrice crèche)
-✅ Finalité des données collectées
-✅ Durée de conservation
-✅ Droits des utilisateurs
-✅ Contact DPO ou responsable RGPD
-✅ Comment exercer ses droits
-✅ Politique de cookies
-```
+### Droits des personnes
+| Droit | Comment il s'exerce aujourd'hui |
+|---|---|
+| Accès | Le parent consulte ses données dans son espace (profil, enfants, documents, suivi) |
+| Rectification | Modification du profil et des fiches enfants depuis l'espace parents |
+| Effacement | Sur demande à la crèche : le super admin supprime le compte (suppression en cascade) |
+| Opposition (photos) | Retrait du consentement en un clic |
+| Portabilité | Sur demande à la crèche (pas d'export automatique) |
 
 ---
 
-## 🌐 SÉCURITÉ HTTPS EN PRODUCTION
+## ⚠️ LIMITES CONNUES ET AMÉLIORATIONS PRÉVUES
 
-```bash
-# En production, TOUJOURS utiliser HTTPS
-# Certificat SSL gratuit avec Let's Encrypt
+À présenter honnêtement au jury, avec la solution envisagée :
 
-# Installation Certbot (Ubuntu)
-sudo apt install certbot python3-certbot-nginx
-
-# Générer le certificat SSL
-sudo certbot --nginx -d lescoccinelles.fr
-
-# Renouvellement automatique
-sudo certbot renew --dry-run
-```
+| Limite | Amélioration envisagée |
+|---|---|
+| Jetons stockés dans `localStorage` (exposés en cas de faille XSS ; risque réduit par la CSP et l'échappement React) | Refresh token en cookie `HttpOnly` + `SameSite` |
+| Pas de suppression de compte ni d'export de données en libre-service | Boutons « Télécharger mes données » et « Supprimer mon compte » dans le profil |
+| « Mot de passe oublié » protégé par Turnstile mais sans limite de débit | Ajouter `rateLimit` comme sur la connexion |
+| Pas de journal d'audit des actions sensibles | Table d'audit (connexions, suppressions, changements de statut) |
+| Pas de tests automatisés de sécurité | Tests d'API (droits par rôle, IDOR) intégrés à une CI |
+| Ancien script `backend/creer_admin.js` contenant un mot de passe de test (présent dans l'historique Git) | Supprimer le fichier ; vérifier qu'aucun compte en ligne n'utilise ce mot de passe |
 
 ---
 
-## 📌 CHECKLIST SÉCURITÉ AVANT MISE EN PRODUCTION
+## 📌 CHECKLIST AVANT MISE EN PRODUCTION
 
 ```
-□ Tous les mots de passe hashés avec bcrypt (min 10 rounds)
-□ JWT_SECRET long et aléatoire (min 64 caractères)
-□ Rate limiting sur auth/login et auth/register
-□ Vraies clés Cloudflare Turnstile dans les .env (remplacer les clés de test)
-□ HTTPS activé sur le domaine
-□ Variables d'environnement dans .env (jamais dans le code)
-□ .env dans .gitignore (jamais versionné)
-□ Validation de toutes les données entrantes
-□ Types de fichiers uploadés vérifiés
-□ Accès aux photos conditionné au consentement RGPD
-□ Page mentions légales complète
-□ Possibilité de suppression de compte (RGPD)
-□ Logs des actions sensibles (connexion, suppression)
-□ Headers de sécurité avec Helmet.js
+✅ Mots de passe bcrypt (coût 12)
+✅ Double authentification par email
+✅ JWT_SECRET long et aléatoire, hors du code
+✅ Rate limiting sur la connexion, Google, la création de compte, le code 2FA, le contact
+✅ HTTPS + HSTS
+✅ .env dans .gitignore
+✅ Validation de toutes les données entrantes
+✅ Types et tailles de fichiers contrôlés, noms aléatoires
+✅ Fichiers privés uniquement par liens signés
+✅ Photos conditionnées au consentement RGPD
+✅ Page mentions légales + bannière cookies
+✅ En-têtes de sécurité (helmet + vercel.json)
+□  Vraies clés Cloudflare Turnstile en production (vérifier qu'il ne reste pas les clés de test)
+□  Suppression de compte et export des données en libre-service
+□  Journal d'audit des actions sensibles
 ```

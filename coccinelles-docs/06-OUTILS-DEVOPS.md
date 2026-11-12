@@ -1,268 +1,162 @@
-# 🐳 06 — OUTILS & DEVOPS
+# 🛠️ 06 — OUTILS, DEVOPS & DÉPLOIEMENT
 # Fichier : 06-OUTILS-DEVOPS.md
-# Description : Docker, Git, GitHub, workflow de développement
+# Description : Environnements, Docker, Git, hébergement (Vercel + Alwaysdata),
+# procédure de mise en production
 
 ---
 
-## 🐳 DOCKER
+## 🌍 LES ENVIRONNEMENTS
 
-### docker-compose.yml
-```yaml
-# Orchestration des services du projet Les Coccinelles
-# Lance : Backend + BDD + PHPMyAdmin en une commande
+| Environnement | Frontend | API | Base de données |
+|---|---|---|---|
+| **Développement (Docker)** | conteneur React — http://localhost:3000 | conteneur Node — http://localhost:3001/api | conteneur MySQL 8 — port 3306 |
+| **Développement (sans Docker)** | `npm start` dans `frontend-web` | `npm run dev` dans `backend` | MySQL local |
+| **Production** | **Vercel** — https://les-coccinelles.vercel.app | **Alwaysdata** — https://alazzawi.alwaysdata.net/api-coccinelles/api | **MariaDB Alwaysdata** |
 
-version: '3.8'
-
-services:
-
-  # ── BASE DE DONNÉES MySQL ──────────────────────────────────────
-  database:
-    image: mysql:8.0                        # Image MySQL officielle
-    container_name: coccinelles_db
-    restart: unless-stopped                 # Redémarrer si crash
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password    # Mot de passe root
-      MYSQL_DATABASE: coccinelles_db        # Créer la BDD au démarrage
-      MYSQL_USER: coccinelles_user          # Utilisateur dédié
-      MYSQL_PASSWORD: coccinelles_pass      # Son mot de passe
-    ports:
-      - "3306:3306"                         # Port BDD accessible localement
-    volumes:
-      - mysql_data:/var/lib/mysql           # Persistance des données
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql # Init BDD
-
-  # ── INTERFACE WEB POUR LA BDD ─────────────────────────────────
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: coccinelles_phpmyadmin
-    restart: unless-stopped
-    ports:
-      - "8080:80"                           # Accès : http://localhost:8080
-    environment:
-      PMA_HOST: database                    # Se connecte au service "database"
-      PMA_USER: root
-      PMA_PASSWORD: root_password
-    depends_on:
-      - database                            # Démarrer après la BDD
-
-  # ── BACKEND NODE.JS ───────────────────────────────────────────
-  backend:
-    build:
-      context: ./backend                    # Dossier du Dockerfile
-      dockerfile: Dockerfile
-    container_name: coccinelles_backend
-    restart: unless-stopped
-    ports:
-      - "3001:3001"                         # API accessible : http://localhost:3001
-    environment:
-      DB_HOST:     database                 # Nom du service Docker BDD
-      DB_PORT:     3306
-      DB_NAME:     coccinelles_db
-      DB_USER:     coccinelles_user
-      DB_PASSWORD: coccinelles_pass
-      JWT_SECRET:  change_this_in_production
-      PORT:        3001
-    volumes:
-      - ./backend/uploads:/app/uploads      # Persistance des fichiers uploadés
-    depends_on:
-      - database                            # Démarrer après la BDD
-
-# ── VOLUMES PERSISTANTS ──────────────────────────────────────────
-volumes:
-  mysql_data:                               # Données MySQL ne se perdent pas
+```
+Navigateur / PWA ──HTTPS──► Vercel (React compilé + service worker)
+        │
+        └──HTTPS──► Alwaysdata : Node.js + Express (/api-coccinelles) ──► MariaDB
+                                     │
+                                     ├──► SMTP (emails : confirmation, code 2FA…)
+                                     ├──► Google (vérification connexion Google)
+                                     └──► Cloudflare (vérification Turnstile)
 ```
 
-### Dockerfile backend
-```dockerfile
-# Image de base Node.js LTS
-FROM node:20-alpine
+---
 
-# Dossier de travail dans le container
-WORKDIR /app
+## 🐳 DOCKER (développement)
 
-# Copier les fichiers de dépendances
-COPY package*.json ./
+`docker-compose.yml` lance 3 conteneurs sur un réseau privé `coccinelles-network` :
 
-# Installer les dépendances
-RUN npm install --production
+| Service | Image | Rôle |
+|---|---|---|
+| `mysql` | mysql:8.0 | Base `coccinelles_db`, initialisée par `database/schema.sql` ; **healthcheck** avant le démarrage du backend ; données persistées dans un volume |
+| `backend` | node:20-alpine (`backend/Dockerfile`) | API sur le port 3001 ; code monté en volume (rechargement) ; `uploads/` persisté |
+| `frontend` | node:20-alpine (`frontend-web/Dockerfile`) | Serveur de développement React sur le port 3000 (polling activé pour Windows) |
 
-# Copier tout le code source
-COPY . .
+Les clés Google et Turnstile sont lues depuis le `.env` à la racine (clés de
+test Turnstile par défaut).
 
-# Exposer le port de l'API
-EXPOSE 3001
-
-# Commande de démarrage
-CMD ["node", "server.js"]
-```
-
-### Commandes Docker utiles
+### Commandes utiles
 ```bash
-# Démarrer tous les services
-docker-compose up -d
-
-# Arrêter tous les services
-docker-compose down
-
-# Voir les logs en temps réel
-docker-compose logs -f backend
-
-# Redémarrer un service spécifique
-docker-compose restart backend
-
-# Accéder au terminal du container backend
-docker-compose exec backend sh
-
-# Supprimer tout (containers + volumes = RESET COMPLET)
-docker-compose down -v
+docker-compose up -d                      # Lancer les 3 conteneurs
+docker-compose ps                         # État des conteneurs
+docker logs -f coccinelles-backend        # Logs de l'API
+docker restart coccinelles-backend        # Relancer l'API après une modification backend
+docker exec -it coccinelles-mysql mysql -u coccinelles_user -p coccinelles_db   # Console SQL
+docker-compose down                       # Arrêter (les données restent dans le volume)
 ```
+
+---
+
+## 🚀 HÉBERGEMENT ET MISE EN PRODUCTION
+
+### Frontend — Vercel
+- Projet relié au dépôt GitHub : **chaque push sur `main` déclenche un
+  déploiement automatique** (`npm run build`).
+- Variables : `REACT_APP_API_URL` (API Alwaysdata), `REACT_APP_GOOGLE_CLIENT_ID`,
+  `REACT_APP_TURNSTILE_SITE_KEY`.
+- `vercel.json` : réécriture de toutes les adresses vers `index.html` (routage
+  React), en-têtes de sécurité (CSP, `X-Frame-Options`, `Referrer-Policy`,
+  `Permissions-Policy`), pas de cache sur `service-worker.js`.
+- HTTPS fourni automatiquement.
+
+### API et base de données — Alwaysdata
+- Site de type **Node.js** ; l'API est servie sous le chemin `/api-coccinelles`
+  (variable `MOUNT_PREFIX`, retirée par `server.js`) et écoute sur l'IP imposée
+  par l'hébergeur (variable `IP`).
+- Base **MariaDB** administrée par phpMyAdmin ; schéma initial :
+  `database/schema.alwaysdata.sql`.
+- Variables d'environnement : celles de `backend/.env.example` (+ `MOUNT_PREFIX`,
+  `IP`, `NODE_ENV=production`, secrets JWT, SMTP, Google, Turnstile).
+- Le déploiement du backend est **manuel** (voir procédure).
+
+### Procédure de mise en production d'une évolution
+```
+1. Développer et tester en local (Docker)
+2. Commit + push sur main            → Vercel redéploie le frontend automatiquement
+3. Si la base change : exécuter la nouvelle migration (database/migrations/00X_*.sql)
+   dans phpMyAdmin d'Alwaysdata AVANT de mettre à jour l'API
+4. Mettre à jour le code backend sur Alwaysdata (SFTP ou git pull), sans toucher .env
+5. Redémarrer le site Node.js dans l'interface Alwaysdata
+6. Vérifier : /api-coccinelles/health, connexion complète (code 2FA reçu),
+   numéro de version en pied de page du site
+```
+> Ordre important : un frontend qui attend une nouvelle route ne fonctionne
+> qu'une fois l'API et la base à jour (ex. double authentification → migration 006).
+
+### Versions de l'application
+Le numéro de version (`frontend-web/src/config/version.js` + `package.json`)
+est affiché en pied de page ; il est augmenté à chaque mise en ligne
+importante (1.1.0 → 1.2.0 → 1.3.0…). Les utilisateurs de la PWA reçoivent un
+bandeau « Nouvelle version disponible ».
 
 ---
 
 ## 🌿 GIT & GITHUB
 
-### Structure des branches
-
-```
-main                    # Production (stable, deployé)
-├── develop             # Intégration (version en cours)
-│   ├── feature/auth    # Nouvelle fonctionnalité auth
-│   ├── feature/galerie # Nouvelle fonctionnalité galerie
-│   ├── fix/login-bug   # Correction d'un bug
-│   └── docs/readme     # Mise à jour documentation
-```
-
-### Règles des branches
-
-| Branche | Description | Merge vers |
-|---------|-------------|-----------|
-| `main` | Production — NE PAS toucher directement | — |
-| `develop` | Branche principale de dev | `main` quand stable |
-| `feature/nom` | Nouvelle fonctionnalité | `develop` |
-| `fix/nom` | Correction de bug | `develop` |
-| `docs/nom` | Documentation | `develop` |
+- Dépôt : `github.com/Alazzawi92/les-coccinelles` (monorepo : backend,
+  frontend-web, database, docs).
+- **Une branche `main`** : projet mené seule ; chaque commit poussé sur `main`
+  est déployé par Vercel. Avant chaque push : compilation de production
+  (`npm run build`) et vérification locale.
+- Historique : **45+ commits** depuis juin 2026.
 
 ### Convention des commits (en français)
-
 ```
-type: description courte et claire
+type(portée): description courte
 
-Types disponibles :
-feat     : Nouvelle fonctionnalité
-fix      : Correction de bug
-docs     : Documentation
-style    : Formatage (pas de changement logique)
-refactor : Refactorisation du code
-test     : Ajout ou modification de tests
-chore    : Tâches de maintenance
+feat      nouvelle fonctionnalité        feat(pwa): fenêtre « Installez l'application »
+fix       correction                     fix(securite): compteur d'erreurs du code 2FA conservé
+docs      documentation                  docs(roadmap): état réel du projet
+style     présentation, sans logique
+refactor  réorganisation du code
+chore     maintenance
 ```
+Le message détaille ensuite le **pourquoi** de la modification.
 
-#### Exemples de commits
-```bash
-git commit -m "feat: ajouter authentification JWT"
-git commit -m "fix: corriger erreur upload photo"
-git commit -m "docs: mettre à jour le README"
-git commit -m "style: reformater les composants Button"
-git commit -m "feat: créer page tableau de bord parent"
-git commit -m "fix: gérer l'expiration du token refresh"
+### .gitignore (principaux)
 ```
-
-### Workflow Git quotidien
-```bash
-# 1. Toujours partir de develop à jour
-git checkout develop
-git pull origin develop
-
-# 2. Créer une branche pour la fonctionnalité
-git checkout -b feature/nom-fonctionnalite
-
-# 3. Coder + commits réguliers
-git add .
-git commit -m "feat: description de ce qui a été fait"
-
-# 4. Pousser la branche sur GitHub
-git push origin feature/nom-fonctionnalite
-
-# 5. Créer une Pull Request sur GitHub vers develop
-# 6. Vérifier le code, puis merger
-
-# 7. Supprimer la branche après merge
-git branch -d feature/nom-fonctionnalite
-```
-
-### .gitignore
-```
-# Dépendances Node.js (trop lourdes)
-node_modules/
-
-# Variables d'environnement (données sensibles)
-.env
-.env.local
-.env.production
-
-# Fichiers uploadés (données utilisateurs)
-backend/uploads/*
-!backend/uploads/.gitkeep
-
-# Cache et builds
-.DS_Store
-dist/
-build/
-
-# Logs
+.env, .env.local              # Secrets
+node_modules/                 # Dépendances
+frontend-web/build/           # Compilation (générée par Vercel)
+backend/uploads/<dossier>/*   # Fichiers envoyés par les utilisateurs (seuls les .gitkeep sont versionnés)
+backend/stockage/             # Pièces justificatives privées
 *.log
-npm-debug.log*
 ```
 
 ---
 
-## 📋 TRELLO — ORGANISATION DU PROJET
+## 📋 ORGANISATION DU PROJET
 
-### Structure des listes
+> **À compléter par Sabah** : outil de suivi réellement utilisé (Trello,
+> GitHub Projects, liste de tâches…), organisation des tâches, rythme de travail.
 
-```
-📋 BACKLOG           → Toutes les tâches à faire (non priorisées)
-🔜 À FAIRE           → Tâches priorisées pour les prochains jours
-🔄 EN COURS          → Tâches en cours de développement (max 3)
-✅ TERMINÉ           → Tâches finies (archiver régulièrement)
-🐛 BUGS              → Bugs identifiés à corriger
-💡 IDÉES             → Idées futures à évaluer
-```
-
-### Étiquettes de couleur
-
-| Couleur | Signification |
-|---------|--------------|
-| 🔴 Rouge | Urgent / Bloquant |
-| 🟠 Orange | Backend |
-| 🔵 Bleu | Frontend Web |
-| 🟣 Violet | Mobile |
-| 🟢 Vert | Terminé / OK |
-| ⚪ Gris | Documentation |
+Repères disponibles dans le dépôt :
+- planning en 7 phases et état d'avancement : `08-ROADMAP-PHASES.md` ;
+- historique daté des commits (`git log`).
 
 ---
 
-## 📌 CHECKLIST SETUP PROJET (à faire une fois)
+## 📌 INSTALLER LE PROJET SUR UN NOUVEAU POSTE
 
 ```bash
-# 1. Cloner le repo
-git clone https://github.com/ton-user/les-coccinelles.git
+# 1. Cloner
+git clone https://github.com/Alazzawi92/les-coccinelles.git
 cd les-coccinelles
 
-# 2. Créer les fichiers .env
-cp backend/.env.example backend/.env
-# Remplir les variables dans backend/.env
+# 2. Variables d'environnement
+cp backend/.env.example backend/.env       # Puis remplir les valeurs
+# (optionnel) .env à la racine : GOOGLE_CLIENT_ID, TURNSTILE_SITE_KEY, TURNSTILE_SECRET_KEY
 
-# 3. Lancer Docker
+# 3. Lancer
 docker-compose up -d
 
-# 4. Vérifier que tout fonctionne
-# BDD : http://localhost:8080 (PHPMyAdmin)
-# API : http://localhost:3001/api/health
-# Frontend : http://localhost:3000
+# 4. Données de test (optionnel) — depuis le poste, base MySQL du conteneur joignable sur le port 3306
+cd backend && npm install && npm run seed
 
-# 5. Installer les dépendances frontend
-cd frontend-web && npm install
-# (pas d'application mobile séparée : la version mobile est la PWA
-#  générée par frontend-web, voir 04-FRONTEND-MOBILE.md)
+# 5. Vérifier
+#  API      : http://localhost:3001/health
+#  Frontend : http://localhost:3000
 ```

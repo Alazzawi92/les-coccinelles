@@ -1,498 +1,114 @@
-# 🎨 07 — COMPOSANTS UI & DESIGN SYSTEM
+# 🎨 07 — DESIGN SYSTEM & COMPOSANTS UI
 # Fichier : 07-COMPOSANTS-UI.md
-# Description : Tous les composants React réutilisables du projet
-# Design System — Les Coccinelles
+# Description : Identité visuelle, variables CSS, boutons communs et
+# composants réutilisables réellement présents dans frontend-web/src/components
 
 ---
 
 ## 🎯 PRINCIPE
 
-Tous les composants utilisent :
-- Les variables CSS du fichier `styles/variables.css`
-- La police Fredoka pour les titres
-- La police Nunito pour le texte
-- La palette de couleurs Arc-en-Ciel Joyeux
+- Identité visuelle tirée du **logo de la crèche** (fleurs orange et jaune,
+  coccinelles rouges) : ambiance douce et rassurante pour les familles.
+- Tout passe par des **variables CSS** (`styles/variables.css`, 97 variables) :
+  changer une couleur à un seul endroit la change dans tout le site, et le
+  **thème sombre** redéfinit simplement ces variables.
+- Un composant = un dossier : `Nom/Nom.jsx` + `Nom/Nom.css`, en-tête
+  `FICHIER / ROLE`, props documentées avec valeurs par défaut.
+- Pas de bibliothèque de composants externe : boutons et formulaires sont des
+  **classes CSS communes** (`global.css`), les composants React sont réservés
+  aux éléments qui ont un comportement.
 
 ---
 
-## 🔘 BOUTON (components/common/Button/)
+## 🎨 COULEURS
 
-### Button.jsx
+| Variable | Valeur (thème clair) | Usage |
+|---|---|---|
+| `--primary` | `#FF7A45` | Orange des pétales du logo — couleur de la marque, boutons principaux |
+| `--primary-dark` | `#E85A22` | Survol / focus des éléments orange |
+| `--primary-light` | `#FFEDE1` | Fonds doux, badges |
+| `--secondary` | `#FFB020` | Jaune des pétales — couleur secondaire |
+| `--accent-1` | `#4FC3F7` | Bleu ciel — informations, statut « en cours » |
+| `--accent-2` | `#FF2D55` | Rouge des coccinelles |
+| `--accent-3` | `#BA68C8` | Violet — liste d'attente, super admin |
+| `--bg-light` | `#FFFDF7` | Fond global (blanc chaud) |
+| `--text-dark` / `--text-gray` | `#2D3436` / `#636e72` | Texte principal / secondaire |
+| `--success` / `--error` / `--warning` / `--info` | `#43A047` / `#E53935` / `#FB8C00` / `#1E88E5` | États |
+
+**Thème sombre** : `<html data-theme="dark">` redéfinit fonds, surfaces, textes,
+bordures et ombres ; l'orange de la marque reste identique.
+
+## 🔤 TYPOGRAPHIE
+- Titres : **Fredoka** (`--font-heading`) — arrondie, adaptée à l'univers petite enfance.
+- Texte : **Nunito** (`--font-body`) — très lisible.
+- Chargées depuis Google Fonts.
+
+## 📐 ESPACEMENTS, ARRONDIS, OMBRES, PROFONDEUR
+| Famille | Valeurs |
+|---|---|
+| Espacements (système de 8 px) | `--space-xs` 4 · `sm` 8 · `md` 16 · `lg` 24 · `xl` 32 · `2xl` 48 · `3xl` 64 px |
+| Arrondis | `--radius-sm` 8 · `md` 12 · `lg` 16 · `xl` 20 px · `--radius-pill` 50 px |
+| Ombres | `--shadow-sm`, `--shadow-md`, `--shadow-lg`, `--shadow-colored` |
+| Profondeur (z-index) | sidebar 90 · navbar 100 · décor 150 · fenêtres 200 · notifications 300 |
+| Animation | `--transition: all 0.2s ease` ; désactivée si `prefers-reduced-motion` |
+
+---
+
+## 🔘 BOUTONS (classes communes de global.css)
+
+| Classe | Rendu |
+|---|---|
+| `.btn` | Base : arrondi pilule, police Nunito grasse, transition |
+| `.btn--primary` | Fond orange, texte blanc (action principale) |
+| `.btn--outline` | Contour, fond transparent (action secondaire) |
+| `.btn--ghost` | Sans fond ni bordure (action discrète) |
+| `.btn--sm` / `.btn--lg` | Petite / grande taille |
+
 ```jsx
-// Composant Button réutilisable pour tout le projet
-// Variantes : primary, secondary, outline, ghost, danger
-
-const Button = ({
-  children,           // Texte ou contenu du bouton
-  variant = 'primary',// Style du bouton (primary par défaut)
-  size    = 'md',     // Taille : sm | md | lg
-  loading = false,    // Afficher un spinner si true
-  disabled = false,   // Désactiver le bouton
-  onClick,            // Fonction appelée au clic
-  type    = 'button', // Type HTML : button | submit | reset
-  className = '',     // Classes CSS supplémentaires
-  ...props            // Autres attributs HTML
-}) => {
-  return (
-    <button
-      type={type}
-      className={`btn btn--${variant} btn--${size} ${loading ? 'btn--loading' : ''} ${className}`}
-      disabled={disabled || loading} // Désactiver aussi si chargement
-      onClick={onClick}
-      {...props}
-    >
-      {/* Spinner de chargement */}
-      {loading && <span className="btn__spinner" aria-hidden="true" />}
-
-      {/* Texte du bouton */}
-      <span className={loading ? 'btn__text--hidden' : ''}>
-        {children}
-      </span>
-    </button>
-  );
-};
-
-export default Button;
-```
-
-### Button.css
-```css
-/* Styles de base communs à tous les boutons */
-.btn {
-  display:        inline-flex;
-  align-items:    center;
-  justify-content: center;
-  gap:            var(--space-sm);
-  font-family:    var(--font-body);
-  font-weight:    700;
-  border:         none;
-  border-radius:  var(--radius-pill); /* Très arrondi */
-  cursor:         pointer;
-  transition:     var(--transition);
-  text-decoration: none;
-  white-space:    nowrap; /* Pas de retour à la ligne */
-}
-
-/* Tailles */
-.btn--sm  { padding: var(--space-xs)  var(--space-md); font-size: 0.85rem; }
-.btn--md  { padding: var(--space-sm)  var(--space-xl); font-size: 1rem;    }
-.btn--lg  { padding: var(--space-md)  var(--space-2xl); font-size: 1.1rem; }
-
-/* Variante Primary (orange) */
-.btn--primary {
-  background: var(--primary);
-  color:      var(--white);
-  box-shadow: var(--shadow-colored);
-}
-.btn--primary:hover {
-  background:  var(--primary-dark);  /* Plus foncé au survol */
-  transform:   translateY(-2px);     /* Légère élévation */
-  box-shadow:  0 6px 20px rgba(255,152,0,0.4);
-}
-
-/* Variante Secondary (vert) */
-.btn--secondary {
-  background: var(--secondary);
-  color:      var(--white);
-}
-.btn--secondary:hover {
-  background: var(--secondary-dark);
-  transform:  translateY(-2px);
-}
-
-/* Variante Outline (bordure orange) */
-.btn--outline {
-  background:  transparent;
-  color:       var(--primary);
-  border:      2px solid var(--primary);
-}
-.btn--outline:hover {
-  background: var(--primary);
-  color:      var(--white);
-}
-
-/* Variante Ghost (transparent discret) */
-.btn--ghost {
-  background: var(--primary-light);
-  color:      var(--primary);
-}
-.btn--ghost:hover {
-  background: var(--primary);
-  color:      var(--white);
-}
-
-/* Variante Danger (rouge) */
-.btn--danger {
-  background: var(--error);
-  color:      var(--white);
-}
-
-/* État désactivé */
-.btn:disabled {
-  opacity: 0.5;
-  cursor:  not-allowed;
-  transform: none;
-}
-
-/* Spinner de chargement */
-.btn__spinner {
-  width:  16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: var(--white);
-  border-radius: 50%;
-  animation: spinner 0.6s linear infinite;
-}
-@keyframes spinner { to { transform: rotate(360deg); } }
-
-/* Texte caché pendant chargement */
-.btn__text--hidden { visibility: hidden; }
+<button type="button" className="btn btn--primary">Installer</button>
+<Link to="/contact" className="btn btn--outline btn--lg">Nous contacter</Link>
 ```
 
 ---
 
-## 📝 INPUT (components/common/Input/)
+## 🧩 COMPOSANTS RÉUTILISABLES (components/)
 
-### Input.jsx
-```jsx
-// Composant Input réutilisable avec label et messages d'erreur
-const Input = ({
-  label,          // Label affiché au-dessus
-  name,           // Nom du champ (pour le formulaire)
-  type = 'text',  // Type HTML : text | email | password | number...
-  placeholder,    // Texte indicatif
-  value,          // Valeur contrôlée
-  onChange,       // Fonction au changement
-  error,          // Message d'erreur à afficher
-  success,        // Message de succès
-  icon,           // Icône à gauche (optionnel)
-  required = false,
-  ...props
-}) => {
-  return (
-    <div className="input-group">
-      {/* Label */}
-      {label && (
-        <label htmlFor={name} className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
+| Composant | Rôle |
+|---|---|
+| `AccesReserve` | Enveloppe une page parent réservée aux familles dont l'inscription est acceptée (galerie, suivi, absences, consentement). Sans inscription acceptée : écran explicatif avec un lien vers les demandes d'inscription. Le serveur bloque aussi ces routes (403) : ce composant évite seulement d'afficher une page vide ou en erreur. L'accès vient du ParentLayout (<Outlet context>) : il est déjà chargé pour le menu, on ne refait pas l'appel API. |
+| `ApercuEquipe` | Aperçu "Notre équipe" : les premiers membres de l'équipe (photo, nom, fonction) + lien vers /equipe. Sorti de la page d'accueil pour pouvoir être placé sur n'importe quelle page. Charge ses propres données. Rien n'est affiché tant qu'aucun membre n'existe. |
+| `BadgeInscription` | Badge du statut d'inscription d'un enfant, avec un libellé adapté : Inscrit(e), Demande en attente, Dossier incomplet, Liste d'attente, Demande refusée... Utilisé sur "Mes enfants" et à l'étape 2 de l'inscription. |
+| `BandeauHorsLigne` | Bandeau affiché en haut de l'écran quand le téléphone ou l'ordinateur perd la connexion internet. Utile surtout pour l'application installée (PWA) : l'interface s'ouvre même hors ligne, mais les données (suivi, messages, photos...) ne sont jamais gardées sur l'appareil (RGPD), il faut donc prévenir le parent. Disparaît tout seul au retour de la connexion. |
+| `BandeauMiseAJour` | Bandeau « Nouvelle version disponible » de la PWA. Apparaît quand une nouvelle version du site a été déployée et téléchargée en arrière-plan. - « Mettre à jour » : active la nouvelle version et recharge la page. - « Plus tard » : masque le bandeau ; la nouvelle version s'appliquera à la prochaine ouverture. |
+| `Chargement` | Indicateur de chargement : une coccinelle qui fait le tour d'une petite piste en pointillés, avec le texte "Chargement...". Annoncé aux lecteurs d'écran (role=status). |
+| `CoccinelleDefilement` | Coccinelle "retour en haut" sur le bord droit de l'écran. - Au repos : carapace fermée. - Pendant le défilement, elle ouvre ses ailes, les bat et se déplace : en haut de l'écran = début de la page, en bas = fin. - Quand le défilement s'arrête, elle se pose et referme ses ailes. - Tête vers le bas quand on descend, vers le haut quand on monte. - Au clic, ailes grandes ouvertes, elle ramène en haut de la page. C'est un vrai bouton : accessible au clavier et aux lecteurs d'écran ("Retour en haut de la page"). |
+| `CoccinelleSvg` | Dessin SVG de la coccinelle de la crèche (vue de dessus, tête en haut), en 3 étapes : - 'fermee' : carapace fermée, ailes rangées - 'mi'     : carapace entrouverte, ailes à moitié sorties - 'ouverte': carapace levée, grandes ailes orange déployées Les passages d'une étape à l'autre sont animés en CSS. |
+| `CookieBanner` | Bannière RGPD de consentement aux cookies. Affichée tant qu'aucun choix n'est enregistré dans localStorage (clé "coccinelles_cookie_consent"). 3 choix : Tout accepter / Tout refuser / Personnaliser (mesure d'audience uniquement, les cookies "essentiels" ne sont jamais désactivables). Le consentement est relu par le reste de l'app via getCookieConsent() pour ne charger les scripts de mesure d'audience que si consent.mesure === true. |
+| `GoogleButton` | Bouton officiel "Se connecter avec Google". Charge le script Google Identity Services, affiche le bouton, puis envoie le jeton d'identité reçu au backend (POST /api/auth/google) qui le vérifie lui-même. Le bouton n'est pas affiché si REACT_APP_GOOGLE_CLIENT_ID n'est pas configuré (fonctionnalité désactivée). |
+| `ImageSecours` | <img> qui affiche un visuel de remplacement si l'image ne se charge pas (fichier supprimé, lien expiré, erreur réseau), au lieu d'une icône d'image cassée. Props : src, alt, icone (emoji du visuel de secours, 📷 par défaut) + toutes les autres props d'un <img> (loading...). |
+| `LanguageSwitcher` | Sélecteur de langue FR / EN. Change la langue de toute l'application via i18next ; le choix est mémorisé dans localStorage par le détecteur de langue (voir i18n/index.js). |
+| `ModaleEmailConfirme` | Fenêtre affichée sur la page d'accueil juste après la confirmation de l'email (redirection depuis /verify-email). Explique la suite : l'équipe va vérifier le compte et le parent recevra un email à l'activation. Fermeture : "J'ai compris", Échap, clic sur le fond. "Découvrir la crèche" mène à la page de présentation. |
+| `ModaleInstallation` | Fenêtre (pop-up) qui propose d'installer l'application Les Coccinelles dès l'ouverture du site. |
+| `ThemeToggle` | Bouton ☀️ / 🌙 pour passer du thème clair au thème sombre. Au premier passage, le thème suit le réglage du système (voir public/theme-init.js) ; dès que le visiteur clique, son choix est mémorisé. |
+| `Turnstile` | Case anti-robot Cloudflare Turnstile. Charge le script Cloudflare, affiche la case, puis transmet le jeton obtenu au formulaire parent, qui l'envoie au backend (vérifié par turnstile.middleware). Rien n'est affiché si REACT_APP_TURNSTILE_SITE_KEY n'est pas configuré (fonctionnalité désactivée). |
+| `NotifCloche` | Cloche de notifications avec panneau déroulant. Rafraîchissement toutes les 60 s, UNIQUEMENT quand l'onglet est visible (pause si l'onglet est caché, rechargement au retour). Clic extérieur : mousedown + ref.current.contains pour fermer. Badge plafonné à "99+" si plus de 99 non lues. formatDate : relatif ("À l'instant", "Il y a X min", "Il y a Xh"). iconeType : objet lookup par type de notification. clicNotif : marquerLue + navigate(n.lien). toutLire : PATCH /notifications/tout-lire → map all lue:true. supprimer : e.stopPropagation() avant DELETE. |
 
-      {/* Conteneur avec icône optionnelle */}
-      <div className={`input-wrapper ${error ? 'input-wrapper--error' : ''} ${success ? 'input-wrapper--success' : ''}`}>
-        {icon && <span className="input-icon">{icon}</span>}
-
-        <input
-          id={name}
-          name={name}
-          type={type}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          className={`input-field ${icon ? 'input-field--with-icon' : ''}`}
-          required={required}
-          {...props}
-        />
-      </div>
-
-      {/* Messages erreur/succès */}
-      {error   && <p className="input-message input-message--error">{error}</p>}
-      {success && <p className="input-message input-message--success">{success}</p>}
-    </div>
-  );
-};
-
-export default Input;
-```
-
-### Input.css
-```css
-/* Groupe complet input + label + message */
-.input-group { display: flex; flex-direction: column; gap: var(--space-xs); }
-
-/* Label */
-.input-label {
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size:   0.9rem;
-  color:       var(--text-dark);
-}
-
-/* Astérisque obligatoire */
-.input-required { color: var(--error); margin-left: 2px; }
-
-/* Conteneur du champ */
-.input-wrapper {
-  display:       flex;
-  align-items:   center;
-  border:        2px solid #E0E0E0;
-  border-radius: var(--radius-md);
-  background:    var(--white);
-  transition:    var(--transition);
-}
-
-/* Focus sur le champ */
-.input-wrapper:focus-within {
-  border-color: var(--primary);     /* Bordure orange au focus */
-  box-shadow:   0 0 0 3px rgba(255,152,0,0.15);
-}
-
-/* État erreur */
-.input-wrapper--error        { border-color: var(--error); }
-.input-wrapper--error:focus-within { box-shadow: 0 0 0 3px rgba(229,57,53,0.15); }
-
-/* État succès */
-.input-wrapper--success { border-color: var(--success); }
-
-/* Champ input lui-même */
-.input-field {
-  flex:        1;
-  padding:     var(--space-sm) var(--space-md);
-  border:      none;
-  outline:     none;
-  font-family: var(--font-body);
-  font-size:   1rem;
-  color:       var(--text-dark);
-  background:  transparent;
-}
-
-/* Champ avec icône (décalage à gauche) */
-.input-field--with-icon { padding-left: var(--space-sm); }
-
-/* Icône à gauche */
-.input-icon {
-  padding-left: var(--space-md);
-  color:        var(--text-gray);
-  font-size:    1.1rem;
-}
-
-/* Messages en dessous du champ */
-.input-message         { font-size: 0.8rem; margin: 0; }
-.input-message--error  { color: var(--error); }
-.input-message--success { color: var(--success); }
-```
-
----
-
-## 🃏 CARD (components/common/Card/)
-
-### Card.jsx
-```jsx
-// Composant Card générique
-const Card = ({ children, className = '', padding = true, shadow = true, ...props }) => {
-  return (
-    <div
-      className={`card ${padding ? 'card--padded' : ''} ${shadow ? 'card--shadow' : ''} ${className}`}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Sous-composants pour structurer le contenu
-Card.Header  = ({ children }) => <div className="card__header">{children}</div>;
-Card.Body    = ({ children }) => <div className="card__body">{children}</div>;
-Card.Footer  = ({ children }) => <div className="card__footer">{children}</div>;
-
-export default Card;
-```
-
-### Card.css
-```css
-.card {
-  background:    var(--white);
-  border-radius: var(--radius-xl);     /* Arrondi généreux */
-  overflow:      hidden;               /* Coins arrondis respectés */
-  transition:    var(--transition);
-}
-
-.card--padded { padding: var(--space-xl); }
-.card--shadow { box-shadow: var(--shadow-md); }
-.card:hover   { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-
-.card__header {
-  border-bottom: 1px solid var(--bg-gray);
-  padding-bottom: var(--space-md);
-  margin-bottom:  var(--space-md);
-  font-family:    var(--font-heading);
-  font-size:      1.2rem;
-  color:          var(--text-dark);
-}
-
-.card__footer {
-  border-top:  1px solid var(--bg-gray);
-  padding-top: var(--space-md);
-  margin-top:  var(--space-md);
-}
-```
-
----
-
-## 🏷️ BADGE (components/common/Badge/)
-
-### Badge.jsx
-```jsx
-// Badge de statut (actif, en attente, etc.)
-const Badge = ({ children, variant = 'default', size = 'md' }) => {
-  return (
-    <span className={`badge badge--${variant} badge--${size}`}>
-      {children}
-    </span>
-  );
-};
-
-export default Badge;
-```
-
-### Badge.css
-```css
-/* Style de base */
-.badge {
-  display:       inline-flex;
-  align-items:   center;
-  border-radius: var(--radius-pill);
-  font-family:   var(--font-body);
-  font-weight:   700;
-  white-space:   nowrap;
-}
-
-/* Tailles */
-.badge--sm { font-size: 0.7rem;  padding: 2px var(--space-sm); }
-.badge--md { font-size: 0.8rem;  padding: 4px var(--space-md); }
-.badge--lg { font-size: 0.9rem;  padding: 6px var(--space-lg); }
-
-/* Variantes de couleur */
-.badge--success  { background: #E8F5E9; color: var(--success); }  /* Vert pâle */
-.badge--warning  { background: #FFF3E0; color: var(--warning); }  /* Orange pâle */
-.badge--error    { background: #FFEBEE; color: var(--error);   }  /* Rouge pâle */
-.badge--info     { background: #E3F2FD; color: var(--info);    }  /* Bleu pâle */
-.badge--default  { background: var(--bg-gray); color: var(--text-gray); }
-```
-
----
-
-## 🚨 ALERT (components/common/Alert/)
-
-### Alert.jsx
-```jsx
-// Alerte pour messages de succès, erreur, info, avertissement
-const ICONES = {
-  success: '✅',
-  error:   '❌',
-  warning: '⚠️',
-  info:    'ℹ️'
-};
-
-const Alert = ({ type = 'info', message, onClose }) => {
-  return (
-    <div className={`alert alert--${type}`} role="alert">
-      <span className="alert__icon">{ICONES[type]}</span>
-      <p className="alert__message">{message}</p>
-      {onClose && (
-        <button className="alert__close" onClick={onClose} aria-label="Fermer">
-          ✕
-        </button>
-      )}
-    </div>
-  );
-};
-
-export default Alert;
-```
-
-### Alert.css
-```css
-.alert {
-  display:       flex;
-  align-items:   center;
-  gap:           var(--space-md);
-  padding:       var(--space-md) var(--space-lg);
-  border-radius: var(--radius-md);
-  border-left:   4px solid;           /* Barre colorée à gauche */
-}
-
-.alert--success { background: #E8F5E9; border-color: var(--success); }
-.alert--error   { background: #FFEBEE; border-color: var(--error);   }
-.alert--warning { background: #FFF3E0; border-color: var(--warning); }
-.alert--info    { background: #E3F2FD; border-color: var(--info);    }
-
-.alert__message { flex: 1; margin: 0; font-family: var(--font-body); }
-.alert__close   { background: none; border: none; cursor: pointer; font-size: 1rem; color: var(--text-gray); }
-```
-
----
-
-## 🎴 COMPOSANT CARD ENFANT (métier)
-
-### SuiviCard.jsx (composant métier)
-```jsx
-// Carte de suivi quotidien d'un enfant
-// Affiche repas, sieste, activités et humeur du jour
-
-const SuiviCard = ({ suivi }) => {
-  // Convertir le statut repas en emoji
-  const emojiRepas = (statut) => {
-    const emojis = { tout: '😋', peu: '😐', rien: '😕', absent: '—' };
-    return emojis[statut] || '—';
-  };
-
-  return (
-    <Card className="suivi-card">
-      <Card.Header>
-        🗓️ Suivi du {new Date(suivi.date_suivi).toLocaleDateString('fr-FR')}
-      </Card.Header>
-
-      <Card.Body>
-        {/* Section repas */}
-        <div className="suivi-section">
-          <h4 className="suivi-section__titre">🍽️ Repas</h4>
-          <div className="suivi-repas">
-            <div className="suivi-repas__item">
-              <span>Matin</span>
-              <span>{emojiRepas(suivi.repas_matin)}</span>
-            </div>
-            <div className="suivi-repas__item">
-              <span>Midi</span>
-              <span>{emojiRepas(suivi.repas_midi)}</span>
-            </div>
-            <div className="suivi-repas__item">
-              <span>Goûter</span>
-              <span>{emojiRepas(suivi.repas_gouter)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Section sieste */}
-        {suivi.sieste_debut && (
-          <div className="suivi-section">
-            <h4 className="suivi-section__titre">😴 Sieste</h4>
-            <p>{suivi.sieste_debut} → {suivi.sieste_fin}</p>
-          </div>
-        )}
-
-        {/* Note générale */}
-        {suivi.note_generale && (
-          <div className="suivi-note">
-            <p>💬 {suivi.note_generale}</p>
-          </div>
-        )}
-      </Card.Body>
-    </Card>
-  );
-};
-
-export default SuiviCard;
-```
+### Composants « mise en page » (layouts/)
+| Layout | Contenu |
+|---|---|
+| `PublicLayout` | Barre de navigation (menu hamburger sur mobile), pied de page (version, mentions légales, installation de l'application) |
+| `ParentLayout` | Sidebar de l'espace parents → barre de navigation en bas sur mobile ; cloche de notifications |
+| `AdminLayout` | Sidebar groupée (« Quotidien » / « Gestion ») selon le rôle ; cloche de notifications |
 
 ---
 
 ## 📌 RÈGLES COMPOSANTS
 
-1. **1 dossier par composant** : `Button/Button.jsx` + `Button/Button.css`
-2. **Props documentées** : toujours commenter les props
-3. **Valeurs par défaut** : chaque prop optionnelle a une valeur par défaut
-4. **Pas de styles inline** : tout dans le fichier `.css` du composant
-5. **Accessibilité** : `aria-label`, `role`, `alt` sur tous les éléments
-6. **Export nommé** : `export default NomComposant` toujours en bas
+1. Un dossier par composant : `Nom/Nom.jsx` + `Nom/Nom.css` (PascalCase).
+2. Classes CSS en kebab-case, méthode BEM (`bloc__element--variante`).
+3. Toujours `var(--variable)`, jamais de couleur en dur, jamais de style inline.
+4. Props documentées et valeurs par défaut sur les props optionnelles.
+5. Textes via `t('…')` (FR / EN), jamais écrits en dur.
+6. Accessibilité : vrais `<button>`, `aria-*` sur les éléments dynamiques,
+   fenêtres fermables avec Échap.
+7. `export default NomComposant` en bas du fichier.

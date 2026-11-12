@@ -1,7 +1,36 @@
-# 🔧 02 — BACKEND API
+# 🔧 02 — BACKEND API (Node.js + Express)
 # Fichier : 02-BACKEND-API.md
-# Description : Architecture complète du backend Node.js + Express
-# Routes API, middlewares, configuration
+# Description : Architecture réelle du backend — structure en couches,
+# chaîne de middlewares, 102 routes, services, dépendances
+
+---
+
+## 🏗️ ARCHITECTURE EN COUCHES
+
+```
+Requête HTTP
+   │
+   ▼
+server.js ── middlewares globaux (helmet, CORS, JSON, logs, Cache-Control)
+   │
+   ▼
+routes/*.routes.js ── middlewares de route :
+   │                   verifierToken → verifierRole → limites de débit
+   │                   → Turnstile → validation (express-validator) → upload (multer)
+   ▼
+controllers/*Controller.js ── logique métier, vérification « ce parent a-t-il le droit ? »
+   │
+   ├──► services/ ── emails, notifications, 2FA, réglages, nettoyage automatique
+   │
+   ▼
+models/ (Sequelize) ── accès aux données, requêtes paramétrées
+   │
+   ▼
+MySQL / MariaDB
+```
+
+Chaque couche a un rôle unique : les routes **déclarent** qui a le droit, les
+contrôleurs **appliquent** les règles métier, les modèles **accèdent** aux données.
 
 ---
 
@@ -9,416 +38,350 @@
 
 ```
 backend/
-├── src/
-│   ├── config/
-│   │   ├── database.js        # Connexion Sequelize
-│   │   ├── jwt.js             # Configuration JWT
-│   │   └── mail.js            # Configuration Nodemailer
-│   ├── models/
-│   │   ├── index.js           # Associations entre modèles
-│   │   ├── User.js
-│   │   ├── Enfant.js
-│   │   ├── Inscription.js
-│   │   ├── Absence.js
-│   │   ├── SuiviQuotidien.js
-│   │   ├── Document.js
-│   │   ├── Message.js
-│   │   ├── Actualite.js
-│   │   ├── Menu.js
-│   │   ├── Notification.js
-│   │   ├── GalerieAlbum.js
-│   │   ├── GaleriePhoto.js
-│   │   ├── Consentement.js
-│   │   └── CmsPage.js
-│   ├── controllers/
-│   │   ├── authController.js
-│   │   ├── userController.js
-│   │   ├── enfantController.js
-│   │   ├── inscriptionController.js
-│   │   ├── absenceController.js
-│   │   ├── suiviController.js
-│   │   ├── documentController.js
-│   │   ├── messageController.js
-│   │   ├── actualiteController.js
-│   │   ├── menuController.js
-│   │   ├── notificationController.js
-│   │   ├── galerieController.js
-│   │   └── cmsController.js
-│   ├── routes/
-│   │   ├── index.js           # Fichier principal qui regroupe toutes les routes
-│   │   ├── auth.routes.js
-│   │   ├── user.routes.js
-│   │   ├── enfant.routes.js
-│   │   ├── inscription.routes.js
-│   │   ├── absence.routes.js
-│   │   ├── suivi.routes.js
-│   │   ├── document.routes.js
-│   │   ├── message.routes.js
-│   │   ├── actualite.routes.js
-│   │   ├── menu.routes.js
-│   │   ├── notification.routes.js
-│   │   ├── galerie.routes.js
-│   │   └── cms.routes.js
-│   ├── middlewares/
-│   │   ├── auth.middleware.js  # Vérification JWT
-│   │   ├── role.middleware.js  # Vérification des rôles
-│   │   ├── upload.middleware.js # Gestion des uploads
-│   │   └── validate.middleware.js # Validation des données
-│   ├── services/
-│   │   ├── mail.service.js    # Envoi d'emails
-│   │   ├── upload.service.js  # Traitement fichiers
-│   │   └── notification.service.js # Création notifications
-│   └── utils/
-│       ├── response.js        # Format réponses API standard
-│       └── helpers.js         # Fonctions utilitaires
-├── uploads/                   # Fichiers uploadés
-│   ├── avatars/
-│   ├── documents/
-│   ├── photos/
-│   └── justificatifs/
-├── .env
+├── server.js                  # Point d'entrée : middlewares globaux, routes, démarrage
 ├── package.json
-└── server.js                  # Point d'entrée
+├── Dockerfile                 # Image Node 20 Alpine (développement sous Docker)
+├── assets/
+│   └── guide-inscription.pdf  # Guide d'inscription par défaut
+├── scripts/                   # Outils en ligne de commande (maintenance)
+│   ├── code-secours-connexion.js  # Affiche un code 2FA si les emails ne partent plus
+│   ├── verifier-photos.js     # Vérifie que les fichiers des photos existent sur le disque
+│   ├── migrer-notifications.js    # Reprise des anciennes notifications (migration 004)
+│   └── corriger-noms.js       # Correction ponctuelle prénom / nom
+├── uploads/                   # Fichiers envoyés (servis via /uploads)
+│   ├── equipe/ actualites/ avatars/        # Publics
+│   └── photos/ documents/ messages/ justificatifs/   # Privés : lien signé obligatoire
+├── stockage/                  # Jamais servi en statique
+│   ├── justificatifs/         # Pièces justificatives d'inscription
+│   └── guide/                 # Guide d'inscription remplacé par le super admin
+└── src/
+    ├── config/
+    │   ├── database.js        # Connexion Sequelize
+    │   ├── jwt.js             # Création / vérification des jetons (15 min / 7 j)
+    │   ├── mail.js            # Transport Nodemailer
+    │   └── limites.js         # Tailles maximales des fichiers
+    ├── middlewares/
+    │   ├── auth.middleware.js         # verifierToken (+ version optionnelle)
+    │   ├── role.middleware.js         # verifierRole('admin', 'super_admin'…)
+    │   ├── turnstile.middleware.js    # Anti-robot Cloudflare (vérifié côté serveur)
+    │   ├── validate.middleware.js     # Renvoie les erreurs express-validator
+    │   ├── upload.middleware.js       # Multer : types MIME, tailles, noms de fichiers sûrs
+    │   ├── inscription.middleware.js  # Réserve suivi / galerie / absences aux familles inscrites
+    │   └── parametres.middleware.js   # Espace parents ou création de comptes fermés
+    ├── controllers/           # 18 contrôleurs (un par domaine)
+    ├── models/                # 19 modèles Sequelize + index.js (associations)
+    ├── routes/                # 18 fichiers de routes + index.js (montage sous /api)
+    ├── services/
+    │   ├── mail.service.js            # Tous les emails (confirmation, code 2FA, réinitialisation…)
+    │   ├── notification.service.js    # Création des notifications dans l'application
+    │   ├── deuxFacteurs.service.js    # Codes de connexion, jeton d'étape, empreintes HMAC
+    │   ├── parametres.service.js      # Lecture des interrupteurs du super admin
+    │   └── nettoyage.service.js       # Suppression des comptes non confirmés (24 h)
+    ├── utils/
+    │   ├── response.js        # Format de réponse standard (succes / erreur)
+    │   ├── fichiersSignes.js  # Liens signés HMAC pour les fichiers privés
+    │   └── joursOuvres.js     # Calcul des jours ouvrés (absences, présences)
+    └── validators/
+        └── inscription.validator.js
 ```
 
 ---
 
-## 🚀 SERVER.JS (point d'entrée)
+## 🚀 SERVER.JS — CE QUI SE PASSE À CHAQUE REQUÊTE
+
+1. **Préfixe d'hébergement** : sur Alwaysdata l'API vit sous `/api-coccinelles` ;
+   `MOUNT_PREFIX` retire ce préfixe avant les routes (vide en local).
+2. **helmet** : en-têtes de sécurité (HSTS 1 an, CSP stricte, `nosniff`,
+   suppression de `X-Powered-By`) — corrections issues d'un scan **OWASP ZAP**.
+3. **Cache-Control `no-store`** sur toute l'API : les réponses contiennent des
+   données personnelles, aucun navigateur ni proxy ne doit les garder.
+4. **CORS** : seule l'adresse du frontend (`FRONTEND_URL`) est autorisée
+   (+ réseau local en développement pour tester sur téléphone).
+5. **`/uploads`** : les dossiers privés exigent un **lien signé** valide
+   (`protegerUploads`), sinon 403 ; fichier absent → 404 JSON propre.
+6. **`/api`** : `signerReponsesApi` ajoute automatiquement une signature
+   temporaire aux chemins de fichiers privés présents dans les réponses.
+7. **Gestion d'erreurs** : origine CORS refusée → 403 JSON ; fichier trop lourd
+   ou type refusé → 400 JSON et suppression des fichiers déjà reçus.
+8. **Démarrage** : connexion BDD, écoute sur `PORT` (et `IP` imposée par
+   Alwaysdata), lancement du **nettoyage automatique** des comptes non confirmés.
+9. **`/health`** : route de santé pour vérifier que le serveur répond.
+
+---
+
+## 📤 FORMAT DE RÉPONSE STANDARD (utils/response.js)
 
 ```javascript
-// Point d'entrée du serveur Express
-const express = require('express');   // Framework web
-const cors    = require('cors');      // Permettre les requêtes cross-origin
-const helmet  = require('helmet');    // Sécurité HTTP headers
-const morgan  = require('morgan');    // Logs des requêtes
-const path    = require('path');      // Gestion des chemins fichiers
-require('dotenv').config();           // Charger les variables d'environnement
-
-const sequelize = require('./src/config/database'); // Connexion BDD
-const routes    = require('./src/routes');           // Toutes les routes
-
-const app = express(); // Créer l'application Express
-
-// ── MIDDLEWARES GLOBAUX ─────────────────────────────────────────────
-app.use(helmet());                    // Sécurité : protège les headers HTTP
-app.use(cors({
-  origin:      process.env.FRONTEND_URL || 'http://localhost:3000', // Autoriser le frontend
-  credentials: true                  // Autoriser les cookies et headers d'auth
-}));
-app.use(express.json());              // Parser le corps des requêtes JSON
-app.use(express.urlencoded({ extended: true })); // Parser les formulaires
-app.use(morgan('dev'));               // Afficher les logs de requêtes
-
-// ── DOSSIER STATIQUE POUR LES FICHIERS UPLOADÉS ─────────────────────
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// ── ROUTES API ───────────────────────────────────────────────────────
-app.use('/api', routes); // Toutes les routes préfixées par /api
-
-// ── DÉMARRAGE DU SERVEUR ─────────────────────────────────────────────
-const PORT = process.env.PORT || 3001;
-
-sequelize.sync({ alter: false }) // Synchroniser les modèles avec la BDD
-  .then(() => {
-    console.log('✅ Base de données connectée');
-    app.listen(PORT, () => {
-      console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('❌ Erreur BDD :', err);
-  });
+// Succès
+{ "success": true,  "data": { ... }, "message": "Connexion réussie" }
+// Erreur
+{ "success": false, "message": "Code incorrect" }
 ```
+Toutes les routes passent par `succes(res, data, message, status)` et
+`erreur(res, message, status)` : le frontend traite toujours la même forme.
 
 ---
 
-## 🔑 TOUTES LES ROUTES API
+## 🔒 MIDDLEWARES DE SÉCURITÉ
 
-### Auth — /api/auth
-```
-POST   /api/auth/register          Créer un compte parent
-POST   /api/auth/login             Connexion
-POST   /api/auth/2fa/verifier      Code à 6 chiffres reçu par email, ouvre la session
-POST   /api/auth/2fa/renvoyer      Envoie un nouveau code (un par minute au maximum)
-POST   /api/auth/logout            Déconnexion
-POST   /api/auth/refresh-token     Renouveler le token JWT
-POST   /api/auth/forgot-password   Demander reset mot de passe
-POST   /api/auth/reset-password    Réinitialiser le mot de passe
-GET    /api/auth/verify-email/:token  Vérifier l'email
-```
+| Middleware | Rôle |
+|---|---|
+| `verifierToken` | Lit `Authorization: Bearer <jeton>`, vérifie le JWT, recharge l'utilisateur en base (compte supprimé ou désactivé → refus), refuse un parent si l'espace parents est fermé |
+| `verifierRole(...roles)` | Refuse (403) si le rôle n'est pas dans la liste |
+| `verifierJetonEtape` | Étape 2FA : accepte uniquement le jeton temporaire délivré après le mot de passe (clé dédiée, jamais un jeton de session) |
+| `rateLimit` | Connexion, connexion Google, création de compte : 10 requêtes / 15 min ; code 2FA : 30 / 15 min ; contact : 5 / heure |
+| `verifierTurnstile` | Vérifie auprès de Cloudflare le jeton anti-robot : connexion, création de compte, mot de passe oublié, contact |
+| `validate` + express-validator | Contrôle et nettoie chaque champ reçu (longueurs, formats, caractères autorisés) |
+| `upload` (multer) | Liste blanche de types MIME, taille max (documents 5 Mo, photos 10 Mo, avatars 2 Mo), nom de fichier aléatoire et extension déduite du type |
+| `verifierInscriptionAcceptee` | Suivi, galerie, absences, consentement : réservés aux parents dont un enfant est inscrit |
+| `verifierCreationComptesOuverte` / `verifierEspaceParentsOuvert` | Appliquent les interrupteurs du super admin |
 
-### Users — /api/users
+**Règle d'or :** en plus des middlewares, chaque contrôleur filtre par
+`req.user.id` : un parent ne lit et ne modifie **que les données de ses enfants**
+(enfants, absences, documents, suivi, inscriptions, messages, galerie).
+
+---
+
+## 🔑 AUTHENTIFICATION — PARCOURS COMPLET
+
 ```
-GET    /api/users/me               Mon profil (connecté)
-PUT    /api/users/me               Modifier mon profil
-PUT    /api/users/me/password      Changer mon mot de passe
-PUT    /api/users/me/avatar        Changer ma photo de profil
-GET    /api/users                  Liste tous les users (admin)
-GET    /api/users/:id              Détail d'un user (admin)
-PUT    /api/users/:id/activer      Activer/désactiver un compte (admin)
-DELETE /api/users/:id              Supprimer un compte (super admin)
+1. POST /api/auth/login  (email + mot de passe)      ou  POST /api/auth/google (jeton Google vérifié côté serveur)
+      → mot de passe vérifié (bcrypt) / jeton Google vérifié (google-auth-library)
+      → AUCUNE session ouverte : un code à 6 chiffres est envoyé par email
+      → réponse : jeton d'étape (20 min) + email masqué (s***@gmail.com)
+2. POST /api/auth/2fa/verifier  (jeton d'étape + code)
+      → code comparé à son empreinte HMAC en temps constant, dans une transaction verrouillée
+      → 5 codes faux sur le compte = blocage 15 min (compteur non remis à zéro par un nouveau code)
+      → réponse : accessToken (15 min) + refreshToken (7 j, stocké en base)
+3. Requêtes suivantes : en-tête Authorization: Bearer <accessToken>
+4. accessToken expiré → POST /api/auth/refresh-token (le jeton doit correspondre à celui en base)
+5. POST /api/auth/logout → refreshToken effacé en base (session révoquée)
 ```
+Autres parcours : création de compte (Turnstile + validation + email de
+confirmation valable 24 h), mot de passe oublié (réponse identique que l'email
+existe ou non : pas d'énumération des comptes), réinitialisation (toutes les
+sessions sont fermées).
+
+---
+
+## 🗺️ TOUTES LES ROUTES API (102)
+
+Légende accès : **Public** = sans connexion · **Connecté** = tout utilisateur
+connecté (le contrôleur limite un parent à ses propres données) · **parent /
+admin / super_admin** = rôles exigés · **Jeton 2FA** = étape du code de connexion.
+
+### Authentification — /api/auth
+| Verbe | Route | Accès |
+|---|---|---|
+| `POST` | `/api/auth/register` | Public |
+| `POST` | `/api/auth/login` | Public |
+| `POST` | `/api/auth/google` | Public |
+| `POST` | `/api/auth/2fa/verifier` | Jeton 2FA |
+| `POST` | `/api/auth/2fa/renvoyer` | Jeton 2FA |
+| `POST` | `/api/auth/logout` | Connecté |
+| `POST` | `/api/auth/refresh-token` | Public |
+| `POST` | `/api/auth/forgot-password` | Public |
+| `POST` | `/api/auth/reset-password` | Public |
+| `GET` | `/api/auth/verify-email/:token` | Public |
+
+### Utilisateurs — /api/users
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/users/me` | Connecté |
+| `PUT` | `/api/users/me` | Connecté |
+| `PUT` | `/api/users/me/password` | Connecté |
+| `PUT` | `/api/users/me/avatar` | Connecté |
+| `GET` | `/api/users/admins` | Connecté |
+| `GET` | `/api/users` | admin, super_admin |
+| `GET` | `/api/users/:id` | super_admin |
+| `PUT` | `/api/users/:id/activer` | super_admin |
+| `DELETE` | `/api/users/:id` | super_admin |
 
 ### Enfants — /api/enfants
-```
-GET    /api/enfants                Mes enfants (parent) / Tous (admin)
-POST   /api/enfants                Ajouter un enfant
-GET    /api/enfants/:id            Détail d'un enfant
-PUT    /api/enfants/:id            Modifier un enfant
-DELETE /api/enfants/:id            Supprimer un enfant (admin)
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/enfants` | Connecté |
+| `POST` | `/api/enfants` | Connecté |
+| `GET` | `/api/enfants/:id` | Connecté |
+| `PUT` | `/api/enfants/:id` | Connecté |
+| `PATCH` | `/api/enfants/:id/jours-presence` | super_admin |
+| `DELETE` | `/api/enfants/:id` | super_admin |
 
 ### Inscriptions — /api/inscriptions
-```
-GET    /api/inscriptions           Mes inscriptions (parent) / Toutes (admin)
-POST   /api/inscriptions           Créer une demande d'inscription
-GET    /api/inscriptions/:id       Détail d'une inscription
-PUT    /api/inscriptions/:id       Modifier une inscription (parent)
-PATCH  /api/inscriptions/:id/statut  Changer le statut (admin)
-GET    /api/inscriptions/stats     Statistiques (admin)
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/inscriptions` | Connecté |
+| `GET` | `/api/inscriptions/acces` | Connecté |
+| `GET` | `/api/inscriptions/mes-documents` | parent |
+| `GET` | `/api/inscriptions/stats` | admin, super_admin |
+| `POST` | `/api/inscriptions` | Connecté |
+| `GET` | `/api/inscriptions/:id` | Connecté |
+| `PUT` | `/api/inscriptions/:id` | Connecté |
+| `PATCH` | `/api/inscriptions/:id/statut` | super_admin |
+| `POST` | `/api/inscriptions/:id/documents` | Connecté |
+| `GET` | `/api/inscriptions/:id/documents/:docId/fichier` | Connecté |
+| `GET` | `/api/inscriptions/:id/documents` | Connecté |
 
 ### Absences — /api/absences
-```
-GET    /api/absences               Mes absences (parent) / Toutes (admin)
-POST   /api/absences               Déclarer une absence
-GET    /api/absences/:id           Détail d'une absence
-PUT    /api/absences/:id           Modifier une absence (si en_attente)
-PATCH  /api/absences/:id/valider   Valider/refuser une absence (admin)
-DELETE /api/absences/:id           Supprimer une absence
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/absences/presences/:date` | admin, super_admin |
+| `GET` | `/api/absences/presences-mois` | admin, super_admin |
+| `GET` | `/api/absences` | Connecté |
+| `POST` | `/api/absences` | Connecté |
+| `GET` | `/api/absences/:id` | Connecté |
+| `PUT` | `/api/absences/:id` | Connecté |
+| `PATCH` | `/api/absences/:id/valider` | admin, super_admin |
+| `DELETE` | `/api/absences/:id` | Connecté |
 
 ### Suivi quotidien — /api/suivi
-```
-GET    /api/suivi/:enfant_id              Suivi d'un enfant (par date)
-GET    /api/suivi/:enfant_id/:date        Suivi d'un jour précis
-POST   /api/suivi                         Créer un suivi (admin)
-PUT    /api/suivi/:id                     Modifier un suivi (admin)
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/suivi/:enfant_id` | Connecté |
+| `GET` | `/api/suivi/:enfant_id/:date` | Connecté |
+| `POST` | `/api/suivi` | admin, super_admin |
+| `PUT` | `/api/suivi/:id` | admin, super_admin |
+
+### Émargement — /api/emargements
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/emargements/:date` | admin, super_admin |
+| `POST` | `/api/emargements` | admin, super_admin |
+| `PATCH` | `/api/emargements/:id` | admin, super_admin |
+| `DELETE` | `/api/emargements/:id` | admin, super_admin |
 
 ### Documents — /api/documents
-```
-GET    /api/documents              Mes documents (parent) / Tous (admin)
-POST   /api/documents              Uploader un document
-GET    /api/documents/:id          Télécharger un document
-DELETE /api/documents/:id          Supprimer un document
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/documents` | Connecté |
+| `POST` | `/api/documents` | Connecté |
+| `GET` | `/api/documents/:id` | Connecté |
+| `DELETE` | `/api/documents/:id` | Connecté |
 
-### Messages — /api/messages
-```
-GET    /api/messages               Ma messagerie (conversations)
-POST   /api/messages               Envoyer un message
-GET    /api/messages/:id           Lire une conversation
-PATCH  /api/messages/:id/lu        Marquer comme lu
-DELETE /api/messages/:id           Supprimer un message
-```
-
-### Actualités — /api/actualites
-```
-GET    /api/actualites             Liste (public)
-GET    /api/actualites/:id         Détail (public)
-POST   /api/actualites             Créer (admin)
-PUT    /api/actualites/:id         Modifier (admin)
-PATCH  /api/actualites/:id/publier Publier/dépublier (admin)
-DELETE /api/actualites/:id         Supprimer (admin)
-```
-
-### Menus — /api/menus
-```
-GET    /api/menus                  Menus de la semaine (public)
-GET    /api/menus/:semaine         Menu d'une semaine précise (public)
-GET    /api/menus/jour/:date       Déjeuner et goûter d'un jour (public)
-GET    /api/menus/cycle            Les 4 menus du cycle (super admin)
-PUT    /api/menus/cycle/:numero    Saisir le menu de la semaine 1 à 4 (super admin)
-```
+### Messagerie — /api/messages
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/messages` | Connecté |
+| `POST` | `/api/messages` | Connecté |
+| `GET` | `/api/messages/:id` | Connecté |
+| `PATCH` | `/api/messages/:id/lu` | Connecté |
+| `DELETE` | `/api/messages/:id` | Connecté |
 
 ### Notifications — /api/notifications
-```
-GET    /api/notifications          Mes notifications
-PATCH  /api/notifications/:id/lue  Marquer comme lue
-PATCH  /api/notifications/tout-lire Tout marquer comme lu
-DELETE /api/notifications/:id      Supprimer une notification
-```
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/notifications` | Connecté |
+| `PATCH` | `/api/notifications/:id/lue` | Connecté |
+| `PATCH` | `/api/notifications/tout-lire` | Connecté |
+| `DELETE` | `/api/notifications/:id` | Connecté |
 
-### Galerie — /api/galerie
-```
-GET    /api/galerie/albums               Liste des albums
-POST   /api/galerie/albums               Créer un album (admin)
-GET    /api/galerie/albums/:id           Photos d'un album
-PUT    /api/galerie/albums/:id           Modifier un album (admin)
-DELETE /api/galerie/albums/:id           Supprimer un album (admin)
-POST   /api/galerie/albums/:id/photos    Ajouter photos (admin)
-DELETE /api/galerie/photos/:id           Supprimer une photo (admin)
-GET    /api/galerie/consentement         Mon consentement RGPD
-POST   /api/galerie/consentement         Donner/retirer consentement
-```
+### Actualités — /api/actualites
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/actualites` | Public |
+| `GET` | `/api/actualites/:id` | Public |
+| `POST` | `/api/actualites` | super_admin |
+| `PUT` | `/api/actualites/:id` | super_admin |
+| `PATCH` | `/api/actualites/:id/publier` | super_admin |
+| `DELETE` | `/api/actualites/:id` | super_admin |
 
-### CMS — /api/cms
-```
-GET    /api/cms/pages              Toutes les pages CMS (admin)
-GET    /api/cms/pages/:slug        Contenu d'une page (public)
-PUT    /api/cms/pages/:slug        Modifier le contenu (admin)
-```
+### Menus — /api/menus
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/menus` | Public |
+| `GET` | `/api/menus/cycle` | super_admin |
+| `PUT` | `/api/menus/cycle/:numero` | super_admin |
+| `GET` | `/api/menus/jour/:date` | Public |
+| `GET` | `/api/menus/:semaine` | Public |
 
----
+### Galerie et consentement photo — /api/galerie
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/galerie/albums` | Connecté |
+| `POST` | `/api/galerie/albums` | super_admin |
+| `GET` | `/api/galerie/albums/:id` | Connecté |
+| `PUT` | `/api/galerie/albums/:id` | super_admin |
+| `DELETE` | `/api/galerie/albums/:id` | super_admin |
+| `POST` | `/api/galerie/albums/:id/photos` | super_admin |
+| `DELETE` | `/api/galerie/photos/:id` | super_admin |
+| `PUT` | `/api/galerie/photos/:id/enfants` | super_admin |
+| `GET` | `/api/galerie/photos/:id/download` | Connecté |
+| `GET` | `/api/galerie/consentement` | Connecté |
+| `POST` | `/api/galerie/consentement` | Connecté |
 
-## 🔒 MIDDLEWARES
+### Pages CMS — /api/cms
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/cms/pages` | super_admin |
+| `GET` | `/api/cms/pages/:slug` | Public |
+| `PUT` | `/api/cms/pages/:slug` | super_admin |
 
-### auth.middleware.js
-```javascript
-// Middleware de vérification du token JWT
-const jwt = require('jsonwebtoken'); // Librairie JWT
-const { User } = require('../models'); // Modèle User
+### Équipe — /api/equipe
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/equipe` | Public |
+| `GET` | `/api/equipe/tous` | super_admin |
+| `POST` | `/api/equipe` | super_admin |
+| `PUT` | `/api/equipe/:id` | super_admin |
+| `DELETE` | `/api/equipe/:id` | super_admin |
 
-// Vérifier que l'utilisateur est connecté
-const verifierToken = async (req, res, next) => {
-  // Récupérer le token dans le header Authorization
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1]; // Format : "Bearer TOKEN"
+### Contact — /api/contact
+| Verbe | Route | Accès |
+|---|---|---|
+| `POST` | `/api/contact` | Public |
 
-  if (!token) {
-    // Pas de token → non autorisé
-    return res.status(401).json({ message: 'Token manquant, connexion requise' });
-  }
+### Rapports — /api/rapports
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/rapports` | super_admin |
 
-  try {
-    // Vérifier et décoder le token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Récupérer l'utilisateur en base de données
-    const user = await User.findByPk(decoded.id);
-    
-    if (!user || !user.actif) {
-      // Utilisateur introuvable ou désactivé
-      return res.status(401).json({ message: 'Utilisateur non trouvé ou désactivé' });
-    }
+### Paramètres (super admin) — /api/parametres
+| Verbe | Route | Accès |
+|---|---|---|
+| `GET` | `/api/parametres/public` | Public |
+| `GET` | `/api/parametres/guide-inscription` | Public |
+| `POST` | `/api/parametres/guide-inscription` | super_admin |
+| `GET` | `/api/parametres` | super_admin |
+| `PUT` | `/api/parametres` | super_admin |
 
-    req.user = user; // Attacher l'utilisateur à la requête
-    next();          // Passer au middleware suivant
-  } catch (err) {
-    // Token invalide ou expiré
-    return res.status(403).json({ message: 'Token invalide ou expiré' });
-  }
-};
-
-module.exports = { verifierToken };
-```
-
-### role.middleware.js
-```javascript
-// Middleware de vérification des rôles
-// Utilisation : router.get('/admin', verifierToken, verifierRole('admin'), controller)
-
-// Vérifier que l'utilisateur a le bon rôle
-const verifierRole = (...rolesAutorises) => {
-  return (req, res, next) => {
-    // Vérifier que le rôle de l'utilisateur est dans la liste autorisée
-    if (!rolesAutorises.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Accès refusé : permissions insuffisantes' });
-    }
-    next(); // Rôle OK, continuer
-  };
-};
-
-module.exports = { verifierRole };
-```
-
-### upload.middleware.js
-```javascript
-// Middleware de gestion des uploads de fichiers
-const multer  = require('multer');  // Gestion upload
-const path    = require('path');    // Gestion chemins
-const crypto  = require('crypto'); // Génération noms uniques
-
-// Types de fichiers autorisés
-const TYPES_AUTORISES = {
-  documents: ['application/pdf', 'image/jpeg', 'image/png'],
-  photos:    ['image/jpeg', 'image/png', 'image/webp'],
-  avatars:   ['image/jpeg', 'image/png']
-};
-
-// Configuration stockage sur disque
-const stockage = multer.diskStorage({
-  // Dossier de destination selon le type
-  destination: (req, file, cb) => {
-    const dossier = req.uploadDossier || 'documents'; // Défini dans la route
-    cb(null, `./uploads/${dossier}/`);
-  },
-  // Nom de fichier unique pour éviter les conflits
-  filename: (req, file, cb) => {
-    const extension = path.extname(file.originalname);        // .pdf, .jpg...
-    const nomUnique = crypto.randomBytes(16).toString('hex'); // Nom aléatoire
-    cb(null, `${nomUnique}${extension}`);
-  }
-});
-
-// Filtre de validation des types MIME
-const filtreTypes = (typesAutorises) => (req, file, cb) => {
-  if (typesAutorises.includes(file.mimetype)) {
-    cb(null, true); // Fichier accepté
-  } else {
-    cb(new Error(`Type de fichier non autorisé : ${file.mimetype}`), false);
-  }
-};
-
-// Uploader pour les documents (PDF + images, max 5MB)
-const uploadDocument = multer({
-  storage:  stockage,
-  limits:   { fileSize: 5 * 1024 * 1024 }, // 5 MB maximum
-  fileFilter: filtreTypes(TYPES_AUTORISES.documents)
-});
-
-// Uploader pour les photos (images uniquement, max 10MB)
-const uploadPhoto = multer({
-  storage:  stockage,
-  limits:   { fileSize: 10 * 1024 * 1024 }, // 10 MB maximum
-  fileFilter: filtreTypes(TYPES_AUTORISES.photos)
-});
-
-module.exports = { uploadDocument, uploadPhoto };
-```
+> Total : 102 routes. Les routes « Public » de lecture (actualités, menus,
+> équipe, pages CMS, paramètres publics) alimentent le site vitrine.
 
 ---
 
-## 📦 DÉPENDANCES NPM
+## 📦 DÉPENDANCES NPM (backend/package.json)
 
-```json
-{
-  "dependencies": {
-    "bcryptjs":       "^2.4.3",   // Hashage des mots de passe
-    "cors":           "^2.8.5",   // Gestion CORS
-    "dotenv":         "^16.0.0",  // Variables d'environnement
-    "express":        "^4.18.0",  // Framework web
-    "express-validator": "^7.0.0", // Validation des données
-    "express-rate-limit": "^6.0.0", // Protection bruteforce
-    "helmet":         "^7.0.0",   // Sécurité HTTP headers
-    "jsonwebtoken":   "^9.0.0",   // Tokens JWT
-    "morgan":         "^1.10.0",  // Logs des requêtes
-    "multer":         "^1.4.5",   // Upload de fichiers
-    "mysql2":         "^3.0.0",   // Driver MySQL
-    "nodemailer":     "^6.9.0",   // Envoi d'emails
-    "sequelize":      "^6.32.0",  // ORM base de données
-    "sharp":          "^0.32.0"   // Compression des images
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.0"           // Redémarrage auto en développement
-  },
-  "scripts": {
-    "start":  "node server.js",       // Production
-    "dev":    "nodemon server.js",    // Développement
-    "seed":   "node database/seeds/index.js" // Insérer données de test
-  }
-}
-```
+| Paquet | Rôle |
+|---|---|
+| express 4 | Serveur HTTP et routage |
+| sequelize 6 + mysql2 | ORM et pilote MySQL / MariaDB |
+| jsonwebtoken | Jetons d'accès, de rafraîchissement et d'étape 2FA |
+| bcryptjs | Hachage des mots de passe (coût 12) |
+| google-auth-library | Vérification côté serveur du jeton « Se connecter avec Google » |
+| helmet | En-têtes de sécurité HTTP |
+| cors | Autorisation du seul frontend |
+| express-rate-limit | Limitation du nombre de tentatives |
+| express-validator | Validation et nettoyage des données reçues |
+| multer | Réception des fichiers |
+| sharp | Compression des photos en 3 tailles (WebP) |
+| nodemailer | Envoi des emails |
+| morgan | Journal des requêtes |
+| dotenv | Variables d'environnement |
+| nodemon, cross-env (dev) | Rechargement automatique, variables multiplateformes |
+
+Scripts : `npm start` (production), `npm run dev` (nodemon), `npm run seed`
+(données de test, fichier `database/seeds/index.js`).
 
 ---
 
 ## 📌 RÈGLES BACKEND IMPORTANTES
 
-1. **Toujours** valider les données entrantes avec express-validator
-2. **Toujours** hasher les mots de passe avec bcrypt (10 rounds minimum)
-3. **Jamais** exposer des infos sensibles dans les réponses API
-4. **Toujours** gérer les erreurs avec try/catch
-5. **Rate limiting** sur les routes d'authentification
-6. **Logs** de toutes les actions sensibles (connexion, suppression...)
-7. **RGPD** : prévoir la suppression des données sur demande
+1. Toute route protégée : `verifierToken` puis `verifierRole` si un rôle est exigé.
+2. Un parent n'accède **qu'à ses données** : filtre `req.user.id` dans le contrôleur.
+3. Toute route POST / PUT : validation **express-validator** + `validerDonnees`.
+4. Toute opération en base dans un `try / catch` ; message générique au client,
+   détail de l'erreur uniquement dans les logs du serveur.
+5. Réponses toujours au format `{ success, data, message }`.
+6. Jamais de `password`, `refresh_token` ou code 2FA dans une réponse.
+7. Tout fichier privé est rangé dans un dossier protégé et servi par **lien signé**.
+8. Commentaires en français sur chaque ligne importante.

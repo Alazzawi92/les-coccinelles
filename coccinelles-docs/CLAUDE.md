@@ -1,6 +1,6 @@
 # 🤖 CLAUDE.md — Guide pour Claude Code
 # Projet : Les Coccinelles — Plateforme web crèche
-# Développeur : Sabah Al-Azzawi (CDA — AFEC La Rochelle)
+# Développeuse : Sabah (CDA — AFEC La Rochelle)
 # Ce fichier aide Claude Code à comprendre et coder le projet
 
 ---
@@ -14,6 +14,10 @@ Elle remplace deux outils séparés par une seule application moderne.
 1. **Site public** — informations crèche, accessible à tous
 2. **Espace parents** — sécurisé, gestion dossiers/suivi enfant
 3. **Espace admin** — gestion interne pour l'équipe de la crèche
++ une **version mobile installable (PWA)** construite à partir du site React.
+
+Documentation de référence (état réel) : `00` à `08` dans ce dossier,
+synthèse pour l'examen : `09-SYNTHESE-SOUTENANCE.md`.
 
 ---
 
@@ -22,12 +26,14 @@ Elle remplace deux outils séparés par une seule application moderne.
 | Couche | Technologie |
 |--------|-------------|
 | Frontend Web | React 18 + React Router 6 |
-| Frontend Mobile | React Native + Expo SDK 51 |
-| Styles | CSS Modules + Variables CSS (PAS de Tailwind) |
+| Frontend Mobile | PWA (manifest + service worker Workbox) |
+| Styles | CSS + Variables CSS, thème clair / sombre (PAS de Tailwind) |
 | Backend | Node.js + Express |
 | ORM | Sequelize |
 | Base de données | MySQL 8 / MariaDB |
-| Auth | JWT (access 15min + refresh 7j) |
+| Auth | JWT (access 15 min + refresh 7 j) + code par email (2FA) + Google |
+| Traductions | i18next (FR / EN) |
+| Hébergement | Vercel (frontend) + Alwaysdata (API + MariaDB) |
 | Upload | Multer + Sharp (compression images) |
 | Email | Nodemailer |
 | DevOps | Docker + Docker Compose |
@@ -37,19 +43,18 @@ Elle remplace deux outils séparés par une seule application moderne.
 ## 📁 STRUCTURE DU PROJET
 
 ```
-projet-coccinelles/
-├── docs/              # Toute la documentation .md
-├── database/          # schema.sql + seeds + migrations
+les-coccinelles/
+├── coccinelles-docs/  # Toute la documentation .md (dont ce fichier)
+├── database/          # schema.sql, schema.alwaysdata.sql, migrations/, seeds/
 ├── backend/           # Node.js Express API
-├── frontend-web/      # React 18
-├── frontend-mobile/   # React Native Expo
-├── docker-compose.yml
-└── CLAUDE.md          # Ce fichier
+├── frontend-web/      # React 18 + PWA (version mobile)
+├── design/            # Maquette d'origine
+└── docker-compose.yml
 ```
 
 ---
 
-## 🗄️ BASE DE DONNÉES — 15 TABLES
+## 🗄️ BASE DE DONNÉES — 20 TABLES
 
 ```
 users               → Tous les utilisateurs (parents, admin)
@@ -67,7 +72,13 @@ galerie_photos      → Photos dans les albums
 photo_enfants       → Pivot photo ↔ enfant
 consentements_photo → Consentements RGPD pour les photos
 cms_pages           → Contenu dynamique des pages (CMS)
+inscription_documents → Pièces justificatives d'une inscription
+emargements         → Arrivées / départs des enfants
+equipe_membres      → Équipe affichée sur le site
+deux_facteurs       → Codes de connexion (empreinte HMAC), compteur d'erreurs
+parametres          → Interrupteurs du super admin
 ```
+Toute évolution : `schema.sql` + `schema.alwaysdata.sql` + nouvelle migration numérotée.
 
 ---
 
@@ -76,7 +87,7 @@ cms_pages           → Contenu dynamique des pages (CMS)
 ```
 public      → Visiteur non connecté (site public uniquement)
 parent      → Parent d'enfant inscrit (espace parents)
-admin       → Équipe crèche (espace admin)
+admin       → Équipe crèche (partie « Quotidien » de l'espace admin)
 super_admin → Directrice (tout + configuration)
 ```
 
@@ -90,6 +101,7 @@ super_admin → Directrice (tout + configuration)
 // Access Token  : 15 minutes (dans chaque requête API)
 // Refresh Token : 7 jours    (pour renouveler l'access token)
 // Header attendu : Authorization: Bearer <access_token>
+// Connexion en 2 étapes : mot de passe (ou Google) → code à 6 chiffres par email → session
 ```
 
 ---
@@ -98,10 +110,10 @@ super_admin → Directrice (tout + configuration)
 
 ### Couleurs CSS (toujours utiliser ces variables)
 ```css
---primary:     #FF9800    /* Orange — couleur principale */
---secondary:   #66BB6A    /* Vert nature */
+--primary:     #FF7A45    /* Orange du logo — couleur principale */
+--secondary:   #FFB020    /* Jaune du logo */
 --accent-1:    #4FC3F7    /* Bleu ciel */
---accent-2:    #F06292    /* Rose doux */
+--accent-2:    #FF2D55    /* Rouge coccinelle */
 --accent-3:    #BA68C8    /* Violet tendre */
 --accent-4:    #FFEB3B    /* Jaune soleil */
 --bg-light:    #FFFDF7    /* Fond blanc chaud */
@@ -247,16 +259,12 @@ docker-compose exec backend sh # Terminal container
 ## 🌿 GIT — BRANCHES ET COMMITS
 
 ```bash
-# Branches
-main            # Production stable
-develop         # Développement en cours
-feature/nom     # Nouvelle fonctionnalité
-fix/nom         # Correction bug
+# Une seule branche : main (chaque push est déployé par Vercel)
 
-# Format commits (en français)
-feat: ajouter authentification JWT
-fix: corriger erreur upload fichier
-docs: mettre à jour README
+# Format commits (en français) : type(portée): description
+feat(pwa): fenêtre « Installez l'application »
+fix(securite): compteur d'erreurs du code 2FA conservé
+docs: mettre à jour la documentation
 ```
 
 ---

@@ -1,6 +1,6 @@
 -- ============================================================
 -- SCHÉMA BASE DE DONNÉES — LES COCCINELLES
--- Plateforme web pour crèche | 15 tables
+-- Plateforme web pour crèche | 20 tables
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS coccinelles_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
