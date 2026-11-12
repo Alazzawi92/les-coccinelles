@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App      from './App';
 import './i18n'; // Initialise les traductions FR / EN avant le premier rendu
 import { enregistrer as enregistrerServiceWorker } from './serviceWorkerRegistration';
+import './utils/installationPwa'; // Capte tôt l'événement « installer l'application »
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

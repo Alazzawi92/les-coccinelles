@@ -20,7 +20,7 @@ import {
 import './BandeauMiseAJour.css';
 
 const BandeauMiseAJour = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
 
   // Visible si une mise à jour attendait déjà avant l'affichage du composant
   const [visible, setVisible] = useState(miseAJourDisponible());
@@ -47,7 +47,7 @@ const BandeauMiseAJour = () => {
     // role="status" : annoncé par les lecteurs d'écran sans couper la lecture
     <div className="bandeau-maj" role="status" aria-live="polite">
       <p className="bandeau-maj__texte">
-        <span aria-hidden="true">✨</span> {t('miseAJour.message')}
+        <span aria-hidden="true">✨</span> {t('common.miseAJour.message')}
       </p>
       <div className="bandeau-maj__actions">
         <button
@@ -56,7 +56,7 @@ const BandeauMiseAJour = () => {
           onClick={() => setVisible(false)}
           disabled={enCours}
         >
-          {t('miseAJour.plusTard')}
+          {t('common.miseAJour.plusTard')}
         </button>
         <button
           type="button"
@@ -64,7 +64,7 @@ const BandeauMiseAJour = () => {
           onClick={mettreAJour}
           disabled={enCours}
         >
-          {enCours ? t('chargement') : t('miseAJour.mettreAJour')}
+          {enCours ? t('common.chargement') : t('common.miseAJour.mettreAJour')}
         </button>
       </div>
     </div>

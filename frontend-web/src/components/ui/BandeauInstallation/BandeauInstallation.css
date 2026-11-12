@@ -1,0 +1,89 @@
+/* ============================================================
+   FICHIER : BandeauInstallation.css
+   RÔLE    : Bandeau « Installez l'application Les Coccinelles ».
+             Carte flottante en bas de l'écran, pleine largeur
+             sur mobile.
+   ============================================================ */
+
+.bandeau-install {
+  position: fixed;
+  right: var(--space-lg);
+  bottom: var(--space-lg);
+  z-index: var(--z-toast);
+  max-width: 440px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  background: var(--surface);
+  border: 2px solid var(--primary-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-md) var(--space-lg);
+}
+
+/* Icône de l'application, telle qu'elle apparaîtra sur l'écran d'accueil */
+.bandeau-install__icone {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.bandeau-install__contenu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.bandeau-install__titre {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.bandeau-install__texte,
+.bandeau-install__etapes {
+  margin: 0;
+  color: var(--text-dark);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.bandeau-install__etapes {
+  padding-left: var(--space-lg);
+}
+
+/* Icône « Partager » d'iPhone, à la taille du texte */
+.bandeau-install__icone-partager {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.25em;
+  color: var(--primary);
+}
+
+.bandeau-install__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
+}
+
+/* Mobile : pleine largeur, boutons côte à côte */
+@media (max-width: 767px) {
+  .bandeau-install {
+    left: var(--space-md);
+    right: var(--space-md);
+    bottom: var(--space-md);
+    max-width: none;
+  }
+
+  .bandeau-install__actions .btn {
+    flex: 1;
+  }
+}

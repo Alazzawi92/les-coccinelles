@@ -298,5 +298,15 @@
     "message": "A new version of the app is available.",
     "mettreAJour": "Update",
     "plusTard": "Later"
+  },
+  "installation": {
+    "titre": "Install the Les Coccinelles app",
+    "texte": "Open the nursery website in one tap from your phone's home screen.",
+    "appleEtape1": "In Safari, tap the Share button",
+    "appleEtape2": "then choose “Add to Home Screen”.",
+    "installer": "Install",
+    "plusTard": "Later",
+    "compris": "Got it",
+    "lienPied": "Install the app"
   }
 }

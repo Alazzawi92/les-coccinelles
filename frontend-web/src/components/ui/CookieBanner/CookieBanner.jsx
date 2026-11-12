@@ -18,6 +18,9 @@ import './CookieBanner.css';
 
 const CLE_CONSENTEMENT = 'coccinelles_cookie_consent';
 
+// Événement envoyé quand le visiteur a fait son choix de cookies
+export const EVENEMENT_COOKIES_CHOISIS = 'coccinelles:cookies-choisis';
+
 // Lit le consentement enregistré (utilisable depuis tout le reste de l'app
 // pour savoir si on a le droit de charger un script de mesure d'audience)
 export const getCookieConsent = () => {
@@ -41,6 +44,8 @@ const CookieBanner = () => {
   // Enregistre le choix et ferme la bannière
   const enregistrer = (choix) => {
     localStorage.setItem(CLE_CONSENTEMENT, JSON.stringify(choix));
+    // Prévient le reste du site (ex : le bandeau d'installation attend ce choix)
+    window.dispatchEvent(new CustomEvent(EVENEMENT_COOKIES_CHOISIS));
     setConsentement(choix);
   };
 

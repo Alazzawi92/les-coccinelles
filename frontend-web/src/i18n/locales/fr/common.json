@@ -298,5 +298,15 @@
     "message": "Une nouvelle version de l'application est disponible.",
     "mettreAJour": "Mettre à jour",
     "plusTard": "Plus tard"
+  },
+  "installation": {
+    "titre": "Installez l'application Les Coccinelles",
+    "texte": "Accédez en un geste au site de la crèche depuis l'écran d'accueil de votre téléphone.",
+    "appleEtape1": "Dans Safari, appuyez sur le bouton Partager",
+    "appleEtape2": "puis choisissez « Sur l'écran d'accueil ».",
+    "installer": "Installer",
+    "plusTard": "Plus tard",
+    "compris": "J'ai compris",
+    "lienPied": "Installer l'application"
   }
 }

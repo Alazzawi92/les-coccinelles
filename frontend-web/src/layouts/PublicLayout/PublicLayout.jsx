@@ -16,6 +16,8 @@ import CoccinelleDefilement from '../../components/ui/CoccinelleDefilement/Cocci
 import { useApparitionAuDefilement } from '../../utils/apparition';
 import { useParametres } from '../../context/ParametresContext';
 import { VERSION_APPLICATION } from '../../config/version';
+import useInstallationPossible from '../../hooks/useInstallationPossible';
+import { ouvrirInstallation } from '../../utils/installationPwa';
 import './PublicLayout.css';
 
 const PublicLayout = () => {
@@ -23,6 +25,8 @@ const PublicLayout = () => {
   const { user } = useAuth(); // Utilisateur connecté (ou null)
   const { espaceParentsOuvert } = useParametres(); // Réglage du super admin
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+  // PWA : vrai si l'application peut être installée sur cet appareil
+  const installationPossible = useInstallationPossible();
 
   // Zone de contenu : ses sections apparaissent en douceur au défilement
   const mainRef = useRef(null);
@@ -203,6 +207,12 @@ const PublicLayout = () => {
             <Link to="/mentions-legales" className="public-footer__lien-legal">
               ⚖️ {t('common.footer.mentionsLegales')}
             </Link>
+            {/* PWA : lien permanent, visible seulement si l'installation est possible */}
+            {installationPossible && (
+              <button type="button" className="public-footer__lien-installer" onClick={ouvrirInstallation}>
+                📱 {t('common.installation.lienPied')}
+              </button>
+            )}
           </div>
         </div>
       </footer>

@@ -12,6 +12,7 @@ import AppRouter from './router';
 import CookieBanner from './components/ui/CookieBanner/CookieBanner';
 import BandeauHorsLigne from './components/ui/BandeauHorsLigne/BandeauHorsLigne';
 import BandeauMiseAJour from './components/ui/BandeauMiseAJour/BandeauMiseAJour';
+import BandeauInstallation from './components/ui/BandeauInstallation/BandeauInstallation';
 import './styles/global.css'; // Styles globaux (reset + variables)
 
 const App = () => {
@@ -51,6 +52,9 @@ const App = () => {
 
       {/* PWA : propose de passer à la nouvelle version après un déploiement */}
       <BandeauMiseAJour />
+
+      {/* PWA : propose d'installer l'application (2e visite ou parent connecté) */}
+      <BandeauInstallation />
 
     </ParametresProvider>
     </AuthProvider>

@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import './BandeauHorsLigne.css';
 
 const BandeauHorsLigne = () => {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation();
 
   // État initial : le navigateur sait déjà s'il est connecté
   const [horsLigne, setHorsLigne] = useState(!navigator.onLine);
@@ -41,7 +41,7 @@ const BandeauHorsLigne = () => {
   return (
     // role="status" : lu automatiquement par les lecteurs d'écran
     <div className="bandeau-hors-ligne" role="status" aria-live="polite">
-      <span aria-hidden="true">📡</span> {t('horsLigne.message')}
+      <span aria-hidden="true">📡</span> {t('common.horsLigne.message')}
     </div>
   );
 };

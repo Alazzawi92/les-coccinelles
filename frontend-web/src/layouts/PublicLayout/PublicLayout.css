@@ -382,6 +382,27 @@
   color:      var(--white);
 }
 
+/* Lien « Installer l'application » (PWA) : même pastille, plein orange */
+.public-footer .public-footer__lien-installer {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           var(--space-xs);
+  padding:       var(--space-xs) var(--space-md);
+  border:        1px solid var(--primary);
+  border-radius: var(--radius-pill);
+  background:    var(--primary);
+  color:         var(--white);
+  font-family:   inherit;
+  font-size:     inherit;
+  font-weight:   600;
+  cursor:        pointer;
+}
+
+.public-footer .public-footer__lien-installer:hover {
+  background:   var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
 /* ── 6. RESPONSIVE ──────────────────────────────────────── */
 
 /* Desktop-first : blocs classés du plus grand au plus petit écran
