@@ -7,4 +7,4 @@
 //            en même temps que "version" dans package.json.
 // ============================================================
 
-export const VERSION_APPLICATION = '1.2.0';
+export const VERSION_APPLICATION = '1.3.0';

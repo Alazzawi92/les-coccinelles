@@ -15,8 +15,7 @@
 //
 //   Mémorisation (localStorage, uniquement des réglages de confort,
 //   aucune donnée personnelle) :
-//     - nombre de visites (pour ne rien proposer à la 1re visite)
-//     - date du clic « Plus tard » (on ne repropose pas pendant 30 jours)
+//     - date du clic « Plus tard » (on ne repropose pas pendant 7 jours)
 // ============================================================
 
 // Événements envoyés à la page quand l'état change
@@ -25,12 +24,10 @@ export const EVENEMENT_OUVRIR_INSTALLATION    = 'coccinelles:ouvrir-installation
 export const EVENEMENT_APPLICATION_INSTALLEE  = 'coccinelles:application-installee';
 
 // Clés localStorage
-const CLE_VISITES    = 'coccinelles_pwa_visites';
 const CLE_PLUS_TARD  = 'coccinelles_pwa_plus_tard';
-const CLE_SESSION    = 'coccinelles_pwa_visite_comptee';
 
 // Délai pendant lequel on ne repropose pas après « Plus tard »
-const DUREE_PLUS_TARD_MS = 30 * 24 * 60 * 60 * 1000; // 30 jours
+const DUREE_PLUS_TARD_MS = 7 * 24 * 60 * 60 * 1000; // 7 jours
 
 // Événement "beforeinstallprompt" gardé de côté (Android / Chrome / Edge)
 let evenementInstallation = null;
@@ -68,13 +65,10 @@ export const installationPossible = () =>
   !estDejaInstallee() && (installationDirectePossible() || estAppareilApple());
 
 // ------------------------------------------------------------
-// Visites et « Plus tard »
+// « Plus tard »
 // ------------------------------------------------------------
 
-// Nombre de visites (une visite = un nouvel onglet ou une réouverture)
-export const nombreVisites = () => Number(lire(localStorage, CLE_VISITES)) || 0;
-
-// Vrai si le visiteur a cliqué « Plus tard » il y a moins de 30 jours
+// Vrai si le visiteur a cliqué « Plus tard » il y a moins de 7 jours
 export const reporteeRecemment = () => {
   const date = Number(lire(localStorage, CLE_PLUS_TARD));
   return date > 0 && Date.now() - date < DUREE_PLUS_TARD_MS;
@@ -106,12 +100,6 @@ export const ouvrirInstallation = () =>
 // ------------------------------------------------------------
 // Démarrage (exécuté une seule fois, à l'import du fichier)
 // ------------------------------------------------------------
-
-// Compte une visite par session (et non à chaque changement de page)
-if (!lire(sessionStorage, CLE_SESSION)) {
-  ecrire(sessionStorage, CLE_SESSION, '1');
-  ecrire(localStorage, CLE_VISITES, String(nombreVisites() + 1));
-}
 
 // Le navigateur indique que le site peut être installé
 window.addEventListener('beforeinstallprompt', (evenement) => {

@@ -1,0 +1,97 @@
+/* ============================================================
+   FICHIER : ModaleInstallation.css
+   RÔLE    : Fenêtre (pop-up) « Installez l'application Les
+             Coccinelles », centrée sur un fond sombre.
+             Même style que ModaleEmailConfirme.
+   ============================================================ */
+
+/* Fond sombre qui couvre toute la page */
+.modale-install {
+  position:        fixed;
+  inset:           0;
+  z-index:         var(--z-modal);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  padding:         var(--space-md);
+  background:      rgba(0, 0, 0, 0.5);
+  animation:       modale-install-fondu 0.2s ease;
+}
+
+/* Carte centrée */
+.modale-install__carte {
+  width:         100%;
+  max-width:     440px;
+  padding:       var(--space-2xl) var(--space-xl);
+  text-align:    center;
+  background:    var(--surface);
+  border-top:    5px solid var(--primary);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-lg);
+  animation:     modale-install-entree 0.25s ease;
+}
+
+/* Icône de l'application */
+.modale-install__icone {
+  display:       block;
+  width:         96px;
+  height:        96px;
+  margin:        0 auto var(--space-md);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-md);
+}
+
+.modale-install__titre {
+  font-family:   var(--font-heading);
+  font-size:     1.4rem;
+  color:         var(--text-dark);
+  margin-bottom: var(--space-md);
+}
+
+.modale-install__texte {
+  color:         var(--text-gray);
+  line-height:   1.6;
+  margin-bottom: var(--space-md);
+}
+
+/* iPhone : étapes numérotées, alignées à gauche pour la lecture */
+.modale-install__etapes {
+  display:       inline-block;
+  text-align:    left;
+  color:         var(--text-gray);
+  line-height:   1.8;
+  margin:        0 0 var(--space-md);
+  padding-left:  var(--space-lg);
+}
+
+/* Icône « Partager » d'iPhone, à la taille du texte */
+.modale-install__icone-partager {
+  width:          1.3em;
+  height:         1.3em;
+  vertical-align: -0.3em;
+  color:          var(--primary);
+}
+
+.modale-install__actions {
+  display:         flex;
+  gap:             var(--space-md);
+  justify-content: center;
+  flex-wrap:       wrap;
+  margin-top:      var(--space-lg);
+}
+
+@keyframes modale-install-fondu  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modale-install-entree { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* Accessibilité : pas d'animation si le visiteur l'a demandé */
+@media (prefers-reduced-motion: reduce) {
+  .modale-install,
+  .modale-install__carte { animation: none; }
+}
+
+/* Petit mobile (≤479px) : boutons pleine largeur, padding réduit */
+@media (max-width: 479px) {
+  .modale-install__carte        { padding: var(--space-xl) var(--space-md); }
+  .modale-install__actions      { flex-direction: column-reverse; }
+  .modale-install__actions .btn { width: 100%; justify-content: center; }
+}
