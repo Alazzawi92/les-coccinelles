@@ -17,7 +17,8 @@ Elle remplace deux outils séparés par une seule application moderne.
 + une **version mobile installable (PWA)** construite à partir du site React.
 
 Documentation de référence (état réel) : `00` à `08` dans ce dossier,
-synthèse pour l'examen : `09-SYNTHESE-SOUTENANCE.md`.
+synthèse pour l'examen : `09-SYNTHESE-SOUTENANCE.md`,
+système de design pour Figma : `10-SYSTEME-DESIGN.md`.
 
 ---
 
