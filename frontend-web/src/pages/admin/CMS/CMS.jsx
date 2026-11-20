@@ -1,40 +1,21 @@
 // ============================================================
 // FICHIER  : CMS.jsx (admin)
-// ROUTE    : /admin/cms
-// RÔLE     : Éditeur de contenu des pages statiques du site.
-//            Quill WYSIWYG pour toutes les pages, sauf "equipe"
-//            qui affiche un gestionnaire de cartes membres dédié.
+// ROUTE    : /admin/cms (super admin uniquement)
+// RÔLE     : Gestion de « Notre équipe » : les membres affichés
+//            sur la page publique Équipe et sur l'accueil
+//            (photo, prénom, nom, fonction, ordre d'affichage).
+//            Les textes des autres pages publiques ne sont plus
+//            modifiables ici : ils gardent leur contenu actuel.
 // ============================================================
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { useTranslation, Trans } from 'react-i18next';
 import api, { BACKEND_URL } from '../../../services/api';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
 import './CMS.css';
-import Chargement from '../../../components/ui/Chargement/Chargement';
 
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, 4, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ color: [] }, { background: [] }],
-    [{ align: [] }],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    ['blockquote', 'code-block'],
-    ['link'],
-    ['clean']
-  ]
-};
-const QUILL_FORMATS = [
-  'header', 'bold', 'italic', 'underline', 'strike',
-  'color', 'background', 'align', 'list',
-  'blockquote', 'code-block', 'link'
-];
-
-// ── Gestionnaire de l'équipe (affiché quand slug === 'equipe') ────────
+// ── Gestionnaire de l'équipe ─────────────────────────────────────────
 const GestionnaireEquipe = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
   const [membres,   setMembres]   = useState([]);
@@ -246,150 +227,19 @@ const GestionnaireEquipe = () => {
 };
 
 // ── Composant principal CMS ───────────────────────────────────────────
+// ── Page : titre + gestionnaire de l'équipe ──────────────────────────
 const CMS = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const [pages,      setPages]      = useState([]);
-  const [editing,    setEditing]    = useState(null);
-  const [form,       setForm]       = useState({ titre: '', contenu: '', meta_description: '' });
-  const [chargement, setChargement] = useState(true);
-  const [envoi,      setEnvoi]      = useState(false);
-  const quillRef = useRef(null);
-
-  useEffect(() => {
-    api.get('/cms/pages')
-      .then(r => setPages(r.data.data || []))
-      .finally(() => setChargement(false));
-  }, []);
-
-  const editer = (page) => {
-    setEditing(page);
-    setForm({
-      titre:            page.titre,
-      contenu:          page.contenu          || '',
-      meta_description: page.meta_description || ''
-    });
-  };
-
-  const sauvegarder = async (e) => {
-    e.preventDefault();
-    setEnvoi(true);
-    try {
-      const res = await api.put(`/cms/pages/${editing.slug}`, form);
-      setPages(prev => prev.map(p => p.slug === editing.slug ? res.data.data : p));
-      setEditing(null);
-      toast.success(t('admin.cms.toastPage'));
-    } catch { toast.error(t('common.erreur')); }
-    setEnvoi(false);
-  };
-
-  const estEquipe = editing?.slug === 'equipe';
-
-  if (chargement) return <Chargement className="a-chargement" />;
 
   return (
     <div>
       <div className="admin-page-entete">
         <h1 className="admin-page-titre"><Trans i18nKey="admin.cms.titre" components={{ s: <span /> }} /></h1>
       </div>
+      <p className="cms-intro">{t('admin.cms.equipeAide')}</p>
 
-      <div className="cms-layout">
-
-        {/* ── LISTE DES PAGES ─────────────────────────────────── */}
-        <div className="cms-pages-liste">
-          <h2 className="a-card__titre" style={{ marginBottom: 'var(--space-md)' }}>{t('admin.cms.pagesSite')}</h2>
-          {pages.map(page => (
-            <button
-              key={page.slug}
-              className={`cms-page-item ${editing?.slug === page.slug ? 'cms-page-item--actif' : ''}`}
-              onClick={() => editer(page)}
-            >
-              <p className="cms-page-slug">/{page.slug}</p>
-              <p className="cms-page-titre-court">{page.titre}</p>
-              {editing?.slug === page.slug && (
-                <span style={{ color: 'var(--primary)', fontSize: '0.75rem' }}>{t('admin.cms.enEdition')}</span>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* ── ÉDITEUR ou GESTIONNAIRE ÉQUIPE ──────────────────── */}
-        <div className="cms-editeur">
-          {!editing ? (
-            <div className="a-vide">
-              <span className="a-vide__icone">🌐</span>
-              <p>{t('admin.cms.selectionnez')}</p>
-            </div>
-
-          ) : estEquipe ? (
-            /* Page Équipe : gestionnaire de cartes membres */
-            <div className="a-card">
-              <h2 className="a-card__titre">{t('admin.cms.equipeTitre')}</h2>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-gray)', marginBottom: 'var(--space-lg)' }}>
-                {t('admin.cms.equipeAide')}
-              </p>
-              <GestionnaireEquipe />
-            </div>
-
-          ) : (
-            /* Toutes les autres pages : éditeur Quill */
-            <div className="a-card">
-              <h2 className="a-card__titre">{t('admin.cms.edition', { titre: editing.titre })}</h2>
-              {/* Le CMS n'est pas multilingue : on le signale à l'admin */}
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-gray)', marginBottom: 'var(--space-md)' }}>{t('admin.cms.noteLangue')}</p>
-              <form className="a-form" onSubmit={sauvegarder}>
-
-                <div className="a-form-groupe">
-                  <label className="a-label">{t('admin.cms.titrePage')}</label>
-                  <input
-                    className="a-input"
-                    value={form.titre}
-                    onChange={e => setForm(p => ({ ...p, titre: e.target.value }))}
-                  />
-                </div>
-
-                <div className="a-form-groupe">
-                  <label className="a-label">{t('admin.cms.seo')}</label>
-                  <input
-                    className="a-input"
-                    value={form.meta_description}
-                    onChange={e => setForm(p => ({ ...p, meta_description: e.target.value }))}
-                    placeholder={t('admin.cms.seoPlaceholder')}
-                    maxLength={160}
-                  />
-                  <small style={{ color: 'var(--text-light)', fontSize: '0.75rem' }}>
-                    {form.meta_description.length}/160
-                  </small>
-                </div>
-
-                <div className="a-form-groupe">
-                  <label className="a-label">{t('admin.cms.contenu')}</label>
-                  <div className="cms-quill-wrapper">
-                    <ReactQuill
-                      ref={quillRef}
-                      theme="snow"
-                      value={form.contenu}
-                      onChange={val => setForm(p => ({ ...p, contenu: val }))}
-                      modules={QUILL_MODULES}
-                      formats={QUILL_FORMATS}
-                      placeholder={t('admin.cms.contenuPlaceholder')}
-                    />
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: 'var(--space-md)', justifyContent: 'flex-end' }}>
-                  <button type="button" className="btn btn--ghost" onClick={() => setEditing(null)}>
-                    {t('common.annuler')}
-                  </button>
-                  <button type="submit" className="btn btn--primary" disabled={envoi}>
-                    {envoi ? t('common.enregistrement') : t('admin.cms.sauvegarder')}
-                  </button>
-                </div>
-
-              </form>
-            </div>
-          )}
-        </div>
-
+      <div className="a-card">
+        <GestionnaireEquipe />
       </div>
     </div>
   );

@@ -2,7 +2,8 @@
    FICHIER : Familles.css
    ROUTE   : /admin/familles
    RÔLE    : Page de gestion des comptes familles (parents).
-             Tableau avec recherche par nom, filtre par rôle.
+             Grille de cartes (une par compte) avec recherche
+             par nom et filtre par rôle.
              Modale de détail d'une famille : infos personnelles,
              enfants liés, historique. Activation/désactivation
              des comptes.
@@ -230,11 +231,7 @@
   border-radius: var(--radius-pill);
 }
 
-/* ── 3. IDENTITÉ DANS LE TABLEAU ────────────────────────── */
-
-/* Cellule d'identité : avatar circulaire + nom + prénom.
-   width:250px pour que la colonne ne soit pas trop étroite. */
-.user-identite { display: flex; align-items: center; width: 250px; gap: var(--space-sm); }
+/* ── AVATAR (initiales) ─────────────────────────────────── */
 
 /* Avatar avec initiales du parent : cercle orange + initiales blanches.
    overflow:hidden pour rogner les vraies photos de profil. */
@@ -252,8 +249,92 @@
   flex-shrink:     0;
 }
 
-/* Nom du parent : gras */
-.user-nom { font-weight: 700; font-size: 0.9rem; }
+/* ── CARTES DES COMPTES ─────────────────────────────────── */
+
+/* Grille de cartes : autant de colonnes que la largeur le permet
+   (cartes de 260px minimum), une seule colonne sur mobile */
+.familles-grille {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap:                   var(--space-lg);
+  list-style:            none;
+  padding:               0;
+  margin:                0;
+}
+
+/* Carte verticale : identité / coordonnées / actions */
+.famille-carte {
+  display:        flex;
+  flex-direction: column;
+  background:     var(--surface);
+  border:         1px solid var(--tint);
+  border-radius:  var(--radius-xl);
+  box-shadow:     var(--shadow-sm);
+  overflow:       hidden;
+  transition:     var(--transition);
+}
+
+.famille-carte:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+/* En-tête centré : grand avatar, nom, badges */
+.famille-carte__entete {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--space-sm);
+  padding:        var(--space-xl) var(--space-lg) var(--space-md);
+  text-align:     center;
+  border-bottom:  1px solid var(--border);
+}
+
+.famille-carte__avatar { width: 56px; height: 56px; font-size: 1.1rem; }
+
+.famille-carte__nom {
+  font-family: var(--font-heading);
+  font-size:   1.05rem;
+  color:       var(--text-dark);
+}
+
+.famille-carte__badges {
+  display:         flex;
+  flex-wrap:       wrap;
+  justify-content: center;
+  gap:             var(--space-xs);
+}
+
+/* Coordonnées : une ligne par information (icône + valeur) */
+.famille-carte__infos {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  padding:        var(--space-md) var(--space-lg);
+  margin:         0;
+  flex:           1; /* Pousse les actions en bas : cartes alignées */
+}
+
+.famille-carte__info {
+  display:     flex;
+  align-items: center;
+  gap:         var(--space-sm);
+  font-size:   0.85rem;
+  color:       var(--text-gray);
+  min-width:   0; /* Autorise la coupure des emails longs */
+}
+
+.famille-carte__info dd { margin: 0; }
+
+/* Email long : coupé proprement au lieu de déborder de la carte */
+.famille-carte__email { overflow-wrap: anywhere; color: var(--text-dark); }
+
+/* Actions : boutons côte à côte, passent à la ligne si besoin */
+.famille-carte__actions {
+  display:         flex;
+  flex-wrap:       wrap;
+  justify-content: center;
+  gap:             var(--space-sm);
+  padding:         var(--space-md) var(--space-lg);
+  border-top:      1px solid var(--border);
+}
 
 /* ── 4 & 5. MODALE DE DÉTAIL FAMILLE ───────────────────── */
 
@@ -294,17 +375,15 @@
 }
 
 /* Tablette (≤1023px) : les informations famille passent en 1 colonne,
-   la cellule identité du tableau est un peu plus compacte */
+   la grille de détail passe en 1 colonne */
 @media (max-width: 1023px) {
   .user-detail-grille { grid-template-columns: 1fr; }
-  .user-identite { width: 200px; }
 }
 
 /* Mobile (≤767px) : onglets plus compacts, identité pleine largeur,
    actions de suppression empilées, modale presque pleine largeur */
 @media (max-width: 767px) {
   .familles-onglet { padding: var(--space-xs) var(--space-md); font-size: 0.85rem; }
-  .user-identite { width: 100%; }
   .suppr-actions { flex-direction: column; }
   .modal--danger { max-width: 92vw; }
 }
@@ -315,7 +394,6 @@
   .familles-onglets { flex-direction: column; align-items: stretch; }
   .familles-onglet { justify-content: center; }
   .user-avatar { width: 30px; height: 30px; font-size: 0.7rem; }
-  .user-nom { font-size: 0.85rem; }
   .detail-item { padding: var(--space-sm); }
   .suppr-avertissements { padding: var(--space-sm) var(--space-md); }
   .btn-supprimer-confirmer { padding: var(--space-sm) var(--space-lg); }

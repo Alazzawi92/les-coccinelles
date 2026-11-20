@@ -2,7 +2,7 @@
 // FICHIER  : Actualites.jsx (admin)
 // ROUTE    : /admin/actualites
 // RÔLE     : Gestion des articles d'actualité de la crèche.
-//            Tableau avec statut Publié/Brouillon.
+//            Grille de cartes avec statut Publié/Brouillon.
 //            Modal création/édition : titre, extrait, contenu
 //            via éditeur WYSIWYG (React Quill), checkbox publier.
 //            Actions : modifier (PUT), toggle publier (PATCH),
@@ -13,7 +13,7 @@ import { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useTranslation, Trans } from 'react-i18next';
-import api from '../../../services/api';
+import api, { urlFichier } from '../../../services/api';
 import { getLocale } from '../../../i18n';
 import toast from 'react-hot-toast';
 import '../../../styles/admin.css';
@@ -170,52 +170,49 @@ const ActualitesAdmin = () => {
         </div>
       )}
 
-      {/* ── TABLEAU DES ACTUALITÉS ────────────────────────────── */}
-      <div className="a-card">
-        {actualites.length === 0 ? (
+      {/* ── CARTES DES ACTUALITÉS ─────────────────────────────
+          Une carte verticale par article : image en haut,
+          titre + extrait au milieu, actions en bas. La grille
+          s'adapte à la largeur (plusieurs colonnes → 1 sur mobile). */}
+      {actualites.length === 0 ? (
+        <div className="a-card">
           <div className="a-vide"><span className="a-vide__icone">📰</span><p>{t('admin.actualites.aucune')}</p></div>
-        ) : (
-          <table className="a-table">
-            <thead>
-              <tr><th>{t('admin.actualites.colTitre')}</th><th>{t('admin.actualites.colExtrait')}</th><th>{t('admin.commun.colStatut')}</th><th>{t('admin.actualites.colCree')}</th><th>{t('admin.commun.colActions')}</th></tr>
-            </thead>
-            <tbody>
-              {actualites.map(a => (
-                <tr key={a.id}>
-                  <td><strong>{a.titre}</strong></td>
-                  {/* Extrait tronqué sur 2 lignes via -webkit-line-clamp */}
-                  <td style={{ fontSize:'0.85rem', color:'var(--text-gray)', maxWidth:'250px' }}>
-                    <span style={{ display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
-                      {a.extrait || '—'}
-                    </span>
-                  </td>
-                  {/* Badge statut : vert=publié, gris=brouillon */}
-                  <td>
-                    <span className={`s-badge ${a.publie ? 's-badge--accepte' : 's-badge--en_attente'}`}>
-                      {a.publie ? t('admin.actualites.publie') : t('admin.actualites.brouillon')}
-                    </span>
-                  </td>
-                  <td style={{ fontSize:'0.8rem', color:'var(--text-gray)' }}>
-                    {new Date(a.created_at).toLocaleDateString(getLocale())}
-                  </td>
-                  <td>
-                    <div className="a-actions">
-                      {/* Modifier : ouvre la modal en mode édition */}
-                      <button className="btn btn--ghost btn--sm" onClick={() => ouvrir(a)}>✏️</button>
-                      {/* Publier/Dépublier : bascule entre les deux états */}
-                      <button className={`btn btn--sm ${a.publie ? 'btn--outline' : 'btn--primary'}`} onClick={() => togglePublier(a)}>
-                        {a.publie ? t('admin.actualites.depublier') : t('admin.actualites.publier')}
-                      </button>
-                      {/* Supprimer : bouton discret en rouge */}
-                      <button className="btn btn--sm" style={{ color:'var(--error)', background:'none', border:'none' }} onClick={() => supprimer(a.id)} title={t('common.supprimer')} aria-label={t('common.supprimer')}>🗑️</button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+        </div>
+      ) : (
+        <ul className="actu-grille">
+          {actualites.map(a => (
+            <li key={a.id} className={`actu-carte${a.publie ? '' : ' actu-carte--brouillon'}`}>
+
+              {/* Vignette : image de l'article, sinon icône sur fond coloré */}
+              <div className="actu-carte__image">
+                {a.image
+                  ? <img src={urlFichier(a.image)} alt="" loading="lazy" />
+                  : <span className="actu-carte__icone" aria-hidden="true">📰</span>}
+                {/* Badge statut : vert = publié, orange = brouillon */}
+                <span className={`s-badge actu-carte__statut ${a.publie ? 's-badge--accepte' : 's-badge--en_attente'}`}>
+                  {a.publie ? t('admin.actualites.publie') : t('admin.actualites.brouillon')}
+                </span>
+              </div>
+
+              {/* Titre, date de création et extrait (coupé à 3 lignes) */}
+              <div className="actu-carte__corps">
+                <h2 className="actu-carte__titre">{a.titre}</h2>
+                <p className="actu-carte__date">📅 {new Date(a.created_at).toLocaleDateString(getLocale())}</p>
+                <p className="actu-carte__extrait">{a.extrait || '—'}</p>
+              </div>
+
+              {/* Actions : modifier, publier / dépublier, supprimer */}
+              <div className="actu-carte__actions">
+                <button className="btn btn--ghost btn--sm" onClick={() => ouvrir(a)} title={t('common.modifier')} aria-label={t('common.modifier')}>✏️</button>
+                <button className={`btn btn--sm ${a.publie ? 'btn--outline' : 'btn--primary'}`} onClick={() => togglePublier(a)}>
+                  {a.publie ? t('admin.actualites.depublier') : t('admin.actualites.publier')}
+                </button>
+                <button className="btn btn--sm actu-carte__supprimer" onClick={() => supprimer(a.id)} title={t('common.supprimer')} aria-label={t('common.supprimer')}>🗑️</button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
     </div>
   );

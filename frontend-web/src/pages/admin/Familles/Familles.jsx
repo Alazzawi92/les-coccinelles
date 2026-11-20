@@ -138,82 +138,81 @@ const Familles = () => {
         </div>
       </div>
 
-      {/* ── TABLEAU ───────────────────────────────────────────── */}
-      <div className="a-card">
-        {filtres.length === 0 ? (
+      {/* ── CARTES DES COMPTES ─────────────────────────────────
+          Une carte verticale par compte : identité en haut,
+          coordonnées au milieu, actions en bas. La grille passe
+          automatiquement de 4 colonnes (grand écran) à 1 (mobile). */}
+      {filtres.length === 0 ? (
+        <div className="a-card">
           <div className="a-vide"><span className="a-vide__icone">👥</span><p>{t('admin.familles.aucun')}</p></div>
-        ) : (
-          <table className="a-table">
-            <thead>
-              <tr>
-                <th>{t('admin.familles.colUtilisateur')}</th>
-                <th>{t('admin.familles.colEmail')}</th>
-                <th>{t('admin.familles.colTelephone')}</th>
-                <th>{t('admin.familles.colRole')}</th>
-                <th>{t('admin.commun.colStatut')}</th>
-                <th>{t('admin.familles.colInscrit')}</th>
-                <th>{t('admin.commun.colActions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtres.map(u => (
-                <tr key={u.id}>
-                  <td>
-                    <div className="user-identite">
-                      <div className="user-avatar">{u.prenom?.[0]}{u.nom?.[0]}</div>
-                      <div>
-                        <p className="user-nom">{u.prenom} {u.nom}</p>
-                        {/* Compte parent en attente : l'email doit être confirmé avant activation */}
-                        {!u.actif && u.role === 'parent' && (
-                          <span className={`badge-email ${u.email_verifie ? 'badge-email--ok' : 'badge-email--attente'}`}>
-                            {u.email_verifie ? t('admin.familles.emailConfirme') : t('admin.familles.emailNonConfirme')}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td>{u.email}</td>
-                  <td>{u.telephone || '—'}</td>
-                  <td><span className={`s-badge s-badge--${u.role}`}>{t(`common.roles.${u.role}`, { defaultValue: u.role.replace('_', ' ') })}</span></td>
-                  <td>
-                    <span className={`s-badge ${u.actif ? 's-badge--accepte' : 's-badge--refuse'}`}>
-                      {u.actif ? t('admin.familles.actif') : t('admin.familles.inactif')}
-                    </span>
-                  </td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--text-gray)' }}>
-                    {new Date(u.created_at).toLocaleDateString(getLocale())}
-                  </td>
-                  <td>
-                    <div className="a-actions">
-                      <button className="btn-voir" onClick={() => setUserDetail(u)}>
-                        {t('admin.familles.voir')}
-                      </button>
-                      <button
-                        className={`btn-toggle ${u.actif ? 'btn-toggle--desactiver' : 'btn-toggle--activer'}`}
-                        onClick={() => toggleActif(u)}
-                        disabled={!u.actif && u.role === 'parent' && !u.email_verifie}
-                        title={!u.actif && u.role === 'parent' && !u.email_verifie ? t('admin.familles.activerImpossible') : undefined}
-                      >
-                        {u.actif ? t('admin.familles.desactiver') : t('admin.familles.activer')}
-                      </button>
-                      {/* Bouton supprimer : visible uniquement si l'admin a le droit */}
-                      {peutSupprimer(u) && (
-                        <button
-                          className="btn btn--sm btn-supprimer"
-                          onClick={() => setUserASupprimer(u)}
-                          title={t('admin.familles.supprimerTitre')}
-                        >
-                          {t('admin.familles.supprimer')}
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+        </div>
+      ) : (
+        <ul className="familles-grille">
+          {filtres.map(u => (
+            <li key={u.id} className="famille-carte">
+
+              {/* Identité : avatar (initiales), nom, rôle et statut */}
+              <div className="famille-carte__entete">
+                <div className="user-avatar famille-carte__avatar" aria-hidden="true">{u.prenom?.[0]}{u.nom?.[0]}</div>
+                <h2 className="famille-carte__nom">{u.prenom} {u.nom}</h2>
+                <div className="famille-carte__badges">
+                  <span className={`s-badge s-badge--${u.role}`}>{t(`common.roles.${u.role}`, { defaultValue: u.role.replace('_', ' ') })}</span>
+                  <span className={`s-badge ${u.actif ? 's-badge--accepte' : 's-badge--refuse'}`}>
+                    {u.actif ? t('admin.familles.actif') : t('admin.familles.inactif')}
+                  </span>
+                </div>
+                {/* Compte parent en attente : l'email doit être confirmé avant activation */}
+                {!u.actif && u.role === 'parent' && (
+                  <span className={`badge-email ${u.email_verifie ? 'badge-email--ok' : 'badge-email--attente'}`}>
+                    {u.email_verifie ? t('admin.familles.emailConfirme') : t('admin.familles.emailNonConfirme')}
+                  </span>
+                )}
+              </div>
+
+              {/* Coordonnées : chaque ligne a un libellé lisible par les lecteurs d'écran */}
+              <dl className="famille-carte__infos">
+                <div className="famille-carte__info">
+                  <dt aria-label={t('admin.familles.colEmail')}>✉️</dt>
+                  <dd className="famille-carte__email">{u.email}</dd>
+                </div>
+                <div className="famille-carte__info">
+                  <dt aria-label={t('admin.familles.colTelephone')}>📞</dt>
+                  <dd>{u.telephone || '—'}</dd>
+                </div>
+                <div className="famille-carte__info">
+                  <dt aria-label={t('admin.familles.colInscrit')}>📅</dt>
+                  <dd>{new Date(u.created_at).toLocaleDateString(getLocale())}</dd>
+                </div>
+              </dl>
+
+              {/* Actions : voir, activer / désactiver, supprimer */}
+              <div className="famille-carte__actions">
+                <button className="btn-voir" onClick={() => setUserDetail(u)}>
+                  {t('admin.familles.voir')}
+                </button>
+                <button
+                  className={`btn-toggle ${u.actif ? 'btn-toggle--desactiver' : 'btn-toggle--activer'}`}
+                  onClick={() => toggleActif(u)}
+                  disabled={!u.actif && u.role === 'parent' && !u.email_verifie}
+                  title={!u.actif && u.role === 'parent' && !u.email_verifie ? t('admin.familles.activerImpossible') : undefined}
+                >
+                  {u.actif ? t('admin.familles.desactiver') : t('admin.familles.activer')}
+                </button>
+                {/* Bouton supprimer : visible uniquement si l'admin a le droit */}
+                {peutSupprimer(u) && (
+                  <button
+                    className="btn btn--sm btn-supprimer"
+                    onClick={() => setUserASupprimer(u)}
+                    title={t('admin.familles.supprimerTitre')}
+                  >
+                    {t('admin.familles.supprimer')}
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {/* ── MODAL DÉTAIL ──────────────────────────────────────── */}
       {userDetail && (
