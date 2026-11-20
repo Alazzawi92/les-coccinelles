@@ -43,6 +43,24 @@ router.get('/admins', verifierToken, userController.listerAdmins);
 // super_admin via les routes ci-dessous.
 router.get('/', verifierToken, verifierRole('admin', 'super_admin'), userController.listerUsers);
 
+// ── COMPTES DE L'ÉQUIPE (super admin uniquement) ─────────────────────
+// Déclarées AVANT /:id, sinon "equipe" serait pris pour un identifiant.
+
+// GET /api/users/equipe — Liste des comptes admin et super admin
+router.get('/equipe', verifierToken, verifierRole('super_admin'), userController.listerEquipe);
+
+// POST /api/users/equipe — Créer un compte admin ou super admin (invitation par email)
+router.post('/equipe', verifierToken, verifierRole('super_admin'),
+  [body('email').isEmail().withMessage('Adresse email invalide').normalizeEmail(),
+   body('prenom').trim().isLength({ min: 2 }).withMessage('Le prénom doit contenir au moins 2 caractères')
+     .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le prénom contient des caractères non autorisés'),
+   body('nom').trim().isLength({ min: 2 }).withMessage('Le nom doit contenir au moins 2 caractères')
+     .bail().matches(/^[\p{L}][\p{L}\p{M}\s'’.-]{0,79}$/u).withMessage('Le nom contient des caractères non autorisés'),
+   // Seuls ces deux rôles : un compte parent se crée par le site public
+   body('role').isIn(['admin', 'super_admin']).withMessage('Rôle invalide')],
+  validerDonnees, userController.creerCompteEquipe
+);
+
 // GET /api/users/:id — Détail d'un utilisateur (super admin — page Familles)
 router.get('/:id', verifierToken, verifierRole('super_admin'), userController.getUser);
 

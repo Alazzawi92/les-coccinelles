@@ -141,7 +141,33 @@ const envoyerCompteActive = async (email, prenom) => {
   });
 };
 
+// Envoyer l'invitation d'un nouveau membre de l'équipe (compte admin ou
+// super admin créé par le super admin). Le lien ouvre la page où la
+// personne choisit elle-même son mot de passe : personne d'autre ne le connaît.
+const envoyerInvitationEquipe = async (email, prenom, role, token) => {
+  const lien    = `${process.env.FRONTEND_URL}/reset-password?token=${token}&invitation=1`;
+  const libelle = role === 'super_admin' ? 'super administrateur' : 'administrateur'; // Rôle lisible
+
+  await transporteur.sendMail({
+    from:    `"Les Coccinelles" <${MAIL_FROM}>`,
+    to:      email,
+    subject: 'Votre compte équipe — Les Coccinelles',
+    html: `
+      <h2>Bonjour ${echapperHtml(prenom)},</h2>
+      <p>Un compte <strong>${libelle}</strong> a été créé pour vous sur la plateforme Les Coccinelles.</p>
+      <p>Pour l'activer, choisissez votre mot de passe en cliquant sur le lien ci-dessous (valable 72 heures) :</p>
+      <a href="${lien}" style="background:#FF9800;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;">
+        Choisir mon mot de passe
+      </a>
+      <p>Lien expiré ? Utilisez « Mot de passe oublié » sur la page de connexion.</p>
+      <p>Si vous ne vous attendiez pas à cet email, ignorez-le.</p>
+      <p style="color:#888;font-size:12px;margin-top:24px;">Crèche Les Coccinelles — Puilboreau</p>
+    `
+  });
+};
+
 module.exports = {
+  envoyerInvitationEquipe,
   envoyerCodeConnexion,
   envoyerVerificationEmail,
   envoyerResetMotDePasse,

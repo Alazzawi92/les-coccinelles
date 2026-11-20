@@ -31,6 +31,10 @@ const ResetPassword = () => {
   // Lire le token depuis ?token=xxx (reçu par email)
   const token = searchParams.get('token');
 
+  // ?invitation=1 : nouveau membre de l'équipe qui choisit son 1er mot de passe
+  // (même formulaire, textes adaptés)
+  const invitation = searchParams.get('invitation') === '1';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErreur('');
@@ -48,7 +52,7 @@ const ResetPassword = () => {
     setEnvoi(true);
     try {
       await resetPassword(token, password);
-      toast.success(t('auth.reset.toastSucces'));
+      toast.success(t(invitation ? 'auth.reset.toastInvitation' : 'auth.reset.toastSucces'));
       navigate('/connexion'); // Redirection vers la connexion
     } catch (err) {
       // Lien expiré (>24h) ou déjà utilisé
@@ -88,8 +92,8 @@ const ResetPassword = () => {
           <img src="/images/logo.png" alt={t('auth.logoAlt')} className="auth-logo__img" />
         </div>
 
-        <h1 className="auth-titre">{t('auth.reset.titre')}</h1>
-        <p className="auth-sous-titre">{t('auth.reset.sousTitre')}</p>
+        <h1 className="auth-titre">{t(invitation ? 'auth.reset.titreInvitation' : 'auth.reset.titre')}</h1>
+        <p className="auth-sous-titre">{t(invitation ? 'auth.reset.sousTitreInvitation' : 'auth.reset.sousTitre')}</p>
 
         {/* Alerte d'erreur (token expiré, mots de passe non conformes...) */}
         {erreur && <div className="auth-alerte"><span>⚠️</span><span>{erreur}</span></div>}
@@ -131,7 +135,7 @@ const ResetPassword = () => {
 
           {/* Désactivé pendant l'envoi ou si le champ est vide */}
           <button type="submit" className="btn-auth" disabled={envoi || !password}>
-            {envoi ? t('auth.reset.maj') : t('auth.reset.changer')}
+            {envoi ? t('auth.reset.maj') : t(invitation ? 'auth.reset.valider' : 'auth.reset.changer')}
           </button>
         </form>
 

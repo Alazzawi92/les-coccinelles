@@ -13,6 +13,7 @@
   "menu": "Menu",
   "fermer": "Close",
   "supprimer": "Delete",
+  "modifier": "Edit",
   "deconnexionReussie": "Successfully logged out",
   "nav": {
     "accueil": "Home",
@@ -77,11 +78,12 @@
       "actualites": "News",
       "menus": "Menus",
       "galerie": "Gallery",
-      "cms": "CMS Pages",
+      "cms": "Our team",
       "documents": "Documents",
       "statistiques": "Statistics",
       "rapports": "Reports",
-      "parametres": "Settings"
+      "parametres": "Settings",
+      "comptes": "Team accounts"
     }
   },
   "notifs": {

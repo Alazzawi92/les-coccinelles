@@ -52,7 +52,7 @@ const GROUPES_NAV = [
       { to: '/admin/actualites', cle: 'actualites',   icone: '📰' },
       { to: '/admin/menus',      cle: 'menus',        icone: '🍽️' },
       { to: '/admin/galerie',    cle: 'galerie',      icone: '🖼️' },
-      { to: '/admin/cms',        cle: 'cms',          icone: '🌐' }
+      { to: '/admin/cms',        cle: 'cms',          icone: '👥' }
     ]
   },
   {
@@ -61,7 +61,8 @@ const GROUPES_NAV = [
       { to: '/admin/documents',    cle: 'documents',      icone: '📄' },
       { to: '/admin/statistiques', cle: 'statistiques',   icone: '📈' },
       { to: '/admin/rapports',     cle: 'rapports',       icone: '🧾' },
-      { to: '/admin/parametres',   cle: 'parametres',     icone: '⚙️' }
+      { to: '/admin/parametres',   cle: 'parametres',     icone: '⚙️' },
+      { to: '/admin/comptes',      cle: 'comptes',        icone: '🔑' }
     ]
   }
 ];

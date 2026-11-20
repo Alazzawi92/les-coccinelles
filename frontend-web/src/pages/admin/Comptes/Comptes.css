@@ -1,0 +1,58 @@
+/* ============================================================
+   FICHIER : Comptes.css  (espace admin)
+   PAGE    : /admin/comptes
+   RÔLE    : Formulaire de création d'un compte de l'équipe
+             (admin / super admin) et liste des comptes existants.
+   ============================================================ */
+
+@import '../../../styles/admin.css';
+
+.comptes-intro { color: var(--text-gray); margin-bottom: var(--space-xl); max-width: 900px; }
+
+/* Formulaire puis liste, l'un sous l'autre */
+.comptes-grille { display: flex; flex-direction: column; gap: var(--space-xl); }
+
+.comptes-formulaire { max-width: 640px; }
+
+/* ── CHOIX DU RÔLE ──────────────────────────────────────── */
+
+.comptes-roles {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  border:         none;
+  padding:        0;
+  margin:         0;
+}
+
+.comptes-roles legend { margin-bottom: var(--space-sm); }
+
+/* Une option = une carte cliquable avec bouton radio + explication */
+.comptes-role {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-md);
+  padding:       var(--space-md);
+  border:        2px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor:        pointer;
+  transition:    var(--transition);
+}
+
+.comptes-role:hover        { border-color: var(--primary); }
+.comptes-role--choisi      { border-color: var(--primary); background: var(--tint); }
+.comptes-role input        { margin-top: var(--space-xs); accent-color: var(--primary); }
+.comptes-role:focus-within { box-shadow: 0 0 0 3px var(--focus-ring); }
+
+.comptes-role__nom  { display: block; color: var(--text-dark); }
+.comptes-role__aide { display: block; font-size: 0.85rem; color: var(--text-gray); line-height: 1.5; }
+
+/* Rappel : le mot de passe est choisi par la personne invitée */
+.comptes-note { font-size: 0.85rem; color: var(--text-gray); line-height: 1.5; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Mobile : prénom et nom l'un sous l'autre */
+@media (max-width: 767px) {
+  .comptes-formulaire .a-form-row { grid-template-columns: 1fr; }
+}

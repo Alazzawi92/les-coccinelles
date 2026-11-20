@@ -140,7 +140,7 @@ et ses gardes :
 | Authentification (plein écran) | `/connexion`, `/connexion/verification` (code 2FA), `/creer-un-compte`, `/mot-de-passe-oublie`, `/reset-password`, `/verify-email/:token` | `/creer-un-compte` fermé si le super admin a fermé la création de comptes |
 | Espace parents (`ParentLayout`) | `/parent/tableau-de-bord`, `mon-profil`, `mes-enfants`, `inscription`, `suivi`, `suivi/:id`, `absences`, `documents`, `messages`, `galerie`, `consentement` | `ParametreRoute` (espace ouvert) + `ProtectedRoute` (parent, admin, super_admin) ; suivi / absences / galerie / consentement en plus dans `AccesReserve` (enfant inscrit) |
 | Admin « Quotidien » (`AdminLayout`) | `/admin/suivi`, `absences`, `calendrier`, `emargement`, `messagerie` | `ProtectedRoute` (admin, super_admin) |
-| Admin « Gestion » | `/admin/tableau-de-bord`, `familles`, `inscriptions`, `enfants`, `actualites`, `menus`, `documents`, `galerie`, `cms`, `statistiques`, `rapports`, `parametres` | + `SuperAdminRoute` (super_admin seulement ; un admin est renvoyé vers l'émargement) |
+| Admin « Gestion » | `/admin/tableau-de-bord`, `familles`, `inscriptions`, `enfants`, `actualites`, `menus`, `documents`, `galerie`, `cms`, `statistiques`, `rapports`, `parametres`, `comptes` | + `SuperAdminRoute` (super_admin seulement ; un admin est renvoyé vers l'émargement) |
 | Route inconnue | `*` | Redirection vers l'accueil |
 
 ### Les gardes de routes

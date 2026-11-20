@@ -147,6 +147,11 @@ const login = async (req, res) => {
       return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
     }
 
+    // Compte équipe créé par le super admin : mot de passe pas encore choisi
+    if (!user.password && user.role !== 'parent') {
+      return erreur(res, 'Vous n\'avez pas encore choisi votre mot de passe : utilisez le lien reçu par email, ou « Oublié ? » s\'il a expiré.', 401);
+    }
+
     // Compte créé via Google : pas de mot de passe local à comparer
     if (!user.password) {
       return erreur(res, 'Ce compte utilise la connexion Google. Cliquez sur « Se connecter avec Google » ou définissez un mot de passe via « Oublié ? ».', 401);
@@ -356,9 +361,12 @@ const resetPassword = async (req, res) => {
     // Hasher le nouveau mot de passe
     const passwordHash = await bcrypt.hash(password, 12);
 
-    // Mettre à jour le mot de passe et supprimer le token
+    // Mettre à jour le mot de passe et supprimer le token.
+    // Le lien a été reçu par email : l'adresse est donc confirmée
+    // (utile pour les comptes équipe créés par invitation).
     await user.update({
       password:     passwordHash,
+      email_verifie: true,
       token_reset:  null,
       token_expire: null,
       refresh_token: null // Déconnecter toutes les sessions actives

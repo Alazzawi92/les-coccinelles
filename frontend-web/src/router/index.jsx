@@ -66,6 +66,7 @@ import CMS               from '../pages/admin/CMS/CMS';
 import Statistiques      from '../pages/admin/Statistiques/Statistiques';
 import Rapports          from '../pages/admin/Rapports/Rapports';
 import Parametres        from '../pages/admin/Parametres/Parametres';
+import Comptes           from '../pages/admin/Comptes/Comptes';
 
 // Garde des routes (vérifie auth + rôle)
 import ProtectedRoute from './ProtectedRoute';
@@ -163,6 +164,7 @@ const AppRouter = () => {
               <Route path="/admin/statistiques"     element={<Statistiques />} />
               <Route path="/admin/rapports"         element={<Rapports />} />
               <Route path="/admin/parametres"       element={<Parametres />} /> {/* Espace parents, création de comptes */}
+              <Route path="/admin/comptes"          element={<Comptes />} />    {/* Comptes admin / super admin */}
             </Route>
           </Route>
         </Route>

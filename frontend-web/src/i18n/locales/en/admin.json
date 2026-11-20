@@ -443,21 +443,8 @@
     }
   },
   "cms": {
-    "titre": "<s>Content</s> management (CMS)",
-    "toastPage": "Page updated",
-    "pagesSite": "Website pages",
-    "enEdition": "→ Editing",
-    "selectionnez": "Select a page to edit",
-    "equipeTitre": "👥 Team management",
+    "titre": "Our <s>team</s>",
     "equipeAide": "Add and manage team members. They will be shown on the public page and on the home page.",
-    "edition": "✏️ Editing: {{titre}}",
-    "titrePage": "Page title",
-    "seo": "SEO description",
-    "seoPlaceholder": "Description for search engines (160 chars max)",
-    "contenu": "Content",
-    "contenuPlaceholder": "Write the page content...",
-    "sauvegarder": "💾 Save",
-    "noteLangue": "ℹ️ Content entered here is displayed as is, whatever language the visitor has chosen.",
     "equipe": {
       "membres_one": "{{count}} team member",
       "membres_other": "{{count}} team members",
@@ -571,6 +558,39 @@
       "ok": "✓ Saved at {{heure}}",
       "aCorriger": "⚠️ Please fix before saving (bottle amount)",
       "erreur": "⚠️ Saving failed — please retry"
+    }
+  },
+  "comptes": {
+    "titre": "Team <s>accounts</s>",
+    "intro": "Create administrator and super administrator accounts here. Only the super admin can access this page. Family accounts are created from the public website.",
+    "nouveau": "New account",
+    "prenom": "First name",
+    "nom": "Last name",
+    "email": "Email address",
+    "role": "Role",
+    "aide": {
+      "admin": "Daily tasks: sign-in sheet, daily follow-up, absences, calendar and messages.",
+      "super_admin": "Full access: families, enrolments, public website, settings and team account creation."
+    },
+    "note": "The person receives an email to choose their own password (link valid for 72 hours). You will never know it.",
+    "creer": "Create account and send invitation",
+    "confirmerSuperAdmin": "Create a SUPER ADMIN account for {{email}}? This person will have full access, including creating other accounts.",
+    "cree": "Account created, invitation sent",
+    "erreur": "The account could not be created",
+    "erreurChargement": "Unable to load team accounts",
+    "liste_one": "{{count}} team account",
+    "liste_other": "{{count}} team accounts",
+    "colonnes": {
+      "nom": "Name",
+      "email": "Email",
+      "role": "Role",
+      "statut": "Status",
+      "creeLe": "Created"
+    },
+    "statuts": {
+      "actif": "Active",
+      "invitation": "Invitation sent",
+      "desactive": "Disabled"
     }
   }
 }

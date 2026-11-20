@@ -443,21 +443,8 @@
     }
   },
   "cms": {
-    "titre": "Gestion du <s>contenu</s> (CMS)",
-    "toastPage": "Page mise à jour",
-    "pagesSite": "Pages du site",
-    "enEdition": "→ En édition",
-    "selectionnez": "Sélectionnez une page à modifier",
-    "equipeTitre": "👥 Gestion de l'équipe",
+    "titre": "Notre <s>équipe</s>",
     "equipeAide": "Ajoutez et gérez les membres de l'équipe. Ils s'afficheront sur la page publique et sur l'accueil.",
-    "edition": "✏️ Édition : {{titre}}",
-    "titrePage": "Titre de la page",
-    "seo": "Description SEO",
-    "seoPlaceholder": "Description pour les moteurs de recherche (160 car. max)",
-    "contenu": "Contenu",
-    "contenuPlaceholder": "Rédigez le contenu de la page...",
-    "sauvegarder": "💾 Sauvegarder",
-    "noteLangue": "ℹ️ Le contenu saisi ici est affiché tel quel, quelle que soit la langue choisie par le visiteur.",
     "equipe": {
       "membres_one": "{{count}} membre dans l'équipe",
       "membres_other": "{{count}} membres dans l'équipe",
@@ -571,6 +558,39 @@
       "ok": "✓ Enregistré à {{heure}}",
       "aCorriger": "⚠️ À corriger avant l'enregistrement (quantité de biberon)",
       "erreur": "⚠️ Échec de l'enregistrement — réessayez"
+    }
+  },
+  "comptes": {
+    "titre": "Comptes de l'<s>équipe</s>",
+    "intro": "Créez ici les comptes administrateur et super administrateur. Seul le super admin a accès à cette page. Les comptes des familles, eux, se créent depuis le site public.",
+    "nouveau": "Nouveau compte",
+    "prenom": "Prénom",
+    "nom": "Nom",
+    "email": "Adresse email",
+    "role": "Rôle",
+    "aide": {
+      "admin": "Le quotidien : émargement, suivi, absences, calendrier et messagerie.",
+      "super_admin": "Tous les droits : familles, inscriptions, site public, paramètres et création de comptes de l'équipe."
+    },
+    "note": "La personne reçoit un email pour choisir elle-même son mot de passe (lien valable 72 heures). Vous ne le connaîtrez jamais.",
+    "creer": "Créer le compte et envoyer l'invitation",
+    "confirmerSuperAdmin": "Créer un compte SUPER ADMIN pour {{email}} ? Cette personne aura tous les droits, y compris créer d'autres comptes.",
+    "cree": "Compte créé, invitation envoyée",
+    "erreur": "Le compte n'a pas pu être créé",
+    "erreurChargement": "Impossible de charger les comptes de l'équipe",
+    "liste_one": "{{count}} compte dans l'équipe",
+    "liste_other": "{{count}} comptes dans l'équipe",
+    "colonnes": {
+      "nom": "Nom",
+      "email": "Email",
+      "role": "Rôle",
+      "statut": "Statut",
+      "creeLe": "Créé le"
+    },
+    "statuts": {
+      "actif": "Actif",
+      "invitation": "Invitation envoyée",
+      "desactive": "Désactivé"
     }
   }
 }

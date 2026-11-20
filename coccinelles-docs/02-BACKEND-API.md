@@ -193,6 +193,8 @@ admin / super_admin** = rôles exigés · **Jeton 2FA** = étape du code de conn
 | `PUT` | `/api/users/me/avatar` | Connecté |
 | `GET` | `/api/users/admins` | Connecté |
 | `GET` | `/api/users` | admin, super_admin |
+| `GET` | `/api/users/equipe` | super_admin (comptes admin / super admin) |
+| `POST` | `/api/users/equipe` | super_admin (crée un compte admin / super admin + invitation par email) |
 | `GET` | `/api/users/:id` | super_admin |
 | `PUT` | `/api/users/:id/activer` | super_admin |
 | `DELETE` | `/api/users/:id` | super_admin |

@@ -1,10 +1,13 @@
 // Contrôleur utilisateurs — Les Coccinelles
 const bcrypt  = require('bcryptjs');
+const crypto  = require('crypto');
 const path    = require('path');
 const fs      = require('fs');
 const { User } = require('../models');
-const { succes, erreur } = require('../utils/response');
-const { envoyerCompteActive } = require('../services/mail.service');
+const { succes, erreur, cree } = require('../utils/response');
+const { envoyerCompteActive, envoyerInvitationEquipe } = require('../services/mail.service');
+
+const DUREE_INVITATION_MS = 72 * 60 * 60 * 1000; // Lien d'invitation valable 72 heures
 
 // GET /api/users/me — Retourner le profil de l'utilisateur connecté
 const monProfil = async (req, res) => {
@@ -168,4 +171,77 @@ const supprimerUser = async (req, res) => {
   }
 };
 
-module.exports = { monProfil, modifierProfil, changerMotDePasse, changerAvatar, listerAdmins, listerUsers, getUser, toggleActif, supprimerUser };
+// ── COMPTES DE L'ÉQUIPE (super admin uniquement) ─────────────────────
+
+// GET /api/users/equipe — Liste des comptes admin et super admin
+const listerEquipe = async (req, res) => {
+  try {
+    const membres = await User.findAll({
+      where: { role: ['admin', 'super_admin'] },
+      attributes: ['id', 'prenom', 'nom', 'email', 'role', 'actif', 'password', 'created_at'],
+      order: [['created_at', 'DESC']],
+      raw:   true // Objets simples (pas d'instances Sequelize)
+    });
+
+    // Le mot de passe sert seulement à savoir si l'invitation a été acceptée :
+    // il est retiré de chaque ligne et n'est jamais renvoyé au navigateur
+    const liste = membres.map(({ password, ...membre }) => ({
+      ...membre,
+      invitation_en_attente: !password // Pas encore de mot de passe choisi
+    }));
+    return succes(res, liste);
+  } catch (err) {
+    return erreur(res, 'Erreur lors de la récupération des comptes de l\'équipe');
+  }
+};
+
+// POST /api/users/equipe — Créer un compte admin ou super admin.
+// Aucun mot de passe n'est choisi ici : la personne reçoit un lien par
+// email et choisit le sien. Le super admin ne le connaît donc jamais.
+const creerCompteEquipe = async (req, res) => {
+  try {
+    const { email, prenom, nom, role } = req.body;
+
+    // Une adresse = un seul compte
+    const existant = await User.findOne({ where: { email } });
+    if (existant) return erreur(res, 'Cette adresse email est déjà utilisée', 409);
+
+    // Jeton du lien "choisir mon mot de passe" (même mécanisme que le mot de passe oublié)
+    const token = crypto.randomBytes(32).toString('hex');
+
+    const membre = await User.create({
+      email,
+      prenom,
+      nom,
+      role,                    // 'admin' ou 'super_admin' (vérifié par la route)
+      password:      null,     // Choisi par la personne via le lien reçu
+      actif:         true,     // Créé par le super admin : pas de validation à attendre
+      email_verifie: false,    // Passe à vrai quand la personne utilise le lien
+      token_reset:   token,
+      token_expire:  new Date(Date.now() + DUREE_INVITATION_MS)
+    });
+
+    // Sans email, la personne ne pourrait jamais choisir son mot de passe :
+    // en cas d'échec, on annule la création pour que le super admin réessaie
+    try {
+      await envoyerInvitationEquipe(email, prenom, role, token);
+    } catch (errMail) {
+      console.error('Erreur email invitation équipe :', errMail.message);
+      await membre.destroy();
+      return erreur(res, 'L\'email d\'invitation n\'a pas pu être envoyé. Le compte n\'a pas été créé, réessayez.', 502);
+    }
+
+    return cree(res, {
+      id:     membre.id,
+      email:  membre.email,
+      prenom: membre.prenom,
+      nom:    membre.nom,
+      role:   membre.role
+    }, `Compte créé. Une invitation a été envoyée à ${email}.`);
+  } catch (err) {
+    console.error('Erreur création compte équipe :', err);
+    return erreur(res, 'Erreur lors de la création du compte');
+  }
+};
+
+module.exports = { monProfil, modifierProfil, changerMotDePasse, changerAvatar, listerAdmins, listerUsers, getUser, toggleActif, supprimerUser, listerEquipe, creerCompteEquipe };
