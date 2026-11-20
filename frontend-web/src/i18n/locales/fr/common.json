@@ -302,8 +302,10 @@
   "installation": {
     "titre": "Installez l'application Les Coccinelles",
     "texte": "Accédez en un geste au site de la crèche depuis l'écran d'accueil de votre téléphone.",
-    "appleEtape1": "Dans Safari, appuyez sur le bouton Partager",
-    "appleEtape2": "puis choisissez « Sur l'écran d'accueil ».",
+    "appleEtape1": "Appuyez sur le bouton Partager (dans la barre du navigateur, ou dans le menu « ••• »)",
+    "appleEtape2": "Faites défiler et choisissez « Sur l'écran d'accueil »",
+    "appleEtape3": "Appuyez sur « Ajouter » : l'icône apparaît sur votre écran d'accueil.",
+    "appleIntegre": "Vous avez ouvert le site depuis une autre application (Instagram, Facebook...). Pour installer l'application, ouvrez d'abord cette page dans Safari : menu « ••• » puis « Ouvrir dans le navigateur ».",
     "installer": "Installer",
     "plusTard": "Plus tard",
     "compris": "J'ai compris",

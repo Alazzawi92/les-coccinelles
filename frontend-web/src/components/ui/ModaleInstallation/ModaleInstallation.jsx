@@ -19,8 +19,11 @@
 //   Deux contenus :
 //     - Android / Chrome / Edge : bouton « Installer » qui ouvre la
 //       vraie fenêtre d'installation du navigateur ;
-//     - iPhone / iPad : les 2 étapes à suivre dans Safari (Apple
-//       n'autorise pas de bouton d'installation).
+//     - iPhone / iPad : les 3 étapes à suivre (Apple n'autorise pas
+//       de bouton d'installation) ;
+//     - iPhone ouvert depuis Instagram, Facebook... : message pour
+//       ouvrir d'abord le site dans Safari (installation impossible
+//       dans le navigateur intégré de ces applications).
 //
 //   Fermeture : « Plus tard », Échap, clic sur le fond.
 // ============================================================
@@ -32,6 +35,7 @@ import { miseAJourDisponible } from '../../../serviceWorkerRegistration';
 import {
   installationPossible,
   installationDirectePossible,
+  estNavigateurIntegre,
   reporteeRecemment,
   reporterInstallation,
   lancerInstallation,
@@ -49,6 +53,14 @@ const IconePartager = () => (
   <svg className="modale-install__icone-partager" viewBox="0 0 24 24" aria-hidden="true">
     <path d="M12 3v12M8 7l4-4 4 4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     <path d="M7 10H5v11h14V10h-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// Icône « Sur l'écran d'accueil » d'iPhone (carré arrondi avec un +)
+const IconeAjouter = () => (
+  <svg className="modale-install__icone-partager" viewBox="0 0 24 24" aria-hidden="true">
+    <rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M12 8v8M8 12h8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -148,6 +160,9 @@ const ModaleInstallation = () => {
   // Android / Chrome / Edge : vrai bouton ; sinon (iPhone) : explications
   const direct = installationDirectePossible();
 
+  // iPhone ouvert depuis Instagram, Facebook... : installation impossible ici
+  const integre = !direct && estNavigateurIntegre();
+
   return (
     // Fond sombre : un clic dessus ferme la fenêtre
     <div className="modale-install" onClick={plusTard}>
@@ -165,13 +180,18 @@ const ModaleInstallation = () => {
           📱 {t('common.installation.titre')}
         </h2>
 
-        {direct ? (
-          <p className="modale-install__texte">{t('common.installation.texte')}</p>
-        ) : (
-          // iPhone : les 2 étapes dans Safari
+        {/* Explication commune à tous les appareils */}
+        <p className="modale-install__texte">{t('common.installation.texte')}</p>
+
+        {integre ? (
+          // iPhone, navigateur d'une autre application : ouvrir d'abord dans Safari
+          <p className="modale-install__alerte">{t('common.installation.appleIntegre')}</p>
+        ) : !direct && (
+          // iPhone : les 3 étapes (Partager → Sur l'écran d'accueil → Ajouter)
           <ol className="modale-install__etapes">
             <li>{t('common.installation.appleEtape1')} <IconePartager /></li>
-            <li>{t('common.installation.appleEtape2')}</li>
+            <li>{t('common.installation.appleEtape2')} <IconeAjouter /></li>
+            <li>{t('common.installation.appleEtape3')}</li>
           </ol>
         )}
 

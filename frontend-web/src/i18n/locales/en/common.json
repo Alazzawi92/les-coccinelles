@@ -302,8 +302,10 @@
   "installation": {
     "titre": "Install the Les Coccinelles app",
     "texte": "Open the nursery website in one tap from your phone's home screen.",
-    "appleEtape1": "In Safari, tap the Share button",
-    "appleEtape2": "then choose “Add to Home Screen”.",
+    "appleEtape1": "Tap the Share button (in the browser bar, or in the “•••” menu)",
+    "appleEtape2": "Scroll down and choose “Add to Home Screen”",
+    "appleEtape3": "Tap “Add”: the icon appears on your home screen.",
+    "appleIntegre": "You opened the site from another app (Instagram, Facebook...). To install the app, first open this page in Safari: “•••” menu then “Open in browser”.",
     "installer": "Install",
     "plusTard": "Later",
     "compris": "Got it",

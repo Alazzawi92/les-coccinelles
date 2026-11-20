@@ -64,7 +64,18 @@
   padding-left:  var(--space-lg);
 }
 
-/* Icône « Partager » d'iPhone, à la taille du texte */
+/* iPhone dans Instagram, Facebook... : encadré orange « Ouvrez dans Safari » */
+.modale-install__alerte {
+  padding:       var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  background:    var(--warning-bg);
+  color:         var(--warning-text);
+  border:        1px solid var(--warning-border);
+  border-radius: var(--radius-md);
+  line-height:   1.6;
+}
+
+/* Icônes « Partager » et « Sur l'écran d'accueil » d'iPhone, à la taille du texte */
 .modale-install__icone-partager {
   width:          1.3em;
   height:         1.3em;

@@ -57,6 +57,14 @@ export const estAppareilApple = () =>
   /iphone|ipad|ipod/i.test(window.navigator.userAgent) ||
   (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
 
+// Vrai si le site est ouvert DANS une autre application (Instagram,
+// Facebook, Messenger, LinkedIn, Snapchat, TikTok...). Sur iPhone, ces
+// navigateurs intégrés n'ont pas « Sur l'écran d'accueil » : il faut
+// d'abord ouvrir le site dans Safari.
+export const estNavigateurIntegre = () =>
+  /FBAN|FBAV|FB_IAB|Instagram|LinkedInApp|Snapchat|musical_ly|BytedanceWebview|Line\//i
+    .test(window.navigator.userAgent);
+
 // Vrai si le navigateur a fourni un vrai bouton d'installation
 export const installationDirectePossible = () => evenementInstallation !== null;
 
