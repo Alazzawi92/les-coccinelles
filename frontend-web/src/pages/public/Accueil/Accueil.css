@@ -138,10 +138,13 @@
 /* Boutons d'action côte à côte : inscription + visite */
 .hero__actions { display: flex; gap: var(--space-md); flex-wrap: wrap; }
 
-/* Bouton d'inscription : plus grand que les boutons habituels, adapté à la largeur de l'écran */
+/* Bouton d'inscription : pleine largeur de la colonne, texte plus grand
+   que les boutons habituels, hauteur donnée par le padding (pas de
+   height fixe, sinon le texte déborde) */
 .hero__actions .hero__inscrire {
-  padding:   var(--space-lg) var(--space-2xl);
+  padding:   var(--space-sm) var(--space-2xl);
   font-size: clamp(1.15rem, 2vw, 1.4rem);
+  width:     100%;
 }
 
 /* Colonne visuelle : ne rétrécit jamais, centrée.
