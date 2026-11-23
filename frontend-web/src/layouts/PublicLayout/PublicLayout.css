@@ -296,6 +296,13 @@
 /* flex:1 fait que le contenu s'étire pour pousser le footer vers le bas */
 .public-main { flex: 1; }
 
+/* Page de connexion affichée entre la navbar et le footer : pas besoin
+   qu'elle occupe tout l'écran (sinon le footer est repoussé très loin) */
+.public-main .auth-page {
+  min-height: auto;
+  padding:    var(--space-3xl) var(--space-md);
+}
+
 /* ── 5. FOOTER ──────────────────────────────────────────── */
 
 /* Footer sombre : fond gris très foncé avec texte blanc semi-transparent.

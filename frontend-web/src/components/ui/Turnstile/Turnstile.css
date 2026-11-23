@@ -3,5 +3,12 @@
 .turnstile {
   display:         flex;
   justify-content: center;
+  width:           100%;
   min-height:      65px;
+}
+
+/* Taille "flexible" : le cadre dessiné par Cloudflare s'étire sur toute
+   la largeur, comme les champs du formulaire */
+.turnstile > div {
+  width: 100%;
 }

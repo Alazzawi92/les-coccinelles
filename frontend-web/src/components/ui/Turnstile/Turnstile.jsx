@@ -86,6 +86,7 @@ const Turnstile = forwardRef(({ onJeton = () => {} }, ref) => {
           sitekey:            SITE_KEY,
           language:           langue,
           theme:              getTheme(), // Suit le thème clair / sombre du site
+          size:               'flexible', // Prend toute la largeur du formulaire (300px minimum)
           callback:           (jeton) => onJetonRef.current(jeton),
           'expired-callback': () => onJetonRef.current(''),
           'error-callback':   () => onJetonRef.current('')

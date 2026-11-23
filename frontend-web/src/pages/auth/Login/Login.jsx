@@ -1,6 +1,7 @@
 // ============================================================
 // FICHIER  : Login.jsx
-// ROUTE    : /connexion
+// ROUTE    : /connexion (dans PublicLayout : navbar + footer du site,
+//            qui fournissent aussi le thème et le choix de langue)
 // RÔLE     : Page de connexion des parents et administrateurs.
 //            Redirige vers l'espace admin si rôle admin,
 //            sinon vers la page demandée avant la redirection.
@@ -13,8 +14,6 @@ import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import { useParametres } from '../../../context/ParametresContext';
-import LanguageSwitcher from '../../../components/ui/LanguageSwitcher/LanguageSwitcher';
-import ThemeToggle from '../../../components/ui/ThemeToggle/ThemeToggle';
 import '../../../styles/auth.css';
 import './Login.css';
 
@@ -82,12 +81,6 @@ const Login = () => {
   return (
     <div className="auth-page">
       <div className="auth-card">
-
-        {/* Sélecteur de langue (pas de layout sur les pages auth) */}
-        <div className="auth-langue">
-          <ThemeToggle />
-          <LanguageSwitcher />
-        </div>
 
         {/* Logo + sous-titre */}
         <div className="auth-logo">

@@ -102,11 +102,12 @@ const AppRouter = () => {
           <Route path="/menus"                  element={<Menus />} />
           <Route path="/contact"               element={<Contact />} />
           <Route path="/mentions-legales"      element={<MentionsLegales />} />
+          {/* Connexion : avec navbar + footer, pour revenir facilement au site */}
+          <Route path="/connexion"             element={<Login />} />
         </Route>
 
         {/* ── AUTHENTIFICATION ────────────────────────────────
             Pas de layout : pages plein écran centrées */}
-        <Route path="/connexion"           element={<Login />} />
         <Route path="/connexion/verification" element={<DeuxFacteurs />} /> {/* Double authentification */}
         {/* Création de compte : renvoie à l'accueil si elle est fermée (Admin → Paramètres) */}
         <Route path="/creer-un-compte"     element={<ParametreRoute reglage="creationComptesOuverte"><Register /></ParametreRoute>} />
