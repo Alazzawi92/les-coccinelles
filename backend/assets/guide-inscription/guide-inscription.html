@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!-- ============================================================
+     FICHIER : guide-inscription.html
+     RÔLE    : Source des pages 1 et 2 du « Guide pratique
+               d'inscription » (backend/assets/guide-inscription.pdf),
+               téléchargeable depuis le site.
+               La page 3 (annexe : fiche unique de renseignements
+               scannée) est annexe-fiche-unique.pdf, ajoutée telle quelle.
+               Pour régénérer le PDF : voir LISEZMOI.md (même dossier).
+     ============================================================ -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Guide pratique d'inscription — Crèche Les Coccinelles</title>
+<style>
+  /* ── Police Lato (fichiers locaux : rendu identique hors ligne) ── */
+  @font-face { font-family: 'Lato'; font-weight: 400; src: url('polices/Lato-400.ttf'); }
+  @font-face { font-family: 'Lato'; font-weight: 700; src: url('polices/Lato-700.ttf'); }
+  @font-face { font-family: 'Lato'; font-weight: 900; src: url('polices/Lato-900.ttf'); }
+
+  /* ── Couleurs du document ───────────────────────────────── */
+  :root {
+    --marine:      #1B3B57;  /* Titres, bandeau du haut */
+    --orange:      #E87722;  /* Début du bandeau, encart adaptation */
+    --orange-fond: #FFF3EA;
+    --sarcelle:    #3A8E9E;  /* Sur-titres, numéros d'étapes */
+    --bleu-fond:   #F0F5F8;  /* Encarts, cases des numéros */
+    --bleu-bord:   #DCE7EE;
+    --texte:       #26323B;
+    --gris:        #6E7C87;
+    --rouge:       #C62828;  /* Encart « Important » */
+    --rouge-fond:  #FFF4F4;
+  }
+
+  /* ── Page A4 sans marges d'impression ───────────────────── */
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Lato', sans-serif; color: var(--texte); font-size: 10pt; line-height: 1.5;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .page { position: relative; width: 210mm; height: 297mm; padding: 0 14mm 0 16mm; overflow: hidden; page-break-after: always; }
+  .page:last-child { page-break-after: auto; }
+
+  /* Bandeau du haut : orange puis bleu marine */
+  .bandeau { position: absolute; top: 0; left: 0; right: 0; height: 4.5mm;
+             background: linear-gradient(90deg, var(--orange) 0 36mm, var(--marine) 36mm); }
+
+  /* En-tête : nom de la crèche à gauche, logo à droite */
+  .entete { display: flex; justify-content: space-between; align-items: flex-start; padding-top: 12mm; }
+  .entete__nom  { font-weight: 700; font-size: 9pt; color: var(--marine); letter-spacing: 0.02em; }
+  .entete__sous { font-size: 8pt; color: var(--gris); }
+  .entete__logo { width: 20mm; padding-bottom: 1.5mm; border-bottom: 0.5mm solid var(--marine); }
+  .entete__logo img { display: block; width: 100%; }
+
+  /* Contenu, légèrement en retrait comme le document d'origine */
+  .contenu { padding: 0 0 0 2.5mm; }
+  .surtitre { margin-top: 0.5mm; font-weight: 700; font-size: 9pt; color: var(--sarcelle); text-transform: uppercase; letter-spacing: 0.03em; }
+  h1 { font-weight: 900; font-size: 29pt; color: var(--marine); line-height: 1.2; margin: 1mm 0 0.5mm; }
+  .chapo { font-size: 10pt; color: var(--gris); margin-bottom: 3mm; }
+  h2 { font-weight: 700; font-size: 14pt; color: var(--marine); margin: 4mm 0 1.5mm; }
+  p + p { margin-top: 2mm; }
+
+  /* Encart à bordure gauche colorée */
+  .encart { margin: 3mm 0; padding: 3.5mm 5mm; background: var(--bleu-fond); border-left: 1mm solid var(--sarcelle); border-radius: 0 1mm 1mm 0; }
+  .encart--orange { background: var(--orange-fond); border-left-color: var(--orange); }
+
+  /* Étapes numérotées 01 → 06 */
+  .etapes { list-style: none; }
+  .etape { display: flex; gap: 4mm; padding: 1.6mm 0; }
+  .etape__num { flex: 0 0 11mm; height: 10mm; margin-top: 0.5mm; display: flex; align-items: center; justify-content: center;
+                background: var(--bleu-fond); border: 0.25mm solid var(--bleu-bord); color: var(--sarcelle); font-weight: 700; font-size: 10pt; }
+  .etape__corps { flex: 1; padding-bottom: 1.6mm; border-bottom: 0.25mm solid var(--bleu-bord); font-size: 9.3pt; line-height: 1.45; }
+  .etape__corps p + p { margin-top: 0.3mm; } /* Titre et texte de l'étape collés */
+  .etape__titre { font-weight: 700; font-size: 11pt; color: var(--marine); }
+
+  /* Encart « Important » rouge */
+  .important { margin-top: 4mm; padding: 3.5mm 5mm 3.5mm 6mm; background: var(--rouge-fond);
+               border: 0.5mm solid var(--rouge); border-left-width: 2.5mm; }
+  .important__titre { font-weight: 900; font-size: 11pt; color: var(--rouge); letter-spacing: 0.02em; margin-bottom: 1mm; }
+  .important strong { color: var(--rouge); }
+  .important ul { list-style: none; margin-top: 1mm; padding-left: 2.5mm; font-size: 9.5pt; }
+
+  /* Liste des pièces à fournir (cases à cocher) */
+  .pieces { list-style: none; }
+  .pieces li { padding: 1.15mm 0 1.15mm 4mm; position: relative; font-size: 9.8pt; }
+  .pieces li::before { content: ''; position: absolute; left: 0.3mm; top: 2.75mm; width: 2mm; height: 2mm; border: 0.25mm solid var(--gris); }
+
+  /* Tableau des contacts */
+  .contacts { width: 100%; border-collapse: collapse; margin-top: 2mm; font-size: 9.8pt; }
+  .contacts th, .contacts td { width: 50%; border: 0.25mm solid var(--bleu-bord); padding: 3.5mm 4mm; text-align: left; vertical-align: top; }
+  .contacts th { background: var(--bleu-fond); font-weight: 700; color: var(--marine); text-transform: uppercase; font-size: 9.5pt; }
+  .contacts td { background: var(--bleu-fond); }
+  .note-annexe { margin-top: 3mm; font-size: 8pt; color: var(--gris); }
+
+  /* Pied de page */
+  .pied { position: absolute; left: 16mm; right: 14mm; bottom: 9mm; padding-top: 2mm; border-top: 0.25mm solid var(--bleu-bord);
+          display: flex; justify-content: space-between; font-size: 7.5pt; color: var(--gris); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ PAGE 1 : INSCRIRE SON ENFANT ════════════════════ -->
+<section class="page">
+  <div class="bandeau"></div>
+  <header class="entete">
+    <div>
+      <p class="entete__nom">CRÈCHE LES COCCINELLES</p>
+      <p class="entete__sous">Puilboreau · Accueil de la petite enfance</p>
+    </div>
+    <div class="entete__logo"><img src="logo.png" alt="Logo de la crèche Les Coccinelles"></div>
+  </header>
+
+  <div class="contenu">
+    <p class="surtitre">Démarches et documents</p>
+    <h1>Inscrire son enfant</h1>
+    <p class="chapo">Le parcours de préinscription, les justificatifs nécessaires et la période d’adaptation à la Crèche Les Coccinelles.</p>
+
+    <h2>Conditions d’inscription</h2>
+    <p>Les enfants accueillis doivent habiter prioritairement les communes de <strong>Puilboreau, Saint-Xandre ou Esnandes</strong>.
+       La préinscription concerne l’accueil régulier ou occasionnel et ne constitue pas, à elle seule, une réservation définitive.</p>
+
+    <div class="encart">
+      <p><strong>Accueil inclusif.</strong> La crèche accueille également les demandes concernant les enfants en situation de handicap.
+         Un projet spécifique peut être élaboré avec la famille, la direction, l’équipe éducative et les partenaires concernés.
+         Les conditions d’inscription sont identiques.</p>
+    </div>
+
+    <h2>Le parcours d’inscription</h2>
+    <ol class="etapes">
+      <li class="etape"><span class="etape__num">01</span><div class="etape__corps">
+        <p class="etape__titre">Télécharger la fiche de préinscription</p>
+        <p>Utiliser la « Fiche unique de renseignements » commune au Relais Petite Enfance Picoti Picota et à la Crèche Les Coccinelles. Le formulaire original figure en annexe.</p>
+      </div></li>
+      <li class="etape"><span class="etape__num">02</span><div class="etape__corps">
+        <p class="etape__titre">Remplir et signer le formulaire</p>
+        <p>Indiquer les renseignements sur l’enfant et ses parents, les besoins d’accueil (jours, horaires, date souhaitée), les choix de mode de garde, les autorisations de données et les signatures.</p>
+      </div></li>
+      <li class="etape"><span class="etape__num">03</span><div class="etape__corps">
+        <p class="etape__titre">Envoyer la fiche complétée</p>
+        <p>Adresser le document <strong>à la crèche et au Relais Petite Enfance</strong> :<br>
+           <strong>Crèche :</strong> les.coccinelles17@orange.fr<br>
+           <strong>RPE Picoti Picota :</strong> rpe@ville-puilboreau.fr</p>
+      </div></li>
+      <li class="etape"><span class="etape__num">04</span><div class="etape__corps">
+        <p class="etape__titre">Compléter le dossier d’admission</p>
+        <p>Lorsque la demande peut aboutir, réunir les pièces justificatives et signer les formulaires et protocoles demandés.</p>
+      </div></li>
+      <li class="etape"><span class="etape__num">05</span><div class="etape__corps">
+        <p class="etape__titre">Finaliser la place</p>
+        <p>La place est réservée après la <strong>signature du contrat</strong> et l’inscription sur le site « Pirouette ». Respecter la date d’entrée prévue.</p>
+      </div></li>
+      <li class="etape"><span class="etape__num">06</span><div class="etape__corps">
+        <p class="etape__titre">Préparer l’accueil progressif</p>
+        <p>Organiser la période d’adaptation avec l’équipe en fonction des habitudes et des besoins de l’enfant.</p>
+      </div></li>
+    </ol>
+
+    <div class="important">
+      <p class="important__titre">IMPORTANT - ENVOI OBLIGATOIRE AUX DEUX DESTINATAIRES</p>
+      <p>La fiche de préinscription complétée et signée doit être envoyée <strong>aux deux adresses e-mail suivantes :</strong></p>
+      <ul>
+        <li>Crèche Les Coccinelles : les.coccinelles17@orange.fr</li>
+        <li>Relais Petite Enfance Picoti Picota : rpe@ville-puilboreau.fr</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer class="pied"><span>Guide pratique d’inscription · Document de présentation du projet de site</span><span>1 / 2 · annexe</span></footer>
+</section>
+
+<!-- ════════════════════ PAGE 2 : PRÉPARER LE DOSSIER ════════════════════ -->
+<section class="page">
+  <div class="bandeau"></div>
+  <header class="entete">
+    <div>
+      <p class="entete__nom">CRÈCHE LES COCCINELLES</p>
+      <p class="entete__sous">Puilboreau · Accueil de la petite enfance</p>
+    </div>
+    <div class="entete__logo"><img src="logo.png" alt="Logo de la crèche Les Coccinelles"></div>
+  </header>
+
+  <div class="contenu">
+    <p class="surtitre">Documents et informations</p>
+    <h1>Préparer le dossier</h1>
+    <p class="chapo">Les pièces nécessaires à l’admission définitive, puis les informations pratiques pour les familles.</p>
+
+    <h2>Pièces à fournir</h2>
+    <ul class="pieces">
+      <li>Numéro d’assuré social dont dépend l’enfant et photocopie du justificatif.</li>
+      <li>Photocopie du livret de famille.</li>
+      <li>Profession et nom de l’employeur de chacun des parents.</li>
+      <li>Numéro d’allocataire CAF, utilisé pour calculer le tarif (CAF PRO), et photocopie du justificatif.</li>
+      <li>Carnet de santé de l’enfant, avec vaccinations obligatoires à jour.</li>
+      <li>Nom et coordonnées du médecin traitant.</li>
+      <li>Certificat d’aptitude à la vie en collectivité.</li>
+      <li>Attestation de responsabilité civile à jour.</li>
+      <li>Noms, prénoms, adresses et téléphones des personnes autorisées à récupérer l’enfant.</li>
+      <li>Protocoles et autorisations à compléter et à signer.</li>
+    </ul>
+
+    <h2>La période d’adaptation</h2>
+    <p>Dans l’intérêt de l’enfant, il est prévu une période dite « d’adaptation » en vue de l’entrée effective.
+       Elle est nécessaire pour établir une <strong>relation de confiance</strong> entre l’enfant, la famille et l’équipe.
+       Elle permet de connaître les habitudes de vie de l’enfant.</p>
+    <div class="encart encart--orange">
+      <p><strong>La période d’adaptation s’effectue sur environ 15 jours</strong> en fonction du besoin de chaque enfant.</p>
+    </div>
+
+    <h2>Informations à connaître</h2>
+    <p>Le dossier doit être complet pour un accueil régulier ou occasionnel. Selon les conditions prévues par la structure,
+       les jours d’absence peuvent être facturés comme si l’enfant était présent.</p>
+
+    <h2>Contacts</h2>
+    <table class="contacts">
+      <tr><th>Crèche Les Coccinelles</th><th>Relais Petite Enfance Picoti Picota</th></tr>
+      <tr>
+        <td>10 rue Saint-Vincent<br>17138 Puilboreau<br><strong>les.coccinelles17@orange.fr</strong></td>
+        <td>10 rue Saint-Vincent<br>17138 Puilboreau<br>06 25 62 86 22<br><strong>rpe@ville-puilboreau.fr</strong></td>
+      </tr>
+    </table>
+    <p class="note-annexe"><strong>Annexe :</strong> fiche unique de renseignements originale à compléter et à transmettre aux destinataires indiqués.</p>
+  </div>
+
+  <footer class="pied"><span>Guide pratique d’inscription · Document de présentation du projet de site</span><span>2 / 2 · annexe</span></footer>
+</section>
+
+</body>
+</html>

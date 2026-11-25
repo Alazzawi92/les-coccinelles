@@ -48,6 +48,7 @@ const TYPES_ACCUEIL = ['temps_plein', 'temps_partiel', 'occasionnel'];
 // par position (parent.inscription.pieces)
 const PIECES = [
   { icone: '🪪', doc: "Numéro d'assuré social dont dépend l'enfant + photocopie justificative" },
+  { icone: '📖', doc: "Photocopie du livret de famille" },
   { icone: '💳', doc: "Numéro d'Allocations Familiales (CAF PRO) + photocopie justificative" },
   { icone: '💉', doc: "Carnet de santé de l'enfant : vaccinations obligatoires et à jour" },
   { icone: '📋', doc: "Certificat d'aptitude à la vie en collectivité" },
@@ -452,7 +453,7 @@ const Inscription = () => {
   // Passage à l'étape suivante (avec validation selon l'étape courante)
   const etapeSuivante = () => {
     if (!validerEtape(etape)) return;
-    // Étape documents : les 5 pièces justificatives sont obligatoires
+    // Étape documents : les 6 pièces justificatives sont obligatoires
     if (etape === 3 && !fichiers.every(f => f !== null)) {
       setDocsManquants(true);
       toast.error(t(`${I}.e4.docsManquants`));

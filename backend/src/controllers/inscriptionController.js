@@ -57,7 +57,7 @@ const stats = async (req, res) => {
 
 // Nombre de pièces justificatives obligatoires pour une demande
 // (doit correspondre à la liste PIECES du formulaire parent)
-const NB_PIECES_OBLIGATOIRES = 5;
+const NB_PIECES_OBLIGATOIRES = 6; // Dont le livret de famille
 
 // Supprime du disque les fichiers uploadés d'une requête refusée
 const supprimerFichiers = (fichiers = []) =>
