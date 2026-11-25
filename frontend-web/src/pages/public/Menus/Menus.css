@@ -11,7 +11,7 @@
      2. Navigation entre semaines
      3. Grille des menus (5 jours)
      4. Carte d'un jour
-     5. Sections repas (midi, goûter)
+     5. Sections repas (midi, goûter) + 5b. allergènes du jour
      6. États (chargement, vide)
      7. Info nutritionnelle
      8. Responsive
@@ -147,6 +147,22 @@
 .repas-html li { margin-bottom: 2px; }
 .repas-html strong { font-weight: 700; }
 .repas-html em     { font-style: italic; }
+
+/* ── 5b. ALLERGÈNES DU JOUR ─────────────────────────────── */
+
+/* Bloc sous le goûter : liste centrée, comme sur le menu imprimé */
+.repas-allergenes        { padding: var(--space-sm); text-align: center; }
+.repas-allergenes__titre { font-size: 0.9rem; font-weight: 700; color: var(--text-dark); text-decoration: underline; margin-bottom: 6px; }
+.repas-allergenes__liste { display: flex; flex-direction: column; gap: 2px; font-size: 0.8rem; line-height: 1.3; }
+
+/* Présent dans les repas du jour : rouge, gras, précédé de ✔ */
+.allergene--present { color: var(--error); font-weight: 700; }
+
+/* Absent : texte discret */
+.allergene--absent  { color: var(--text-gray); }
+
+/* Légende sous la grille : explique le rouge et le ✔ */
+.allergenes-legende { margin-top: var(--space-md); font-size: 0.85rem; color: var(--text-gray); text-align: center; }
 
 /* ── 6. ÉTATS ───────────────────────────────────────────── */
 

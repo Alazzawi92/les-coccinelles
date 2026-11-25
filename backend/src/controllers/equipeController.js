@@ -7,6 +7,29 @@ const crypto = require('crypto');
 
 const { EquipeMembre } = require('../models');
 const { succes, erreur, cree } = require('../utils/response');
+const { signerChemin }  = require('../utils/fichiersSignes');
+
+// ── Signer les chemins de la photo d'un membre ───────────────────────
+// La photo est stockée en JSON ({ web, miniature }) dans la colonne photo :
+// le middleware signerReponsesApi ne la reconnaît pas comme un chemin, on
+// signe donc ici chaque chemin (dossier uploads/equipe protégé).
+// À n'appeler que pour un utilisateur connecté (RGPD : photos des salariés).
+const avecPhotoSignee = (membre) => {
+  const donnees = membre.toJSON();
+  if (!donnees.photo) return donnees;
+  try {
+    const { web, miniature } = JSON.parse(donnees.photo);
+    donnees.photo = JSON.stringify({
+      web:       web       ? signerChemin(web)       : null,
+      miniature: miniature ? signerChemin(miniature) : null
+    });
+  } catch {
+    donnees.photo = null; // JSON illisible : initiales affichées côté frontend
+  }
+  return donnees;
+};
+
+const ORDRE_MEMBRES = [['ordre', 'ASC'], ['nom', 'ASC']];
 
 // ── Compresser et redimensionner la photo du membre ──────────────────
 const traiterPhoto = async (fichier) => {
@@ -49,11 +72,14 @@ const supprimerFichiers = (membre) => {
 };
 
 // ── GET /equipe — liste publique des membres actifs ──────────────────
+// Visiteurs : prénom, nom et fonction uniquement — la photo n'est jamais
+// envoyée (elle est réservée aux utilisateurs connectés, voir ci-dessous)
 const listerMembres = async (req, res) => {
   try {
     const membres = await EquipeMembre.findAll({
-      where: { actif: true },
-      order: [['ordre', 'ASC'], ['nom', 'ASC']]
+      where:      { actif: true },
+      attributes: ['id', 'prenom', 'nom', 'titre', 'ordre'],
+      order:      ORDRE_MEMBRES
     });
     return succes(res, membres);
   } catch (err) {
@@ -62,13 +88,27 @@ const listerMembres = async (req, res) => {
   }
 };
 
+// ── GET /equipe/avec-photos — membres actifs + photos (connecté) ─────
+// Parents et équipe : même liste, avec les liens signés des photos
+const listerMembresAvecPhotos = async (req, res) => {
+  try {
+    const membres = await EquipeMembre.findAll({
+      where:      { actif: true },
+      attributes: ['id', 'prenom', 'nom', 'titre', 'ordre', 'photo'],
+      order:      ORDRE_MEMBRES
+    });
+    return succes(res, membres.map(avecPhotoSignee));
+  } catch (err) {
+    console.error('Erreur listerMembresAvecPhotos :', err);
+    return erreur(res, 'Erreur récupération équipe');
+  }
+};
+
 // ── GET /equipe/tous — liste admin (tous) ────────────────────────────
 const listerTous = async (req, res) => {
   try {
-    const membres = await EquipeMembre.findAll({
-      order: [['ordre', 'ASC'], ['nom', 'ASC']]
-    });
-    return succes(res, membres);
+    const membres = await EquipeMembre.findAll({ order: ORDRE_MEMBRES });
+    return succes(res, membres.map(avecPhotoSignee));
   } catch (err) {
     return erreur(res, 'Erreur récupération équipe');
   }
@@ -145,4 +185,4 @@ const supprimerMembre = async (req, res) => {
   }
 };
 
-module.exports = { listerMembres, listerTous, ajouterMembre, modifierMembre, supprimerMembre };
+module.exports = { listerMembres, listerMembresAvecPhotos, listerTous, ajouterMembre, modifierMembre, supprimerMembre };

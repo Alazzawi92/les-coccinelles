@@ -13,7 +13,7 @@
 | **Nom** | Les Coccinelles |
 | **Type** | Plateforme web complète + application mobile installable (PWA) |
 | **Client** | Crèche associative Les Coccinelles, Puilboreau (17) |
-| **Public accueilli** | Enfants de 0 à 3 ans — 28 places fixes + 4 places de garderie |
+| **Public accueilli** | Enfants de 2 mois et demi à 3 ans — 28 places fixes + 4 places de garderie |
 | **Horaires** | Du lundi au vendredi, 7 h 30 – 18 h 30 |
 | **Communes accueillies** | Puilboreau, Saint-Xandre, Esnandes |
 | **Formation** | CDA — Concepteur Développeur d'Applications, AFEC La Rochelle |

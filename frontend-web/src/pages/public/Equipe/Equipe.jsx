@@ -2,33 +2,21 @@
 // FICHIER  : Equipe.jsx
 // ROUTE    : /equipe
 // RÔLE     : Page de présentation de l'équipe éducative.
-//            Membres chargés depuis /api/equipe (table equipe_membres).
+//            Membres chargés via useMembresEquipe (table equipe_membres) :
+//            visiteurs → simple liste prénom, nom, fonction (ListeEquipe) ;
+//            parents et équipe connectés → cartes avec photos.
 // ============================================================
 
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
-import api, { BACKEND_URL } from '../../../services/api';
+import { BACKEND_URL } from '../../../services/api';
+import useMembresEquipe, { photoMembre } from '../../../hooks/useMembresEquipe';
+import ListeEquipe from '../../../components/ui/ListeEquipe/ListeEquipe';
 import './Equipe.css';
-
-const photoUrl = (membre) => {
-  try {
-    const data = JSON.parse(membre.photo);
-    return `${BACKEND_URL}${data.web}`;
-  } catch { return null; }
-};
 
 const Equipe = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const [membres,    setMembres]    = useState([]);
-  const [chargement, setChargement] = useState(true);
-
-  useEffect(() => {
-    api.get('/equipe')
-      .then(r => setMembres(r.data.data || []))
-      .catch(() => setMembres([]))
-      .finally(() => setChargement(false));
-  }, []);
+  const { membres, chargement, avecPhotos } = useMembresEquipe();
 
   return (
     <div className="equipe">
@@ -76,20 +64,28 @@ const Equipe = () => {
               <span>👥</span>
               <p>{t('public.equipe.bientot')}</p>
             </div>
+          ) : !avecPhotos ? (
+            // Visiteur : simple liste, sans photo
+            <ListeEquipe membres={membres} />
           ) : (
+            // Connecté : cartes avec photos
             <div className="equipe-grille">
-              {membres.map(m => (
-                <div key={m.id} className="membre-carte">
-                  <div className="membre-carte__avatar">
-                    {photoUrl(m)
-                      ? <img src={photoUrl(m)} alt={`${m.prenom} ${m.nom}`} />
-                      : <span>{m.prenom[0]}{m.nom[0]}</span>
-                    }
+              {membres.map(m => {
+                // Photo envoyée seulement aux utilisateurs connectés, sinon initiales
+                const photo = photoMembre(m, 'web', BACKEND_URL);
+                return (
+                  <div key={m.id} className="membre-carte">
+                    <div className="membre-carte__avatar">
+                      {photo
+                        ? <img src={photo} alt={`${m.prenom} ${m.nom}`} />
+                        : <span>{m.prenom[0]}{m.nom[0]}</span>
+                      }
+                    </div>
+                    <h3 className="membre-carte__nom">{m.prenom} {m.nom}</h3>
+                    <p className="membre-carte__poste">{m.titre}</p>
                   </div>
-                  <h3 className="membre-carte__nom">{m.prenom} {m.nom}</h3>
-                  <p className="membre-carte__poste">{m.titre}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

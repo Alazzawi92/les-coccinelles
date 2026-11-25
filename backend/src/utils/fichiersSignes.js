@@ -20,10 +20,12 @@ const SECRET = process.env.FILES_SECRET || process.env.JWT_SECRET;
 // Liste BLANCHE des sous-dossiers publics de /uploads (affichés sur le site
 // public). Tout autre dossier — photos, justificatifs, documents, messages,
 // ou tout dossier ajouté plus tard — exige un lien signé (on refuse par défaut).
-const DOSSIERS_PUBLICS = ['equipe', 'actualites', 'avatars'];
+const DOSSIERS_PUBLICS = ['actualites', 'avatars'];
 
-// Dossiers privés connus (sert à reconnaître les chemins à signer)
-const DOSSIERS_PROTEGES = ['photos', 'justificatifs', 'documents', 'messages'];
+// Dossiers privés connus (sert à reconnaître les chemins à signer).
+// equipe : les photos de l'équipe ne sont visibles que par les utilisateurs
+// connectés (parents, équipe) — le site public n'affiche que les noms.
+const DOSSIERS_PROTEGES = ['photos', 'justificatifs', 'documents', 'messages', 'equipe'];
 
 // Chemin de fichier privé tel que stocké en base : /uploads/<dossier>/<fichier>
 const RE_CHEMIN_PROTEGE = new RegExp(`^/uploads/(${DOSSIERS_PROTEGES.join('|')})/[^?#]+$`);

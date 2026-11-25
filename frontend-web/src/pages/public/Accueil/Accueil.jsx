@@ -137,13 +137,14 @@ const Accueil = () => {
               detail : ligne facultative sous le chiffre (places garderie) */}
           {[
             { valeur: '28',   unite: t('public.accueil.chiffres.placesUnite'),   detail: t('public.accueil.chiffres.placesGarderie'), label: t('public.accueil.chiffres.placesLabel'),   icone: '👶' },
-            { valeur: t('public.accueil.chiffres.horairesValeur'), unite: t('public.accueil.chiffres.horairesUnite'), label: t('public.accueil.chiffres.horairesLabel'), icone: '🕐' },
+            { valeur: t('public.accueil.chiffres.horairesValeur'), unite: '', label: t('public.accueil.chiffres.horairesLabel'), icone: '🕐', long: true },
             { valeur: '5',    unite: t('public.accueil.chiffres.joursUnite'),    label: t('public.accueil.chiffres.joursLabel'),    icone: '📅' },
             { valeur: '100%', unite: '',                                         label: t('public.accueil.chiffres.equipeLabel'),   icone: '🎓' }
-          ].map(({ valeur, unite, detail, label, icone }) => (
+          ].map(({ valeur, unite, detail, label, icone, long }) => (
             <div key={label} className="chiffre-carte">
               <span className="chiffre-carte__icone">{icone}</span>
-              <div className="chiffre-carte__nombre">
+              {/* long : valeur plus longue (plage horaire) → police réduite pour tenir sur une ligne */}
+              <div className={`chiffre-carte__nombre${long ? ' chiffre-carte__nombre--long' : ''}`}>
                 <strong>{valeur}</strong>
                 {unite && <span> {unite}</span>}
               </div>
@@ -151,31 +152,6 @@ const Accueil = () => {
               <p className="chiffre-carte__label">{label}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ── NOS VALEURS ─────────────────────────────────────── */}
-      <section className="valeurs">
-        <div className="container">
-          <h2 className="section-titre text-center">
-            <Trans i18nKey="public.accueil.valeursTitre" components={{ s: <span /> }} />
-          </h2>
-          <div className="valeurs__grille">
-            {/* 4 cartes valeurs : Nature, Bienveillance, Créativité, Familles
-                cle : clé de traduction (public.accueil.valeurs.*) */}
-            {[
-              { icone: '🌿', couleur: 'vert',   cle: 'nature' },
-              { icone: '❤️', couleur: 'rose',   cle: 'bienveillance' },
-              { icone: '🎨', couleur: 'orange', cle: 'creativite' },
-              { icone: '👨‍👩‍👧', couleur: 'violet', cle: 'familles' }
-            ].map(({ icone, couleur, cle }) => (
-              <div key={cle} className={`valeur-carte valeur-carte--${couleur}`}>
-                <div className="valeur-carte__icone">{icone}</div>
-                <h3 className="valeur-carte__titre">{t(`public.accueil.valeurs.${cle}.titre`)}</h3>
-                <p className="valeur-carte__texte">{t(`public.accueil.valeurs.${cle}.texte`)}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

@@ -11,7 +11,10 @@ const menuController     = require('../controllers/menuController');
 // Numéro de semaine entre 1 et 4, champs de menu facultatifs mais toujours du texte
 const reglesSemaineCycle = [
   param('numero').isInt({ min: 1, max: 4 }).withMessage('Numéro de semaine invalide (1 à 4)'),
-  body(menuController.CHAMPS_MENU).optional({ nullable: true }).isString().withMessage('Contenu de menu invalide')
+  body(menuController.CHAMPS_MENU).optional({ nullable: true }).isString().withMessage('Contenu de menu invalide'),
+  // Allergènes : une liste par jour, chaque élément doit être une clé connue
+  body(menuController.CHAMPS_ALLERGENES).optional().isArray({ max: menuController.ALLERGENES.length }).withMessage('Liste d\'allergènes invalide'),
+  body(menuController.CHAMPS_ALLERGENES.map(champ => `${champ}.*`)).isIn(menuController.ALLERGENES).withMessage('Allergène inconnu')
 ];
 
 router.get('/',             menuController.lister);            // Semaine courante (public)

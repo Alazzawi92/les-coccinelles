@@ -3,7 +3,7 @@
    PAGE    : /admin/menus
    RÔLE    : Styles de la page de gestion des menus de la semaine.
              Affiche les 5 jours en cartes empilées (lundi en haut),
-             chaque carte contenant midi + goûter.
+             chaque carte contenant midi + goûter + allergènes.
 
    STRUCTURE :
      1. Import admin global
@@ -91,6 +91,47 @@
 .menu-quill-wrapper .ql-editor.ql-blank::before {
   color:      var(--text-light);
   font-style: normal;
+}
+
+/* ── ALLERGÈNES DU JOUR ─────────────────────────────────── */
+
+/* Cadre des 14 cases à cocher : pastilles qui passent à la ligne */
+.menu-allergenes {
+  display:   flex;
+  flex-wrap: wrap;
+  gap:       var(--space-xs) var(--space-sm);
+  border:    none;
+  padding:   0;
+  margin:    0;
+}
+
+.menu-allergenes .a-label { width: 100%; }
+
+/* Phrase d'aide sous le titre */
+.menu-allergenes__aide { width: 100%; font-size: 0.8rem; color: var(--text-gray); margin: 0 0 var(--space-xs); }
+
+/* Une pastille par allergène (case + libellé) */
+.menu-allergene {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           var(--space-xs);
+  padding:       4px var(--space-sm);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size:     0.85rem;
+  color:         var(--text-gray);
+  cursor:        pointer;
+  user-select:   none;
+}
+
+.menu-allergene input { accent-color: var(--error); cursor: pointer; }
+
+/* Allergène coché : rouge, comme sur le menu imprimé */
+.menu-allergene--coche {
+  background:   var(--error-bg);
+  border-color: var(--error-border);
+  color:        var(--error-text);
+  font-weight:  700;
 }
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */

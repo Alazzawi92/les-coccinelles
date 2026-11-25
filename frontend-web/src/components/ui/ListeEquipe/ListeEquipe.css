@@ -1,0 +1,52 @@
+/* ============================================================
+   FICHIER : ListeEquipe.css
+   RÔLE    : Liste simple de l'équipe pour les visiteurs
+             (nom à gauche, fonction à droite, une ligne par membre).
+   ============================================================ */
+
+@import '../../../styles/variables.css';
+
+/* Bloc liste : fond blanc, coins arrondis, largeur limitée et centrée */
+.liste-equipe {
+  max-width:     760px;
+  margin:        var(--space-2xl) auto 0;
+  background:    var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-sm);
+  overflow:      hidden;
+}
+
+/* Une ligne par membre : nom + fonction, séparées par un filet */
+.liste-equipe__ligne {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+  gap:             var(--space-md);
+  padding:         var(--space-md) var(--space-xl);
+  border-bottom:   1px solid var(--bg-gray);
+}
+
+.liste-equipe__ligne:last-child { border-bottom: none; }
+
+/* Prénom Nom : police de titre, foncé */
+.liste-equipe__nom {
+  font-family: var(--font-heading);
+  font-size:   1.05rem;
+  color:       var(--text-dark);
+}
+
+/* Fonction : orange, gras, alignée à droite */
+.liste-equipe__fonction {
+  font-size:   0.9rem;
+  font-weight: 600;
+  color:       var(--primary);
+  text-align:  right;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Mobile : fonction sous le nom */
+@media (max-width: 479px) {
+  .liste-equipe__ligne     { flex-direction: column; gap: var(--space-xs); padding: var(--space-md) var(--space-lg); }
+  .liste-equipe__fonction  { text-align: left; }
+}

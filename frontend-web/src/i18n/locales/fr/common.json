@@ -27,7 +27,7 @@
   "footer": {
     "logoAlt": "Crèche Les Coccinelles",
     "description": "Crèche associative à Puilboreau (17)",
-    "ages": "Accueil des enfants de 0 à 3 ans",
+    "ages": "Accueil des enfants de 2 mois et demi à 3 ans",
     "communes": "Communes accueillies : Puilboreau, Saint-Xandre, Esnandes",
     "navigation": "Navigation",
     "presentation": "Présentation",
@@ -171,6 +171,22 @@
     "vendredi": "Vendredi",
     "samedi": "Samedi",
     "dimanche": "Dimanche"
+  },
+  "allergenes": {
+    "sulfites": "Sulfites",
+    "lait": "Lait",
+    "gluten": "Gluten",
+    "arachide": "Arachide",
+    "fruits_a_coque": "Fruits à coque",
+    "fruits_de_mer": "Fruits de mer",
+    "oeufs": "Œufs",
+    "poisson": "Poisson",
+    "crustaces": "Crustacés",
+    "soja": "Soja",
+    "moutarde": "Moutarde",
+    "sesame": "Sésame",
+    "lupin": "Lupin",
+    "celeri": "Céleri"
   },
   "repas": {
     "midi": "Midi",

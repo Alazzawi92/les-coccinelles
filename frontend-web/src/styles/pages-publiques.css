@@ -12,9 +12,8 @@
      4. Titres de section
      5. Layout 2 colonnes (texte + visuel)
      6. Grille des espaces de vie
-     7. Grille des infos pratiques
-     8. CTA bas de page (call-to-action orange)
-     9. Responsive
+     7. CTA bas de page (call-to-action orange)
+     8. Responsive
    ============================================================ */
 
 /* Charge toutes les variables CSS du projet */
@@ -172,32 +171,7 @@
 /* Description de l'espace */
 .espace-carte__texte { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
 
-/* ── 7. GRILLE DES INFOS PRATIQUES ──────────────────────── */
-
-/* 4 colonnes pour les informations clés : horaires, tarif, contact, accès */
-.infos-grille {
-  display:               grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:                   var(--space-xl);
-  margin-top:            var(--space-2xl);
-}
-
-/* Carte d'information : centrée, avec barre orange en haut */
-.info-carte {
-  background:    var(--surface);
-  border-radius: var(--radius-xl);
-  padding:       var(--space-xl);
-  text-align:    center;
-  box-shadow:    var(--shadow-sm);
-  border-top:    4px solid var(--primary); /* Barre orange en haut */
-}
-
-/* Icône de l'info */
-.info-carte__icone { font-size: 2.5rem; display: block; margin-bottom: var(--space-md); }
-.info-carte h3     { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); margin-bottom: var(--space-sm); }
-.info-carte p      { font-size: 0.9rem; color: var(--text-gray); line-height: 1.5; }
-
-/* ── 8. CTA BAS DE PAGE ─────────────────────────────────── */
+/* ── 7. CTA BAS DE PAGE ─────────────────────────────────── */
 
 /* Section d'appel à l'action orange en bas de page.
    Couleur orange unie (pas de dégradé). */
@@ -221,7 +195,7 @@
   font-weight: 600;
 }
 
-/* ── 9. RESPONSIVE ──────────────────────────────────────── */
+/* ── 8. RESPONSIVE ──────────────────────────────────────── */
 
 /* Desktop-first : blocs classés du plus grand au plus petit écran
    pour que la règle la plus étroite prime toujours dans la cascade. */
@@ -230,7 +204,6 @@
    indéfiniment sur les très larges écrans. */
 @media (min-width: 1440px) {
   .espaces-grille,
-  .infos-grille,
   .contenu-deux-colonnes,
   .cta-bas__contenu {
     max-width:    1600px;
@@ -247,14 +220,12 @@
   .section-grise,
   .section-couleur { padding: var(--space-2xl) 0; }
 
-  .espaces-grille,
-  .infos-grille { gap: var(--space-lg); }
+  .espaces-grille { gap: var(--space-lg); }
 }
 
 /* Tablette (≤1023px) : grilles réduites de 4/3 à 2 colonnes */
 @media (max-width: 1023px) {
   .espaces-grille { grid-template-columns: repeat(2, 1fr); }
-  .infos-grille   { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Mobile (≤767px) :
@@ -265,7 +236,6 @@
   .contenu-deux-colonnes { flex-direction: column; }
   .contenu-visuel { order: -1; }  /* Le visuel passe en premier sur mobile */
   .espaces-grille { grid-template-columns: 1fr; }
-  .infos-grille   { grid-template-columns: repeat(2, 1fr); }
   .cta-bas__contenu { flex-direction: column; text-align: center; }
 
   .page-hero__titre   { font-size: clamp(1.6rem, 6vw, 2.2rem); }
@@ -281,7 +251,6 @@
   .section-grise,
   .section-couleur { padding: var(--space-xl) 0; }
 
-  .infos-grille { grid-template-columns: 1fr; }
   .info-bulle { padding: var(--space-sm) var(--space-lg); }
   .visuel-emoji-grand { font-size: 4rem; }
   .cta-bas p { font-size: 1rem; }

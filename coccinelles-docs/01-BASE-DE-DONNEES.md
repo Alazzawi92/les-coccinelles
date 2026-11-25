@@ -101,6 +101,7 @@ seule fois, dans l'ordre :
 | `004_notifications_code.sql` | `notifications.code` + `params` (notifications traduites) |
 | `005_parametres.sql` | Table `parametres` (interrupteurs du super admin) — `INSERT IGNORE`, relançable |
 | `006_deux_facteurs.sql` | Table `deux_facteurs` + déconnexion de toutes les sessions |
+| `007_menus_allergenes.sql` | `menus.lundi_allergenes` … `vendredi_allergenes` : allergènes présents chaque jour |
 
 `schema.alwaysdata.sql` : même schéma, adapté à l'hébergeur (MariaDB, sans
 `CREATE DATABASE`).

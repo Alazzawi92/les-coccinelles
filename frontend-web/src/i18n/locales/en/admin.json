@@ -324,7 +324,7 @@
   "menus": {
     "titre": "Menu <s>management</s>",
     "dejeuner": "🍽️ Lunch",
-    "gouter": "🍪 Snack",
+    "gouter": "🍎 Snack",
     "dejeunerPlaceholder": "E.g. grated carrots, roast chicken, mash...",
     "gouterPlaceholder": "E.g. fruit compote, bread",
     "aide": "Enter the 4 menus. They follow one another automatically on the website, week after week, all year round.",
@@ -335,7 +335,9 @@
     "erreurChargement": "Could not load the menus. Please reload the page.",
     "enregistrer": "💾 Save week {{numero}}",
     "toastEnregistre": "Week {{numero}} menu saved",
-    "erreurSauvegarde": "Error while saving"
+    "erreurSauvegarde": "Error while saving",
+    "allergenes": "⚠️ Allergens of the day",
+    "allergenesAide": "Tick the allergens present in lunch or the afternoon snack."
   },
   "emargement": {
     "titre": "Daily <s>attendance</s>",

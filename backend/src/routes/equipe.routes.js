@@ -10,8 +10,11 @@ const equipeController  = require('../controllers/equipeController');
 // Middleware pour diriger l'upload vers uploads/equipe/
 const avecDossier = (req, res, next) => { req.uploadDossier = 'equipe'; next(); };
 
-// Public : liste des membres actifs
+// Public : liste des membres actifs (prénom, nom, fonction — sans photo)
 router.get('/',      equipeController.listerMembres);
+
+// Connecté (parents + équipe) : liste des membres actifs avec leurs photos
+router.get('/avec-photos', verifierToken, equipeController.listerMembresAvecPhotos);
 
 // Admin : liste complète (actifs + inactifs)
 router.get('/tous',  verifierToken, verifierRole('super_admin'), equipeController.listerTous);

@@ -11,7 +11,7 @@
 
 ### En français
 Les Coccinelles est une plateforme web réalisée pour une crèche associative de
-Puilboreau (28 places, enfants de 0 à 3 ans). Elle remplace deux outils séparés
+Puilboreau (28 places, enfants de 2 mois et demi à 3 ans). Elle remplace deux outils séparés
 par une application unique qui réunit le site public de la crèche, un espace
 sécurisé pour les parents (demande d'inscription en ligne, suivi quotidien de
 l'enfant, absences, documents, messagerie, galerie photos soumise au
@@ -31,7 +31,7 @@ application (PWA).
 
 ### In English (draft — to be reviewed)
 Les Coccinelles is a web platform built for a non-profit day nursery in
-Puilboreau, France (28 places, children aged 0 to 3). It replaces two separate
+Puilboreau, France (28 places, children aged 2½ months to 3 years). It replaces two separate
 tools with a single application combining the nursery's public website, a
 secure parent area (online enrolment request, child's daily log, absences,
 documents, messaging, photo gallery subject to consent) and a management area

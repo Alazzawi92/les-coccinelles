@@ -15,6 +15,12 @@ const Menu = sequelize.define('Menu', {
   jeudi_gouter:    { type: DataTypes.TEXT },
   vendredi_midi:   { type: DataTypes.TEXT },
   vendredi_gouter: { type: DataTypes.TEXT },
+  // Allergènes présents chaque jour : clés séparées par des virgules (ex : "lait,gluten")
+  lundi_allergenes:    { type: DataTypes.STRING(255) },
+  mardi_allergenes:    { type: DataTypes.STRING(255) },
+  mercredi_allergenes: { type: DataTypes.STRING(255) },
+  jeudi_allergenes:    { type: DataTypes.STRING(255) },
+  vendredi_allergenes: { type: DataTypes.STRING(255) },
   publie:          { type: DataTypes.BOOLEAN, defaultValue: false },
   redige_par:      { type: DataTypes.INTEGER, allowNull: false }
 }, {

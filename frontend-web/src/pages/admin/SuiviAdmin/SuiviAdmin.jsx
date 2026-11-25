@@ -374,7 +374,7 @@ const SuiviAdmin = () => {
                 {(menuDuJour.midi || menuDuJour.gouter) && (
                   <div className="suivi-menu-rappel">
                     {menuDuJour.midi   && <p><strong>🍽️ {t('admin.suivi.moments.midi')} :</strong> {menuDuJour.midi}</p>}
-                    {menuDuJour.gouter && <p><strong>🍪 {t('admin.suivi.moments.gouter')} :</strong> {menuDuJour.gouter}</p>}
+                    {menuDuJour.gouter && <p><strong>🍎 {t('admin.suivi.moments.gouter')} :</strong> {menuDuJour.gouter}</p>}
                   </div>
                 )}
               </div>

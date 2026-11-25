@@ -92,7 +92,7 @@ const CMS_PAGES = [
   {
     slug: 'presentation',
     titre: 'Présentation de la crèche',
-    contenu: '<p>La crèche Les Coccinelles est une structure d\'accueil associative implantée à Puilboreau (17). Nous accueillons les enfants de 0 à 3 ans dans un cadre bienveillant et sécurisant.</p>',
+    contenu: '<p>La crèche Les Coccinelles est une structure d\'accueil associative implantée à Puilboreau (17). Nous accueillons les enfants de 2 mois et demi à 3 ans dans un cadre bienveillant et sécurisant.</p>',
     meta_description: 'Découvrez la crèche associative Les Coccinelles à Puilboreau, Charente-Maritime.',
     publie: true
   },

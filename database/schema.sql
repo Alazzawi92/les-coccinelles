@@ -251,6 +251,11 @@ CREATE TABLE IF NOT EXISTS menus (
   jeudi_gouter     TEXT,
   vendredi_midi    TEXT,
   vendredi_gouter  TEXT,
+  lundi_allergenes    VARCHAR(255),                       -- Allergènes présents le lundi (clés séparées par des virgules)
+  mardi_allergenes    VARCHAR(255),
+  mercredi_allergenes VARCHAR(255),
+  jeudi_allergenes    VARCHAR(255),
+  vendredi_allergenes VARCHAR(255),
   publie           BOOLEAN DEFAULT FALSE,                 -- Visible sur le site
   redige_par       INT NOT NULL,                          -- Admin auteur
   created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,

@@ -25,6 +25,9 @@
   gap:                   var(--space-xl);
 }
 
+/* Liste visiteurs (ListeEquipe) : l'en-tête porte déjà l'espacement du haut */
+.apercu-equipe .liste-equipe { margin-top: 0; }
+
 /* Carte membre compacte */
 .apercu-equipe__carte {
   text-align:    center;

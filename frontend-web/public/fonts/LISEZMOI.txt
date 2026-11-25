@@ -1,0 +1,14 @@
+Polices utilisées pour le PDF des menus (src/utils/menuPdf.js)
+==============================================================
+Chargées uniquement au clic sur « Télécharger le menu (PDF) ».
+
+- Fredoka-SemiBold.ttf : Fredoka, poids 600 (titres, jours, « Goûter »)
+- Nunito-Bold.ttf      : Nunito, poids 700 (plats, allergènes)
+
+Sous-ensemble « latin » (accents français inclus), fichiers issus de
+Fontsource (https://fontsource.org), copies des polices Google Fonts.
+
+Licence : SIL Open Font License 1.1 (https://openfontlicense.org)
+- Fredoka : Copyright 2016 The Fredoka Project Authors
+- Nunito  : Copyright 2014 The Nunito Project Authors
+Usage, intégration dans un PDF et redistribution autorisés.

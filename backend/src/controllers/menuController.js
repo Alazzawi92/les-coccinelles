@@ -15,6 +15,32 @@ const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 's
 // Les 10 champs saisissables : déjeuner et goûter du lundi au vendredi
 const CHAMPS_MENU = JOURS.slice(1, 6).flatMap(jour => [`${jour}_midi`, `${jour}_gouter`]);
 
+// Les 14 allergènes réglementaires, dans l'ordre d'affichage du menu imprimé.
+// fruits_de_mer = mollusques (intitulé utilisé par la crèche)
+const ALLERGENES = [
+  'sulfites', 'lait', 'gluten', 'arachide', 'fruits_a_coque', 'fruits_de_mer', 'oeufs',
+  'poisson', 'crustaces', 'soja', 'moutarde', 'sesame', 'lupin', 'celeri'
+];
+
+// Les 5 champs d'allergènes : un par jour (déjeuner + goûter confondus)
+const CHAMPS_ALLERGENES = JOURS.slice(1, 6).map(jour => `${jour}_allergenes`);
+
+// Base de données → API : "lait,gluten" devient ['lait', 'gluten'] (clés inconnues ignorées)
+const versListe = (texte) => (texte ? texte.split(',').filter(cle => ALLERGENES.includes(cle)) : []);
+
+// API → base de données : liste dans l'ordre officiel, sans doublon ; liste vide → NULL
+const versTexte = (liste) => {
+  const cles = ALLERGENES.filter(cle => Array.isArray(liste) && liste.includes(cle));
+  return cles.length ? cles.join(',') : null;
+};
+
+// Menu renvoyé par l'API : champs texte + allergènes sous forme de listes
+const formaterMenu = (menu) => {
+  const donnees = menu.toJSON();
+  CHAMPS_ALLERGENES.forEach(champ => { donnees[champ] = versListe(donnees[champ]); });
+  return donnees;
+};
+
 // Date fictive qui identifie chaque semaine du cycle dans la colonne unique semaine_debut :
 // Semaine 1 = 2000-01-01 (l'ancien menu par défaut), 2 = 2000-01-08, 3 = 2000-01-15, 4 = 2000-01-22
 const dateDuCycle = (numero) => `2000-01-${String(1 + (numero - 1) * 7).padStart(2, '0')}`;
@@ -39,13 +65,14 @@ const numeroSemaineCycle = (date) => {
 // Menu saisi pour la semaine du cycle qui contient cette date (null si pas encore saisi)
 const menuDeLaDate = (date) => Menu.findOne({
   where:      { semaine_debut: dateDuCycle(numeroSemaineCycle(date)) },
-  attributes: CHAMPS_MENU
+  attributes: [...CHAMPS_MENU, ...CHAMPS_ALLERGENES]
 });
 
 // GET /api/menus — Menu de la semaine en cours (public)
 const lister = async (req, res) => {
   try {
-    return succes(res, await menuDeLaDate(aujourdhui()));
+    const menu = await menuDeLaDate(aujourdhui());
+    return succes(res, menu ? formaterMenu(menu) : null);
   } catch (err) { return erreur(res, 'Erreur récupération menu'); }
 };
 
@@ -59,14 +86,15 @@ const getMenuJour = async (req, res) => {
 
     const numJour = new Date(`${date}T00:00:00Z`).getUTCDay();
     const jour    = JOURS[numJour];
-    if (numJour === 0 || numJour === 6) return succes(res, { date, jour, midi: null, gouter: null });
+    if (numJour === 0 || numJour === 6) return succes(res, { date, jour, midi: null, gouter: null, allergenes: [] });
 
     const menu = await menuDeLaDate(date);
     return succes(res, {
       date,
       jour,
       midi:   menu?.[`${jour}_midi`]   || null,
-      gouter: menu?.[`${jour}_gouter`] || null
+      gouter: menu?.[`${jour}_gouter`] || null,
+      allergenes: versListe(menu?.[`${jour}_allergenes`]) // Allergènes du jour
     });
   } catch (err) { return erreur(res, 'Erreur récupération du menu du jour'); }
 };
@@ -78,7 +106,7 @@ const getMenuSemaine = async (req, res) => {
     if (!dateValide(semaine)) return erreur(res, 'Date invalide (format AAAA-MM-JJ)', 400);
     const menu = await menuDeLaDate(semaine);
     if (!menu) return erreur(res, 'Aucun menu disponible', 404);
-    return succes(res, menu);
+    return succes(res, formaterMenu(menu));
   } catch (err) { return erreur(res, 'Erreur lors de la récupération'); }
 };
 
@@ -91,7 +119,11 @@ const getCycle = async (req, res) => {
     // Toujours 4 entrées, même pour une semaine pas encore saisie
     const semaines = numeros.map(numero => {
       const menu = menus.find(m => m.semaine_debut === dateDuCycle(numero));
-      return { numero, ...Object.fromEntries(CHAMPS_MENU.map(champ => [champ, menu?.[champ] ?? ''])) };
+      return {
+        numero,
+        ...Object.fromEntries(CHAMPS_MENU.map(champ => [champ, menu?.[champ] ?? ''])),
+        ...Object.fromEntries(CHAMPS_ALLERGENES.map(champ => [champ, versListe(menu?.[champ])])) // Cases cochées
+      };
     });
     return succes(res, { numero_courant: numeroSemaineCycle(aujourdhui()), semaines });
   } catch (err) { return erreur(res, 'Erreur lors de la récupération'); }
@@ -105,6 +137,10 @@ const sauvegarderSemaineCycle = async (req, res) => {
     const contenu = Object.fromEntries(
       CHAMPS_MENU.filter(champ => req.body[champ] !== undefined).map(champ => [champ, req.body[champ]])
     );
+    // Allergènes : listes de clés (déjà validées par la route) → texte en base
+    CHAMPS_ALLERGENES
+      .filter(champ => req.body[champ] !== undefined)
+      .forEach(champ => { contenu[champ] = versTexte(req.body[champ]); });
 
     let menu = await Menu.findOne({ where: { semaine_debut: semaineDebut } });
     if (menu) {
@@ -112,8 +148,8 @@ const sauvegarderSemaineCycle = async (req, res) => {
     } else {
       menu = await Menu.create({ ...contenu, semaine_debut: semaineDebut, publie: true, redige_par: req.user.id });
     }
-    return succes(res, menu, 'Menu enregistré');
+    return succes(res, formaterMenu(menu), 'Menu enregistré');
   } catch (err) { return erreur(res, 'Erreur lors de la sauvegarde'); }
 };
 
-module.exports = { CHAMPS_MENU, lister, getMenuJour, getMenuSemaine, getCycle, sauvegarderSemaineCycle };
+module.exports = { CHAMPS_MENU, CHAMPS_ALLERGENES, ALLERGENES, lister, getMenuJour, getMenuSemaine, getCycle, sauvegarderSemaineCycle };

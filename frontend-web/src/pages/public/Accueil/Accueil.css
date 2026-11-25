@@ -3,8 +3,7 @@
    ROUTE   : / (page d'accueil publique)
    RÔLE    : Page vitrine principale du site. Contient les
              styles les plus complexes du projet :
-             animations, hero full-height, chiffres clés,
-             valeurs, CTA.
+             animations, hero full-height, chiffres clés, CTA.
 
    STRUCTURE :
      1. Import des variables
@@ -14,9 +13,8 @@
         c. Contenu du hero (texte + visuel)
         d. Coccinelle animée
      3. Chiffres clés (4 stats)
-     4. Nos valeurs (4 cartes colorées)
-     5. CTA final (appel à l'inscription)
-     6. Responsive
+     4. CTA final (appel à l'inscription)
+     5. Responsive
    (Équipe : voir components/ui/ApercuEquipe, affiché sur /presentation)
    ============================================================ */
 
@@ -282,6 +280,9 @@
   margin-bottom: var(--space-xs);
 }
 
+/* Valeur longue (plage horaire "07h30 à 18h30") : entièrement orange, police réduite */
+.chiffre-carte__nombre--long { font-size: 1.5rem; white-space: nowrap; }
+
 /* Suffixe du chiffre : ex "+", "%" — plus petit, gris */
 .chiffre-carte__nombre span { font-size: 1rem; color: var(--text-gray); }
 
@@ -291,53 +292,7 @@
 /* Label sous le chiffre : "ans d'expérience", "enfants accueillis"... */
 .chiffre-carte__label { font-size: 0.9rem; color: var(--text-gray); font-weight: 600; }
 
-/* ── 4. NOS VALEURS ─────────────────────────────────────── */
-
-/* Section fond blanc cassé avec 4 cartes de valeurs */
-.valeurs {
-  padding:    var(--space-3xl) 0;
-  background: var(--bg-light);
-}
-
-/* Grille 4 colonnes */
-.valeurs__grille {
-  display:               grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:                   var(--space-xl);
-  margin-top:            var(--space-2xl);
-}
-
-/* Carte de valeur : barre colorée en haut selon la valeur
-   (vert = nature, rose = bienveillance, orange = créativité, violet = diversité) */
-.valeur-carte {
-  background:    var(--surface);
-  border-radius: var(--radius-xl);
-  padding:       var(--space-2xl) var(--space-xl);
-  text-align:    center;
-  box-shadow:    var(--shadow-sm);
-  transition:    var(--transition);
-  border-top:    4px solid transparent;  /* Transparente par défaut, colorée par variante */
-}
-
-/* Au survol : grande élévation */
-.valeur-carte:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
-
-/* Couleurs des barres du haut selon la valeur */
-.valeur-carte--vert   { border-top-color: var(--secondary); }  /* Vert nature */
-.valeur-carte--rose   { border-top-color: var(--accent-2); }   /* Rose bienveillance */
-.valeur-carte--orange { border-top-color: var(--primary); }    /* Orange créativité */
-.valeur-carte--violet { border-top-color: var(--accent-3); }   /* Violet diversité */
-
-/* Icône de la valeur */
-.valeur-carte__icone { font-size: 3rem; display: block; margin-bottom: var(--space-md); }
-
-/* Titre de la valeur */
-.valeur-carte__titre { font-family: var(--font-heading); font-size: 1.2rem; color: var(--text-dark); margin-bottom: var(--space-md); }
-
-/* Description de la valeur */
-.valeur-carte__texte { font-size: 0.9rem; color: var(--text-gray); line-height: 1.6; }
-
-/* ── 5. CTA FINAL ───────────────────────────────────────── */
+/* ── 4. CTA FINAL ───────────────────────────────────────── */
 
 /* Section d'appel à l'inscription : dégradé orange plein */
 .cta {
@@ -378,7 +333,7 @@
   border-color: var(--white);
 }
 
-/* ── 6. RESPONSIVE ──────────────────────────────────────── */
+/* ── 5. RESPONSIVE ──────────────────────────────────────── */
 
 /* Petit ordinateur (≤1279px) : légère transition vers le desktop plein,
    on resserre un peu les grilles avant de passer en mode tablette */
@@ -392,7 +347,7 @@
 /* Tablette (≤1023px) :
    - Hero : texte + visuel empilés, arcs-en-ciel et bulles réduits
      pour ne pas dominer un layout devenu vertical
-   - Chiffres et valeurs : 4 → 2 colonnes */
+   - Chiffres : 4 → 2 colonnes */
 @media (max-width: 1023px) {
   .hero { min-height: auto; padding: var(--space-2xl) 0; }
   .hero__contenu  { flex-direction: column; text-align: center; }
@@ -410,7 +365,6 @@
   .hero__arc-en-ciel--3 { width: 130px; top: 55%; left: 115%; --angle: 30deg; }
   .hero__deco { font-size: 2rem; }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
-  .valeurs__grille   { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* Mobile (≤767px) : tout en 1 ou 2 colonnes, hero réduit */
@@ -420,7 +374,6 @@
   .hero__arc-en-ciel--1 { width: clamp(260px, 70vw, 460px); }
   .hero__deco { font-size: 1.9rem; gap: var(--space-lg); }
   .chiffres__grille  { grid-template-columns: repeat(2, 1fr); }
-  .valeurs__grille   { grid-template-columns: 1fr; }
   .cta__titre { font-size: 1.6rem; }
 }
 
@@ -450,9 +403,7 @@
   .hero__contenu { max-width: 1600px; margin: 0 auto; }
   .hero__logo-grand { width: clamp(10rem, 16vw, 18rem); }
   .hero__fond { transform: scale(1.1); }
-  .chiffres__grille,
-  .valeurs__grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
-  .valeurs__grille { gap: var(--space-2xl); }
+  .chiffres__grille { max-width: 1600px; margin-left: auto; margin-right: auto; }
   .cta__contenu { max-width: 800px; }
 }
 

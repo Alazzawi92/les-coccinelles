@@ -15,11 +15,17 @@ import './Menus.css';
 import { versDateISO, depuisDateISO, lundiDeLaSemaine } from '../../../utils/dates'; // Dates en heure locale
 import { telechargerMenuPdf } from '../../../utils/menuPdf';
 import { menuEnTexte } from '../../../hooks/useMenuDuJour'; // HTML de l'éditeur → texte simple
+import { ALLERGENES } from '../../../utils/allergenes';      // Les 14 allergènes, ordre du menu imprimé
 
 const JOURS = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
 
 // Quill produit "<p><br></p>" pour un champ vide
 const quillVide = v => !v || v === '<p><br></p>';
+
+// Un plat par ligne : les plats saisis sur une seule ligne et séparés
+// par « • » (ex : "Salade • Steak haché • Fromage blanc") sont affichés
+// les uns sous les autres. La mise en forme (gras, italique) est conservée.
+const unPlatParLigne = html => html.replace(/\s*•\s*/g, '<br>');
 
 // ── Utilitaire : calcule la date du lundi de la semaine donnée ──
 // Retourne une chaîne YYYY-MM-DD utilisée comme clé d'API
@@ -65,22 +71,48 @@ const Menus = () => {
     return `${lundi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })} — ${vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long', year: 'numeric' })}`;
   };
 
+  // ── En-tête du PDF : « Semaine du 2 au 6 novembre » ──────
+  // Le mois du lundi n'est écrit que s'il diffère de celui du vendredi
+  // (ex : « du 30 novembre au 4 décembre »)
+  const enTetePdf = (dateStr) => {
+    const lundi    = depuisDateISO(dateStr);
+    const vendredi = depuisDateISO(dateStr);
+    vendredi.setDate(lundi.getDate() + 4);
+    const memeMois = lundi.getMonth() === vendredi.getMonth();
+    return t('public.menus.pdfSemaine', {
+      debut: lundi.toLocaleDateString(getLocale(), memeMois ? { day: 'numeric' } : { day: 'numeric', month: 'long' }),
+      fin:   vendredi.toLocaleDateString(getLocale(), { day: 'numeric', month: 'long' })
+    });
+  };
+
+  // Texte d'un repas (HTML de l'éditeur) → un plat par ligne
+  const plats = (html) => menuEnTexte(html).split(' • ').filter(Boolean);
+
   // ── Téléchargement du menu affiché, au format PDF ─────────
+  // Même style que le menu imprimé de la crèche (voir utils/menuPdf.js)
   const telecharger = async () => {
     setTelechargement(true);
     try {
       await telechargerMenuPdf({
-        titre:      t('public.menus.pdfTitre'),
-        sousTitre:  t('public.menus.semaineDu', { periode: formaterSemaine(semaine) }),
-        jours:      JOURS.map(jour => ({
+        titre:  t('public.menus.pdfTitre'),
+        enTete: enTetePdf(semaine),
+        jours:  JOURS.map(jour => ({
           nom:    t(`common.jours.${jour}`),
-          midi:   menuEnTexte(menu[`${jour}_midi`]),
-          gouter: menuEnTexte(menu[`${jour}_gouter`])
+          midi:   plats(menu[`${jour}_midi`]),
+          gouter: plats(menu[`${jour}_gouter`]),
+          // Les 14 allergènes, chacun marqué présent ou non ce jour-là
+          allergenes: ALLERGENES.map(cle => ({
+            libelle: t(`common.allergenes.${cle}`),
+            present: (menu[`${jour}_allergenes`] || []).includes(cle)
+          }))
         })),
         labels: {
-          dejeuner:     t('public.menus.dejeuner'),
+          sousTitre:    t('public.menus.pdfSousTitre'),
           gouter:       t('public.menus.gouter'),
-          nonRenseigne: t('public.menus.nonRenseigne')
+          allergenes:   t('public.menus.allergenes'),
+          nonRenseigne: t('public.menus.nonRenseigne'),
+          legende:      t('public.menus.pdfLegende'),
+          pied:         t('public.menus.pdfPied')
         },
         nomFichier: `menu-coccinelles-${semaine}.pdf`
       });
@@ -133,6 +165,7 @@ const Menus = () => {
 
           /* ── Menu disponible : grille 5 jours ──────────────── */
           ) : menu ? (
+            <>
             <div className="menus-grille">
               {JOURS.map((jour) => (
                 <div key={jour} className="menu-carte">
@@ -148,20 +181,44 @@ const Menus = () => {
                       <p className="repas-label">🍽️ {t('public.menus.dejeuner')}</p>
                       {quillVide(menu[`${jour}_midi`])
                         ? <p className="repas-contenu repas-vide">{t('public.menus.nonRenseigne')}</p>
-                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_midi`] }} />
+                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: unPlatParLigne(menu[`${jour}_midi`]) }} />
                       }
                     </div>
                     <div className="repas-section repas-section--gouter">
-                      <p className="repas-label">🍪 {t('public.menus.gouter')}</p>
+                      <p className="repas-label">🍎 {t('public.menus.gouter')}</p>
                       {quillVide(menu[`${jour}_gouter`])
                         ? <p className="repas-contenu repas-vide">{t('public.menus.nonRenseigne')}</p>
-                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: menu[`${jour}_gouter`] }} />
+                        : <div className="repas-contenu repas-html" dangerouslySetInnerHTML={{ __html: unPlatParLigne(menu[`${jour}_gouter`]) }} />
                       }
+                    </div>
+
+                    {/* Allergènes du jour : les 14 listés, ceux présents en rouge + ✔
+                        (comme sur le menu imprimé). Rien de coché → message simple. */}
+                    <div className="repas-allergenes">
+                      <p className="repas-allergenes__titre">⚠️ {t('public.menus.allergenes')}</p>
+                      {(menu[`${jour}_allergenes`] || []).length === 0 ? (
+                        <p className="repas-contenu repas-vide">{t('public.menus.aucunAllergene')}</p>
+                      ) : (
+                        <ul className="repas-allergenes__liste">
+                          {ALLERGENES.map(cle => {
+                            const present = menu[`${jour}_allergenes`].includes(cle);
+                            return (
+                              <li key={cle} className={present ? 'allergene--present' : 'allergene--absent'}>
+                                {present && <span aria-hidden="true">✔ </span>}
+                                {t(`common.allergenes.${cle}`)}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+            {/* Légende : la couleur seule ne suffit pas (accessibilité) → ✔ en plus */}
+            <p className="allergenes-legende">⚠️ {t('public.menus.allergenesLegende')}</p>
+            </>
 
           /* ── Aucun menu pour cette semaine ──────────────────── */
           ) : (

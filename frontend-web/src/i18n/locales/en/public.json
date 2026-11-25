@@ -2,38 +2,18 @@
   "accueil": {
     "surtitre": "Non-profit nursery in Puilboreau (17)",
     "titre": "A joyful place to grow<br/>for your <s>little ones</s>",
-    "description": "Welcome to Les Coccinelles! We care for children aged 0 to 3 in a warm, safe and stimulating environment, Monday to Friday.",
+    "description": "Welcome to Les Coccinelles! We care for children aged 2½ months to 3 years in a warm, safe and stimulating environment, Monday to Friday.",
     "inscrire": "Enrol my child",
     "logoAlt": "Les Coccinelles Nursery",
     "chiffres": {
       "placesUnite": "permanent places",
       "placesGarderie": "+ 4 drop-in care places",
       "placesLabel": "children cared for",
-      "horairesValeur": "7:30am",
-      "horairesUnite": "to 6:30pm",
+      "horairesValeur": "7:30am – 6:30pm",
       "horairesLabel": "opening hours",
       "joursUnite": "days",
       "joursLabel": "Monday to Friday",
       "equipeLabel": "qualified staff"
-    },
-    "valeursTitre": "Why <s>trust us</s>?",
-    "valeurs": {
-      "nature": {
-        "titre": "Nature project",
-        "texte": "Activities linked to nature and the seasons. Educational garden, outings and outdoor sensory discovery."
-      },
-      "bienveillance": {
-        "titre": "Caring welcome",
-        "texte": "Every child is unique. Our team makes sure to respect each child's rhythm and needs every day."
-      },
-      "creativite": {
-        "titre": "Creative development",
-        "texte": "Art workshops, discovery games and sensory activities to develop curiosity and creativity."
-      },
-      "familles": {
-        "titre": "Partnership with families",
-        "texte": "A relationship of trust: daily reports, regular meetings and an online area dedicated to parents."
-      }
     },
     "equipeTitre": "Our <s>team</s>",
     "toutEquipe": "Meet the whole team →",
@@ -55,13 +35,13 @@
     "sousTitre": "Discover Les Coccinelles, a non-profit nursery in the heart of Puilboreau",
     "quiTitre": "Who are we?",
     "quiParagraphes": [
-      "Les Coccinelles is a non-profit childcare facility located in Puilboreau, Charente-Maritime. Open for many years, it welcomes children aged <strong>0 to 3</strong> in a caring and reassuring setting.",
+      "Les Coccinelles is a non-profit childcare facility located in Puilboreau, Charente-Maritime. Open for many years, it welcomes children aged <strong>2½ months to 3 years</strong> in a caring and reassuring setting.",
       "Run by a parents' association, our nursery works hand in hand with families. We firmly believe that trust between parents and professionals is the key to a successful experience for every child.",
       "We can welcome <strong>28 children</strong>, with full-time, part-time and occasional places to meet the varied needs of families."
     ],
     "bullePlaces": "28 permanent places",
     "bulleGarderie": "+ 4 drop-in care places",
-    "bulleAges": "children aged 0 to 3",
+    "bulleAges": "children aged 2½ months to 3 years",
     "historiqueTitre": "Our history",
     "historique": [
       "The nursery opened its doors on 2 February 2004, following work carried out by a group of parents and elected officials from four towns to meet the need for group childcare in the area.",
@@ -83,39 +63,6 @@
       "44.5 permanent half-days for St Xandre",
       "11 permanent half-days for Esnandes"
     ],
-    "espacesTitre": "Our spaces",
-    "espaces": {
-      "bebes": {
-        "titre": "Baby section",
-        "texte": "A space dedicated to the youngest (0-12 months), with suitable rest areas, play mats and safe furniture."
-      },
-      "jeux": {
-        "titre": "Playroom",
-        "texte": "A large, bright room with themed play corners, a library, a pretend-play area and a creative zone."
-      },
-      "jardin": {
-        "titre": "Educational garden",
-        "texte": "An outdoor area designed for daily outings, outdoor play and nature activities."
-      },
-      "repas": {
-        "titre": "Dining room",
-        "texte": "A friendly space for meals, encouraging independence and social skills around the table."
-      },
-      "sieste": {
-        "titre": "Nap rooms",
-        "texte": "Quiet, safe rooms with beds suited to each age group for good-quality naps."
-      },
-      "changes": {
-        "titre": "Changing area",
-        "texte": "A raised, secure changing table with everything needed for daily care."
-      }
-    },
-    "infosTitre": "Practical information",
-    "adresse": "Address",
-    "horaires": "Opening hours",
-    "horairesTexte": "Monday to Friday<br/>7:30am — 6:30pm",
-    "telephone": "Phone",
-    "email": "Email",
     "gouvernanceTitre": "How our association works",
     "gouvernanceIntro": "Les Coccinelles is a non-profit association governed by the French law of 1901. It is run by volunteer parents who form a Board of Directors, from which an executive committee is chosen. A Director manages the nursery day to day, applies the decisions taken by the Board and reports back to it.",
     "gouvernance": {
@@ -328,7 +275,7 @@
     "sousTitre": "Everything you need to know to enrol your child at Les Coccinelles nursery",
     "conditionsTitre": "How to enrol your child",
     "conditions": [
-      "Priority is given to families living in Puilboreau, Saint-Xandre or Esnandes.",
+      "Children enrolled should preferably live in the towns of Puilboreau, Saint-Xandre or Esnandes.",
       "All the steps are set out in our enrolment guide (in French): the process to follow, the documents to provide, the settling-in period and the pre-registration form to complete.",
       "The child's place is only reserved once the contract has been signed and the child is registered on the “Pirouette” website."
     ],
@@ -361,6 +308,13 @@
     "dejeuner": "Lunch",
     "gouter": "Snack",
     "nonRenseigne": "Not specified",
+    "allergenes": "Allergens",
+    "allergenesLegende": "In red and ticked ✔: allergens present in the day's meals.",
+    "aucunAllergene": "No allergens reported",
+    "pdfSemaine": "Week of {{debut}} to {{fin}}",
+    "pdfSousTitre": "Les Coccinelles nursery · Weekly menu",
+    "pdfLegende": "In red: allergen present in the day's meals",
+    "pdfPied": "Les Coccinelles nursery · 10 rue Saint Vincent, 17138 Puilboreau",
     "nonPublie": "The menu for this week has not been published yet.",
     "revenez": "Come back soon or check the previous week.",
     "nutritionTitre": "Our nutrition commitment",

@@ -21,7 +21,7 @@ const AXES = [
 ];
 
 // Icônes de la journée type, dans l'ordre des étapes (public.projetPeda.journee)
-const ICONES_JOURNEE = ['👋', '🎨', '🧴', '🍽️', '😴', '🍪', '🌿', '🏠'];
+const ICONES_JOURNEE = ['👋', '🎨', '🧴', '🍽️', '😴', '🍎', '🌿', '🏠'];
 
 const ProjetPedagogique = () => {
   const { contenu } = usePageCMS('projet-pedagogique');

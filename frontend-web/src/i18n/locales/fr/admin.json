@@ -324,7 +324,7 @@
   "menus": {
     "titre": "Gestion des <s>menus</s>",
     "dejeuner": "🍽️ Déjeuner",
-    "gouter": "🍪 Goûter",
+    "gouter": "🍎 Goûter",
     "dejeunerPlaceholder": "Ex : Carottes râpées, Poulet rôti, Purée...",
     "gouterPlaceholder": "Ex : Compote, Pain",
     "aide": "Saisissez les 4 menus. Ils s'enchaînent automatiquement sur le site, semaine après semaine, toute l'année.",
@@ -335,7 +335,9 @@
     "erreurChargement": "Impossible de charger les menus. Rechargez la page.",
     "enregistrer": "💾 Enregistrer la semaine {{numero}}",
     "toastEnregistre": "Menu de la semaine {{numero}} enregistré",
-    "erreurSauvegarde": "Erreur lors de la sauvegarde"
+    "erreurSauvegarde": "Erreur lors de la sauvegarde",
+    "allergenes": "⚠️ Allergènes du jour",
+    "allergenesAide": "Cochez les allergènes présents dans le déjeuner ou le goûter."
   },
   "emargement": {
     "titre": "Émargement <s>journalier</s>",

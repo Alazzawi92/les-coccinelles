@@ -88,7 +88,7 @@ const MENU = {
 };
 
 const CMS_PAGES = [
-  { slug: 'presentation',         titre: 'Présentation de la crèche',   contenu: '<p>La crèche Les Coccinelles est une structure d\'accueil associative implantée à Puilboreau (17). Nous accueillons les enfants de 0 à 3 ans dans un cadre bienveillant et sécurisant.</p>', meta_description: 'Découvrez la crèche associative Les Coccinelles à Puilboreau.', publie: true },
+  { slug: 'presentation',         titre: 'Présentation de la crèche',   contenu: '<p>La crèche Les Coccinelles est une structure d\'accueil associative implantée à Puilboreau (17). Nous accueillons les enfants de 2 mois et demi à 3 ans dans un cadre bienveillant et sécurisant.</p>', meta_description: 'Découvrez la crèche associative Les Coccinelles à Puilboreau.', publie: true },
   { slug: 'equipe',               titre: 'Notre équipe',                 contenu: '<p>Notre équipe de professionnels diplômés (EJE, auxiliaires de puériculture, CAP Petite Enfance) accueille vos enfants avec bienveillance et professionnalisme.</p>', meta_description: 'Rencontrez l\'équipe de la crèche Les Coccinelles.', publie: true },
   { slug: 'horaires',             titre: 'Horaires d\'accueil',           contenu: '<p>La crèche est ouverte du lundi au vendredi de 8h30 à 18h00. Elle est fermée les week-ends et jours fériés.</p>', meta_description: 'Horaires d\'ouverture de la crèche Les Coccinelles.', publie: true },
   { slug: 'tarifs',               titre: 'Tarifs et financement',         contenu: '<p>Le tarif est calculé par la CAF selon le quotient familial. La participation familiale varie de 0,06€ à 0,60€ par heure selon les revenus.</p>', meta_description: 'Tarifs et financement de la crèche Les Coccinelles.', publie: true },

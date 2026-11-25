@@ -3,7 +3,7 @@
 // ROUTE    : /presentation
 // RÔLE     : Page de présentation de la crèche Les Coccinelles.
 //            Sections : Qui sommes-nous → Historique → Notre équipe →
-//            Nos espaces → Informations pratiques → Gouvernance →
+//            Gouvernance →
 //            Travail avec les parents → CTA contact.
 //            Seul l'aperçu de l'équipe appelle l'API (il charge ses données).
 //            Textes traduits via i18n (clés public.presentation.*).
@@ -17,16 +17,6 @@ import './Presentation.css';
 
 // Préfixe commun à toutes les clés de traduction de la page
 const P = 'public.presentation';
-
-// Espaces de la crèche : icône + clé de traduction (public.presentation.espaces.*)
-const ESPACES = [
-  { icone: '🍼', cle: 'bebes' },
-  { icone: '🎠', cle: 'jeux' },
-  { icone: '🌿', cle: 'jardin' },
-  { icone: '🍽️', cle: 'repas' },
-  { icone: '😴', cle: 'sieste' },
-  { icone: '🚿', cle: 'changes' }
-];
 
 // Instances de l'association : icône + clé de traduction (public.presentation.gouvernance.*)
 const GOUVERNANCE = [
@@ -112,55 +102,8 @@ const Presentation = () => {
 
       {/* ── NOTRE ÉQUIPE ─────────────────────────────────────── */}
       {/* Aperçu des premiers membres + lien vers /equipe (fond blanc :
-          l'alternance blanc / gris des sections suivantes est décalée) */}
+          les sections suivantes reprennent l'alternance gris / blanc) */}
       <ApercuEquipe />
-
-      {/* ── NOS ESPACES ───────────────────────────────────────── */}
-      {/* Grille de 6 cartes décrivant chaque zone de la crèche */}
-      <section className="section-grise">
-        <div className="container">
-          <h2 className="titre-section text-center">{t(`${P}.espacesTitre`)}</h2>
-          <div className="espaces-grille">
-            {ESPACES.map(({ icone, cle }) => (
-              <div key={cle} className="espace-carte">
-                <span className="espace-carte__icone">{icone}</span>
-                <h3 className="espace-carte__titre">{t(`${P}.espaces.${cle}.titre`)}</h3>
-                <p className="espace-carte__texte">{t(`${P}.espaces.${cle}.texte`)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── INFORMATIONS PRATIQUES ───────────────────────────── */}
-      {/* 4 cartes : adresse, horaires, téléphone, email */}
-      <section className="section-blanche">
-        <div className="container">
-          <h2 className="titre-section text-center">{t(`${P}.infosTitre`)}</h2>
-          <div className="infos-grille">
-            <div className="info-carte">
-              <span className="info-carte__icone">📍</span>
-              <h3>{t(`${P}.adresse`)}</h3>
-              <p>10 rue Saint Vincent<br />17138 Puilboreau</p>
-            </div>
-            <div className="info-carte">
-              <span className="info-carte__icone">🕐</span>
-              <h3>{t(`${P}.horaires`)}</h3>
-              <p><Trans i18nKey={`${P}.horairesTexte`} /></p>
-            </div>
-            <div className="info-carte">
-              <span className="info-carte__icone">📞</span>
-              <h3>{t(`${P}.telephone`)}</h3>
-              <p>05 46 69 68 25</p>
-            </div>
-            <div className="info-carte">
-              <span className="info-carte__icone">✉️</span>
-              <h3>{t(`${P}.email`)}</h3>
-              <p>les.coccinelles17@orange.fr</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── GOUVERNANCE ASSOCIATIVE ──────────────────────────── */}
       {/* Fonctionnement de l'association : Assemblée générale,

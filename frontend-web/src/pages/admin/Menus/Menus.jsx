@@ -3,7 +3,8 @@
 // ROUTE    : /admin/menus
 // RÔLE     : Saisie des 4 menus du cycle (Semaine 1 à 4) qui se
 //            répète toute l'année. Un onglet par semaine.
-//            Chaque champ jour (déjeuner + goûter) est édité via Quill.
+//            Chaque champ jour (déjeuner + goûter) est édité via Quill,
+//            et les allergènes du jour sont cochés sous le goûter.
 // ============================================================
 
 import { useState, useEffect } from 'react';
@@ -12,6 +13,7 @@ import 'react-quill/dist/quill.snow.css';
 import { useTranslation, Trans } from 'react-i18next';
 import api from '../../../services/api';
 import toast from 'react-hot-toast';
+import { ALLERGENES } from '../../../utils/allergenes';
 import '../../../styles/admin.css';
 import './Menus.css';
 
@@ -33,6 +35,15 @@ const QUILL_FORMATS_MENU = ['bold', 'italic', 'list'];
 // onChange : (champ, valeur, source) — source = 'user' si c'est une frappe au clavier
 const FormulaireMenu = ({ form, onChange }) => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
+
+  // Coche / décoche un allergène du jour (liste de clés, ordre officiel conservé)
+  const basculerAllergene = (jour, cle) => {
+    const champ  = `${jour}_allergenes`;
+    const actuel = form[champ] || [];
+    const suivant = actuel.includes(cle) ? actuel.filter(c => c !== cle) : [...actuel, cle];
+    onChange(champ, ALLERGENES.filter(c => suivant.includes(c)), 'user');
+  };
+
   return (
   <div className="menus-admin-grille">
     {JOURS.map(jour => (
@@ -68,6 +79,25 @@ const FormulaireMenu = ({ form, onChange }) => {
             />
           </div>
         </div>
+
+        {/* Allergènes du jour : une case par allergène (déjeuner + goûter) */}
+        <fieldset className="menu-allergenes">
+          <legend className="a-label">{t('admin.menus.allergenes')}</legend>
+          <p className="menu-allergenes__aide">{t('admin.menus.allergenesAide')}</p>
+          {ALLERGENES.map(cle => {
+            const coche = (form[`${jour}_allergenes`] || []).includes(cle);
+            return (
+              <label key={cle} className={`menu-allergene ${coche ? 'menu-allergene--coche' : ''}`}>
+                <input
+                  type="checkbox"
+                  checked={coche}
+                  onChange={() => basculerAllergene(jour, cle)}
+                />
+                {t(`common.allergenes.${cle}`)}
+              </label>
+            );
+          })}
+        </fieldset>
       </div>
     ))}
   </div>
