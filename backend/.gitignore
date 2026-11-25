@@ -6,6 +6,8 @@ uploads/photos/*
 uploads/justificatifs/*
 uploads/equipe/*
 uploads/messages/*
+uploads/documentation/*
+uploads/partenaires/*
 !uploads/avatars/.gitkeep
 !uploads/documents/.gitkeep
 !uploads/photos/.gitkeep

@@ -1,12 +1,12 @@
 /* ============================================================
    FICHIER : Presentation.css
    ROUTE   : /presentation
-   RÔLE    : Page de présentation de la crèche (histoire,
-             équipe, infos pratiques, gouvernance, parents).
+   RÔLE    : Page de présentation de la crèche (gouvernance,
+             capacité, équipe, parents, historique, documentation,
+             fermetures, partenaires).
              Ce fichier importe pages-publiques.css qui contient
-             tous les styles communs : hero, sections, layouts,
-             grilles d'espaces, boutons. Aucun style spécifique
-             n'est nécessaire pour cette page.
+             les styles communs : hero, sections, layouts, grilles,
+             boutons. Styles propres à la page ci-dessous.
 
    COMPOSANTS UTILISÉS (définis dans pages-publiques.css) :
      - .page-hero / .page-hero--orange
@@ -107,8 +107,155 @@
   box-shadow:    var(--shadow-sm);
 }
 
+/* Phrase d'introduction centrée sous le titre d'une section */
+.presentation-intro {
+  max-width:  760px;
+  margin:     0 auto var(--space-xl);
+  text-align: center;
+  color:      var(--text-gray);
+  line-height: 1.7;
+}
+
+/* ── DOCUMENTATION ───────────────────────────────────────── */
+/* Une carte par document : icône, titre + description, bouton */
+
+.documentation-liste {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-md);
+  max-width:      860px;
+  margin:         0 auto;
+}
+
+.documentation-carte {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-lg);
+  padding:       var(--space-lg) var(--space-xl);
+  background:    var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow:    var(--shadow-sm);
+  border-left:   4px solid var(--primary);
+}
+
+.documentation-carte__icone       { font-size: 2rem; flex-shrink: 0; }
+.documentation-carte__texte       { flex: 1; min-width: 0; }
+.documentation-carte__titre       { font-family: var(--font-heading); font-size: 1.1rem; color: var(--text-dark); }
+.documentation-carte__description { font-size: 0.9rem; color: var(--text-gray); margin-top: 2px; }
+.documentation-carte .btn         { flex-shrink: 0; }
+
+/* ── CALENDRIER DES FERMETURES ───────────────────────────── */
+/* Une ligne par fermeture : dates en gras, motif dessous */
+
+.fermetures-liste {
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--space-sm);
+  max-width:      760px;
+  margin:         0 auto;
+}
+
+.fermeture-ligne {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--space-md);
+  padding:       var(--space-md) var(--space-lg);
+  background:    var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow:    var(--shadow-sm);
+}
+
+.fermeture-ligne__icone { font-size: 1.6rem; flex-shrink: 0; }
+.fermeture-ligne__dates { font-weight: 700; color: var(--text-dark); }
+.fermeture-ligne__dates::first-letter { text-transform: uppercase; } /* « Du lundi… » */
+.fermeture-ligne__motif { font-size: 0.9rem; color: var(--primary); font-weight: 600; }
+
+/* ── LES PARTENAIRES ─────────────────────────────────────── */
+/* Grille de cartes : logo (ou icône neutre), nom, catégorie, bouton « Visiter le site » */
+
+.partenaires-grille {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap:                   var(--space-lg);
+  max-width:             1100px;
+  margin:                0 auto;
+}
+
+.partenaire-carte {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  gap:             var(--space-sm);
+  height:          100%;
+  padding:         var(--space-lg);
+  background:      var(--surface);
+  border-radius:   var(--radius-xl);
+  box-shadow:      var(--shadow-sm);
+  text-align:      center;
+  color:           var(--text-dark);
+  transition:      var(--transition);
+}
+
+/* Légère élévation au survol */
+.partenaire-carte:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+
+/* Zone du logo : fond blanc (logos souvent prévus pour fond clair, même en thème sombre) */
+.partenaire-carte__logo {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           100%;
+  height:          80px;
+  padding:         var(--space-xs);
+  background:      var(--white);
+  border-radius:   var(--radius-md);
+}
+
+.partenaire-carte__logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+/* Sans logo : icône neutre dans un cercle orange clair */
+.partenaire-carte__icone {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           56px;
+  height:          56px;
+  border-radius:   50%;
+  background:      var(--primary-light);
+  color:           var(--primary);
+  font-size:       1.6rem;
+}
+
+/* Nom du partenaire */
+.partenaire-carte__nom { font-family: var(--font-heading); font-size: 1rem; color: var(--text-dark); line-height: 1.3; }
+
+/* Catégorie : petite étiquette orange */
+.partenaire-carte__categorie {
+  font-size:     0.75rem;
+  font-weight:   700;
+  color:         var(--primary);
+  background:    var(--primary-light);
+  padding:       2px var(--space-sm);
+  border-radius: var(--radius-pill);
+}
+
+/* Bouton « Visiter le site » : toujours en bas de la carte */
+.partenaire-carte__bouton { margin-top: auto; }
+
 /* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1023px) {
   .gouvernance-grille       { grid-template-columns: 1fr; }
   .historique-repartitions  { grid-template-columns: 1fr; }
+}
+
+/* Mobile : document en colonne (bouton sous le texte), partenaires 2 par ligne */
+@media (max-width: 767px) {
+  .documentation-carte { flex-direction: column; align-items: flex-start; padding: var(--space-md) var(--space-lg); }
+  .partenaires-grille  { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+}
+
+/* Petit mobile : cartes partenaires plus compactes */
+@media (max-width: 479px) {
+  .partenaire-carte        { padding: var(--space-md); }
+  .partenaire-carte__logo  { height: 60px; }
 }

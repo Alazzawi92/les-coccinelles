@@ -83,7 +83,10 @@
       "statistiques": "Statistiques",
       "rapports": "Rapports",
       "parametres": "Paramètres",
-      "comptes": "Comptes de l'équipe"
+      "comptes": "Comptes de l'équipe",
+      "documentation": "Documentation",
+      "fermetures": "Fermetures",
+      "partenaires": "Partenaires"
     }
   },
   "notifs": {

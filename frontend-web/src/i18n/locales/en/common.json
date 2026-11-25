@@ -83,7 +83,10 @@
       "statistiques": "Statistics",
       "rapports": "Reports",
       "parametres": "Settings",
-      "comptes": "Team accounts"
+      "comptes": "Team accounts",
+      "documentation": "Documentation",
+      "fermetures": "Closures",
+      "partenaires": "Partners"
     }
   },
   "notifs": {

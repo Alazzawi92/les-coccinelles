@@ -1,12 +1,12 @@
 # 🗄️ 01 — BASE DE DONNÉES (MySQL / MariaDB)
 # Fichier : 01-BASE-DE-DONNEES.md
-# Description : Modèle de données réel du projet — 20 tables, relations,
+# Description : Modèle de données réel du projet — 23 tables, relations,
 # migrations, configuration Sequelize
 # Source de vérité : database/schema.sql (copié intégralement en fin de document)
 
 ---
 
-## 📋 LES 20 TABLES
+## 📋 LES 23 TABLES
 
 | # | Table | Rôle | Liée à |
 |---|---|---|---|
@@ -30,9 +30,13 @@
 | 18 | `equipe_membres` | Membres de l'équipe affichés sur le site (photo, fonction, ordre) | — |
 | 19 | `deux_facteurs` | Code de connexion à 6 chiffres (empreinte seulement), compteur d'erreurs, blocage | users |
 | 20 | `parametres` | Interrupteurs du super admin (espace parents, création de comptes) | users |
+| 21 | `documents_publics` | Documentation PDF téléchargeable par tous (page Présentation) | — |
+| 22 | `fermetures` | Calendrier des fermetures de la crèche (page Présentation) | — |
+| 23 | `partenaires` | Partenaires de la crèche : nom, catégorie, logo, lien (page Présentation) | — |
 
 > Le plan initial prévoyait 15 tables. Se sont ajoutées en cours de projet :
-> `inscription_documents`, `emargements`, `equipe_membres`, `deux_facteurs`, `parametres`.
+> `inscription_documents`, `emargements`, `equipe_membres`, `deux_facteurs`, `parametres`,
+> puis `documents_publics`, `fermetures`, `partenaires` (sections de la page Présentation).
 
 ---
 
@@ -102,6 +106,7 @@ seule fois, dans l'ordre :
 | `005_parametres.sql` | Table `parametres` (interrupteurs du super admin) — `INSERT IGNORE`, relançable |
 | `006_deux_facteurs.sql` | Table `deux_facteurs` + déconnexion de toutes les sessions |
 | `007_menus_allergenes.sql` | `menus.lundi_allergenes` … `vendredi_allergenes` : allergènes présents chaque jour |
+| `008_presentation_contenus.sql` | Tables `documents_publics`, `fermetures`, `partenaires` (page Présentation, gérées par le super admin) |
 
 `schema.alwaysdata.sql` : même schéma, adapté à l'hébergeur (MariaDB, sans
 `CREATE DATABASE`).
@@ -147,7 +152,7 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 ```sql
 -- ============================================================
 -- SCHÉMA BASE DE DONNÉES — LES COCCINELLES
--- Plateforme web pour crèche | 20 tables
+-- Plateforme web pour crèche | 23 tables
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS coccinelles_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

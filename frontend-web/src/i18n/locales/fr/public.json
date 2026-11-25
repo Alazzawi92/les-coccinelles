@@ -106,7 +106,20 @@
     "ensemble": "Ensemble",
     "ensembleSous": "professionnelles & familles",
     "ctaTexte": "Vous souhaitez visiter la crèche ou en savoir plus ?",
-    "ctaBouton": "Nous contacter"
+    "ctaBouton": "Nous contacter",
+    "documentationTitre": "Documentation",
+    "documentationIntro": "Les documents de référence de la crèche, à consulter et à télécharger.",
+    "telechargerPdf": "Télécharger le PDF",
+    "fermeturesTitre": "Le calendrier des fermetures",
+    "fermeturesIntro": "La crèche sera fermée aux dates suivantes :",
+    "fermeturesVide": "Aucune fermeture prévue pour le moment.",
+    "fermetureJour": "Le {{date}}",
+    "fermeturePeriode": "Du {{debut}} au {{fin}}",
+    "partenairesTitre": "Les partenaires",
+    "partenairesIntro": "Nos partenariats permettent aux enfants de découvrir de nouveaux lieux, de nouvelles personnes et de nouvelles expériences.",
+    "visiterSite": "Visiter le site",
+    "visiterSiteAria": "Visiter le site de {{nom}} (nouvel onglet)",
+    "logoDe": "Logo de {{nom}}"
   },
   "equipe": {
     "tag": "L'équipe",

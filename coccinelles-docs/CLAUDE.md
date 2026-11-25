@@ -55,7 +55,7 @@ les-coccinelles/
 
 ---
 
-## 🗄️ BASE DE DONNÉES — 20 TABLES
+## 🗄️ BASE DE DONNÉES — 23 TABLES
 
 ```
 users               → Tous les utilisateurs (parents, admin)
@@ -78,6 +78,9 @@ emargements         → Arrivées / départs des enfants
 equipe_membres      → Équipe affichée sur le site
 deux_facteurs       → Codes de connexion (empreinte HMAC), compteur d'erreurs
 parametres          → Interrupteurs du super admin
+documents_publics   → Documentation PDF publique (page Présentation)
+fermetures          → Calendrier des fermetures (page Présentation)
+partenaires         → Partenaires : nom, catégorie, logo, lien (page Présentation)
 ```
 Toute évolution : `schema.sql` + `schema.alwaysdata.sql` + nouvelle migration numérotée.
 

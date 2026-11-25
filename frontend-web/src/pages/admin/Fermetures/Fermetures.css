@@ -1,0 +1,14 @@
+/* ============================================================
+   FICHIER : Fermetures.css  (espace admin)
+   PAGE    : /admin/fermetures
+   RÔLE    : Calendrier des fermetures (page Présentation).
+             Styles communs : styles/contenus-site-admin.css
+   ============================================================ */
+
+@import '../../../styles/contenus-site-admin.css';
+
+/* Fermeture passée : plus affichée sur le site, texte atténué */
+.fermeture-ligne--passee td { color: var(--text-gray); }
+
+/* Badge « Passée » : neutre (gris), ce n'est pas une erreur */
+.fermeture-badge--passee { background: var(--bg-gray); color: var(--text-gray); }

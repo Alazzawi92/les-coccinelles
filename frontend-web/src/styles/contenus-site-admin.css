@@ -1,0 +1,38 @@
+/* ============================================================
+   FICHIER : contenus-site-admin.css  (espace admin)
+   RÔLE    : Styles communs aux 3 pages qui gèrent les contenus
+             de la page Présentation : Documentation, Fermetures,
+             Partenaires (formulaire en haut, liste en dessous).
+             Importé par le CSS de chacune de ces pages.
+   ============================================================ */
+
+@import './admin.css';
+
+/* Phrase d'explication sous le titre de la page */
+.contenu-admin-intro { color: var(--text-gray); margin-bottom: var(--space-xl); max-width: 900px; }
+
+/* Formulaire puis liste, l'un sous l'autre */
+.contenu-admin-grille { display: flex; flex-direction: column; gap: var(--space-xl); }
+
+.contenu-admin-formulaire { max-width: 720px; }
+
+/* Texte d'aide sous un champ */
+.contenu-admin-aide { font-size: 0.8rem; color: var(--text-gray); margin: 0; }
+
+/* Boutons du formulaire (enregistrer, annuler) */
+.contenu-admin-actions { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+/* Ligne du tableau en cours de modification : surlignée */
+.contenu-admin-ligne--active td { background: var(--primary-light); }
+
+/* Information secondaire sous une valeur du tableau (description, taille) */
+.contenu-admin-secondaire { display: block; font-size: 0.8rem; color: var(--text-gray); }
+
+/* Bouton supprimer : rouge au survol */
+.contenu-admin-supprimer { background: none; border: 1px solid var(--border); }
+.contenu-admin-supprimer:hover:not(:disabled) { background: var(--error-bg); border-color: var(--error-border); }
+
+/* Mobile (≤767px) : le tableau défile horizontalement dans sa carte */
+@media (max-width: 767px) {
+  .contenu-admin-formulaire { max-width: none; }
+}

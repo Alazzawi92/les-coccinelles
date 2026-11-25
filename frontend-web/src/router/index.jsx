@@ -63,6 +63,9 @@ import MenusAdmin        from '../pages/admin/Menus/Menus';
 import DocumentsAdmin    from '../pages/admin/Documents/Documents';
 import GalerieAdmin      from '../pages/admin/Galerie/Galerie';
 import CMS               from '../pages/admin/CMS/CMS';
+import DocumentationAdmin from '../pages/admin/Documentation/Documentation'; // Page Présentation
+import FermeturesAdmin   from '../pages/admin/Fermetures/Fermetures';       // Page Présentation
+import PartenairesAdmin  from '../pages/admin/Partenaires/Partenaires';     // Page Présentation
 import Statistiques      from '../pages/admin/Statistiques/Statistiques';
 import Rapports          from '../pages/admin/Rapports/Rapports';
 import Parametres        from '../pages/admin/Parametres/Parametres';
@@ -162,6 +165,10 @@ const AppRouter = () => {
               <Route path="/admin/documents"        element={<DocumentsAdmin />} />
               <Route path="/admin/galerie"          element={<GalerieAdmin />} />
               <Route path="/admin/cms"              element={<CMS />} />
+              {/* Sections de la page Présentation */}
+              <Route path="/admin/documentation"    element={<DocumentationAdmin />} />
+              <Route path="/admin/fermetures"       element={<FermeturesAdmin />} />
+              <Route path="/admin/partenaires"      element={<PartenairesAdmin />} />
               <Route path="/admin/statistiques"     element={<Statistiques />} />
               <Route path="/admin/rapports"         element={<Rapports />} />
               <Route path="/admin/parametres"       element={<Parametres />} /> {/* Espace parents, création de comptes */}

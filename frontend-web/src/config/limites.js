@@ -11,3 +11,7 @@ export const TAILLE_MAX_DOCUMENT    = TAILLE_MAX_DOCUMENT_MO * 1024 * 1024;
 
 // true si le fichier dépasse la taille maximale d'un document
 export const documentTropLourd = (fichier) => Boolean(fichier) && fichier.size > TAILLE_MAX_DOCUMENT;
+
+// Logos des partenaires : 2 Mo (même valeur que TAILLE_MAX_AVATAR côté serveur)
+export const TAILLE_MAX_LOGO_MO = 2;
+export const logoTropLourd = (fichier) => Boolean(fichier) && fichier.size > TAILLE_MAX_LOGO_MO * 1024 * 1024;

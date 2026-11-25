@@ -1,0 +1,41 @@
+/* ============================================================
+   FICHIER : Partenaires.css  (espace admin)
+   PAGE    : /admin/partenaires
+   RÔLE    : Partenaires de la page Présentation (nom, logo, lien).
+             Styles communs : styles/contenus-site-admin.css
+   ============================================================ */
+
+@import '../../../styles/contenus-site-admin.css';
+
+/* Champ logo : aperçu à gauche, bouton de choix à droite */
+.partenaire-logo-champ { display: flex; align-items: center; gap: var(--space-md); }
+.partenaire-logo-champ .a-input { flex: 1; min-width: 0; }
+
+/* Aperçu du logo dans le formulaire : contenu entier, fond clair */
+.partenaire-logo-apercu {
+  width:         64px;
+  height:        64px;
+  object-fit:    contain;
+  padding:       4px;
+  background:    var(--white);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-md);
+  flex-shrink:   0;
+}
+
+/* Case « Retirer le logo » */
+.partenaire-retirer { display: inline-flex; align-items: center; gap: var(--space-xs); font-size: 0.85rem; color: var(--text-gray); cursor: pointer; }
+
+/* Logo dans la liste : petit, sur fond blanc (logos souvent prévus pour fond clair) */
+.partenaire-logo-liste {
+  display:       block;
+  width:         72px;
+  height:        44px;
+  object-fit:    contain;
+  background:    var(--white);
+  border-radius: var(--radius-sm);
+  padding:       2px;
+}
+
+/* Lien du partenaire : coupé proprement s'il est long */
+.partenaire-lien { display: inline-block; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }

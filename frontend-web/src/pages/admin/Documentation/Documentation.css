@@ -1,0 +1,8 @@
+/* ============================================================
+   FICHIER : Documentation.css  (espace admin)
+   PAGE    : /admin/documentation
+   RÔLE    : Documents PDF publics de la page Présentation.
+             Styles communs : styles/contenus-site-admin.css
+   ============================================================ */
+
+@import '../../../styles/contenus-site-admin.css';

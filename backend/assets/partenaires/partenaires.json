@@ -1,0 +1,68 @@
+[
+  {
+    "nom": "Médiathèque de Puilboreau",
+    "categorie": "Culture",
+    "lien": "https://www.ville-puilboreau.fr/mes-loisirs/la-culture/la-mediatheque/",
+    "logo": "puilboreau.png"
+  },
+  {
+    "nom": "Relais Petite Enfance « Picoti Picota »",
+    "categorie": "Petite enfance",
+    "lien": "https://www.ville-puilboreau.fr/mon-quotidien/enfance-jeunesse/petite-enfance/",
+    "logo": null
+  },
+  {
+    "nom": "Maison de retraite de Puilboreau",
+    "categorie": "Partenaire social",
+    "lien": null,
+    "logo": null
+  },
+  {
+    "nom": "Centres de loisirs des trois communes",
+    "categorie": "Loisirs et éducation",
+    "lien": null,
+    "logo": null
+  },
+  {
+    "nom": "Carré Amelot",
+    "categorie": "Culture et art",
+    "lien": "https://www.carre-amelot.net/",
+    "logo": "carre-amelot.png"
+  },
+  {
+    "nom": "Ludothèque du Pertuis de La Rochelle",
+    "categorie": "Culture et loisirs",
+    "lien": "https://le-pertuis.fr/csclp2020/activites/#ludotheque",
+    "logo": "le-pertuis.png"
+  },
+  {
+    "nom": "Écoles maternelles du territoire",
+    "categorie": "Éducation",
+    "lien": null,
+    "logo": null
+  },
+  {
+    "nom": "MAM Pomme d'Api de Saint-Xandre",
+    "categorie": "Petite enfance",
+    "lien": null,
+    "logo": null
+  },
+  {
+    "nom": "Crèche de Dompierre-sur-Mer",
+    "categorie": "Petite enfance",
+    "lien": "https://creche-dompierre.com/",
+    "logo": "creche-dompierre.png"
+  },
+  {
+    "nom": "Espace Camaïeux",
+    "categorie": "Partenaire social et culturel",
+    "lien": "https://assoespacecamaieux.centres-sociaux.fr/",
+    "logo": "espace-camaieux.png"
+  },
+  {
+    "nom": "Fabie – Assistante maternelle",
+    "categorie": "Petite enfance",
+    "lien": null,
+    "logo": null
+  }
+]

@@ -106,7 +106,20 @@
     "ensemble": "Together",
     "ensembleSous": "staff & families",
     "ctaTexte": "Would you like to visit the nursery or find out more?",
-    "ctaBouton": "Contact us"
+    "ctaBouton": "Contact us",
+    "documentationTitre": "Documentation",
+    "documentationIntro": "The nursery's reference documents, to read and download.",
+    "telechargerPdf": "Download PDF",
+    "fermeturesTitre": "Closure calendar",
+    "fermeturesIntro": "The nursery will be closed on the following dates:",
+    "fermeturesVide": "No closures planned at the moment.",
+    "fermetureJour": "On {{date}}",
+    "fermeturePeriode": "From {{debut}} to {{fin}}",
+    "partenairesTitre": "Our partners",
+    "partenairesIntro": "Our partnerships let children discover new places, new people and new experiences.",
+    "visiterSite": "Visit website",
+    "visiterSiteAria": "Visit the {{nom}} website (new tab)",
+    "logoDe": "{{nom}} logo"
   },
   "equipe": {
     "tag": "The team",

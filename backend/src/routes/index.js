@@ -21,6 +21,9 @@ const contactRoutes      = require('./contact.routes');
 const equipeRoutes       = require('./equipe.routes');
 const rapportRoutes      = require('./rapport.routes');
 const parametresRoutes   = require('./parametres.routes');
+const documentationRoutes = require('./documentation.routes'); // Page Présentation : documentation
+const fermetureRoutes     = require('./fermeture.routes');     // Page Présentation : fermetures
+const partenaireRoutes    = require('./partenaire.routes');    // Page Présentation : partenaires
 
 // Enregistrer toutes les routes avec leur préfixe
 router.use('/auth',          authRoutes);
@@ -41,5 +44,8 @@ router.use('/contact',       contactRoutes);
 router.use('/equipe',        equipeRoutes);
 router.use('/rapports',      rapportRoutes);
 router.use('/parametres',    parametresRoutes);
+router.use('/documentation', documentationRoutes);
+router.use('/fermetures',    fermetureRoutes);
+router.use('/partenaires',   partenaireRoutes);
 
 module.exports = router;

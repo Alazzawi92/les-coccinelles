@@ -21,6 +21,9 @@ const CmsPage        = require('./CmsPage');
 const EquipeMembre          = require('./EquipeMembre');
 const InscriptionDocument   = require('./InscriptionDocument');
 const Parametre             = require('./Parametre');
+const DocumentPublic        = require('./DocumentPublic'); // Page Présentation : documentation
+const Fermeture             = require('./Fermeture');      // Page Présentation : fermetures
+const Partenaire            = require('./Partenaire');     // Page Présentation : partenaires
 
 // ── ASSOCIATIONS ────────────────────────────────────────────────────
 
@@ -121,6 +124,9 @@ Parametre.belongsTo(User,      { foreignKey: 'modifie_par', as: 'auteur' });
 module.exports = {
   sequelize,
   Parametre,
+  DocumentPublic,
+  Fermeture,
+  Partenaire,
   User,
   Enfant,
   Inscription,

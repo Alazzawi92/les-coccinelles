@@ -126,7 +126,7 @@ app.use('/uploads', (err, req, res, next) => {
 });
 
 // Crée les sous-dossiers d'upload manquants au démarrage (multer ne les crée pas)
-['avatars', 'actualites', 'documents', 'equipe', 'justificatifs', 'messages', 'photos'].forEach(d =>
+['avatars', 'actualites', 'documentation', 'documents', 'equipe', 'justificatifs', 'messages', 'partenaires', 'photos'].forEach(d =>
   fs.mkdirSync(path.join(__dirname, 'uploads', d), { recursive: true })
 );
 // Stockage privé des pièces justificatives (jamais servi en statique)

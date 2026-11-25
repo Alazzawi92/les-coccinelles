@@ -75,6 +75,20 @@ const uploadAvatar = multer({
   fileFilter: filtreTypes(TYPES_AUTORISES.avatars)
 });
 
+// Uploader pour la documentation publique (PDF uniquement, TAILLE_MAX_DOCUMENT)
+const uploadPdf = multer({
+  storage:    stockage,
+  limits:     { fileSize: TAILLE_MAX_DOCUMENT },
+  fileFilter: filtreTypes(['application/pdf'])
+});
+
+// Uploader pour les logos des partenaires (JPG / PNG, TAILLE_MAX_AVATAR)
+const uploadLogo = multer({
+  storage:    stockage,
+  limits:     { fileSize: TAILLE_MAX_AVATAR }, // 2 Mo : un logo est léger
+  fileFilter: filtreTypes(TYPES_AUTORISES.avatars)
+});
+
 // Uploader pour les pièces jointes de messages (images + PDF) : même limite
 // que les autres documents (TAILLE_MAX_DOCUMENT), harmonisée partout
 const stockageMessages = multer.diskStorage({
@@ -136,6 +150,6 @@ const empreinteFichier = (cheminFichier) =>
   crypto.createHash('sha256').update(fs.readFileSync(cheminFichier)).digest('hex');
 
 module.exports = {
-  uploadDocument, uploadPhoto, uploadAvatar, uploadPieceJointe,
+  uploadDocument, uploadPhoto, uploadAvatar, uploadPieceJointe, uploadPdf, uploadLogo,
   verifierContenuFichiers, detecterTypeReel, empreinteFichier, DOSSIER_PRIVE
 };

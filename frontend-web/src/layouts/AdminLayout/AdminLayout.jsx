@@ -52,7 +52,11 @@ const GROUPES_NAV = [
       { to: '/admin/actualites', cle: 'actualites',   icone: '📰' },
       { to: '/admin/menus',      cle: 'menus',        icone: '🍽️' },
       { to: '/admin/galerie',    cle: 'galerie',      icone: '🖼️' },
-      { to: '/admin/cms',        cle: 'cms',          icone: '👥' }
+      { to: '/admin/cms',        cle: 'cms',          icone: '👥' },
+      // Sections de la page Présentation
+      { to: '/admin/documentation', cle: 'documentation', icone: '📚' },
+      { to: '/admin/fermetures',    cle: 'fermetures',    icone: '🚪' },
+      { to: '/admin/partenaires',   cle: 'partenaires',   icone: '🤝' }
     ]
   },
   {
