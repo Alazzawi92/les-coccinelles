@@ -2,6 +2,14 @@
 const { Enfant, User } = require('../models');
 const { succes, erreur, cree } = require('../utils/response');
 
+// Champs qu'un formulaire peut modifier (liste blanche). Tout le reste est
+// ignoré : user_id (déplacer l'enfant sur un autre compte), photo (chemin de
+// fichier : la suppression de compte effacerait le fichier d'une autre
+// famille), actif, jours_presence (route dédiée)...
+const CHAMPS_MODIFIABLES = ['prenom', 'nom', 'date_naissance', 'sexe', 'allergies', 'medicaments', 'medecin_nom', 'medecin_tel'];
+const champsAutorises = (corps) =>
+  Object.fromEntries(CHAMPS_MODIFIABLES.filter(c => corps[c] !== undefined).map(c => [c, corps[c]]));
+
 // GET /api/enfants — Mes enfants ou tous (admin)
 const lister = async (req, res) => {
   try {
@@ -24,7 +32,7 @@ const lister = async (req, res) => {
 // POST /api/enfants — Créer un enfant
 const creer = async (req, res) => {
   try {
-    const enfant = await Enfant.create({ ...req.body, user_id: req.user.id });
+    const enfant = await Enfant.create({ ...champsAutorises(req.body), user_id: req.user.id });
     return cree(res, enfant, 'Enfant ajouté avec succès');
   } catch (err) {
     return erreur(res, 'Erreur lors de l\'ajout de l\'enfant');
@@ -57,7 +65,7 @@ const modifier = async (req, res) => {
     const enfant = await Enfant.findOne({ where: filtre });
     if (!enfant) return erreur(res, 'Enfant non trouvé', 404);
 
-    await enfant.update(req.body);
+    await enfant.update(champsAutorises(req.body));
     return succes(res, enfant, 'Enfant mis à jour');
   } catch (err) {
     return erreur(res, 'Erreur lors de la mise à jour');

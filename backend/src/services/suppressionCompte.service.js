@@ -38,6 +38,29 @@ const cheminDisque = (chemin) => {
   return null;
 };
 
+// Colonnes de la base qui peuvent pointer vers un fichier des dossiers famille
+const COLONNES_FICHIERS = [
+  ['users', 'avatar'], ['enfants', 'photo'], ['documents', 'chemin_fichier'],
+  ['inscription_documents', 'fichier_path'], ['absences', 'justificatif'], ['messages', 'piece_jointe'],
+  ['galerie_photos', 'chemin_original'], ['galerie_photos', 'chemin_web'], ['galerie_photos', 'chemin_miniature']
+];
+
+// Vrai si un fichier est encore utilisé par une AUTRE ligne de la base.
+// Appelé après la suppression du compte : ses propres lignes n'existent
+// plus, donc toute référence restante appartient à quelqu'un d'autre et
+// le fichier est conservé (défense contre un chemin enregistré à tort).
+const fichierEncoreUtilise = async (cheminFichier) => {
+  const nom = path.basename(cheminFichier).replace(/[\\%_]/g, c => `\\${c}`); // Échappe les jokers de LIKE
+  for (const [table, colonne] of COLONNES_FICHIERS) {
+    const [lignes] = await sequelize.query(
+      `SELECT 1 FROM ${table} WHERE ${colonne} LIKE :motif LIMIT 1`, // Tables et colonnes : liste fixe ci-dessus
+      { replacements: { motif: `%${nom}%` } }
+    );
+    if (lignes.length) return true;
+  }
+  return false;
+};
+
 // Vrai si le parent a au moins un enfant ACCEPTÉ à la crèche (inscrit ou
 // accueilli) : la suppression passe alors par l'équipe
 const aUnEnfantAccepte = async (userId) =>
@@ -82,9 +105,14 @@ const supprimerCompteEtDonnees = async (user) => {
     await User.destroy({ where: { id: user.id }, transaction });
   });
 
-  // 3. Fichiers supprimés du disque une fois la base à jour
-  await Promise.all([...new Set(fichiers)].map(f => fs.promises.unlink(f).catch(() => {})));
-  return fichiers.length;
+  // 3. Fichiers supprimés du disque une fois la base à jour, SAUF ceux
+  //    encore utilisés par une autre famille ou par la galerie
+  let supprimes = 0;
+  for (const fichier of new Set(fichiers)) {
+    if (await fichierEncoreUtilise(fichier)) continue;
+    await fs.promises.unlink(fichier).then(() => { supprimes++; }).catch(() => {}); // Déjà absent : rien à faire
+  }
+  return supprimes;
 };
 
 module.exports = { aUnEnfantAccepte, supprimerCompteEtDonnees, cheminDisque };
