@@ -21,7 +21,7 @@ statistiques, rapports de présence).
 
 L'application suit une architecture trois tiers : interface React 18 hébergée
 sur Vercel, API REST Node.js / Express avec Sequelize hébergée sur Alwaysdata,
-base MySQL / MariaDB de 23 tables. Les données concernant des mineurs, dont des
+base MySQL / MariaDB de 24 tables. Les données concernant des mineurs, dont des
 données de santé, la sécurité et le RGPD ont guidé chaque choix : double
 authentification par email, rôles et contrôle de propriété des données, liens
 signés pour les fichiers privés, consentement photo par enfant, en-têtes de
@@ -125,7 +125,7 @@ développement et à la relecture). **À COMPLÉTER** : outil de suivi des tâch
 |---|---|
 | Analyser les besoins et maquetter une application | Récits utilisateurs (§2), maquette d'origine `design/Accueil-complet.html` — **À COMPLÉTER** : autres maquettes / wireframes |
 | Définir l'architecture logicielle | 3 tiers ; backend en couches routes → middlewares → contrôleurs → services → modèles (`02`) |
-| Concevoir et mettre en place une base de données relationnelle | 23 tables, clés étrangères et règles de suppression, index, migrations versionnées (`01`) |
+| Concevoir et mettre en place une base de données relationnelle | 24 tables, clés étrangères et règles de suppression, index, migrations versionnées (`01`) |
 | Développer des composants d'accès aux données SQL et NoSQL | Modèles et associations Sequelize, transactions avec verrou, requêtes d'agrégation (statistiques, rapports). **NoSQL : non utilisé dans ce projet** — à expliquer à l'oral (choix justifié : données très relationnelles) |
 
 ### Activité 3 — Préparer le déploiement d'une application sécurisée
@@ -230,7 +230,7 @@ chaque push.
 ## 9. BILAN ET PERSPECTIVES
 
 ### Bilan
-- Application complète en ligne : 3 espaces, 102 routes API, 23 tables, 44 pages,
+- Application complète en ligne : 3 espaces, 102 routes API, 24 tables, 44 pages,
   bilingue, installable sur téléphone.
 - Sécurité et RGPD traités à chaque couche, audit réalisé.
 - **À COMPLÉTER** : bilan personnel (ce que le projet m'a appris, ce que je
@@ -254,7 +254,7 @@ chaque push.
 5. Les 3 espaces + la version mobile (captures d'écran)
 6. Gestion de projet : phases, chronologie, outils
 7. Architecture 3 tiers et hébergement (schéma de `00-PROJET-GENERAL.md`)
-8. Base de données : 23 tables, schéma des relations, choix de conception
+8. Base de données : 24 tables, schéma des relations, choix de conception
 9. Backend en couches : chaîne d'une requête (middlewares → contrôleur → modèle)
 10. Frontend : routage, gardes, design system, traductions, accessibilité
 11. Sécurité : authentification en deux étapes (schéma du parcours)

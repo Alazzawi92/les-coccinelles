@@ -55,7 +55,7 @@ les-coccinelles/
 
 ---
 
-## 🗄️ BASE DE DONNÉES — 23 TABLES
+## 🗄️ BASE DE DONNÉES — 24 TABLES
 
 ```
 users               → Tous les utilisateurs (parents, admin)
@@ -81,6 +81,7 @@ parametres          → Interrupteurs du super admin
 documents_publics   → Documentation PDF publique (page Présentation)
 fermetures          → Calendrier des fermetures (page Présentation)
 partenaires         → Partenaires : nom, catégorie, logo, lien (page Présentation)
+appareils_confiance → Appareils de confiance 2FA (30 j parents / 24 h équipe)
 ```
 Toute évolution : `schema.sql` + `schema.alwaysdata.sql` + nouvelle migration numérotée.
 

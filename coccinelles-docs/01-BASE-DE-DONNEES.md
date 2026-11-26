@@ -1,12 +1,12 @@
 # 🗄️ 01 — BASE DE DONNÉES (MySQL / MariaDB)
 # Fichier : 01-BASE-DE-DONNEES.md
-# Description : Modèle de données réel du projet — 23 tables, relations,
+# Description : Modèle de données réel du projet — 24 tables, relations,
 # migrations, configuration Sequelize
 # Source de vérité : database/schema.sql (copié intégralement en fin de document)
 
 ---
 
-## 📋 LES 23 TABLES
+## 📋 LES 24 TABLES
 
 | # | Table | Rôle | Liée à |
 |---|---|---|---|
@@ -33,10 +33,12 @@
 | 21 | `documents_publics` | Documentation PDF téléchargeable par tous (page Présentation) | — |
 | 22 | `fermetures` | Calendrier des fermetures de la crèche (page Présentation) | — |
 | 23 | `partenaires` | Partenaires de la crèche : nom, catégorie, logo, lien (page Présentation) | — |
+| 24 | `appareils_confiance` | « Faire confiance à cet appareil » : plus de code email pendant 30 j (parents) / 24 h (équipe) — empreinte de la clé seulement | users |
 
 > Le plan initial prévoyait 15 tables. Se sont ajoutées en cours de projet :
 > `inscription_documents`, `emargements`, `equipe_membres`, `deux_facteurs`, `parametres`,
-> puis `documents_publics`, `fermetures`, `partenaires` (sections de la page Présentation).
+> puis `documents_publics`, `fermetures`, `partenaires` (sections de la page Présentation)
+> et `appareils_confiance` (double authentification).
 
 ---
 
@@ -107,6 +109,7 @@ seule fois, dans l'ordre :
 | `006_deux_facteurs.sql` | Table `deux_facteurs` + déconnexion de toutes les sessions |
 | `007_menus_allergenes.sql` | `menus.lundi_allergenes` … `vendredi_allergenes` : allergènes présents chaque jour |
 | `008_presentation_contenus.sql` | Tables `documents_publics`, `fermetures`, `partenaires` (page Présentation, gérées par le super admin) |
+| `009_appareils_confiance.sql` | Table `appareils_confiance` (« Faire confiance à cet appareil ») |
 
 `schema.alwaysdata.sql` : même schéma, adapté à l'hébergeur (MariaDB, sans
 `CREATE DATABASE`).
@@ -152,7 +155,7 @@ const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
 ```sql
 -- ============================================================
 -- SCHÉMA BASE DE DONNÉES — LES COCCINELLES
--- Plateforme web pour crèche | 23 tables
+-- Plateforme web pour crèche | 24 tables
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS coccinelles_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

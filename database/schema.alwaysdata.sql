@@ -438,6 +438,20 @@ CREATE TABLE IF NOT EXISTS partenaires (
   updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- ── TABLE 24 : appareils_confiance ─────────────────────────
+-- « Faire confiance à cet appareil » : plus de code email pendant 30 jours
+-- (parents) ou 24 heures (équipe). Empreinte de la clé seulement.
+CREATE TABLE IF NOT EXISTS appareils_confiance (
+  id               INT AUTO_INCREMENT PRIMARY KEY,
+  user_id          INT NOT NULL,                        -- Compte concerné
+  cle_empreinte    CHAR(64) NOT NULL,                   -- Empreinte HMAC de la clé gardée par le navigateur
+  expire_le        DATETIME NOT NULL,                   -- Fin de la confiance (30 jours ou 24 heures)
+  created_at       DATETIME DEFAULT CURRENT_TIMESTAMP,  -- Date de la confiance (sert à recalculer la durée selon le rôle)
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_cle (cle_empreinte),
+  INDEX idx_appareils_user (user_id)
+);
+
 -- ── DONNÉES INITIALES ────────────────────────────────────────
 -- Pages CMS de base (contenu modifiable via l'admin)
 INSERT INTO cms_pages (slug, titre, meta_description) VALUES

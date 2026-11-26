@@ -58,6 +58,23 @@ const importer = async () => {
   if (!appliquer && ajoutes) console.log('Simulation : relancer avec --appliquer pour importer.');
 };
 
+// Message d'erreur toujours lisible : certaines erreurs de connexion
+// (ex : plusieurs adresses refusées) n'ont pas de « message » propre
+const decrireErreur = (err) => {
+  const cause = err.original || err.parent || err;                         // Erreur MySQL d'origine
+  const details = [err.name, cause.code, cause.message || err.message].filter(Boolean).join(' — ');
+  const sousErreurs = (cause.errors || []).map(e => `${e.code || ''} ${e.address || ''}:${e.port || ''}`.trim());
+  return details + (sousErreurs.length ? ` (${sousErreurs.join(', ')})` : '');
+};
+
 importer()
-  .catch(err => { console.error('Erreur import partenaires :', err.message); process.exitCode = 1; })
+  .catch(err => {
+    console.error('Erreur import partenaires :', decrireErreur(err));
+    // Connexion impossible : variables de la base absentes (.env) ou incorrectes
+    if (/Connection|ECONNREFUSED|ENOTFOUND|ER_ACCESS_DENIED/i.test(decrireErreur(err))) {
+      console.error(`Base visée : ${process.env.DB_USER || 'root'}@${process.env.DB_HOST || 'localhost'}/${process.env.DB_NAME || 'coccinelles_db'}`);
+      console.error('Vérifier les variables DB_HOST, DB_NAME, DB_USER, DB_PASSWORD (fichier .env ou variables du site).');
+    }
+    process.exitCode = 1;
+  })
   .finally(() => sequelize.close());

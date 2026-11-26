@@ -45,10 +45,16 @@ const reglesRegister = [
     .matches(/^\+?[0-9 .\-()]{8,20}$/).withMessage('Numéro de téléphone invalide (ex : 06 12 34 56 78)')
 ];
 
+// Clé « appareil de confiance » envoyée par le navigateur (facultative) :
+// 64 caractères hexadécimaux, sinon refusée (une clé inconnue est simplement ignorée)
+const regleAppareil = body('appareil').optional({ values: 'falsy' })
+  .isString().matches(/^[a-f0-9]{64}$/).withMessage('Appareil de confiance invalide');
+
 // Règles de validation pour la connexion
 const reglesLogin = [
   body('email').isEmail().withMessage('Adresse email invalide').normalizeEmail(),
-  body('password').notEmpty().withMessage('Le mot de passe est requis')
+  body('password').notEmpty().withMessage('Le mot de passe est requis'),
+  regleAppareil
 ];
 
 // Règles de validation pour le reset mot de passe
@@ -76,6 +82,7 @@ router.post('/google',
   limiteAuth,
   verifierEspaceParentsOuvert,
   body('credential').isString().notEmpty().withMessage('Jeton Google manquant'),
+  regleAppareil,
   validerDonnees,
   authController.googleLogin
 );
@@ -93,7 +100,10 @@ const limite2fa = rateLimit({
 const regleJeton = body('jeton').isString().notEmpty().withMessage('Reconnectez-vous');
 const regleCode  = body('code').isString().matches(/^\d{6}$/).withMessage('Le code contient 6 chiffres');
 
-router.post('/2fa/verifier', limite2fa, regleJeton, regleCode, validerDonnees, deuxFacteurs.verifierJetonEtape, deuxFacteurs.verifier);
+// Case « Faire confiance à cet appareil » : vrai / faux (facultative)
+const regleConfiance = body('faire_confiance').optional().isBoolean({ strict: true }).withMessage('Valeur invalide');
+
+router.post('/2fa/verifier', limite2fa, regleJeton, regleCode, regleConfiance, validerDonnees, deuxFacteurs.verifierJetonEtape, deuxFacteurs.verifier);
 router.post('/2fa/renvoyer', limite2fa, regleJeton, validerDonnees, deuxFacteurs.verifierJetonEtape, deuxFacteurs.renvoyer);
 
 // POST /api/auth/logout — Déconnexion (token requis)

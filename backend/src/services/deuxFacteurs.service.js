@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const jwt    = require('jsonwebtoken');
 const { DeuxFacteurs } = require('../models');
 const { envoyerCodeConnexion } = require('./mail.service');
+const { dureeHeures } = require('./appareilsConfiance.service');
 
 const DUREE_CODE_MS   = 10 * 60 * 1000;  // Un code reste valable 10 minutes
 const DELAI_RENVOI_MS = 60 * 1000;       // Un seul envoi par minute
@@ -88,7 +89,9 @@ const etapeDeuxFacteurs = async (user) => {
   return {
     jeton_2fa:    creerJetonEtape(user.id),
     email_masque: masquerEmail(user.email),
-    email_envoye: statut !== 'echec_envoi' // Si false : la page propose de renvoyer le code
+    email_envoye: statut !== 'echec_envoi', // Si false : la page propose de renvoyer le code
+    // Durée proposée pour « Faire confiance à cet appareil » (30 jours parents, 24 h équipe)
+    confiance_heures: dureeHeures(user.role)
   };
 };
 

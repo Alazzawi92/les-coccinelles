@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 import '../../../styles/auth.css';
 import './Register.css';
 import { nomPersonneValide } from '../../../utils/validation'; // Format prénom / nom
+import useSuiteConnexion from '../../../hooks/useSuiteConnexion'; // Session directe ou code email
 
 // ── Vérification des critères du mot de passe ─────────────────
 // Renvoie un objet indiquant si chaque critère est respecté
@@ -46,6 +47,7 @@ const Register = () => {
   const turnstileRef = useRef(null);                       // Pour redemander une vérification
 
   const navigate      = useNavigate();
+  const { suiteConnexion } = useSuiteConnexion(); // Après un compte Google déjà validé
 
   // Critères de force du mot de passe, recalculés à chaque frappe
   const criteres = verifierPassword(form.password);
@@ -262,10 +264,9 @@ const Register = () => {
         <GoogleButton
           texte="signup_with"
           onConnexion={(data) => {
-            // Compte Google déjà existant et validé : saisie du code reçu par email
-            navigate('/connexion/verification', {
-              state: { jeton: data.jeton_2fa, emailMasque: data.email_masque, emailEnvoye: data.email_envoye }
-            });
+            // Compte Google déjà existant et validé : session directe (appareil
+            // de confiance) ou saisie du code reçu par email
+            suiteConnexion(data);
           }}
           onCompteCree={(message) => navigate('/connexion', { state: { message } })}
           onErreur={setErreur}

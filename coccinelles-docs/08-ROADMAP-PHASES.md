@@ -40,7 +40,7 @@ Mettre en place toute l'infrastructure du projet.
 
 #### Base de données
 ```
-✅ Créer le schéma SQL complet (23 tables)
+✅ Créer le schéma SQL complet (24 tables)
 ✅ Configurer Sequelize + connexion BDD
 ✅ Créer tous les modèles Sequelize
 ✅ Créer les migrations

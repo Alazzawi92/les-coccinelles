@@ -8,12 +8,13 @@
 // ============================================================
 
 import { useRef, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { login as loginService } from '../../../services/auth.service';
 import GoogleButton from '../../../components/ui/GoogleButton/GoogleButton';
 import Turnstile, { TURNSTILE_ACTIF } from '../../../components/ui/Turnstile/Turnstile';
 import { useParametres } from '../../../context/ParametresContext';
+import useSuiteConnexion from '../../../hooks/useSuiteConnexion';
 import '../../../styles/auth.css';
 import './Login.css';
 
@@ -33,18 +34,15 @@ const Login = () => {
 
   // ── Hooks de navigation ───────────────────────────────────
   const { espaceParentsOuvert, creationComptesOuverte } = useParametres(); // Réglages du super admin
-  const navigate      = useNavigate();
   const location      = useLocation();
 
   // Destination après connexion : page demandée avant la redirection (ou dashboard)
   const destination = location.state?.from?.pathname || '/parent/tableau-de-bord';
 
-  // ── Identité confirmée (mot de passe ou Google) : saisie du code reçu par email ──
-  const demanderCode = (data) => {
-    navigate('/connexion/verification', {
-      state: { jeton: data.jeton_2fa, emailMasque: data.email_masque, emailEnvoye: data.email_envoye, destination }
-    });
-  };
+  // ── Identité confirmée (mot de passe ou Google) ──
+  // Appareil de confiance : session ouverte tout de suite ; sinon, saisie du code reçu par email
+  const { suiteConnexion } = useSuiteConnexion();
+  const demanderCode = (data) => suiteConnexion(data, destination);
 
   // ── Connexion Google : nouveau compte en attente de validation ──
   const compteGoogleCree = (message) => {

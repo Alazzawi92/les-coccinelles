@@ -5,6 +5,7 @@ const { creerSession } = require('./authController');
 const { succes, erreur } = require('../utils/response');
 const { espaceParentsOuvert, MESSAGE_ESPACE_FERME } = require('../services/parametres.service');
 const { lireJetonEtape, empreinteCode, memeEmpreinte, envoyerNouveauCode } = require('../services/deuxFacteurs.service');
+const { ajouterAppareil } = require('../services/appareilsConfiance.service');
 
 // Le compteur d'erreurs est propre au COMPTE (il n'est pas remis à zéro quand
 // un nouveau code est envoyé) : au maximum 5 codes faux par tranche de 15 minutes.
@@ -75,7 +76,15 @@ const verifier = async (req, res) => {
     if (statut === 'expire') return erreur(res, 'Ce code a expiré. Demandez un nouveau code.', 400);
     if (statut === 'faux')   return erreur(res, 'Code incorrect', 401);
 
-    return succes(res, await creerSession(user), 'Connexion réussie');
+    const session = await creerSession(user);
+    // Case « Faire confiance à cet appareil » cochée : clé remise au navigateur
+    // (plus de code email pendant 30 jours pour un parent, 24 h pour l'équipe)
+    if (req.body.faire_confiance === true) {
+      const appareil = await ajouterAppareil(user);
+      session.appareil_confiance = appareil.cle;
+      session.appareil_expire_le = appareil.expire_le;
+    }
+    return succes(res, session, 'Connexion réussie');
   } catch (err) {
     console.error('Erreur vérification du code :', err);
     return erreur(res, 'Erreur lors de la vérification');

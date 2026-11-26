@@ -10,7 +10,7 @@ titre CDA.
 | Fichier | Sujet |
 |---|---|
 | `00-PROJET-GENERAL.md` | Vue d'ensemble : client, besoins, rôles, fonctionnalités, architecture, stack, chiffres clés |
-| `01-BASE-DE-DONNEES.md` | 23 tables, relations, choix de conception, migrations, schéma SQL complet |
+| `01-BASE-DE-DONNEES.md` | 24 tables, relations, choix de conception, migrations, schéma SQL complet |
 | `02-BACKEND-API.md` | Architecture en couches, middlewares, parcours d'authentification, 102 routes |
 | `03-FRONTEND-WEB.md` | Arborescence, routage et gardes, API, styles, traductions, accessibilité |
 | `04-FRONTEND-MOBILE.md` | Version mobile en PWA (choix face à Expo, cache RGPD, installation, mises à jour) |

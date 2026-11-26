@@ -6,6 +6,7 @@ const fs      = require('fs');
 const { User } = require('../models');
 const { succes, erreur, cree } = require('../utils/response');
 const { envoyerCompteActive, envoyerInvitationEquipe } = require('../services/mail.service');
+const { oublierAppareils } = require('../services/appareilsConfiance.service');
 
 const DUREE_INVITATION_MS = 72 * 60 * 60 * 1000; // Lien d'invitation valable 72 heures
 
@@ -50,6 +51,7 @@ const changerMotDePasse = async (req, res) => {
 
     const hash = await bcrypt.hash(nouveauPassword, 12);
     await userAvecPassword.update({ password: hash, refresh_token: null }); // Déconnecter les autres sessions
+    await oublierAppareils(userAvecPassword.id); // Plus d'appareil de confiance : code email redemandé partout
 
     return succes(res, null, 'Mot de passe modifié avec succès');
   } catch (err) {

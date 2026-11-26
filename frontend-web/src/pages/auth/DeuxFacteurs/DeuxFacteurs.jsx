@@ -4,14 +4,17 @@
 // RÔLE     : Deuxième étape de la connexion, obligatoire pour tous :
 //            saisie du code à 6 chiffres reçu par email.
 //            La session ne s'ouvre qu'après ce code.
+//            Case « Faire confiance à cet appareil » (décochée par défaut) :
+//            plus de code sur ce navigateur pendant 30 jours (parents) ou
+//            24 heures (équipe) ; le mot de passe reste toujours demandé.
 // ============================================================
 
 import { useEffect, useState } from 'react';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../../context/AuthContext';
 import { verifier2fa, renvoyer2fa } from '../../../services/auth.service';
+import useSuiteConnexion from '../../../hooks/useSuiteConnexion';
 import '../../../styles/auth.css';
 import './DeuxFacteurs.css';
 
@@ -22,14 +25,14 @@ const DELAI_RENVOI = 60; // Secondes avant de pouvoir redemander un code
 
 const DeuxFacteurs = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
-  const { connecter } = useAuth();
-  const navigate = useNavigate();
-  const { state } = useLocation(); // { jeton, emailMasque, emailEnvoye, destination } transmis à la connexion
+  const { ouvrirSession } = useSuiteConnexion();
+  const { state } = useLocation(); // { jeton, emailMasque, emailEnvoye, confianceHeures, destination } transmis à la connexion
   const jeton = state?.jeton;
 
   const [code,    setCode]    = useState('');
   const [erreur,  setErreur]  = useState(state?.emailEnvoye === false ? t(`${P}.emailNonEnvoye`) : '');
   const [envoi,   setEnvoi]   = useState(false);
+  const [confiance, setConfiance] = useState(false); // Case « Faire confiance à cet appareil » (décochée par défaut)
   const [attente, setAttente] = useState(state?.emailEnvoye === false ? 0 : DELAI_RENVOI); // Secondes restantes
 
   // Compte à rebours du bouton "Renvoyer le code"
@@ -42,22 +45,19 @@ const DeuxFacteurs = () => {
   // Accès direct à l'adresse, sans être passé par la page de connexion
   if (!jeton) return <Navigate to="/connexion" replace />;
 
-  // Ouvre la session puis envoie vers l'espace correspondant au rôle
-  const terminer = (data) => {
-    connecter(data.user, data.accessToken, data.refreshToken);
-    toast.success(t('auth.bienvenue', { prenom: data.user.prenom }));
-    if (data.user.role === 'super_admin')  navigate('/admin/tableau-de-bord', { replace: true });
-    else if (data.user.role === 'admin')   navigate('/admin/emargement', { replace: true });
-    else navigate(state.destination || '/parent/tableau-de-bord', { replace: true });
-  };
+  // Durée de la confiance proposée, en clair : « 30 jours » (parents) ou « 24 heures » (équipe)
+  const heures = state.confianceHeures || 24;
+  const dureeConfiance = heures >= 48 && heures % 24 === 0
+    ? t('common.jours', { count: heures / 24 })
+    : t(`${P}.heures`, { count: heures });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErreur('');
     setEnvoi(true);
     try {
-      const res = await verifier2fa(jeton, code);
-      terminer(res.data.data);
+      const res = await verifier2fa(jeton, code, confiance);
+      ouvrirSession(res.data.data, state.destination); // Garde aussi la clé si la case est cochée
     } catch (err) {
       setErreur(err.response?.data?.message || t(`${P}.erreur`));
       setCode('');
@@ -110,6 +110,16 @@ const DeuxFacteurs = () => {
               autoFocus
             />
           </div>
+
+          {/* Appareil de confiance : à ne pas cocher sur un ordinateur partagé */}
+          <label className="deux-facteurs__confiance">
+            <input type="checkbox" checked={confiance} onChange={e => setConfiance(e.target.checked)} />
+            <span>
+              <strong>{t(`${P}.confiance`, { duree: dureeConfiance })}</strong>
+              <span className="deux-facteurs__confiance-aide">{t(`${P}.confianceAide`)}</span>
+            </span>
+          </label>
+
           <button type="submit" className="btn-auth" disabled={envoi || code.length !== 6}>
             {envoi ? t(`${P}.verificationEnCours`) : t(`${P}.valider`)}
           </button>

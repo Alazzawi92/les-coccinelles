@@ -24,6 +24,7 @@ const Parametre             = require('./Parametre');
 const DocumentPublic        = require('./DocumentPublic'); // Page Présentation : documentation
 const Fermeture             = require('./Fermeture');      // Page Présentation : fermetures
 const Partenaire            = require('./Partenaire');     // Page Présentation : partenaires
+const AppareilConfiance     = require('./AppareilConfiance'); // 2FA : appareils de confiance
 
 // ── ASSOCIATIONS ────────────────────────────────────────────────────
 
@@ -127,6 +128,7 @@ module.exports = {
   DocumentPublic,
   Fermeture,
   Partenaire,
+  AppareilConfiance,
   User,
   Enfant,
   Inscription,

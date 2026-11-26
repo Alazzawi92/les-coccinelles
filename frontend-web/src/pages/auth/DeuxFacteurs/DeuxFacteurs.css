@@ -1,7 +1,8 @@
 /* ============================================================
    FICHIER : DeuxFacteurs.css
    PAGE    : /connexion/verification
-   RÔLE    : Saisie du code reçu par email et bouton de renvoi.
+   RÔLE    : Saisie du code reçu par email, case « Faire confiance
+             à cet appareil » et bouton de renvoi.
    ============================================================ */
 
 /* Chiffres du code bien espacés */
@@ -22,3 +23,21 @@
 }
 
 .deux-facteurs__renvoyer:disabled { color: var(--text-gray); cursor: not-allowed; }
+
+/* Case « Faire confiance à cet appareil » : case + texte sur 2 lignes */
+.deux-facteurs__confiance {
+  display:       flex;
+  align-items:   flex-start;
+  gap:           var(--space-sm);
+  padding:       var(--space-sm) var(--space-md);
+  border:        1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size:     0.9rem;
+  color:         var(--text-dark);
+  cursor:        pointer;
+}
+
+.deux-facteurs__confiance input { margin-top: 3px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+
+/* Conseil sous la case : ordinateur partagé, mot de passe toujours demandé */
+.deux-facteurs__confiance-aide { display: block; font-size: 0.8rem; color: var(--text-gray); margin-top: 2px; }

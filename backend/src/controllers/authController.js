@@ -6,6 +6,7 @@ const { genererAccessToken, genererRefreshToken, verifierRefreshToken } = requir
 const { envoyerVerificationEmail, envoyerResetMotDePasse, envoyerCompteEnAttente } = require('../services/mail.service');
 const { creerNotification } = require('../services/notification.service');
 const { etapeDeuxFacteurs } = require('../services/deuxFacteurs.service');
+const { estAppareilDeConfiance, oublierAppareils } = require('../services/appareilsConfiance.service');
 const { succes, erreur, cree } = require('../utils/response');
 const { OAuth2Client } = require('google-auth-library');
 const {
@@ -44,8 +45,14 @@ const creerSession = async (user) => {
   };
 };
 
-// Mot de passe ou compte Google valide : il reste à donner le code reçu par email
-const demanderDeuxFacteurs = async (res, user) => {
+// Mot de passe ou compte Google valide : il reste à donner le code reçu par email,
+// sauf si ce navigateur est un appareil de confiance encore valable
+// (30 jours parents, 24 h équipe) : la session s'ouvre alors directement.
+// cleAppareil : clé envoyée par le navigateur (champ « appareil », facultatif)
+const demanderDeuxFacteurs = async (res, user, cleAppareil) => {
+  if (await estAppareilDeConfiance(user, cleAppareil)) {
+    return succes(res, await creerSession(user), 'Connexion réussie');
+  }
   const etape = await etapeDeuxFacteurs(user);
   if (etape.bloque) return erreur(res, 'Trop de codes incorrects. Réessayez dans 15 minutes.', 429);
   return succes(res, etape, 'Code de vérification requis');
@@ -169,7 +176,7 @@ const login = async (req, res) => {
       return erreur(res, MESSAGE_ESPACE_FERME, 403);
     }
 
-    return demanderDeuxFacteurs(res, user);
+    return demanderDeuxFacteurs(res, user, req.body.appareil);
 
   } catch (err) {
     console.error('Erreur login :', err);
@@ -252,7 +259,7 @@ const googleLogin = async (req, res) => {
       return erreur(res, 'Votre compte est en attente de validation par l\'administrateur', 403);
     }
 
-    return demanderDeuxFacteurs(res, user);
+    return demanderDeuxFacteurs(res, user, req.body.appareil);
 
   } catch (err) {
     console.error('Erreur connexion Google :', err);
@@ -371,6 +378,8 @@ const resetPassword = async (req, res) => {
       token_expire: null,
       refresh_token: null // Déconnecter toutes les sessions actives
     });
+    // Mot de passe changé : plus aucun appareil de confiance (code email redemandé partout)
+    await oublierAppareils(user.id);
 
     return succes(res, null, 'Mot de passe réinitialisé avec succès');
 
