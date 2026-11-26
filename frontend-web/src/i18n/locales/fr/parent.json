@@ -86,7 +86,27 @@
     "mdpCourt": "8 caractères minimum",
     "toastMdp": "Mot de passe modifié",
     "erreurMdp": "Erreur lors du changement",
-    "nomInvalide": "Prénom ou nom invalide : lettres, espaces, apostrophe ou tiret uniquement (2 caractères minimum)"
+    "nomInvalide": "Prénom ou nom invalide : lettres, espaces, apostrophe ou tiret uniquement (2 caractères minimum)",
+    "ongletSuppression": "Supprimer mon compte",
+    "suppression": {
+      "titre": "Supprimer mon compte",
+      "intro": "Vous pouvez supprimer votre compte à tout moment. Cette action est définitive : les éléments suivants seront effacés et ne pourront pas être récupérés.",
+      "donnees": [
+        "Votre compte et vos informations personnelles",
+        "Les fiches de vos enfants et leurs demandes d'inscription",
+        "Les documents et pièces justificatives envoyés",
+        "Les absences, suivis du quotidien et messages",
+        "Vos consentements photo (vos enfants ne seront plus identifiés sur les photos de groupe)"
+      ],
+      "enfantAccepte": "Si l'un de vos enfants est inscrit ou accueilli à la crèche, votre demande sera transmise à l'équipe, qui la traitera avec vous (départ de l'enfant, documents à conserver).",
+      "motDePasse": "Votre mot de passe",
+      "tapez": "Tapez {{mot}} pour confirmer",
+      "bouton": "Supprimer définitivement mon compte",
+      "toastSupprime": "Votre compte et vos données ont été supprimés.",
+      "toastDemande": "Votre demande a été transmise à la crèche.",
+      "demandeEnvoyee": "Demande de suppression envoyée le {{date}}",
+      "demandeExplication": "L'équipe de la crèche va vous contacter pour organiser le départ de votre enfant, puis supprimera votre compte et vos données."
+    }
   },
   "suivi": {
     "retour": "← Mes enfants",

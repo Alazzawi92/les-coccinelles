@@ -2,8 +2,9 @@
 // FICHIER  : MonProfil.jsx (parent)
 // ROUTE    : /parent/mon-profil
 // RÔLE     : Page de gestion du profil personnel du parent.
-//            2 onglets : "Informations" (PUT /users/me)
-//            et "Mot de passe" (PUT /users/me/password).
+//            3 onglets : "Informations" (PUT /users/me),
+//            "Mot de passe" (PUT /users/me/password) et
+//            "Supprimer mon compte" (SuppressionCompte.jsx, RGPD).
 //            Validation locale du mdp (correspondance + longueur ≥ 8).
 //            majUser(data) met à jour le contexte Auth après sauvegarde.
 // ============================================================
@@ -16,13 +17,14 @@ import toast from 'react-hot-toast';
 import '../../../styles/parent.css';
 import './MonProfil.css';
 import { nomPersonneValide } from '../../../utils/validation'; // Format prénom / nom
+import SuppressionCompte from './SuppressionCompte';
 
 const MonProfil = () => {
   const { t } = useTranslation(); // Fonction de traduction FR / EN
   // Utilisateur connecté + fonction de mise à jour du contexte
   const { user, majUser } = useAuth();
 
-  // Onglet actif : 'infos' (informations personnelles) ou 'password' (changement de mdp)
+  // Onglet actif : 'infos', 'password' (changement de mdp) ou 'suppression' (supprimer mon compte)
   const [onglet, setOnglet] = useState('infos');
 
   // ── Formulaire infos personnelles ─────────────────────────
@@ -113,6 +115,7 @@ const MonProfil = () => {
       <div className="profil-onglets">
         <button className={`onglet ${onglet === 'infos'    ? 'onglet--actif' : ''}`} onClick={() => setOnglet('infos')}>{t('parent.monProfil.ongletInfos')}</button>
         <button className={`onglet ${onglet === 'password' ? 'onglet--actif' : ''}`} onClick={() => setOnglet('password')}>{t('parent.monProfil.ongletMdp')}</button>
+        <button className={`onglet onglet--danger ${onglet === 'suppression' ? 'onglet--actif' : ''}`} onClick={() => setOnglet('suppression')}>{t('parent.monProfil.ongletSuppression')}</button>
       </div>
 
       {/* ── FORMULAIRE INFOS PERSONNELLES ─────────────────────── */}
@@ -175,6 +178,9 @@ const MonProfil = () => {
           </form>
         </div>
       )}
+
+      {/* ── SUPPRIMER MON COMPTE (RGPD) ────────────────────────── */}
+      {onglet === 'suppression' && <SuppressionCompte />}
 
     </div>
   );

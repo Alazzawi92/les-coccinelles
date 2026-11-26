@@ -215,7 +215,9 @@
     },
     "emailConfirme": "✓ Email confirmed",
     "emailNonConfirme": "✉️ Email not confirmed",
-    "activerImpossible": "The parent must first confirm their email address (link sent by email)"
+    "activerImpossible": "The parent must first confirm their email address (link sent by email)",
+    "suppressionDemandee": "Deletion requested on {{date}}",
+    "suppressionDemandeeAide": "The parent asked for their account to be deleted. Arrange the child leaving, then click \"Delete\": all their data and files will be erased."
   },
   "rapports": {
     "titre": "Attendance <s>& activity report</s>",

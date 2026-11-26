@@ -3,12 +3,13 @@
    ROUTE   : /parent/mon-profil
    RÔLE    : Page de profil du parent. Affiche les informations
              personnelles avec un avatar. Navigation par onglets
-             (Informations personnelles, Sécurité, Notifications).
+             (Informations, Mot de passe, Supprimer mon compte).
 
    STRUCTURE :
      1. Imports
      2. Carte d'identité (avatar + nom + rôle)
      3. Navigation par onglets
+     3b. Supprimer mon compte
      4. Responsive
    ============================================================ */
 
@@ -90,6 +91,37 @@
 
 /* Onglet actif : orange + bordure orange en bas (l'onglet "couvre" la ligne grise) */
 .onglet--actif     { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* Onglet « Supprimer mon compte » : rouge pour signaler une action définitive */
+.onglet--danger:hover,
+.onglet--danger.onglet--actif { color: var(--error); border-bottom-color: var(--error); }
+
+/* ── 3b. SUPPRIMER MON COMPTE ───────────────────────────── */
+
+/* Carte bordée de rouge : action irréversible */
+.suppression-compte { border: 1px solid var(--error-border); }
+.suppression-compte p { color: var(--text-gray); line-height: 1.6; margin-bottom: var(--space-sm); }
+
+/* Liste de ce qui sera supprimé */
+.suppression-compte__liste { margin: 0 0 var(--space-md) var(--space-lg); color: var(--text-dark); line-height: 1.7; list-style: disc; }
+
+/* Note sur le cas « enfant accepté » */
+.suppression-compte__note { font-size: 0.9rem; background: var(--bg-gray); padding: var(--space-sm) var(--space-md); border-radius: var(--radius-md); }
+
+.suppression-compte__form { max-width: 400px; margin-top: var(--space-md); }
+
+/* Bouton rouge (désactivé tant que la confirmation n'est pas complète) */
+.suppression-compte__bouton { background: var(--error); color: var(--white); }
+.suppression-compte__bouton:hover:not(:disabled) { background: var(--error-dark); }
+
+/* Demande déjà transmise à la crèche */
+.suppression-compte__demande {
+  background:    var(--warning-bg);
+  color:         var(--warning-text);
+  padding:       var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+}
+.suppression-compte__demande p { color: inherit; margin: var(--space-xs) 0 0; }
 
 /* ── 4. RESPONSIVE ──────────────────────────────────────── */
 /* 6 paliers : 479 (petit mobile) / 767 (mobile) / 1023 (tablette) /

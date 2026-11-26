@@ -215,7 +215,9 @@
     },
     "emailConfirme": "✓ Email confirmé",
     "emailNonConfirme": "✉️ Email non confirmé",
-    "activerImpossible": "Le parent doit d'abord confirmer son adresse email (lien reçu par mail)"
+    "activerImpossible": "Le parent doit d'abord confirmer son adresse email (lien reçu par mail)",
+    "suppressionDemandee": "Suppression demandée le {{date}}",
+    "suppressionDemandeeAide": "Le parent a demandé la suppression de son compte. Organisez le départ de l'enfant, puis cliquez sur « Supprimer » : toutes ses données et ses fichiers seront effacés."
   },
   "rapports": {
     "titre": "Rapport <s>présence & activités</s>",

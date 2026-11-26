@@ -38,6 +38,8 @@ const User = sequelize.define('User', {
   adresse:       { type: DataTypes.TEXT },
   avatar:        { type: DataTypes.STRING(255) },
   actif:         { type: DataTypes.BOOLEAN, defaultValue: true },
+  // Demande « Supprimer mon compte » d'un parent dont un enfant est accepté (NULL = aucune)
+  suppression_demandee_le: { type: DataTypes.DATE, allowNull: true },
   email_verifie: { type: DataTypes.BOOLEAN, defaultValue: false },
   token_reset:   { type: DataTypes.STRING(255) },
   token_expire:  { type: DataTypes.DATE },

@@ -101,6 +101,10 @@
         "titre": "New account to approve",
         "message": "{{parent}} ({{email}}) created an account and confirmed their email"
       },
+      "suppressionDemandee": {
+        "titre": "Account deletion request",
+        "message": "{{parent}} asks for their account and data to be deleted"
+      },
       "nouveauDocument": {
         "titre": "New document",
         "message": "{{parent}} uploaded a document ({{fichier}})"

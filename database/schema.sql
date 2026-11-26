@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
   adresse        TEXT,                                    -- Adresse postale complète
   avatar         VARCHAR(255),                            -- Chemin vers la photo de profil
   actif          BOOLEAN DEFAULT TRUE,                    -- Compte actif ou désactivé
+  suppression_demandee_le DATETIME NULL,                 -- Demande « Supprimer mon compte » (NULL = aucune)
   email_verifie  BOOLEAN DEFAULT FALSE,                   -- Email confirmé ou non
   token_reset    VARCHAR(255),                            -- Token de réinitialisation mot de passe
   token_expire   DATETIME,                                -- Expiration du token reset

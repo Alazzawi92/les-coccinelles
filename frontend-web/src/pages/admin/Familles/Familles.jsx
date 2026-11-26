@@ -160,6 +160,13 @@ const Familles = () => {
                   <span className={`s-badge ${u.actif ? 's-badge--accepte' : 's-badge--refuse'}`}>
                     {u.actif ? t('admin.familles.actif') : t('admin.familles.inactif')}
                   </span>
+                  {/* Le parent a demandé la suppression de son compte (enfant accepté) :
+                      à traiter avec le bouton « Supprimer » de cette carte */}
+                  {u.suppression_demandee_le && (
+                    <span className="s-badge s-badge--refusee" title={t('admin.familles.suppressionDemandeeAide')}>
+                      🗑️ {t('admin.familles.suppressionDemandee', { date: new Date(u.suppression_demandee_le).toLocaleDateString(getLocale()) })}
+                    </span>
+                  )}
                 </div>
                 {/* Compte parent en attente : l'email doit être confirmé avant activation */}
                 {!u.actif && u.role === 'parent' && (

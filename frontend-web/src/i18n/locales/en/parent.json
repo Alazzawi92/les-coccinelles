@@ -86,7 +86,27 @@
     "mdpCourt": "At least 8 characters",
     "toastMdp": "Password changed",
     "erreurMdp": "Error while changing password",
-    "nomInvalide": "Invalid first or last name: letters, spaces, apostrophe or hyphen only (at least 2 characters)"
+    "nomInvalide": "Invalid first or last name: letters, spaces, apostrophe or hyphen only (at least 2 characters)",
+    "ongletSuppression": "Delete my account",
+    "suppression": {
+      "titre": "Delete my account",
+      "intro": "You can delete your account at any time. This is permanent: the following will be erased and cannot be recovered.",
+      "donnees": [
+        "Your account and personal information",
+        "Your children's records and enrolment requests",
+        "Documents and supporting documents you sent",
+        "Absences, daily reports and messages",
+        "Your photo consents (your children will no longer be tagged on group photos)"
+      ],
+      "enfantAccepte": "If one of your children is enrolled or cared for at the nursery, your request will be sent to the team, who will handle it with you (child leaving, documents to keep).",
+      "motDePasse": "Your password",
+      "tapez": "Type {{mot}} to confirm",
+      "bouton": "Permanently delete my account",
+      "toastSupprime": "Your account and data have been deleted.",
+      "toastDemande": "Your request has been sent to the nursery.",
+      "demandeEnvoyee": "Deletion request sent on {{date}}",
+      "demandeExplication": "The nursery team will contact you to arrange your child leaving, then delete your account and data."
+    }
   },
   "suivi": {
     "retour": "← My children",

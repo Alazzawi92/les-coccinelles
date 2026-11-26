@@ -110,6 +110,7 @@ seule fois, dans l'ordre :
 | `007_menus_allergenes.sql` | `menus.lundi_allergenes` … `vendredi_allergenes` : allergènes présents chaque jour |
 | `008_presentation_contenus.sql` | Tables `documents_publics`, `fermetures`, `partenaires` (page Présentation, gérées par le super admin) |
 | `009_appareils_confiance.sql` | Table `appareils_confiance` (« Faire confiance à cet appareil ») |
+| `010_suppression_compte.sql` | `users.suppression_demandee_le` : « Supprimer mon compte » (parent dont un enfant est accepté) |
 
 `schema.alwaysdata.sql` : même schéma, adapté à l'hébergeur (MariaDB, sans
 `CREATE DATABASE`).

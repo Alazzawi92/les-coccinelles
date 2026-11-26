@@ -101,6 +101,10 @@
         "titre": "Nouveau compte à valider",
         "message": "{{parent}} ({{email}}) a créé un compte et confirmé son email"
       },
+      "suppressionDemandee": {
+        "titre": "Demande de suppression de compte",
+        "message": "{{parent}} demande la suppression de son compte et de ses données"
+      },
       "nouveauDocument": {
         "titre": "Nouveau document",
         "message": "{{parent}} a déposé un document ({{fichier}})"

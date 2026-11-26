@@ -7,15 +7,61 @@ const { User } = require('../models');
 const { succes, erreur, cree } = require('../utils/response');
 const { envoyerCompteActive, envoyerInvitationEquipe } = require('../services/mail.service');
 const { oublierAppareils } = require('../services/appareilsConfiance.service');
+const { aUnEnfantAccepte, supprimerCompteEtDonnees } = require('../services/suppressionCompte.service');
+const { creerNotification } = require('../services/notification.service');
 
 const DUREE_INVITATION_MS = 72 * 60 * 60 * 1000; // Lien d'invitation valable 72 heures
 
 // GET /api/users/me — Retourner le profil de l'utilisateur connecté
+// a_mot_de_passe : le compte a-t-il un mot de passe (sinon compte Google) ?
+// Sert à « Supprimer mon compte » ; le mot de passe lui-même n'est jamais renvoyé.
 const monProfil = async (req, res) => {
   try {
-    return succes(res, req.user); // req.user est déjà sans password (voir middleware)
+    const avecMdp = await User.findByPk(req.user.id, { attributes: ['password'] });
+    return succes(res, { ...req.user.toJSON(), a_mot_de_passe: Boolean(avecMdp?.password) });
   } catch (err) {
     return erreur(res, 'Erreur lors de la récupération du profil');
+  }
+};
+
+// DELETE /api/users/me — « Supprimer mon compte » (parent, RGPD)
+//  - aucun enfant accepté : suppression immédiate du compte et de toutes
+//    ses données, fichiers compris → { statut: 'supprime' }
+//  - enfant accepté (inscrit ou accueilli) : demande enregistrée, les
+//    super admins sont prévenus et suppriment le compte depuis
+//    Admin → Familles → { statut: 'demande' }
+const supprimerMonCompte = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    // Compte avec mot de passe : il est exigé (téléphone resté ouvert, etc.)
+    if (user.password && !(await bcrypt.compare(req.body.password || '', user.password))) {
+      return erreur(res, 'Mot de passe incorrect', 401);
+    }
+
+    if (await aUnEnfantAccepte(user.id)) {
+      // Demande déjà envoyée : rien de plus (pas de nouvelle notification)
+      if (!user.suppression_demandee_le) {
+        await user.update({ suppression_demandee_le: new Date() });
+        const superAdmins = await User.findAll({ where: { role: 'super_admin', actif: true }, attributes: ['id'] });
+        await Promise.all(superAdmins.map(admin => creerNotification(
+          admin.id,
+          'Demande de suppression de compte',
+          `${user.prenom} ${user.nom} demande la suppression de son compte et de ses données`,
+          'alerte',
+          '/admin/familles',
+          { code: 'suppressionDemandee', params: { parent: `${user.prenom} ${user.nom}` } }
+        )));
+      }
+      return succes(res, { statut: 'demande', suppression_demandee_le: user.suppression_demandee_le },
+        'Votre demande a été transmise à la crèche');
+    }
+
+    await supprimerCompteEtDonnees(user);
+    return succes(res, { statut: 'supprime' }, 'Votre compte et vos données ont été supprimés');
+  } catch (err) {
+    console.error('Erreur suppression de compte :', err);
+    return erreur(res, 'Erreur lors de la suppression du compte');
   }
 };
 
@@ -166,7 +212,9 @@ const supprimerUser = async (req, res) => {
     if (req.user.role === 'admin' && user.role !== 'parent')
       return erreur(res, 'Vous n\'êtes pas autorisé à supprimer ce compte', 403);
 
-    await user.destroy();
+    // Parent : toutes ses données ET ses fichiers (RGPD) ; équipe : le compte seul
+    if (user.role === 'parent') await supprimerCompteEtDonnees(user);
+    else await user.destroy();
     return succes(res, null, 'Compte supprimé');
   } catch (err) {
     return erreur(res, 'Erreur lors de la suppression');
@@ -246,4 +294,4 @@ const creerCompteEquipe = async (req, res) => {
   }
 };
 
-module.exports = { monProfil, modifierProfil, changerMotDePasse, changerAvatar, listerAdmins, listerUsers, getUser, toggleActif, supprimerUser, listerEquipe, creerCompteEquipe };
+module.exports = { monProfil, modifierProfil, changerMotDePasse, changerAvatar, listerAdmins, listerUsers, getUser, toggleActif, supprimerUser, supprimerMonCompte, listerEquipe, creerCompteEquipe };

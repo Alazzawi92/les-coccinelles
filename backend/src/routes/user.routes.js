@@ -1,5 +1,6 @@
 // Routes utilisateurs — /api/users
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const { body } = require('express-validator');
 const router  = express.Router();
 
@@ -31,6 +32,22 @@ router.put('/me/password', verifierToken,
 
 // PUT /api/users/me/avatar — Changer ma photo de profil
 router.put('/me/avatar', verifierToken, uploadAvatar.single('avatar'), userController.changerAvatar);
+
+// DELETE /api/users/me — « Supprimer mon compte » (parents uniquement, RGPD)
+// Mot de passe (si le compte en a un) + mot « SUPPRIMER » tapé en toutes lettres.
+// Limite : 5 essais / 15 min (le mot de passe ne doit pas pouvoir être deviné ici)
+const limiteSuppression = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max:      5,
+  message:  { success: false, message: 'Trop de tentatives. Réessayez dans 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders:   false
+});
+router.delete('/me', limiteSuppression, verifierToken, verifierRole('parent'),
+  [body('confirmation').equals('SUPPRIMER').withMessage('Tapez SUPPRIMER pour confirmer'),
+   body('password').optional().isString().isLength({ max: 200 })],
+  validerDonnees, userController.supprimerMonCompte
+);
 
 // GET /api/users/admins — Liste des admins (tous utilisateurs connectés, pour la messagerie)
 router.get('/admins', verifierToken, userController.listerAdmins);

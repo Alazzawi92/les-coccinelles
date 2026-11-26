@@ -68,6 +68,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null); // Déconnecte visuellement l'utilisateur
   };
 
+  // ── Session oubliée sans appel au serveur ─────────────────
+  // Après « Supprimer mon compte » : le compte n'existe plus, la
+  // déconnexion côté serveur est inutile. Vide aussi la clé
+  // « appareil de confiance » de ce navigateur.
+  const oublierSession = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('appareilConfiance');
+    setUser(null);
+  };
+
   // ── Mise à jour du profil ─────────────────────────────────
 
   // Fusionne les nouvelles données avec le profil existant
@@ -78,7 +89,7 @@ export const AuthProvider = ({ children }) => {
 
   // ── Valeurs exposées via useAuth() ────────────────────────
   return (
-    <AuthContext.Provider value={{ user, loading, connecter, deconnecter, majUser }}>
+    <AuthContext.Provider value={{ user, loading, connecter, deconnecter, oublierSession, majUser }}>
       {children}
     </AuthContext.Provider>
   );
